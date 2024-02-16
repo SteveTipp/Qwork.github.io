@@ -1,0 +1,76 @@
+/* CSS for Steve Tippeconnic Qwork website */
+body {
+    background-color: #000000; /* black background */
+    color: #FFFFFF; /* White text */
+    font-family: Arial, sans-serif; /* sans-serif font */
+}
+
+header, nav, section, article, footer {
+    margin: 10px;
+    padding: 10px;
+}
+
+/* Header logo */
+#logo img {
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
+    width: 50%; 
+}
+
+/* Navigation styles */
+nav {
+    text-align: center;
+    margin-bottom: 20px;
+}
+
+nav a {
+    color: #FFFFFF; /* white links */
+    margin: 0 10px;
+    text-decoration: none;
+    font-size: 1.2em;
+}
+
+nav a:hover {
+    color: #00FF00; /* matrix green for hover state */
+}
+
+/* experiment list */
+.experiment a {
+    display: block;
+    background-color: #000000; /* black background for each link */
+    color: #00FF00; /* green text */
+    padding: 5px;
+    text-decoration: none;
+    margin-bottom: 5px;
+    border-left: 5px solid #0000FF; /*  blue border on left */
+}
+
+.experiment a:hover {
+    border-left: 5px solid #00FF00; /* green border on hover */
+    background-color: #001a00; /* lighter black for hover background */
+}
+
+/* Footer styles */
+footer {
+    color: #FFFFFF; /* white text */
+    text-align: center;
+    font-size: 0.8em;
+}
+
+footer a {
+    color: #FFFFFF; /* white links */
+    text-decoration: none;
+}
+
+footer a:hover {
+    color: #00FF00; /* green on hover */
+}
+
+/* Add responsive design elements as needed */
+@media (max-width: 600px) {
+    /* Adjust styles for mobile view */
+    nav a, .experiment a, footer {
+        font-size: 1em;
+    }
+}

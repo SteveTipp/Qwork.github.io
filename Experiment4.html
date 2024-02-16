@@ -1,0 +1,308 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Experiment 1 - Qwork</title>
+    <style>
+        body {
+            background-color: #000000; /* Black background */
+            color: #FFFFFF; /* White text */
+            font-family: Arial, sans-serif; /* Modern, sans-serif font */
+            margin: 0;
+            padding: 0;
+        }
+        header {
+            background: url('QImage1.png') no-repeat center center;
+            background-size: contain; /* Ensure the image is fully contained within the header */
+            height: 300px; /* Height as per the resized image */
+            position: relative;
+        }
+        nav {
+            display: flex;
+            justify-content: center;
+            padding: 10px 0;
+        }
+        nav a {
+            color: #FFFFFF; /* White links */
+            margin: 0 20px;
+            text-decoration: none;
+            font-size: 1.2em;
+        }
+        nav a:hover {
+            color: #00FF00; /* Matrix green for hover state */
+        }
+        .content-section {
+            padding: 20px;
+            text-align: center;
+        }
+        .content-block {
+            margin: 10px auto;
+            padding: 10px;
+            border: 1px solid #00FF00; /* Matrix green border */
+        }
+        .experiment-image {
+            width: 1200px; /* Updated width */
+            height: 816px; /* Updated height */
+            margin: 20px auto;
+            display: block;
+        }
+        .experiment-image2 {
+            width: 621px; /* Updated width */
+            height: 484px; /* Updated height */
+            margin: 20px auto;
+            display: block;
+        }
+         .experiment-image3 {
+            width: 381px; /* Updated width */
+            height: 217px; /* Updated height */
+            margin: 20px auto;
+            display: block;
+        }
+        footer {
+            color: #FFFFFF; /* White text */
+            text-align: center;
+            padding: 20px 0;
+        }
+        footer a {
+            color: #FFFFFF;
+            text-decoration: none;
+        }
+        footer a:hover {
+            color: #00FF00; /* Matrix green on hover */
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <!-- Header with the resized image -->
+    </header>
+
+    <nav>
+        <!-- Navigation links as per wireframe -->
+        <a href="try_yourself.html">Try Yourself</a>
+        <a href="index.html">Experiments</a>
+        <a href="about.html">About Me</a>
+    </nav>
+
+    <section class="content-section">
+        <h1>Visualizing Two-Qubit Superposition on IBM's 7 Qubit Nairobi Quantum Computer </h1>
+        <div class="content-block">
+        
+
+<p>This experiment aims to create and analyze quantum entanglement between two qubits using IBM's 7 qubit quantum computer "ibm_nairobi." Quantum entanglement is a phenomenon where the quantum states of two or more particles become intertwined, and the state of each particle cannot be described independently of the state of the others, regardless of the distance separating them. The experiment, using Qiskit, starts by applying quantum gates to manipulate the states of the qubits, observing the entanglement through measurement, and interpreting the results statistically. One of my favorite visuals of entanglement on this thread, now on a real system.</p>
+
+<p>Code Walkthrough</p>
+<p>1. Initialization:<br>
+We begin with two qubits in the default state ∣0⟩, the quantum equivalent of the binary '0'. The combined initial state of our two-qubit system is ∣00⟩.</p>
+
+<p>2. Application of the Hadamard Gate (H-gate) on the First Qubit:<br>
+A Hadamard gate is applied to the first qubit, which puts it into a superposition state. The Hadamard transformation (H) is represented by the matrix:<br>
+H = 1/sqrt(2) * (1, 1, 1, −1)<br>
+The action of H on ∣0⟩ produces the state:<br>
+H∣0⟩ = 1/sqrt(2) * (∣0⟩+∣1⟩)<br>
+The new state of the system is:<br>
+1/sqrt(2) * (∣00⟩+∣10⟩)</p>
+
+<p>3. Controlled-NOT Gate (CNOT) Application:<br>
+A CNOT gate uses one qubit to control another, flipping the target qubit's state from ∣0⟩ to ∣1⟩ (or vice versa) if the control qubit is in state ∣1⟩. Its matrix representation is:<br>
+CNOT=(1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 1, 0, 0, 1, 0)<br>
+Applying the CNOT gate to our state results in the entangled state:<br>
+1/sqrt(2) * (∣00⟩+∣11⟩)<br>
+This is because the second qubit is flipped only when the first qubit is ∣1⟩, which is true for the second term of our superposition.</p>
+
+<p>4. Measurement:<br>
+We measure the qubits, which collapses the superposition to one of the possible states (∣00⟩ or ∣11⟩) with equal probability, due to the nature of the entanglement.</p>
+
+<p>5. Execution on Quantum Hardware:<br>
+The transpiled (optimized for quantum processor "ibm_nairobi") circuit is sent to the IBM quantum computer for execution. The backend executes the instructions.</p>
+
+<p>6. Result and Analysis:<br>
+The results are retrieved as a distribution of counts that indicate how often each possible outcome was measured. These are presented in a histogram, reflecting the probabilities extracted from the quantum state measurements, three json files (experiment's configuration, experimental data, plot data), and a rendered 3D plot.</p>
+
+<p>7. Json Result Data:<br>
+The experiment's configuration, shot records, plot data, and status data are serialized into three JSON files (experiment_results, backend_information, 3d_plot_data) for record-keeping and future analysis. </p>
+
+<p>8. 3D Plot: <br>
+For a visual analysis, we create a 3D scatter plot using a grid of points, where the entanglement degree is indicated by color intensity, demonstrating how entanglement varies across the qubit state space. The distance of points from the center of a cube, normalized between 0 and 1, represents the strength of entanglement, providing a spatial representation of entangled states.<br>
+distances = np.sqrt((X - 0.5)**2 + (Y - 0.5)**2 + (Z - 0.5)**2)</p>
+
+<p>In the end, this experiment visualizes quantum entanglement, using IBM's quantum computer Nairobi, in a three-dimensional space. Superposition allows a qubit to occupy a multitude of states until measured, and entanglement links the state of one qubit with another. The entangled states are visualized using a histogram of measurement outcomes, showing the probability distribution of the qubits' correlated states. A 3D scatter plot is rendered to represent the degree of entanglement across a range of potential quantum states, with color gradients indicating the strength of correlation, providing a visual interpretation of the entanglement. </p>
+            
+            
+            
+            
+            
+        </div>
+        <img src="E4image1.png" alt="Run Render" class="experiment-image">
+        <p>Above is a screenshot of the run.</p>
+        <div class="content-block">
+        
+        <p>Code:<br>
+            <p><pre><code>import numpy as np
+import qiskit
+import json
+from datetime import datetime
+from qiskit import QuantumCircuit, transpile
+from qiskit.visualization import plot_histogram
+import matplotlib.pyplot as plt
+from qiskit_ibm_provider import IBMProvider
+
+# Extend the default JSON serializer to handle complex numbers and datetime objects
+def default_serializer(obj):
+    if isinstance(obj, complex):
+        return {"real": obj.real, "imag": obj.imag}
+    elif isinstance(obj, datetime):
+        return obj.isoformat()
+    raise TypeError(f"Object of type {obj.__class__.__name__} is not JSON serializable")
+
+# Initialize the IBMProvider with your API key
+provider = IBMProvider(token='Your_Token_Here')  # Replace with your actual token
+
+# Create a two-qubit quantum circuit
+qc = QuantumCircuit(2)
+
+# Apply a Hadamard gate to the first qubit
+qc.h(0)
+
+# Apply a CNOT gate with the first qubit as control and the second as target
+qc. cx(0, 1)
+
+# Get the provider and select 'ibm_nairobi'
+backend = provider.get_backend('ibm_nairobi')
+
+# Fetch the configuration and status for 'ibm_nairobi'
+config = backend.configuration().to_dict()
+status = backend.status().to_dict()
+print(f"Backend: {backend. name}")
+print("Jobs in queue for ibm_nairobi:", status['pending_jobs'])
+
+# Serialize and write configuration and status to a JSON file
+data_to_write = {
+    'backend_name': backend. name,
+    'backend_config': config,
+    'backend_status': status
+}
+
+# Save to JSON file
+with open('backend_information.json', 'w') as outfile:
+    json.dump(data_to_write, outfile, default=default_serializer, indent=4)
+
+# Transpile the circuit for 'ibm_nairobi'
+t_qc = transpile(qc, backend, optimization_level=3)
+
+# Monitor and execute the job
+from qiskit. tools.monitor import job_monitor
+job = backend. run(t_qc, shots=1024)
+job_monitor(job)  # Monitor the job's execution
+result = job.result()
+
+# Get the counts of the quantum circuit run results
+counts = result.get_counts(qc)
+
+# Serialize and write the counts to a JSON file
+counts_data_to_write = {
+    'counts': counts
+}
+
+# Save counts to JSON file
+with open('experiment_results.json', 'w') as outfile:
+    json.dump(counts_data_to_write, outfile, default=default_serializer, indent=4)
+
+# Plot a histogram of the counts
+plot_histogram(counts)
+plt.savefig('histogram.png')  # Save the histogram plot
+plt. show()
+
+# The following code is for the 3D plot visualization part
+# Create a 3D grid of points
+grid_length = 20
+x = np.linspace(0, 1, grid_length)
+y = np.linspace(0, 1, grid_length)
+z = np.linspace(0, 1, grid_length)
+X, Y, Z = np.meshgrid(x, y, z)
+
+# Calculate the distance of each point from the center
+distances = np.sqrt((X - 0.5)**2 + (Y - 0.5)**2 + (Z - 0.5)**2)
+
+# Normalize the distances to be between 0 and 1
+normalized_distances = distances / np.max(distances)
+
+# Use the normalized distances to represent the degree of entanglement
+entanglement_degree = 1 - normalized_distances
+
+# Create the 3D scatter plot
+fig = plt.figure()
+ax = fig.add_subplot(111, projection='3d')
+sc = ax.scatter(X, Y, Z, c=entanglement_degree.flatten(), cmap='viridis', s=100 * entanglement_degree.flatten())
+ax.set_title('Spatially Varying Entanglement')
+ax.set_xlabel('X')
+ax.set_ylabel('Y')
+ax.set_zlabel('Z')
+plt.colorbar(sc)
+plt.savefig('3d_entanglement_plot.png')  # Save the 3D plot
+plt. show()
+
+# Serialize and save the 3D plot data
+plot_data = [{'x': X[i][j][k], 'y': Y[i][j][k], 'z': Z[i][j][k], 'entanglement_degree': entanglement_degree[i][j][k]} 
+             for i in range(grid_length) for j in range(grid_length) for k in range(grid_length)]
+with open('3d_plot_data.json', 'w') as f:
+    json.dump(plot_data, f, default=default_serializer, indent=4)
+</code></pre>
+</p>
+            
+            
+            
+        </div>
+        <img src="E4image2.png" alt="Description of Image 2" class="experiment-image">
+        <p>3D Scatter Plot of Total Counts.</p>
+        <img src="E4image3.png" alt="Description of Image 3" class="experiment-image">
+        <p>Total Counts for Each Basis.</p>
+        <img src="E4image4.png" alt="Description of Image 4" class="experiment-image">
+        <p></p>
+        <div class="content-block">
+            <h2>Results</h2>
+       
+You can see the visualization on the video below.</p>
+
+<p>The maximum entanglement degree observed in the dataset is approximately 0.9474, occurring at four unique coordinate sets. These points seem to be near the center or at symmetrical positions, considering their close numerical values. This clustering might suggest a pattern where maximum entanglement is associated with a particular symmetrical arrangement of spatial coordinates.</p>
+
+<p>The minimum entanglement degree is 0.0, found at eight distinct coordinate sets, all at the extremes of the possible values (corners of the space in a cubic model). This is consistent with quantum mechanics, where entanglement typically decreases with distance, and maximal separation (corners of a cube) would naturally exhibit minimal entanglement in a bounded system.</p>
+
+<p>These findings suggest that entanglement might be sensitive to both symmetry and separation in this dataset, which aligns with various quantum mechanics principles where both these factors can significantly impact quantum states.</p>
+
+<p>Linear Regression Baseline:<br>
+Mean Squared Error (MSE): <br>
+0.0287, which indicates the average squared difference between the observed actual outturns and the model's predictions. A lower MSE suggests a better fit to the data.</p>
+
+<p>R^2 score:<br>
+−0.0006, which represents the proportion of the variance in the dependent variable that is predictable from the independent variables. </p>
+
+<p>Polynomial Regression with Quadratic Features:<br>
+MSE: <br>
+0.0010, a significant improvement over the linear model, showing that the polynomial model captures the data's structure much more effectively.</p>
+
+<p>R2 score:<br>
+0.9638, a very high value indicating that the model explains most of the variance in entanglement degrees from the test data, suggesting a good fit.</p>
+
+<p>The results from the polynomial regression model suggest that the relationship between spatial coordinates and the entanglement degree is non-linear and that the quadratic terms help in capturing this non-linearity. This is coherent with the expectations for physical phenomena in quantum mechanics, where relationships are rarely linear, and factors such as superposition and entanglement create complex dependencies.</p>
+
+<p>Given the high R^2 score of the polynomial regression model, it seems like a promising approach to modeling entanglement degree based on spatial coordinates.</p>
+
+<p>ibm_nairobi Information:<br>
+The 'ibm_nairobi' is a seven-qubit device, part of the Falcon family, revision 5.11, indicating a medium-sized quantum processor in IBM's lineup, suitable for intermediate-scale quantum experiments.</p>
+
+<p>The device supports a variety of quantum operations, with basic gates like CX, ID, RZ, SX, and X. These operations form the foundation for constructing a wide range of quantum algorithms.</p>
+
+<p>The definitions for identity (ID), rotation around the Z-axis (RZ), sqrt-NOT (SX), and NOT (X) operations are specified, which are crucial for quantum state preparation and manipulation.</p>
+
+<p>The coupling_map shows which qubits are connected and capable of two-qubit operations like the CX gate, which is essential for understanding the device's entanglement capabilities.”</p>
+        </div>
+    </section>
+
+    <footer>
+        <!-- Footer content -->
+        <a href="mailto:contact@example.com">Contact Me</a>
+    </footer>
+
+</body>
+</html>
