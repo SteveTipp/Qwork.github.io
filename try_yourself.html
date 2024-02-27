@@ -1,19 +1,19 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>About Me - Qwork</title>
+    <title>Try A Quantum Experiment Yourself! - Qwork</title>
     <style>
         body {
             background-color: #000000; /* Black background */
             color: #FFFFFF; /* White text */
-            font-family: Arial, sans-serif; /* Modern, sans-serif font */
+            font-family: Arial, sans-serif; 
             margin: 0;
             padding: 0;
         }
         header {
             background: url('QImage1.png') no-repeat center center;
-            background-size: contain; /* Ensure the image is fully contained within the header */
-            height: 300px; /* Height as per the resized image */
+            background-size: contain; 
+            height: 612px; 
             position: relative;
         }
         nav {
@@ -39,6 +39,12 @@
             padding: 10px;
             border: 1px solid #00FF00; /* Matrix green border */
         }
+        .interactive-image {
+            cursor: pointer;
+            width: 200px; 
+            margin: 20px auto;
+            display: block;
+        }
         footer {
             color: #FFFFFF; /* White text */
             text-align: center;
@@ -51,44 +57,60 @@
         footer a:hover {
             color: #00FF00; /* Matrix green on hover */
         }
-        .profile-pic {
-            width: 200px; /* Adjust as needed */
-            height: auto;
-            margin: 20px auto;
-            display: block;
+        #result {
+            font-size: 1.5em;
+            margin-top: 20px;
         }
     </style>
 </head>
 <body>
 
     <header>
-        <!-- Header with the resized image -->
     </header>
 
     <nav>
-        <!-- Navigation links as per wireframe -->
         <a href="try_yourself.html">Try Yourself</a>
         <a href="index.html">Experiments</a>
         <a href="about.html">About Me</a>
     </nav>
 
     <section class="content-section">
-        <h1>Steve Tippeconnic</h1>
+        <h1>Try A Quantum Experiment Yourself!</h1>
         <div class="content-block">
-            <h2>Who Am I?</h2>
-            <p>Hello! My name is Steve Tippeconnic. I am a quantum computing hobbyist, and a student of computer science at ASU. I am part of IBMQ, and get 10 minutes a month on IBM’s 127-qubit machines. This page is to follow my journey through the novel field of Quantum Computing. </p>
+            <p>What is a Qubit? </p>
+            <p>A qubit, short for "quantum bit," is the fundamental unit of quantum information, representing the quantum version of the classical binary bit. Unlike a traditional bit, which can be either 0 or 1, a qubit can exist in a state of 0, 1, or any quantum superposition of these states. This means a qubit can represent both 0 and 1 simultaneously, thanks to the principles of quantum mechanics, such as superposition and entanglement. This unique property allows quantum computers to process and store information in ways that classical computers cannot, potentially enabling them to solve certain problems much more efficiently.</p>
+
         </div>
         <div class="content-block">
-            <h2>Why am I doing these tests?</h2>
-            <p>I am preforming these experiments because I am fascinated by Qubits and how modern computing could benefit from these unusual states. I love to explore mathematics, statical mechanics, computer science, general relativity, special relativity, and quantum physics, this is a combination of all. For example, entanglement could one day give us instant communication, or instant picture feeds. It is an exciing new world and I hope that you can come away with some of the wonder of Quantum Systems that I have.</p>
+            <p>What is a Qubit Spin? </p>
+             <p>A qubit spin refers to the quantum property of particles like electrons or protons, utilized as a basis for qubits in quantum computing. In classical physics, spin relates to the angular momentum of an object. In quantum mechanics, however, spin describes an intrinsic form of angular momentum carried by quantum particles, which doesn't have a direct classical analog. For a qubit, the spin state of a particle—often simplified as "spin up" (representing 1) and "spin down" (representing 0) - serves as the fundamental unit of quantum information. These spin states, due to quantum superposition, allow the qubit to exist in a combination of both states simultaneously, enabling complex computations that are beyond the reach of classical computing.</p>
+
         </div>
-        <img src="me.png" alt="A picture of me" class="profile-pic">
-        
-  
+        <div class="content-block">
+            <p>What is a Qubit Superposition State?</p>
+             <p>A qubit superposition state is a fundamental principle of quantum computing, where a qubit simultaneously exists in multiple states. Unlike classical bits that are either 0 or 1, a qubit in superposition embodies both 0 and 1 at the same time, thanks to quantum mechanics. This capability allows quantum computers to perform multiple calculations concurrently, vastly increasing their computational power compared to classical computers. The superposition state remains until measured, at which point the qubit collapses to one of its possible states, making superposition crucial for the enhanced processing capabilities of quantum computers.</p>
+
+        </div>
+        <div class="content-block">
+            <p>Measure a 'Qubit' and Collapse a Wave Function</p>
+             <p>In this interactive experiment, you'll engage with one of the most fascinating aspects of quantum mechanics: the behavior of a qubit in superposition. A qubit, the quantum analog of a classical bit, can exist in a state of superposition where it simultaneously embodies multiple states, akin to a coin spinning in the air encompassing both heads and tails. By clicking on the image below, you emulate the act of measuring the qubit. Just as a spinning coin collapses to a definitive state when caught, the qubit's superposition collapses upon measurement, yielding either a "Spin Up" or "Spin Down" result. This simple action on your part brings to life the core principle of quantum reality: that the act of measurement affects the state of the system, providing a hands-on understanding of the quantum world's probabilistic nature.</p>
+			<p>Click the Particle Below to Collapse its Wave Function and find its Spin State.</p>
+            <img src="particle.png" alt="Clickable particle" class="interactive-image" id="particle" onclick="flipParticle()">
+            <div id="result"></div>
+        </div>
+       
+    </section>
+
     <footer>
-        <!-- Footer content -->
-        <a href="mailto:contact@example.com">Contact Me</a>
+        <a href="stippeco@asu.edu">Contact Me</a>
     </footer>
+
+    <script>
+        function flipParticle() {
+            var result = Math.random() < 0.5 ? "Spin Up" : "Spin Down"; /* Figure out spin state with 50% randomness */
+            document.getElementById("result").textContent = "The particle is: " + result;
+        }
+    </script>
 
 </body>
 </html>

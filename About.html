@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>About Me - Qwork</title>
+    <style>
+        body {
+            background-color: #000000; /* Black background */
+            color: #FFFFFF; /* White text */
+            font-family: Arial, sans-serif; 
+            margin: 0;
+            padding: 0;
+        }
+        header {
+            background: url('QImage1.png') no-repeat center center;
+            background-size: contain; 
+            height: 612px; 
+            position: relative;
+        }
+        nav {
+            display: flex;
+            justify-content: center;
+            padding: 10px 0;
+        }
+        nav a {
+            color: #FFFFFF; /* White links */
+            margin: 0 20px;
+            text-decoration: none;
+            font-size: 1.2em;
+        }
+        nav a:hover {
+            color: #00FF00; /* Matrix green for hover state */
+        }
+        .content-section {
+            padding: 20px;
+            text-align: center;
+        }
+        .content-block {
+            margin: 10px auto;
+            padding: 10px;
+            border: 1px solid #00FF00; /* Matrix green border */
+        }
+        footer {
+            color: #FFFFFF; /* White text */
+            text-align: center;
+            padding: 20px 0;
+        }
+        footer a {
+            color: #FFFFFF;
+            text-decoration: none;
+        }
+        footer a:hover {
+            color: #00FF00; /* Matrix green on hover */
+        }
+        .profile-pic {
+            width: 200px; 
+            height: auto;
+            margin: 20px auto;
+            display: block;
+        }
+        /* Form styles */
+        .contact-form {
+            padding: 20px;
+            margin: 20px auto;
+            border: 1px solid #00FF00; /* Matrix green border */
+        }
+        .contact-form label,
+        .contact-form input,
+        .contact-form textarea,
+        .contact-form button {
+            display: block;
+            width: 90%;
+            margin: 10px auto;
+            padding: 10px;
+            border: none;
+        }
+        .contact-form button {
+            background-color: #00FF00; /* Matrix green */
+            color: #000000; /* Black text */
+            font-size: 1.2em;
+            border: none;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+        .contact-form button:hover {
+            background-color: #009900; /* Darker green */
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+      
+    </header>
+
+    <nav>   
+        <a href="try_yourself.html">Try Yourself</a>
+        <a href="index.html">Experiments</a>
+        <a href="about.html">About Me</a>
+    </nav>
+
+    <section class="content-section">
+        <h1>Steve Tippeconnic</h1>
+        <div class="content-block">
+            <h2>Who Am I?</h2>
+            <p>Hello! My name is Steve Tippeconnic. I am a quantum computing hobbyist, and a student of computer science at ASU. I am part of IBMQ, and get 10 minutes a month on IBM’s 127-qubit machines. This page is to follow my journey through the novel field of Quantum Computing. </p>
+        </div>
+        <div class="content-block">
+            <h2>Why am I doing these tests?</h2>
+            <p>I am preforming these experiments because I am fascinated by Qubits and how modern computing could benefit from these unusual states. I love to explore mathematics, statical mechanics, computer science, general relativity, special relativity, and quantum physics, this is a combination of all. For example, entanglement could one day give us instant communication, or instant picture feeds. It is an exciing new world and I hope that you can come away with some of the wonder of Quantum Systems that I have.</p>
+        </div>
+        <img src="me.png" alt="A picture of me" class="profile-pic">
+        
+  
+        <div class="contact-form">
+            <h2>Contact Me</h2>
+            <form action="/submit_form" method="post">
+                <label for="name">Name</label>
+                <input type="text" id="name" name="name" required>
+                
+                <label for="email">Email</label>
+                <input type="email" id="email" name="email" required>
+                
+                <label for="message">Suggestions</label>
+                <textarea id="message" name="message" rows="4" required></textarea>
+                
+                <label for="message">Questions</label>
+                <textarea id="message" name="message" rows="4" required></textarea>
+                
+                <button type="submit">Send Message</button>
+            </form>
+        </div>
+
+    </section>
+  
+    <footer>
+  
+        <a href="stippeco@asu.edu">Contact Me</a>
+    </footer>
+
+</body>
+</html>

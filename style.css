@@ -2,7 +2,7 @@
 body {
     background-color: #000000; /* black background */
     color: #FFFFFF; /* White text */
-    font-family: Arial, sans-serif; /* sans-serif font */
+    font-family: Arial, sans-serif; 
 }
 
 header, nav, section, article, footer {
@@ -67,7 +67,7 @@ footer a:hover {
     color: #00FF00; /* green on hover */
 }
 
-/* Add responsive design elements as needed */
+
 @media (max-width: 600px) {
     /* Adjust styles for mobile view */
     nav a, .experiment a, footer {

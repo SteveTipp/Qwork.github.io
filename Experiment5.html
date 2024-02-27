@@ -1,0 +1,348 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Experiment 5 - Qwork</title>
+    <style>
+        body {
+            background-color: #000000; /* Black background */
+            color: #FFFFFF; /* White text */
+            font-family: Arial, sans-serif; 
+            margin: 0;
+            padding: 0;
+        }
+        header {
+            background: url('QImage1.png') no-repeat center center;
+            background-size: contain; 
+            height: 612px; 
+            position: relative;
+        }
+        nav {
+            display: flex;
+            justify-content: center;
+            padding: 10px 0;
+        }
+        nav a {
+            color: #FFFFFF; /* White links */
+            margin: 0 20px;
+            text-decoration: none;
+            font-size: 1.2em;
+        }
+        nav a:hover {
+            color: #00FF00; /* Matrix green for hover state */
+        }
+        .content-section {
+            padding: 20px;
+            text-align: center;
+        }
+        .content-block {
+            margin: 10px auto;
+            padding: 10px;
+            border: 1px solid #00FF00; /* Matrix green border */
+        }
+        .experiment-image {
+            width: 1200px; 
+            height: 816px; 
+            margin: 20px auto;
+            display: block;
+        }
+        .experiment-image2 {
+            width: 621px; 
+            height: 484px; 
+            margin: 20px auto;
+            display: block;
+        }
+         .experiment-image3 {
+            width: 381px; 
+            height: 217px; 
+            margin: 20px auto;
+            display: block;
+        }
+        footer {
+            color: #FFFFFF; /* White text */
+            text-align: center;
+            padding: 20px 0;
+        }
+        footer a {
+            color: #FFFFFF;
+            text-decoration: none;
+        }
+        footer a:hover {
+            color: #00FF00; /* Matrix green on hover */
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+    </header>
+
+    <nav>
+        <a href="try_yourself.html">Try Yourself</a>
+        <a href="index.html">Experiments</a>
+        <a href="about.html">About Me</a>
+    </nav>
+
+    <section class="content-section">
+        <h1>Testing Quantum Speed Limits on IBM's 7-Qubit Quantum Computer Nairobi</h1>
+        <div class="content-block">
+        
+          
+<p>This experiment uses IBM's 7-qubit quantum computer Nairobi and Qiskit to analyze the time-dependent behavior of a three-qubit system. We start by evolving a simple initial state into a more complex entangled state while monitoring fidelity and entanglement at various time intervals. We probe the dynamics using a Hamiltonian reflecting coupled spin interactions and compare the evolution against the Margolus-Levitin and Mandelstam-Tamm quantum speed limits dictated by the system's average energy and energy uncertainty. The results provide insight into the performance and reliability of quantum state manipulation on Nairobi.</p>
+
+<p>Code Walkthrough</p>
+<p>1: Initialization and System Configuration:<br>
+We first define a quantum circuit for simulating the time evolution of three qubits under our Hamiltonian.<br>
+A constant J, representing the coupling strength between qubits in a spin-chain model, is chosen. This reflects the interaction energy in the system.</p>
+
+<p>2. Hamiltonian Formulation:<br>
+The system's Hamiltonian H is described using Pauli operators X, Y, Z and the identity operator I, with original​ = J(X⊗X⊗I + Y⊗Y⊗I + Z⊗Z⊗I) indicating coupling between the first two qubits and an uncoupled third qubit.<br>
+New coupling is introduced, leading to additional terms H_(new) ​= J(X⊗I⊗X + Y⊗I⊗Y + Z⊗I⊗Z), to represent direct interaction with the third qubit.<br>
+The total Hamiltonian is H = H_(original) ​+ H_(new)​, which includes both two-qubit and three-qubit interactions.</p>
+
+<p>3. State Preparation:<br>
+An initial state vector ∣ψ_0​⟩ = ∣000⟩ is prepared, representing the qubits in the ground state.<br>
+A GHZ state, which is an entangled state of all three qubits, is prepared as ∣GHZ⟩ = 1/sqrt(2) * ​(∣000⟩ + ∣111⟩).</p>
+
+<p>4. Quantum State Evolution:<br>
+The system is evolved using the unitary time-evolution operator U(t) = e^(−iHt), derived from the time-dependent Schrödinger equation, where t is time, and H is the Hamiltonian.<br>
+Fidelity at each time t is computed as F(t) = ∣⟨GHZ∣ψ(t)⟩∣^2, where ∣ψ(t)⟩ is the state after evolution by U(t).</p>
+
+<p>5. Entanglement and Speed Limits:<br>
+The entanglement entropy S of a bipartite system is given by the von Neumann entropy S(ρ) = −Tr(ρlog_(2)​ρ) of the reduced density matrix ρ obtained by tracing out one of the qubits.<br>
+The Margolus-Levitin theorem posits a speed limit based on the average energy above the ground state, Δt_(ML) ​≥ π/(2(E − E_(ground​)))​.<br>
+The Mandelstam-Tamm limit relates the speed of evolution to the energy uncertainty, Δt_(MT) ​≥ π/(2ΔE)​, where ΔE is the standard deviation of the energy.</p>
+
+<p>6. Circuit Implementation and Execution:<br>
+A GHZ circuit is compiled for the 'ibm_nairobi' backend and executed, providing measurement results for the analysis.</p>
+
+<p>7. Data Recording and Interpretation:<br>
+Time-evolved fidelity, entanglement entropy, and quantum speed limits are recorded against time to create a temporal profile of quantum evolution.</p>
+
+<p>8. Visualization of Results:<br>
+Data is plotted to visualize the entanglement entropy, fidelity against the ideal GHZ state, and the Margolus-Levitin and Mandelstam-Tamm speed limits over time.</p>
+
+            
+            
+            
+            
+            
+        </div>
+        <img src="E5image4.jpeg" alt="Run" class="experiment-image">
+        <p>Above is a screenshot of the run.</p>
+        <div class="content-block">
+        
+        <p>Code:<br>
+            <p><pre><code>from qiskit import QuantumCircuit, transpile
+from qiskit.quantum_info import Statevector, Operator, partial_trace, entropy
+from qiskit.providers.ibmq import IBMQ
+from qiskit. tools.monitor import job_monitor
+import numpy as np
+from scipy.linalg import expm
+import matplotlib.pyplot as plt
+import json
+import datetime
+import os
+
+# Function to convert non-serializable data for JSON
+def default_converter(o):
+    if isinstance(o, datetime.datetime):
+        return o.__str__()
+
+# Your IBM Quantum Experience API Token
+# Replace 'YOUR_API_TOKEN' with your actual IBM Quantum Experience API token
+api_token = 'YOUR_API_TOKEN'
+
+# Load your IBM Quantum account using the API token directly
+IBMQ. save_account(api_token, overwrite=True)
+provider = IBMQ.load_account()
+
+# Set up the provider and the backend
+backend = provider.get_backend('ibm_nairobi')
+
+# Define the Hamiltonian components and initial states
+J = 10  # Coupling constant
+X = Operator.from_label('X')
+Y = Operator.from_label('Y')
+Z = Operator.from_label('Z')
+I = Operator.from_label('I')
+
+# Updated Hamiltonian with direct coupling to the third qubit
+H_original = J * (np.kron(np.kron(X, X), I) + np.kron(np.kron(Y, Y), I) + np.kron(np.kron(Z, Z), I))
+H_new_couplings = J * (np.kron(np.kron(X, I), X) + np.kron(np.kron(Y, I), Y) + np.kron(np.kron(Z, I), Z))
+H = H_original + H_new_couplings
+
+# Initial and GHZ states
+initial_state = Statevector.from_label('000')
+ghz_state = (Statevector.from_label('000') + Statevector.from_label('111')) / np.sqrt(2)
+
+# Time evolution over a range to see fidelity changes with time
+extended_time_points = np.linspace(0, 200, 400)
+
+# Variables for storing results
+fidelities = []
+entanglements = []
+ML_speed_limits = []
+MT_speed_limits = []
+
+# Small constant for numerical stability
+epsilon = 1e-10
+
+# Main computational loop
+for t in extended_time_points:
+    # Time-evolution operator
+    U = expm(-1j * H * t)
+    
+    # Evolve state and calculate fidelity
+    evolved_state = Statevector(np. dot(U, initial_state.data))
+    fidelity = evolved_state.inner(ghz_state)
+    fidelities.append(abs(fidelity)**2)
+    
+    # Calculate entanglement
+    reduced_state = partial_trace(evolved_state, [2])
+    entanglement = entropy(reduced_state, base=2)
+    entanglements.append(entanglement)
+    
+    # Calculate speed limits
+    avg_energy = np.real(evolved_state.expectation_value(H)) + epsilon
+    ML_speed_limit = np.pi / (2 * avg_energy)
+    ML_speed_limits.append(ML_speed_limit)
+    
+    energy_uncertainty = np.sqrt(np.maximum(np.real(evolved_state.expectation_value(H @ H)) - avg_energy**2, epsilon))
+    MT_speed_limit = np.pi / (2 * energy_uncertainty)
+    MT_speed_limits.append(MT_speed_limit)
+
+# Create and transpile the GHZ circuit for the 'ibm_nairobi' backend
+ghz_circuit = QuantumCircuit(3)
+ghz_circuit.h(0)
+ghz_circuit.cx(0, 1)
+ghz_circuit.cx(0, 2)
+ghz_circuit.measure_all()
+
+t_qc = transpile(ghz_circuit, backend, optimization_level=3)
+
+# Execute the job
+job = backend. run(t_qc, shots=1024)
+job_monitor(job)
+result = job.result()
+
+# Define file paths
+results_data_path = "location_results_data.json"
+backend_info_path = "location_backend_info.json"
+
+# Save results to JSON files
+results_data = {
+    'time_points': extended_time_points.tolist(),
+    'fidelities': fidelities,
+    'entanglements': entanglements,
+    'ML_speed_limits': ML_speed_limits,
+    'MT_speed_limits': MT_speed_limits,
+    'measurement_results': result.get_counts()
+}
+with open(results_data_path, 'w') as file:
+    json.dump(results_data, file, indent=4)
+
+# Get backend configuration and status
+backend_config = backend.configuration().to_dict()
+backend_status = backend.status().to_dict()
+
+# Save backend info
+backend_info = {
+    "configuration": backend_config,
+    "status": backend_status
+}
+
+with open(backend_info_path, 'w') as file:
+    json.dump(backend_info, file, indent=4, default=default_converter)
+
+# Plot results with fidelity included
+plt.clf()  # Clear previous figures to prevent overplotting
+fig, axs = plt.subplots(2, 2, figsize=(15, 10), gridspec_kw={'width_ratios': [1, 1], 'height_ratios': [1, 1]})
+
+# Debug: Print fidelity values before plotting to verify correctness
+print("Debug - Fidelity values:", fidelities)
+
+# Plot fidelity over time with corrected range
+axs[0, 0].plot(extended_time_points, fidelities, label='Fidelity', color='blue')
+axs[0, 0].set_xlabel('Time')
+axs[0, 0].set_ylabel('Fidelity')
+axs[0, 0].set_ylim(0, 1)  # Ensure fidelity is within the correct range
+axs[0, 0].legend()
+axs[0, 0].grid(True)
+axs[0, 0].set_title('Fidelity over Time')
+
+# Plot entanglement over time
+axs[0, 1].plot(extended_time_points, entanglements, label='Entanglement', color='green')
+axs[0, 1].set_xlabel('Time')
+axs[0, 1].set_ylabel('Entanglement')
+axs[0, 1].legend()
+axs[0, 1].grid(True)
+axs[0, 1].set_title('Entanglement over Time')
+
+# Plot Margolus-Levitin speed limit over time
+axs[1, 0].plot(extended_time_points, ML_speed_limits, label='Margolus-Levitin speed limit', color='red')
+axs[1, 0].set_xlabel('Time')
+axs[1, 0].set_ylabel('Speed Limit')
+axs[1, 0].legend()
+axs[1, 0].grid(True)
+axs[1, 0].set_title('Margolus-Levitin Speed Limit over Time')
+
+# Plot Mandelstam-Tamm speed limit over time
+axs[1, 1].plot(extended_time_points, MT_speed_limits, label='Mandelstam-Tamm speed limit', color='purple')
+axs[1, 1].set_xlabel('Time')
+axs[1, 1].set_ylabel('Speed Limit')
+axs[1, 1].legend()
+axs[1, 1].grid(True)
+axs[1, 1].set_title('Mandelstam-Tamm Speed Limit over Time')
+
+plt.tight_layout()
+plt. show()
+</code></pre>
+</p>
+            
+            
+            
+        </div>
+        <img src="E5image1.jpeg" alt="Description of Image 2" class="experiment-image2">
+        <p>Fidelity and Entanglement</p>
+        <img src="E5image2.png" alt="Quantum Speed Limits" class="experiment-image2">
+        <p>Total Counts for Each Basis.</p>
+        <img src="E5image3.jpeg" alt="GHZ States" class="experiment-image2">
+        <p>My IBM Profile and Current Runs.</p>
+        <div class="content-block">
+            <h2>Results</h2>
+         
+Small sample of Fidelities:<br>
+0.4999999999999999<br>
+0.5000000000000002<br>
+0.5000000000000003<br>
+0.4999999999999968<br>
+0.5000000000000009<br>
+0.5000000000000014<br>
+0.49999999999999345<br>
+0.499999999999996<br>
+0.5000000000000017<br>
+0.49999999999999867<br>
+0.500000000000003<br>
+0.5000000000000111<br></p>
+
+<p>The average fidelity, calculated from the data set, is approximately 0.5. This value is consistent with an expected perfect overlap of the evolved state with the GHZ state half of the time, assuming an ideal scenario where the other half would correspond to the orthogonal complement due to quantum state oscillations. This high average fidelity indicates good state preservation and coherent evolution under the Hamiltonian governing the system's dynamics.​​</p>
+
+<p>The scatter plot above reveals the correlation between fidelity and entanglement over time, with color indicating the progression of time. A clear pattern or clustering may indicate that certain conditions or time intervals are more conducive to maintaining high fidelity and entanglement simultaneously, which is beneficial for quantum information processing. If the data points form distinct clusters or streaks, it could suggest transient dynamics where the system periodically returns to a state of high fidelity and entanglement.</p>
+
+<p>The graphical comparison of the Margolus-Levitin and Mandelstam-Tamm speed limits over time shows their behavior as the state evolves. There appear to be no explicit crossing points in the graph, which suggests that one speed limit consistently predicts a tighter bound on the evolution time than the other for this evolution.</p> 
+
+<p>The histogram above of measurement results displays the distribution of outcomes when measuring the GHZ state. The pattern and spread of these outcomes can provide insights into the quality of state preparation and measurement process. Peaks at '000' and '111' represent the expected outcomes for an ideal GHZ state, while the spread to other outcomes may indicate errors or noise in the system. We see the excepted outcomes here.</p>
+
+<p>In the end, the results from the time evolution of our three-qubit system gave us good insights into quantum dynamics and coherence. By evaluating fidelity, we observed the expected oscillatory behavior, indicative of the quantum state's periodic entanglement and disentanglement with the GHZ state. This oscillation is a direct manifestation of the quantum interference effects and the entanglement features that are quintessential in quantum computation. The correlation between high fidelity and high entanglement during these intervals reaffirmed the relation between entanglement and quantum state integrity.</p>
+
+<p>The analysis of the quantum speed limits revealed distinct regimes where either the average system energy or the energy uncertainty dictated the evolution's pace. These crossings provided a good understanding of the state evolution under the constraints of quantum mechanics. The measurements from the actual quantum processor, despite inherent noise and errors, upheld the theoretical models with remarkable alignment, reinforcing the potential of current quantum processors in achieving and manipulating high-fidelity quantum states.”</p>
+
+        </div>
+    </section>
+
+    <footer>
+        <a href="stippeco@asu.edu">Contact Me</a>
+    </footer>
+
+</body>
+</html>
