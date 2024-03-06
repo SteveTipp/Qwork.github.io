@@ -35,7 +35,7 @@ nav a:hover {
     color: #00FF00; /* matrix green for hover state */
 }
 
-/* experiment list */
+/* Experiment list */
 .experiment a {
     display: block;
     background-color: #000000; /* black background for each link */
@@ -43,7 +43,7 @@ nav a:hover {
     padding: 5px;
     text-decoration: none;
     margin-bottom: 5px;
-    border-left: 5px solid #0000FF; /*  blue border on left */
+    border-left: 5px solid #0000FF; /* blue border on left */
 }
 
 .experiment a:hover {
@@ -67,11 +67,20 @@ footer a:hover {
     color: #00FF00; /* green on hover */
 }
 
-
 @media (max-width: 600px) {
     /* Adjust styles for mobile view */
-    nav a, .experiment a, footer {
+    header, nav, section, article, footer {
+        margin: 5px;
+        padding: 5px;
+    }
+
+    nav a, .experiment a, footer a {
         font-size: 1em;
-        text-align: center;
+    }
+
+    /* Universal resize for all images on mobile */
+    img {
+        width: 200vw; /* Resize images to be twice as wide as the viewport width */
+        max-width: none; /* Override any max-width settings to allow scaling */
     }
 }
