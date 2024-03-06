@@ -72,5 +72,6 @@ footer a:hover {
     /* Adjust styles for mobile view */
     nav a, .experiment a, footer {
         font-size: 1em;
+        text-align: center;
     }
 }
