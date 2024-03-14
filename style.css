@@ -20,7 +20,7 @@ header, nav, section, article, footer {
 
 /* Navigation styles */
 nav {
-    text-align: center;
+    text-align: left;
     margin-bottom: 20px;
 }
 
@@ -68,10 +68,10 @@ footer a:hover {
 }
 
 
-@media (max-width: 400px) {
+@media (max-width: 600px) {
     /* Adjust styles for mobile view */
     nav a, .experiment a, footer {
         font-size: 1em;
-        text-align: left;
+        text-align: center;
     }
 }
