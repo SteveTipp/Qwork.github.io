@@ -37,16 +37,17 @@ nav a:hover {
 
 /* experiment list */
 .experiment a {
-    display: block;
-    max-width: 600px; /* or your desired max-width */
-    margin-left: auto;
-    margin-right: auto;
-    background-color: #000000; /* black background for each link */
-    color: #00FF00; /* green text */
+    display: block; /* This makes the element a block-level element */
+    background-color: #000000; /* Black background for each link */
+    color: #00FF00; /* Green text */
     padding: 5px;
     text-decoration: none;
     margin-bottom: 5px;
-    border-left: 5px solid #0000FF; /*  blue border on left */
+    border-left: 5px solid #0000FF; /* Blue border on left */
+    /* Center content */
+    margin-left: auto;
+    margin-right: auto;
+    width: fit-content; /* This will make the width only as wide as its content */
 }
 
 .experiment a:hover {
@@ -74,10 +75,11 @@ footer a:hover {
 @media (max-width: 600px) {
     /* Adjust styles for mobile view */
     nav a, .experiment a, footer {
+        width: fit-content; /* Ensures the width is only as wide as its content */
         font-size: 1em;
-        text-align: center;
         margin-left: auto;
         margin-right: auto;
+        text-align: center;
         /* If your .experiment elements are not aligning as blocks */
         display: flex;
         justify-content: center;
