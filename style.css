@@ -70,8 +70,22 @@ footer a:hover {
 
 @media (max-width: 600px) {
     /* Adjust styles for mobile view */
-    nav a, .experiment a, footer {
-        font-size: 1em;
+    .content-block, .experiment a, footer {
         text-align: center;
+        margin: auto; /* This ensures margin on all sides is equal, centering the block */
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .content-block {
+        border: none; /* Adjust as needed */
+    }
+
+    .experiment-image, .experiment-image2, .experiment-image3 {
+        width: 80%; /* Adjust width to be responsive */
+        height: auto; /* Maintain aspect ratio */
+        margin: 20px auto; /* Center the image */
     }
 }
