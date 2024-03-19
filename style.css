@@ -38,6 +38,9 @@ nav a:hover {
 /* experiment list */
 .experiment a {
     display: block;
+    max-width: 600px; /* or your desired max-width */
+    margin-left: auto;
+    margin-right: auto;
     background-color: #000000; /* black background for each link */
     color: #00FF00; /* green text */
     padding: 5px;
@@ -70,14 +73,16 @@ footer a:hover {
 
 @media (max-width: 600px) {
     /* Adjust styles for mobile view */
-    .content-block, .experiment a, footer {
+    nav a, .experiment a, footer {
+        font-size: 1em;
         text-align: center;
-        margin: auto; /* This ensures margin on all sides is equal, centering the block */
+        margin-left: auto;
+        margin-right: auto;
+        /* If your .experiment elements are not aligning as blocks */
         display: flex;
-        flex-direction: column;
-        align-items: center;
         justify-content: center;
     }
+}
 
     .content-block {
         border: none; /* Adjust as needed */
