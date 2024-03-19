@@ -6,7 +6,7 @@ body {
 }
 
 header, nav, section, article, footer {
-    margin: 5px;
+    margin: 10px;
     padding: 10px;
 }
 
