@@ -72,7 +72,7 @@ footer a:hover {
 }
 
 
-@media (max-width: 1000px) {
+@media (max-width: 600px) {
     /* Adjust styles for mobile view */
     nav a, .experiment a, footer {
        /*  width: auto; /* Ensures the width is only as wide as its content */
