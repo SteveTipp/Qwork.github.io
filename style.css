@@ -75,13 +75,13 @@ footer a:hover {
 @media (max-width: 1000px) {
     /* Adjust styles for mobile view */
     nav a, .experiment a, footer {
-        width: auto; /* Ensures the width is only as wide as its content */
+       /*  width: auto; /* Ensures the width is only as wide as its content */
         font-size: auto;
         margin-left: auto;
         margin-right: auto;
         text-align: center;
         /* If your .experiment elements are not aligning as blocks */
-        display: auto;
+        display: flex;
         justify-content: center;
     }
 }
@@ -94,9 +94,14 @@ footer a:hover {
         border: none; /* Adjust as needed */
     }
 
-    .experiment-image, .experiment-image2, .experiment-image3 {
-        width: 80%; /* Adjust width to be responsive */
-        height: auto; /* Maintain aspect ratio */
-        margin: 20px auto; /* Center the image */
-    }
+
+
+
+
+
+
+
+
+
+
 }
