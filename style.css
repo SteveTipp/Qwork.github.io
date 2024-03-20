@@ -86,6 +86,20 @@ footer a:hover {
     }
 }
 
+
+    body {
+        font-size: 14px; /* Slightly smaller font size for mobile */
+    }
+
+    h1 {
+        font-size: 1.5em; /* Slightly smaller headers for mobile */
+    }
+
+
+
+
+
+
     .content-block {
         border: none; /* Adjust as needed */
     }
