@@ -95,8 +95,11 @@ footer a:hover {
     }
 
 
-
-
+ .experiment-image, .experiment-image2, .experiment-image3 {
+        width: 80%; /* Adjust width to be responsive */
+        height: auto; /* Maintain aspect ratio */
+        margin: 20px auto; /* Center the image */
+    }
 
 
 
