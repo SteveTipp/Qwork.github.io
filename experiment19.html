@@ -46,25 +46,25 @@
         }
         .experiment-image {
             width: 1200px; /* Updated width */
-            height: 904px; /* Updated height */
+            height: 1042px; /* Updated height */
             margin: 20px auto;
             display: block;
         }
         .experiment-image2 {
             width: 1200px; /* Updated width */
-            height: 999px; /* Updated height */
+            height: 392px; /* Updated height */
             margin: 20px auto;
             display: block;
         }
          .experiment-image3 {
             width: 1199px; /* Updated width */
-            height:  842px; /* Updated height */
+            height:  1009px; /* Updated height */
             margin: 20px auto;
             display: block;
         }
         .experiment-image4 {
-            width: 1200px; /* Updated width */
-            height: 779px; /* Updated height */
+            width: 1199px; /* Updated width */
+            height: 774px; /* Updated height */
             margin: 20px auto;
             display: block;
         }
@@ -97,90 +97,114 @@
     </nav>
 
     <section class="content-section">
-        <h1><center>Exploring abstract Electron-Positron Annihilation on IBM's 127-Qubit Quantum Computer Osaka</center></h1>
+        <h1><center>A Quantum Neural Network on IBM's 127-Qubit Quantum Computer Kyoto</center></h1>
         <div class="content-block">
          
           
 
-<p>Leveraging quantum computing and Qiskit, particle interactions can be abstractly represented and studied, offering a novel way for exploring complex probabilistic phenomena in particle physics. Quantum computers harness superposition and entanglement properties of quantum bits (qubits) to simulate the dynamics of particle interactions more efficiently than classical computers. By encoding the states and interactions of particles into quantum circuits, we can simulate various scattering processes, decay channels, and particle production mechanisms. Quantum computers could enable the exploration quantum tunneling effects, strong and weak force interactions, and the behavior of particles in extreme conditions such as those encountered in high energy collisions.</p>
-<p>This experiment explores the abstract annihilation process of an electron-positron pair through quantum computing. Electrons and positrons, fundamental particles with opposite charges and identical masses, exhibit unique interactions when brought together. Upon collision, they can annihilate each other, leading to the creation of various particles, such as photons, neutrinos, or muons. This experiment aims to abstractly create the beginning of this process using a quantum circuit.  </p>
+<p>This Qiskit experiment is designed to explore Quantum Neural Networks (QNNs) for pattern recognition, specifically focusing on classifying data points based on their angular position in a 2-dimensional space. It uses IBM's 127-Qubit Kyoto to perform tasks that involve quantum state preparation, parameterized quantum circuit (PQC) execution, and optimization of parameters based on the outcome of measurements. The QNN's parameters are optimized using a classical optimization algorithm (COBYLA) to minimize a loss function that reflects the accuracy of the network's predictions. This is done in two circuits, first running the experiment, and second analyzing the results post-run. </p>
 
 
             
 <p><strong>Code Walkthrough</strong><br>
-1. Initialization: <br>
-We define a quantum circuit with two qubits, symbolizing the electron and positron states.
-Applying Hadamard gates (H) to both qubits, we establish superposition states, ensuring they exist in a coherent mixture of |0⟩ and |1⟩. The superposition state can be represented by the equation:
-<p><center>∣ψ⟩ = H∣0⟩ = 1/sqrt(2) * ​(∣0⟩ + ∣1⟩)</center><br>
-Applying this to both qubits, the initial state of the system is:
-<p><center>∣ψ_initial​⟩ = 1/sqrt(2) * ​(∣00⟩ + ∣01⟩ + ∣10⟩ + ∣11⟩)</center><br>
+1. Data Generation: <br>
+Points (x,y) on a unit circle are generated with angles uniformly distributed between 0 and 2π.
+Each point is labeled based on its angle, θ, such that points in specific angular ranges (0 < θ < π/2​ or π < θ < (3π)/2​) are assigned one label, and points outside these ranges are assigned another.
+This results in a dataset {(x_i​, y_i​)}^N i = 1​ where x_i​ represents the 2D coordinates of the i-th point, and y_i​ is its label.
 
 
 
 
-<p>2. Annihilation Gate:<br>
-We define a bespoke gate, the annihilation gate, designed to emulate the interaction between the electron and positron. The annihilation process is simulated by a custom gate sequence that includes a controlled-NOT (CNOT) gate, a Hadamard gate, a Pauli-X gate, and another CNOT gate. This sequence is designed to reflect the transformation of the electron-positron pair into another state, mimicking the annihilation process. The CNOT gate entangles the qubits, reflecting the interaction between the electron and positron.
+
+<p>2. Data Encoding into Quantum States:<br>
+A quantum circuit is constructed to map a data point (x, y) onto the state of a qubit.
+The mapping is achieved through the use of quantum gates (universal U gate) that transform the initial state of the qubit based on the coordinates of the point.
+The transformation applied by the U gate is parameterized by angles that are functions of the point's coordinates, encoding the classical data into a quantum state. Given a data point (x, y), the encoding process transforms it into a quantum state ∣ψ⟩ using a quantum circuit that applies gates parameterized by the data point's coordinates.
+
+
+
+
+
+<p>3. Quantum Neural Network (QNN) Design:<br>
+The QNN is designed as a parameterized quantum circuit (PQC) with tunable gates that allow for the learning process.
+The circuit consists of rotation gates (R_x​, R_y​) and controlled-NOT (CNOT) gates for entanglement, with parameters θ representing the weights of the neural network. 
+
+<p>4. Loss Calculation and Objective Function:<br>
+The loss function quantifies the difference between the predicted and actual labels of the data points.
+After executing the QNN with a given set of parameters, the output quantum state is measured. The measurement outcomes are used to estimate the probability of observing a state corresponding to the correct label.
+The loss for a single data point is calculated using the cross-entropy between the observed probabilities and the true label, facilitating gradient-based optimization.
+The loss for a data point is calculated as:
+<p><center>L = −[ylog(p) + (1 − y)log(1 − p)]</center><br>
+where p is the probability of measuring the qubit in the state corresponding to the correct label y.
+
+
+
+<p>5. Optimization Process:<br>
+The parameters of the QNN are optimized using the COBYLA optimization algorithm, a classical optimization good for problems with noisy gradients, as encountered in quantum systems.
+The optimization aims to minimize the loss function across the dataset, adjusting the parameters of the QNN to improve its prediction accuracy.
+The experiment involves 230 computed jobs with 256 shots each with. The objective function to be minimized is the average loss over all data points in the batch or dataset, with COBYLA used to find the set of parameters θ that minimizes this average loss.
+
+<p>6. Training and Validation:<br>
+The dataset is split into training and validation subsets to evaluate the performance of the QNN and avoid overfitting.
+The QNN is trained on the training subset, and its performance is periodically evaluated on the validation set to monitor progress and generalize ability.
+
+
+<p>7. Results Serialization:<br>
+After training, the optimized parameters of the QNN, along with training and validation losses are serialized into a JSON.
+Quantum states of the system at different points in training are recorded to study the evolution of the QNN's representations.
+
+    
+<p><center> Post-Run Analysis Circuit:</center><br>
+<p>1. Loading Calibration Data: <br>
+Calibration data from the runs on Kyoto are loaded.
+
+<p>2. Quantum Neural Network (QNN) Initialization: <br>
+A Quantum Circuit is generated. Each qubit's state can be manipulated using rotation gates (rx gates), which are parameterized by θ, representing the weights of the neural network.
+
+<p>3. Fidelity Calculation:<br>
+Fidelity between two quantum states is calculated using the formula: 
+<p><center> F = sqrt(p_0 * q_0) + sqrt(p_1 * q_1) </center><br>
+where p_0 and p_1 are the predicted probabilities, and q_0 and q_1 are the expected probabilities of the quantum state being in 0 or 1. Fidelity measures the closeness of two quantum states.
+
+
+<p>4. Custom Hybrid Loss Function:<br>
+A custom hybrid loss function is defined, combining cross-entropy loss and fidelity. The cross-entropy: 
+<p><center> (-np.mean(y_true * log(p_pred) + (1 - y_true) * log(1 - p_pred)))  </center><br>
+calculates the difference between the predicted probabilities and actual labels. The fidelity adjusts the loss based on the similarity between the predicted and expected quantum states. A regularization parameter (lambda_reg) balances the contribution of fidelity to the total loss.
+
+Loss Calculation Using Measurement Outcomes:<br>
+For each measurement, the loss is computed based on the cross-entropy between the observed probabilities (obtained from the runs) and the true labels. Probabilities are adjusted using an epsilon to avoid undefined logarithms.
 <br>
-The annihilation gate comprises a sequence of quantum operations:
-Implement a controlled-NOT (CNOT) gate, where the electron qubit serves as the control and the positron qubit as the target. Mathematically, this gate can be represented as:
-<p><center>CNOT =​ (1, 0, 0, 0, 0, 1, 0, 0, ​0, 0, 0, 1, ​0, 0, 1, 0​) - 4x4 matrix</center><br>
-Apply a Hadamard gate to the electron qubit to generate entanglement between the qubits. Mathematically, the Hadamard gate is represented as:
-<p><center>H = 1/sqrt(2) * (1, 1, ​1, −1​) - 2x2 matrix</center><br>
-Employ a Pauli-X gate (or NOT gate) to flip the state of the electron qubit from |0⟩ to |1⟩.
-Apply another CNOT gate, this time with the positron qubit as the control and the electron qubit as the target.
-
-
-
-
-<p>3. Measurement:<br>
-Conduct measurements on both qubits to get the final outcome of the annihilation process. The act of measurement collapses the quantum superposition into definitive classical states. 
-
-<p>4. Data Analysis: <br>
-Measurement counts, transpiled circuit, backend information, job ID, and execution status are saved to a JSON.  We also generate a histogram of the frequency of different outcomes for the annihilation process.
-
+Optimization Process:<br>
+The QNN parameters are optimized using a classical optimization technique (COBYLA) to minimize the loss function. The process iteratively updates the QNN parameters (θ) and evaluates the loss, aiming to find the set that leads to the lowest loss.
+<br>
+Visualization and Analysis:<br>
+The loss values for each optimization iteration are visualized using an initial bar chart. The history of optimization, including parameters and loss values, is saved into a json.
+<br>
 
 
 
 
 <p><center> Results:</center><br>
-Using backend:  ibm_kyoto<br>
-{'10': 1625, '11': 485, '00': 383, '01': 1507}<br>
-Probability of '00': 9.575%<br>
-Probability of '01': 37.675%<br>
-Probability of '10': 40.625%<br>
-Probability of '11': 12.125%<br>
+Optimization Loss Values for Each Loss Function:<br>
+Cross-Entropy Loss: 1.2966822024302034<br>
+Fidelity-Based Loss: 1.298556642044095<br>
+Custom Hybrid Loss: 0.0037488792277833305<br>
 
 </div>
-        <img src="E18image1.png" alt="" class="experiment-image">
+        <img src="E19image1.png" alt="" class="experiment-image">
         <p></p>
         <div class="content-block">
 
-Above is a Feynman-like Quantum Diagram (full code below) that is based on the run data. In this diagram, blue and red lines represent the paths of an incoming electron and positron. The point where these paths converge represents the interaction vertex. Green lines represent the possible outcomes (quantum states) of this interaction, with the opacity of each line corresponding to the relative number of counts for each outcome, serving as a proxy for the probability amplitude. The labels next to the green lines indicate the quantum state and the corresponding measurement count from the simulation data.
-
-<br>
-Probabilistic Nature vs. Deterministic Outcomes: While the quantum simulation inherently exhibits a probabilistic nature due to measurement, real-world annihilation events under specific conditions can have deterministic outcomes (e.g. exactly two photons produced). The quantum simulation mirrors the underlying quantum mechanics governing these processes, emphasizing the role of probability amplitudes and non-determinism. The higher probabilities for '01' and '10' can be abstractly interpreted as the simulation's equivalent of the conservation laws in real collisions, indicating a balance between the possible states post annihilation.
-
-<br>
-
-Symmetry and Quantum States: 
-The simulation outcomes show a notable symmetry in probabilities, with '01' and '10' being more probable than '00' and '11'. This reflects the superposition and entanglement of quantum states where certain states are more likely due to the quantum gates applied, resembling the balanced outcomes expected in particle annihilation where different states (photon directions, polarizations) are equally probable in a symmetric setup.
-            
-            
-            
-<br>
-
-Quantum Interference: 
-The variation in probabilities can also be attributed to quantum interference effects, where the amplitude for certain outcomes constructively or destructively interferes. This is akin to the way probabilities for different quantum paths contribute to the observed outcomes in physical processes.
-<br>         
-
+The correlation heatmap above shows the relationships between parameters of the quantum neural network and the different types of loss. The heatmap shows the degree to which each parameter influences loss, a higher absolute value of the correlation coefficient suggests a stronger relationship.
 
             
 </div>
-        <img src="E18image2.png" alt="" class="experiment-image2">
+        <img src="E19image2.png" alt="" class="experiment-image2">
         <p></p>
         <div class="content-block">
 
-The 3D Density Plot of Quantum State Distributions above offers a way to view the distribution of measurements across different quantum states. In this plot, each point represents a measurement, with points clustered around different locations in 3D space corresponding to each quantum cluster. The density of points in each cluster reflects the count of measurements for that state.
+Above is the optimization landscapes of Cross-Entropy Loss, Fidelity-Based Loss, and Custom Hybrid Loss. The areas of low and high loss show the precision required to align the quantum states with their target states. Both CEL and FBL have variable patterns but CHL seems to be less variable. CHL merges aspects of the previous two. 
 <br>
 
 
@@ -189,19 +213,19 @@ The 3D Density Plot of Quantum State Distributions above offers a way to view th
 
 
 </div>
-        <img src="E18image3.png" alt="" class="experiment-image3">
+        <img src="E19image3.png" alt="" class="experiment-image3">
         <p></p>
         <div class="content-block">
 
-The Particle Interaction Line Chart above captures the run probabilities of the simulated 'electron' and 'positron' interactions leading to various annihilation outcomes. This chart abstractly represents the electron and positron as distinct paths, with their interaction probabilities over time. 
+The 3D scatter plot above shows parameter space against Custom Hybrid Loss, with the color intensity representing the magnitude of the loss. The plot shows how the three parameters move together in parameter space. This form of visualization can help identify regions within the parameter space that could be more promising for optimization.
 <br>
 
-In the end, the simulation offers an abstract representation of an electron-positron annihilation. The higher probabilities for '01' and '10' could be abstractly interpreted as the simulation's equivalent of the conservation laws in real collisions, indicating a balance between the possible states post annihilation.
-            
+Insight:<br>
+The Custom Hybrid Loss function did significantly better than the other two. It incorporates both the predictive accuracy and the quantum state fidelity into a single metric. By doing so, it can guide the optimization process more effectively than if these aspects were considered separately. This novel approach ensures that the optimization does not overly favor one aspect at the expense of the other, potentially leading to a more optimal set of parameters that achieve lower overall loss. This is a promising result.             
             
             
 <br>
-This type of quantum computation, in more complex ways, could serve as a bridge between abstract quantum theory and tangible experimental phenomena. Illustrating probabilistic principles of quantum mechanics and their possible implications for understanding the probabilities of particle interactions.
+In the end, we have completed and analyzed a basic Quantum Neural Network on IBM Osaka. Quantum systems are inherently noisy environments but it's amazing that we can begin to optimize these kinds of networks on qubits. Just the beginning of this kind of exploration.
 
 <br> 
 
@@ -211,118 +235,276 @@ This type of quantum computation, in more complex ways, could serve as a bridge 
     
         
         <p>Code:<br>
-            <p><pre><code># imports
-from qiskit import QuantumCircuit, Aer, transpile, IBMQ, execute
-from qiskit.visualization import plot_histogram
+            <p><pre><code>Backend Circuit:
+import numpy as np
+import pandas as pd
+from qiskit import Aer, QuantumCircuit, execute, IBMQ
+from qiskit.circuit import ParameterVector
+from qiskit.quantum_info import Statevector
 import json
-from datetime import datetime
-import matplotlib.pyplot as plt
+from scipy.optimize import minimize
+from qiskit_algorithms.optimizers import COBYLA
 
-# IBM Quantum api and backend
-IBMQ. save_account('Your_IBM_Key_O-', overwrite=True)
+# IBM quantum account 
 IBMQ.load_account()
 provider = IBMQ.get_provider(hub='ibm-q')
-backend = provider.get_backend('ibm_kyoto')  # Adjust to your specific backend
-print("Using backend: ", backend. name())
+backend = provider.get_backend('ibm_kyoto')  # Adjust this to your specific backend
+print("Using backend: ", backend)
 
-# Gate for annihilation process
-def annihilation_gate(qc, electron_qubit, positron_qubit):
-    qc. cx(electron_qubit, positron_qubit)
-    qc.h(electron_qubit)
-    qc.x(electron_qubit)
-    qc. cx(positron_qubit, electron_qubit)
+# Load calibration data
+calibration_data_path = '/Users/Documents/ibm_kyoto_calibrations_2024-03-07T20_24_57Z.csv'  # Calibration file
+calibration_data = pd. read_csv(calibration_data_path, header=1)
 
-# Initialize a Quantum Circuit with 2 qubits (representing electron and positron)
-qc = QuantumCircuit(2)
+# Data Generation and Preparation
+def generate_data(num_samples=50):  # Keep the dataset size reasonable for the scope of training
+    angles = np.random.uniform(low=0, high=2*np.pi, size=num_samples)
+    data = np.array([np.cos(angles), np.sin(angles)]).T
+    labels = np.where(np.logical_or(np.logical_and(angles > 0, angles < np.pi/2), 
+                                    np.logical_and(angles > np.pi, angles < 3*np.pi/2)), 1, 0)
+    return data, labels
 
-# Apply gates to represent the initial states of the electron and positron
-qc.h(0)
-qc.h(1)
+def encode_data_into_qubit(data_point):
+    x, y = data_point
+    theta_qubit = np.arctan2(y, x)
+    r_qubit = np.sqrt(x**2 + y**2)
+    qc = QuantumCircuit(1)
+    qc.u(theta_qubit, r_qubit, 0, 0)
+    return qc
 
-# Apply custom annihilation gate
-annihilation_gate(qc, 0, 1)
+# QNN 
+def create_efficient_qnn(qubits):
+    qc = QuantumCircuit(qubits)
+    parameters = ParameterVector('θ', length=3*qubits)
+    index = 0
+    for q in range(qubits):
+        qc.rx(parameters[index], q)
+        index += 1
+    for q in range(qubits):
+        qc.ry(parameters[index], q)
+        index += 1
+    if qubits > 1:
+        for q in range(qubits - 1):
+            qc.cnot(q, q + 1)
+    return qc
 
-# Measure the qubits to observe the outcome
-qc.measure_all()
+def calculate_loss(probabilities, label):
+    prob_of_1 = probabilities.get('1', 0) / 1024
+    loss = -((label * np.log(prob_of_1 + 1e-10)) + ((1 - label) * np.log(1 - prob_of_1 + 1e-10)))
+    return loss
 
-# Transpile the circuit for the ibm_kyoto 
-transpiled_qc = transpile(qc, backend)
+def objective_function(params, data, label, qnn, backend):
+    param_dict = {param: val for param, val in zip(qnn.parameters, params)}
+    data_circuit = encode_data_into_qubit(data)
+    combined_circuit = data_circuit.compose(qnn.assign_parameters(param_dict))
+    combined_circuit.measure_all()
+    job = execute(combined_circuit, backend, shots=256)
+    result = job.result().get_counts(combined_circuit)
+    probabilities = {state: counts for state, counts in result.items()}
+    loss = calculate_loss(probabilities, label)
+    return loss
 
-# Execute the circuit on the ibm_kyoto 
-job = execute(transpiled_qc, backend)
-result = job.result()
-counts = result.get_counts(transpiled_qc)
-print(counts)
+def batch_train_qnn(data, labels, qnn, backend, iterations=2, batch_size=10):  # Adjusted to ensure 40 total runs
+    optimizer = COBYLA(maxiter=1)  # Limit the optimizer iterations to manage execution time
+    training_losses = []
+    validation_losses = []
+    quantum_states = []
 
-# Save relevant data to a JSON file
-data = {
-    'measurement_counts': counts,
-    'circuit_transpiled': transpiled_qc.qasm(),
-    'backend': backend. name(),
-    'backend_properties': backend. properties().to_dict(),
-    'job_id': job.job_id(),
-    'status': job.status(),
-    'result_data': result. to_dict(),
-    'execution_date': datetime. now().strftime("%Y-%m-%d %H:%M:%S")
+    # Split data into training (80%) and validation (20%) sets
+    split_idx = int(0.8 * len(data))
+    training_data, validation_data = data[:split_idx], data[split_idx:]
+    training_labels, validation_labels = labels[:split_idx], labels[split_idx:]
+
+    params = np.random.rand(len(qnn.parameters)) * 2 * np.pi  # Initial parameter values
+    for it in range(iterations):
+        shuffled_indices = np.random.permutation(len(training_data))
+        training_data, training_labels = training_data[shuffled_indices], training_labels[shuffled_indices]
+
+        for start_idx in range(0, len(training_data), batch_size):
+            end_idx = min(start_idx + batch_size, len(training_data))
+            batch_data = training_data[start_idx:end_idx]
+            batch_labels = training_labels[start_idx:end_idx]
+
+            for data_point, label in zip(batch_data, batch_labels):
+                result = minimize(lambda p: objective_function(p, data_point, label, qnn, backend),
+                                  params, method='COBYLA')
+                params = result.x  # Update parameters based on optimization
+
+        train_loss = np.mean([objective_function(params, dp, lbl, qnn, backend) for dp, lbl in zip(training_data, training_labels)])
+        training_losses.append(train_loss)
+
+        val_loss = np.mean([objective_function(params, dp, lbl, qnn, backend) for dp, lbl in zip(validation_data, validation_labels)])
+        validation_losses.append(val_loss)
+
+        # Record quantum state of first training data point 
+        if backend. name == 'statevector_simulator' and it % 2 == 0:
+            sv = execute(encode_data_into_qubit(training_data[0]).compose(qnn.assign_parameters(params)), Aer.get_backend('statevector_simulator')).result().get_statevector()
+            quantum_states.append(sv.tolist())
+
+    return params, training_losses, validation_losses, quantum_states
+
+# Training and analysis
+data, labels = generate_data(50)  # Generate a smaller dataset for this training session
+qnn = create_efficient_qnn(1)  # Using a single qubit for this example
+optimized_params, training_losses, validation_losses, quantum_states = batch_train_qnn(data, labels, qnn, backend, iterations=2, batch_size=10)  # Adapted for 40 total runs
+
+# serialization of results for complex numbers
+def complex_encoder(z):
+    if isinstance(z, complex):
+        return {"real": z.real, "imag": z.imag}
+    else:
+        raise TypeError(f"Object of type '{z.__class__.__name__}' is not JSON serializable")
+
+output_data = {
+    'optimized_params': optimized_params.tolist(),
+    'final_loss': training_losses[-1],
+    'training_losses': training_losses,
+    'validation_losses': validation_losses,
+    'quantum_states': quantum_states
 }
-output_file = '/Users/Documents/ElectronPositronAnnihilation.json'
-with open(output_file, 'w') as f:
-    json.dump(data, f, indent=4, default=str)
 
-# Display histogram of measurement results with counts
-plot_histogram(counts, title='Measurement Results', bar_labels=True)
-plt. show() 
+json_path = '/Users/O-'/QNN_HW_Run.json'  # Adjust this to your desired output path
+with open(json_path, 'w') as f:
+    json.dump(output_data, f, indent=4, default=complex_encoder)
 
-# Feynman-like Diagram from Run Result Code
-# imports
-import json
-import matplotlib.pyplot as plt
+print("Results saved to:", json_path)
+
+Analysis Circuit:
+import pandas as pd
 import numpy as np
+import matplotlib.pyplot as plt
+from scipy.optimize import minimize
+from qiskit import Aer, execute, QuantumCircuit
+from qiskit.circuit import ParameterVector
+import json
 
-# Load measurement counts from JSON 
-with open('/Users/Documents/ElectronPositronAnnihilation.json', 'r') as file:
-    measurement_counts = json.load(file)
+# load calibration data
+calibration_data_path = '/Users/Documents/ibm_kyoto_calibrations_2024-03-07T20_24_57Z.csv'
+calibration_data = pd. read_csv(calibration_data_path)
 
-# Define the figure for the Feynman-like diagram
-fig, ax = plt.subplots(figsize=(8, 6))
-ax.axis('off')  # Remove the axis as they are not needed
-ax.set_xlim([0, 4])
-ax.set_ylim([0, 4])
+# generate QNN
+def create_qnn(num_qubits, num_parameters):
+    qc = QuantumCircuit(num_qubits)
+    parameters = ParameterVector('θ', num_parameters)
+    for i in range(num_qubits):
+        qc.rx(parameters[i], i)  # Example usage of parameters
+    return qc, parameters
 
-# Define positions for the particles and vertices in the diagram
-electron_position = (1, 3)
-positron_position = (1, 1)
-interaction_vertex = (2, 2)
-outcomes_positions = {
-    '00': (3, 3),
-    '01': (3, 2.5),
-    '10': (3, 1.5),
-    '11': (3, 1)
-}
+#  Fidelity calculation
+def calculate_fidelity(p_0, p_1, q_0, q_1):
+    return np.sqrt(p_0 * q_0) + np.sqrt(p_1 * q_1)
 
-# Draw electron and positron lines to the interaction vertex
-ax.annotate('', xy=interaction_vertex, xytext=electron_position,
-            arrowprops=dict(facecolor='blue', shrink=0, width=2, headwidth=8))
-ax.annotate('', xy=interaction_vertex, xytext=positron_position,
-            arrowprops=dict(facecolor='red', shrink=0, width=2, headwidth=8))
+# custom hybrid loss function
+def custom_hybrid_loss(y_true, p_pred, q_0, q_1, lambda_reg=0.5):
+    p_0 = 1 - p_pred
+    p_1 = p_pred
+    fidelity = calculate_fidelity(p_0, p_1, q_0, q_1)
+    cross_entropy_loss = -np.mean(y_true * np.log(p_pred) + (1 - y_true) * np.log(1 - p_pred))
+    return cross_entropy_loss + lambda_reg * (1 - fidelity)
 
-# Label the electron and positron
-ax.text(*electron_position, 'Electron (e-)', ha='right', va='center', fontsize=12, color='white')
-ax.text(*positron_position, 'Positron (e+)', ha='right', va='center', fontsize=12, color='white')
+#  Calculate_loss function  
+def calculate_loss_from_measurements(measurement_outcomes, true_labels):
+    epsilon = 1e-10  # Small number to avoid log(0)
+    total_shots = sum(measurement_outcomes.values())
+    p0 = measurement_outcomes.get('0x0', 0) / total_shots
+    p1 = measurement_outcomes.get('0x1', 0) / total_shots
+    
+    p0 = np.clip(p0, epsilon, 1-epsilon)  # Ensure p0 is between 0 and 1
+    p1 = np.clip(p1, epsilon, 1-epsilon)  # Ensure p1 is between 0 and 1
+    
+    # probability 
+    p = p1 if true_labels == 1 else p0
+    
+    # Computing cross-entropy loss
+    if true_labels == 1:
+        loss = -np.log(p)
+    else:
+        loss = -np.log(1 - p)
+    
+    return loss
 
-# Draw outcome lines and label them, using the counts as probability amplitudes
-for state, position in outcomes_positions.items():
-    opacity = measurement_counts[state] / max(measurement_counts.values())  # Opacity based on relative count
-    ax.annotate('', xy=position, xytext=interaction_vertex,
-                arrowprops=dict(facecolor='green', alpha=opacity, shrink=0, width=2, headwidth=8))
-    ax.text(*position, f'{state}: {measurement_counts[state]}', ha='left', va='center', fontsize=10, color='white')
+# Run optimization and collect history
+def run_optimization(initial_params, measurement_results):
+    optimization_history = {'parameters': [], 'loss': []}
+    
+    # Extract probabilities from measurement results
+    total_counts = sum(measurement_results.values())
+    p_0 = measurement_results['0x0'] / total_counts
+    p_1 = measurement_results['0x1'] / total_counts
+    q_0, q_1 = 0.8, 0.2
 
-# bg color
-fig.patch.set_facecolor('black')
-ax.set_facecolor('black')
+    # single data point
+    true_labels = np.array([1])
+    p_pred = p_1
+    
+    # Calculate each loss
+    fidelity_loss = 1 - calculate_fidelity(p_0, p_1, q_0, q_1)
+    hybrid_loss = custom_hybrid_loss(true_labels, p_pred, q_0, q_1, lambda_reg=0.5)
+    cross_entropy_loss = calculate_loss_from_measurements({'0x0': p_0, '0x1': p_1}, true_labels)
 
-# Display the Feynman-like diagram
-plt. show()
+    optimization_history['loss'].append({
+        'Cross-Entropy Loss': cross_entropy_loss,
+        'Custom Hybrid Loss': hybrid_loss,
+        'Fidelity-Based Loss': fidelity_loss,
+        
+    })
+    
+    def objective_function(params):
+        return hybrid_loss
+    
+    result = minimize(objective_function, initial_params, method='COBYLA', options={'maxiter': 100})
+    
+    optimization_history['parameters'].append(initial_params.tolist())
+    
+    return optimization_history, result
+
+#  analysis script
+if __name__ == "__main__":
+    num_qubits = 1
+    num_parameters = 3
+    
+    measurement_results = {"0x0": 186, "0x1": 70}
+    initial_params = np.random.rand(num_parameters) * 2 * np.pi
+    
+    optimization_history, result = run_optimization(initial_params, measurement_results)
+    
+    #  loss results for each loss function
+    print("Optimization Loss Values for Each Loss Function:")
+    for loss_name, loss_value in optimization_history['loss'][0].items():
+        print(f"{loss_name}: {loss_value}")
+
+    #  dark background for plots
+    plt. style.use('dark_background')
+
+    #  bar chart for loss values
+    plt.figure(figsize=(10, 5))
+    loss_values = optimization_history['loss'][0]
+    bars = plt. bar(loss_values.keys(), loss_values.values(), color='white', edgecolor='white')
+    
+    # text 
+    for bar in bars:
+        yval = bar.get_height()
+        plt.text(bar.get_x() + bar.get_width()/2, yval, round(yval, 4), ha='center', va='bottom', color='white')
+
+    plt.title('Loss Values', color='white')
+    plt.xlabel('Loss Function', color='white')
+    plt.ylabel('Loss Value', color='white')
+    plt.tick_params(axis='x', colors='white')
+    plt.tick_params(axis='y', colors='white')
+    
+    plt. show()
+
+    # Save json 
+    save_path = '/Users/O-'/QNN_ANALYSIS_RUN.json'
+    with open(save_path, 'w') as f:
+        json_data = {
+            'optimization_history': optimization_history,
+            'final_result': {
+                'final_parameters': result.x.tolist(),
+                'final_loss': result. fun
+            }
+        }
+        json.dump(json_data, f, indent=4) 
+      # end
         
            
             
