@@ -45,26 +45,26 @@
             border: 1px solid #00FF00; /* Matrix green border */
         }
         .experiment-image {
-            width: 1200px; /* Updated width */
-            height: 816px; /* Updated height */
+            width: 1901px; /* Updated width */
+            height: 1717px; /* Updated height */
             margin: 20px auto;
             display: block;
         }
         .experiment-image2 {
-            width: 1199px; /* Updated width */
-            height: 460px; /* Updated height */
+            width: 1176px; /* Updated width */
+            height: 1200px; /* Updated height */
             margin: 20px auto;
             display: block;
         }
          .experiment-image3 {
-            width: 1200px; /* Updated width */
-            height:  323px; /* Updated height */
+            width: 1970px; /* Updated width */
+            height:  1630px; /* Updated height */
             margin: 20px auto;
             display: block;
         }
         .experiment-image4 {
             width: 1200px; /* Updated width */
-            height: 778px; /* Updated height */
+            height: 776px; /* Updated height */
             margin: 20px auto;
             display: block;
         }
@@ -97,40 +97,36 @@
     </nav>
 
     <section class="content-section">
-        <h1><center>Reducing Entropy Through Quantum Teleportation On IBM's 127-Qubit Quantum Computer Osaka</center></h1>
+        <h1><center>A Quantum Walk On IBM's 127-Qubit Quantum Computer Osaka</center></h1>
         <div class="content-block">
          
           
 
-<p>This experiment aims to explore the concepts presented in my thought experiment "Entropy's Observer" by implementing quantum teleportation using qiskiton IBM's 127-Qubit Quantum Computer Osaka. Quantum teleportation allows the state of a qubit to be transmitted from one location to another, without physical transfer of the particle itself. This process involves creating a Bell pair, preparing an initial state to be teleported, performing Bell state measurements, and applying appropriate corrections based on the measurement outcomes. The experiment examines how quantum information's transmission and observation can be conceptualized within the framework of entropy and observation scale.</p>
+<p>This experiment aims to execute a discrete-time quantum walk on IBM's 127-Qubit Quantum Computer Osaka, utilizing Qiskit and a series of quantum gates to create the walk over a predefined number of steps. A quantum walk is the quantum mechanical counterpart of a classical random walk, set by the quantum superposition of all possible paths. It includes a 'coin' qubit for determining movement direction and multiple position qubits to represent different locations. By applying conditional rotations and Hadamard gates, the walk introduces quantum interference, leading to a non-classical distribution of position probabilities. The experiment's outcome is visualized through the measurement of position qubits at each step.</p>
 
 <p><strong>Code Walkthrough</strong><br>
-1. Quantum Circuit Initialization:<br>
-Utilizing Qiskit, we first load the IBMQ account and select a quantum backend for the experiment.
+1. Initialization: <br>
+The quantum circuit is initialized with n position qubits and 1 coin qubit. The position qubits represent the possible positions of the quantum walker, and the coin qubit determines the direction of the walk (left or right). The coin qubit is placed in a superposition state using a Hadamard gate (H), enabling both movement directions simultaneously.
 
 
 
 
-<p>2. Creating a Bell Pair:<br>
-A Bell pair is created to facilitate quantum teleportation. The process involves two qubits:
-Apply a Hadamard gate H on qubit q_1. This transforms the qubit into a superposition state: 
-<p><center>1/sqrt(2) * (∣0⟩ + ∣1⟩)</center><br>
-<br>
-Apply a CNOT gate CX with q_1 as control and q_2 as target. This entangles the two qubits, resulting in the Bell state:
-<p><center>1/sqrt(2) * (∣00⟩ + ∣11⟩)</center><br>
+<p>2. Quantum Walk Steps:<br>
+The quantum walk progresses through a series of steps, each involving a conditional operation based on the state of the coin qubit.
+A conditional rotation (CR_x​) is applied between the coin qubit and each position qubit. The rotation angle is π​/(2^(i + 1)) for the i-th position qubit, introducing a phase shift that depends on both the position and the coin's state.
+The Hadamard gate is applied again to the coin qubit after each set of conditional rotations, flipping the coin to ensure a mix of deterministic and probabilistic behavior in the walk.
 
 
 
 
-<p>3. Teleporting a Qubit: <br>
-The qubit's state ∣ψ⟩ to be teleported is entangled with one of the qubits in the Bell pair. The process involves:
-Applying a CNOT gate CX from the source qubit src to the intermediate qubit inter, followed by an H gate on src. 
-Measuring src and inter, collapsing their states, and sending the results to the target location.
-Based on the measurement, conditional operations (a CNOT and a CZ gate) are applied to the target qubit trg, completing the teleportation.
 
+<p>3. Measurement and Data Collection:<br>
+At each step of the walk, all position qubits are measured, collapsing their state to a classical outcome that represents the walker's position.
+The measurement outcomes are collected over 1024 iterations (shots) to build a probability distribution of the walker's position at each step.
+This data is used to observe the evolution of the quantum walk, highlighting the quantum interference patterns that differentiate it from classical random walks.
 
-<p>4. Measurement and Results: <br>
-The final step involves measuring the state of the teleported qubit and analyzing the outcomes. The experiment measures how accurately the initial qubit's state is reproduced at the target location, reflecting on quantum information's fidelity during teleportation.
+<p>4. Data Analysis: <br>
+The collected data is analyzed to visualize the probability distribution of the walker's positions over time. This distribution showcases the properties of quantum walks, such as faster spreading and non-locality, compared to classical random walks.
 
 
 
@@ -140,200 +136,270 @@ The final step involves measuring the state of the teleported qubit and analyzin
 
 
 </div>
-        <img src="E14image1.png" alt="" class="experiment-image">
+        <img src="E17image1.png" alt="" class="experiment-image">
         <p></p>
         <div class="content-block">
 
-The total counts for each distance are consistent, with 1024 measurements made in each case.
+The heatmap above visualizes how the probability distribution spreads and evolves, highlighting areas of higher probability (warmer reds) versus lower probability (cooler reds). This helps to capture the quantum walk's dynamics, showing the transition from an initial localized state to a more distributed probability pattern.
 
 <br>
-The fidelity of teleportation, which can be inferred by the proportion of '00' outcomes (indicating successful teleportation) relative to the total counts, is quite high:
-Distance 1: 99.22%
-Distance 2: 98.05%
-Distance 3: 99.41%
-<br>
-The '00' outcome (indicating successful teleportation) is the most frequent across all distances, which aligns with the high fidelities calculated. The distribution of outcomes is relatively consistent across distances, which suggests that the teleportation protocol's performance is stable over these variations.
-<br>
-The ratio of '01' and '10' results to '00' results provides insight into the error rates during teleportation:
-<br>
-For Distance 1, we have a '01' to '00' ratio of about 0.0079 and no '10' errors.
-For Distance 2, the '01' to '00' ratio is about 0.0070, and the '10' to '00' ratio is 0.0130.
-For Distance 3, the '01' to '00' ratio decreases to approximately 0.0020, and the '10' to '00' ratio is 0.0039.
-<br>   
-The lower ratios of '01' and '10' to '00' in Distance 3 compared to Distance 2 suggest an improved error rate, which could indicate better control or correction mechanisms in place.
-<br> 
-These high fidelity rates are indicative of effective quantum teleportation with a robust protocol, as errors ('01' and '10' states) are significantly lower compared to the successful teleportation outcomes ('00' state).
+Central Position Dominance:
+At the initial step (step 0), there's a significant concentration of counts at the central position (00000), as expected. This indicates that the walker starts in a well defined position before the walk begins.
 
-
+<br>
+Spread and Interference Patterns:
+Unlike a classical random walk that would show a Gaussian (bell curve) distribution of probabilities over time, the quantum walk demonstrates a more complex pattern of spread. As the steps progress, the distribution of counts spreads out from the central position, indicating the quantum walker exploring the space. Notably, the spread is not uniform; certain positions exhibit higher counts than others, suggesting interference patterns that are a hallmark of quantum walks. This interference results from the superposition of multiple paths that the walker can take.
+<br>
 
 
 </div>
-        <img src="E14image2.png" alt="" class="experiment-image2">
+        <img src="E17image2.png" alt="" class="experiment-image2">
         <p></p>
         <div class="content-block">
 
-The visualization above demonstrates the Evolution of Entanglement Strength Over Time, captured in three stages:
-<br>
-Initial: 
-Before any observation, showcasing a quantum system where qubits exhibit varying degrees of entanglement with each other, represented by the strengths in the heatmap. This represents the system's high entropy state, with maximum uncertainty from the observer's perspective.
-<br>
-Post Macroscopic Observation: 
-After a macroscopic observer has interacted with the system, providing a coarse-grained measurement. Here, the entanglement strengths are slightly altered, reflecting the observer's limited impact on collapsing the system's wave function. The system still retains a relatively high entropy state, but with some macroscopic properties becoming more defined.
-<br>
-Post Microscopic Observation: 
-Following measurements by a microscopic observer, capable of resolving the state of each qubit individually. This results in a significant reduction in entanglement strengths across the system, as the fine-grained observations collapse the superpositions to definite states, thereby reducing the system's entropy and resolving quantum uncertainty at the microscopic level.
-<br>
-This visualization captures the conceptual narrative of how the scale and nature of observation - macroscopic versus microscopic - might influence the entropy of a quantum system and the definiteness of its outcomes. It visually interprets the theoretical journey from a high-entropy quantum superposition to a lower-entropy state with well-defined outcomes, highlighting the role of entanglement and coherence in this transition.
+The network analysis chart above presents the quantum walk state transition network, constructed from the results. In this network, nodes represent quantum states and directed edges indicate transitions between states, with edge weights reflecting the transition probabilities (averaged between steps). This reveals the dynamics and relationships between different states in the quantum walk. The nodes centrality, depicted by their color intensity, highlights the 'importance' or connectivity of each state within the network, suggesting how central or peripheral they are to the quantum walk's dynamics.
 <br>
 
+The network analysis chart above presents the quantum walk state transition network, constructed from the results. In this network, nodes represent quantum states and directed edges indicate transitions between states, with edge weights reflecting the transition probabilities (averaged between steps). This reveals the dynamics and relationships between different states in the quantum walk. The nodes centrality, depicted by their color intensity, highlights the 'importance' or connectivity of each state within the network, suggesting how central or peripheral they are to the quantum walk's dynamics.
 
+         
+<br>
 
+Superposition and Interference:
+The results reflect superposition where the walker simultaneously exists in multiple states (positions). The interference (constructive and destructive) is evident in the varying counts across different positions, influenced by the phase relationships between the superposed states.
+            
+            
+<br>
+
+            
+Symmetry:
+The quantum walk retains a form of symmetry around the initial position, which is consistent with the walker's equal probability of moving left or right at each step, modulated by quantum effects.
+            
+            
+            
+<br>
+
+Number of Communities Detected: 2
+This suggests the network partitions into two distinct clusters, indicating a possible division in the quantum state space explored by the walk.
+            
+            
+<br>
+Communities: 
+Each community represents a cluster of closely interconnected states. For space, only the first five states of each community are shown in the network analysis chart above, but they hint at underlying structures or patterns in how the quantum walk evolves across different segments of the state space.
+The presence of communities within the network might reflect coherent subspaces or regions of the state space that the quantum walk preferentially explores or transitions between.
+<br>
+
+Centrality:
+The centrality of nodes provides insights into which states play pivotal roles in the quantum walk's evolution, possibly indicating states with significant probabilities or those that act as hubs in state transitions.
+<br>
             
 
 
 
 </div>
-        <img src="E14image3.png" alt="" class="experiment-image3">
+        <img src="E17image3.png" alt="" class="experiment-image3">
         <p></p>
         <div class="content-block">
 
-Above are 3D contour plots of the experiment data:
+The 3D visualization above represents the evolution of selected quantum state probabilities in a quantum walk, plotted over discrete time steps. This shows how probabilities for different states evolve. The surface plot's peaks and valleys indicate varying probabilities across states at each step, reflecting the quantum superposition. This behavior underscores the fundamental differences between quantum and classical walks, showing the unique ability of quantum systems to explore multiple paths simultaneously.
 <br>
-'00' Outcomes Contour Plot:
-This plot represents the count of '00' outcomes (indicating successful teleportation) as a function of both distance and qubit index. The varying heights and colors show how the success rates may change across different distances and qubits.<br>
-<br>
-'01' Outcomes Contour Plot:
-This plot shows the counts of '01' outcomes (a type of error) across distances and qubits. Given that these values are simulated to be lower, the contour levels are less pronounced, indicating fewer error occurrences.
-<br>
-'10' Outcomes Contour Plot:
-This plot depicts the '10' outcomes (another type of error) in a similar manner. The visualization aims to highlight how errors distribute differently across the experiment's parameters.
-<br>         
-Relation to "Entropy's Observer":
-The experiment abstractly embodies my thought experiment's concepts by demonstrating how quantum states, embodying high entropy through superposition and entanglement, can be precisely manipulated and observed. 
-<br>      
-In the context of "Entropy's Observer":
-Macroscopic Observation: 
-The overall process of preparing, entangling, and measuring qubits reflects a macroscopic observer's role. The observer sees the outcome of the teleportation (the macroscopic average state) without directly collapsing the individual qubit states during preparation.
-<br>   
-Microscopic Observation: 
-The detailed steps of entangling qubits, performing conditional operations based on classical communication, and the final measurement represent microscopic observations. These steps reduce the system's entropy by determining the exact state of each qubit, similar to the microscopic observer collapsing the wave functions to specific states.
-<br>   
-In the end, the experiment successfully demonstrates quantum teleportation, highlighting the interplay between quantum coherence, superposition, entanglement, and the role of observation in quantum mechanics. Through the precise control and observation of quantum states, the experiment aligns with the thought experiment's narrative, showing how entropy can be managed and reduced in a quantum system. The fidelity of the teleportation process, captured in the results data, underscores the potential and challenges of quantum information processing, reflecting the delicate balance between quantum uncertainty and classical certainty as influenced by the scale and nature of observation.
 
+In the end, this analysis and visualization provides a glimpse into the dynamics of quantum walks, demonstrating their non-classical behavior. The symmetry and spreading behavior underscore the quantum walk's utility in algorithms, leveraging superposition and interference. ​​
+            
+            
+            
+<br>
 
+            
+A Small Sample Of Runs:<br>
+[<br>
+{<br>
+"step": 0,<br>
+"counts": {<br>
+"00100": 6,<br>
+"01000": 2,<br>
+"10000": 5,<br>
+"00001": 5,<br>
+"00000": 1002,<br>
+}<br>
+},<br>
+{<br>
+"step": 1,<br>
+"counts": {<br>
+"10010": 4,<br>
+"10001": 2,<br>
+"01001": 31,<br>
+"01100": 3,<br>
+"11001": 2,<br>
+}<br>
+},<br>
+{<br>
+"step": 2,<br>
+"counts": {<br>
+"11011": 16,<br>
+"10010": 27,<br>
+"01110": 36,<br>
+"11101": 34,<br>
+"11010": 29,<br>
+}<br>
+},<br>
+{<br>
+"step": 3,<br>
+"counts": {<br>
+"01100": 65,<br>
+"00001": 22,<br>
+"10110": 39,<br>
+"11111": 33,<br>
+"10011": 20,<br>
+}<br>
+},<br>
+{<br>
+"step": 4,<br>
+"counts": {<br>
+"00110": 21,<br>
+"11010": 21,<br>
+"10011": 23,<br>
+"00101": 29,<br>
+"01000": 43,<br>
+}<br>
+},<br>
+{<br>
+"step": 5,<br>
+"counts": {<br>
+"00001": 25,<br>
+"00011": 32,<br>
+"11011": 34,<br>
+"01110": 12,<br>
+"10110": 48,<br>
+}<br>
+},<br>
+{<br>
+"step": 6,<br>
+"counts": {<br>
+"00101": 37,<br>
+"10010": 19,<br>
+"01011": 28,<br>
+"01000": 38,<br>
+"10000": 34,<br>
+}<br>
+},<br>
+{<br>
+"step": 7,<br>
+"counts": {<br>
+"11101": 39,<br>
+"01111": 28,<br>
+"00111": 32,<br>
+"01101": 28,<br>
+"11011": 28,<br>
+}<br>
+},<br>
+{<br>
+"step": 8,<br>
+"counts": {<br>
+"01011": 33,<br>
+"00101": 52,<br>
+"01001": 40,<br>
+"11010": 32,<br>
+"00001": 30,<br>
+}<br>
+},<br>
+{<br>
+"step": 9,<br>
+"counts": {<br>
+"11100": 32,<br>
+"00111": 40,<br>
+"11110": 22,<br>
+"00011": 30,<br>
+"01101": 33,<br>
+}<br>
+},<br>
+{<br>
+"step": 10,<br>
+"counts": {<br>
+"10010": 20,<br>
+"00101": 29,<br>
+"00100": 36,<br>
+"01101": 38,<br>
+"11100": 43,<br>
+}<br>
+}<br>
+]    <br>        
+            
+ 
 
 
 </div>            
     
         
         <p>Code:<br>
-            <p><pre><code>from qiskit import QuantumCircuit, transpile, IBMQ, execute
-from qiskit. tools.monitor import job_monitor
+            <p><pre><code># Imports
+from qiskit import IBMQ, QuantumCircuit, transpile, execute
 from qiskit.visualization import plot_histogram
-import matplotlib.pyplot as plt
+import numpy as np
 import json
-import csv
-from datetime import datetime
 
-# Encoder for handling complex numbers and datetime in JSON serialization
-def custom_encoder(obj):
-    if isinstance(obj, complex):
-        return {"real": obj.real, "imag": obj.imag}
-    elif isinstance(obj, datetime):
-        return obj.isoformat()
-    elif callable(obj):
-        return "Callable method or function"
-    raise TypeError("Object of type '%s' is not JSON serializable" % type(obj).__name__)
-
-# Load IBMQ Account
-IBMQ. save_account('Your_IBM_Key_O-`', overwrite=True)
+# IBM account setup
+IBMQ. save_account('Your_IBM_Key_O-', overwrite=True)  
 IBMQ.load_account()
-
-# Select a backend
 provider = IBMQ.get_provider(hub='ibm-q')
-device = provider.get_backend('ibm_osaka')  # Example backend, replace with your choice
+backend = provider.get_backend('ibm_osaka')  
+print("Using backend: ", backend. name())
 
-# Function to create Bell pair
-def create_bell_pair(qc, q1, q2):
-    qc.h(q1)
-    qc. cx(q1, q2)
+# Parameters
+num_position_qubits = 5  # Number of qubits for position (allowing for 32 positions)
+num_steps = 10  # Number of steps in the quantum walk
+shots = 1024  # Number of shots for each measurement
 
-# Function to teleport qubit
-def teleport_qubit(qc, src, inter, trg):
-    qc. cx(src, inter)
-    qc.h(src)
-    qc.barrier()
-    qc.measure(src, 0)
-    qc.measure(inter, 1)
-    qc.barrier()
-    qc. cx(inter, trg)
-    qc. cz(src, trg)
+# Function to add quantum walk steps to the circuit
+def add_quantum_walk_step(qc, num_position_qubits):
+    for pos in range(num_position_qubits):
+        qc.crx(np.pi/2**(pos+1), num_position_qubits, pos)  # Conditional rotation
+    qc.h(num_position_qubits)  # Flip the coin at each step
 
-# Prepare the results dictionary
-results = {
-    "backend_name": device. name(),
-    "backend_configuration": device.configuration().to_dict(),
-    "backend_properties": device. properties().to_dict(),
-}
+data_for_visualization = []
 
-# Selected distances for teleportation
-distances = [1, 2, 3]
-
-for distance in distances:
-    print(f"Running teleportation over distance: {distance}")
-
-    # Create the circuit
-    qc = QuantumCircuit(4, 2)
-    create_bell_pair(qc, 0, 1)
-    teleport_qubit(qc, 0, 1, 2)
-
-    # Transpile for the real backend
-    transpiled_circuit = transpile(qc, device, optimization_level=3)
-
-    # Execute the job on the real device
-    job = execute(transpiled_circuit, backend=device, shots=1024)
-    job_monitor(job)
-
-    # Get the result
+# Execute each step separately and measure
+for step in range(num_steps + 1):
+    qc = QuantumCircuit(num_position_qubits + 1, num_position_qubits)  # Plus one for the coin qubit, plus measurement bits
+    qc.h(num_position_qubits)  # Initialize the coin in a superposition state
+    
+    for _ in range(step):
+        add_quantum_walk_step(qc, num_position_qubits)
+    
+    # Add measurement operation to all position qubits
+    qc.measure(range(num_position_qubits), range(num_position_qubits))
+    
+    # Transpile for the backend
+    transpiled_qc = transpile(qc, backend=backend, optimization_level=3)
+    
+    # Execute the circuit on backend
+    job = execute(transpiled_qc, backend, shots=shots)
     result = job.result()
     counts = result.get_counts(qc)
+    
+    # Save step and counts
+    data_for_visualization.append({
+        'step': step,
+        'counts': counts
+    })
 
-    # Record detailed results for this distance
-    results[f"Distance_{distance}"] = {
-        "measurement_distribution": counts,
-        "job_id": job.job_id(),
-        "execution_time": result.time_taken,
-    }
+# Prepare the data for JSON 
+data_for_visualization = [{
+    'step': entry['step'],
+    'counts': entry['counts']
+} for entry in data_for_visualization]
 
-# Record Calibration Data
-calibration_data = {}
-try:
-    with open("/Users/Your/Documents/ibm_osaka_calibrations_2024-02-07T23_00_45Z.csv", 'r') as cal_file:
-        csv_reader = csv.DictReader(cal_file)
-        for row in csv_reader:
-            if 'qubit' in row:
-                calibration_data[row['qubit']] = row
-except Exception as e:
-    print(f"Error reading calibration data: {e}")
+json_filename = "/Users/Documents/Quantum_Walk_Result.json"
+with open(json_filename, 'w') as f:
+    json.dump(data_for_visualization, f, indent=4)
 
-results["calibration_data"] = calibration_data
-
-# Save the results to a JSON file using the encoder for complex numbers and datetime
-results_file = "/Users/Your/Documents/Fidelity_Results_HW.json"
-with open(results_file, 'w') as f:
-    json.dump(results, f, indent=4, default=custom_encoder)
-
-print(f"Results saved to {results_file}")
-
-# Plotting the histogram of the runs
-plot_histogram([results[f"Distance_{distance}"]["measurement_distribution"] for distance in distances])
-plt. show()
+print(f"Data for each step saved to {json_filename}."
 
 </code></pre>
 </p>
             
  </div>
-        <img src="E14image4.png" alt="" class="experiment-image4">
+        <img src="E17image4.png" alt="" class="experiment-image4">
         
            
             
