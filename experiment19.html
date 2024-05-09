@@ -329,10 +329,12 @@ def batch_train_qnn(data, labels, qnn, backend, iterations=2, batch_size=10):  #
                                   params, method='COBYLA')
                 params = result.x  # Update parameters based on optimization
 
-        train_loss = np.mean([objective_function(params, dp, lbl, qnn, backend) for dp, lbl in zip(training_data, training_labels)])
+        train_loss = np.mean([objective_function(params, dp, lbl, qnn, backend) for dp, 
+        lbl in zip(training_data, training_labels)])
         training_losses.append(train_loss)
 
-        val_loss = np.mean([objective_function(params, dp, lbl, qnn, backend) for dp, lbl in zip(validation_data, validation_labels)])
+        val_loss = np.mean([objective_function(params, dp, lbl, qnn, backend) for dp, 
+        lbl in zip(validation_data, validation_labels)])
         validation_losses.append(val_loss)
 
         # Record quantum state of first training data point 
