@@ -1,1 +1,319 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Experiment 9 - Qwork</title>
+    <style>
+       body {
+            background-color: #000000; /* Black background */
+            color: #FFFFFF; /* White text */
+            font-family: Arial, sans-serif; /* Modern, sans-serif font */
+            margin: 0;
+            padding: 0;
+            width: fit-content;
+            margin-left: auto;
+            margin-right: auto;
+            text-align: center;
+            
+        } 
+        header {
+            background: url('QImage4.png') no-repeat center center;
+            background-size: contain; /* Ensure the image is fully contained within the header */
+            height: 420px; /* Height as per the resized image */
+            position: relative;
+        }
+        nav {
+            display: flex;
+            justify-content: center;
+            padding: 10px 0;
+        }
+        nav a {
+            color: #FFFFFF; /* White links */
+            margin: 0 20px;
+            text-decoration: none;
+            font-size: 1.2em;
+        }
+        nav a:hover {
+            color: #00FF00; /* Matrix green for hover state */
+        }
+        .content-section {
+            padding: 20px;
+            text-align: left;
+        }
+        .content-block {
+            margin: 10px auto;
+            padding: 10px;
+            border: 1px solid #00FF00; /* Matrix green border */
+        }
+        .experiment-image {
+            width: 1200px; /* Updated width */
+            height: 816px; /* Updated height */
+            margin: 20px auto;
+            display: block;
+        }
+        .experiment-image2 {
+            width: 621px; /* Updated width */
+            height: 484px; /* Updated height */
+            margin: 20px auto;
+            display: block;
+        }
+         .experiment-image3 {
+            width: 381px; /* Updated width */
+            height: 217px; /* Updated height */
+            margin: 20px auto;
+            display: block;
+        }
+        .experiment-image4 {
+            width: 1086px; /* Updated width */
+            height: 417px; /* Updated height */
+            margin: 20px auto;
+            display: block;
+        }
+        .experiment-image5 {
+            width: 2461px; /* Updated width */
+            height: 1717px; /* Updated height */
+            margin: 20px auto;
+            display: block;
+        }
+        .experiment-image6 {
+            width: 600px; /* Updated width */
+            height: 572px; /* Updated height */
+            margin: 20px auto;
+            display: block;
+        }
+        .experiment-image7 {
+            width: 1073px; /* Updated width */
+            height: 1717px; /* Updated height */
+            margin: 20px auto;
+            display: block;
+        }
+        footer {
+            color: #FFFFFF; /* White text */
+            text-align: center;
+            padding: 20px 0;
+        }
+        footer a {
+            color: #FFFFFF;
+            text-decoration: none;
+        }
+        footer a:hover {
+            color: #00FF00; /* Matrix green on hover */
+        }
+    </style>
+</head>
+<body>
 
+    <header>
+        <!-- Header with the resized image -->
+    </header>
+
+    <nav>
+        <!-- Navigation links as per wireframe -->
+        <a href="try_yourself.html">Try Yourself</a>
+        <a href="index.html">Experiments</a>
+        <a href="about.html">About Me</a>
+    </nav>
+
+    <section class="content-section">
+        <h1>Exploring Quantum Gate-Induced Qubit Transitions on  IBM's 7-Qubit Quantum Computer Lagos</h1>
+        <div class="content-block">
+        
+          
+
+<p>This experiment aims to explore a sequence of quantum gates on a series of qubits, particularly focusing on their behavior in superposition and subsequent measurement outcomes. Using IBM's quantum computer Lagos and qiskit, the experiment initializes qubits in a superposition state, applying a series of quantum gates (X, Y, and Z), and then measures the outcomes. The process is repeated across multiple iterations to gather statistical data, which is then analyzed to understand the quantum states' behavior.</p>
+
+<p><strong>Code Walkthrough</strong><br>
+1. Initialization and IBM Quantum Computer Setup:<br>
+The ibm_lagos backend is selected for the experiment. A quantum circuit with 7 qubits is initialized.
+  
+
+<p>2. Quantum Circuit Preparation:<br>
+<p>All 7 qubits are brought into a state of superposition using Hadamard gates (H-gates). The Hadamard gate creates a superposition by transforming the base state ∣0⟩ to (∣0⟩ + ∣1⟩)/sqrt(2) and (∣0⟩ - ∣1⟩)/sqrt(2). </p>
+
+<p>A sequence of quantum gates (X, Y, and Z) is applied to each qubit. The X-gate (Pauli-X) flips the state from ∣0⟩ to ∣1⟩ and vice versa, acting like a quantum NOT gate. The Y-gate (Pauli-Y) and Z-gate (Pauli-Z) further manipulate the qubit states on the Bloch sphere, inducing phase shifts and rotations. </p>
+
+
+<p>3. Measurement:<br>
+Each qubit's state is measured in the computational basis (∣0⟩ and ∣1⟩), collapsing the superposition to a definite state of either 0 or 1.
+
+<p>4. Execution:<br>
+The quantum circuit is transpiled and sent to ibm_lagos backend for execution.
+The experiment is run 100 times (jobs), with each job executing the circuit 1024 times (shots). This repetition allows for the collection of a significant amount of statistical data.
+
+<p>5. Data Aggregation and Analysis:<br>
+After all jobs are completed, the measurement outcomes are aggregated. The outcomes are counts of how many times the qubits collapsed to each possible state. A statistical analysis, a chi-squared test, is performed to compare the observed distribution of results with an expected uniform distribution. The chi-squared test assesses if the deviations from the expected distribution are statistically significant or not.
+
+
+<p>6. Result Visualization and Saving:<br>
+The aggregated results are visualized using a histogram, showing the frequency of each measurement outcome. All results, including the raw data and statistical analysis, are saved to a JSON file for further study or reference.
+
+<p>7. Result Analysis:<br>
+The results are returned and saved to a json for further analysis.</p>
+
+            
+            
+            
+            
+            
+        </div>
+        <img src="E8image4.jpeg" alt="Run" class="experiment-image">
+        <p>Above is a screenshot of the run.</p>
+        <div class="content-block">
+        
+        <p>Code:<br>
+            <p><pre><code>from qiskit_ibm_provider import IBMProvider
+from qiskit import QuantumCircuit, QuantumRegister, ClassicalRegister, transpile, execute
+from qiskit.circuit.library import RYGate, CXGate
+from qiskit.extensions import UnitaryGate
+from qiskit.visualization import plot_histogram
+import numpy as np
+import json
+import matplotlib.pyplot as plt
+
+# Load IBMQ Account
+provider = IBMProvider()
+backend = provider.get_backend('ibm_osaka')
+
+# Initialize Quantum Registers
+ehq = QuantumRegister(40, 'event_horizon')  # Adjusted Event Horizon Qubits
+pq = QuantumRegister(40, 'particle')       # Adjusted Particle Qubits
+hrq = QuantumRegister(20, 'hawking_radiation') # Hawking Radiation Qubits
+tq = QuantumRegister(3, 'teleport')        # Teleportation Qubits
+cq = QuantumRegister(7, 'control')         # Control Qubits
+cr = ClassicalRegister(110, 'classical')   # Adjusted Classical Register
+
+# Create Quantum Circuit
+qc = QuantumCircuit(ehq, pq, hrq, tq, cq, cr)
+
+# Gravitational Gate for Event Horizon Simulation
+def gravitational_gate():
+matrix = np.array([[1, 0], [0, np.exp(-1j * np.pi / 4)]])
+return UnitaryGate(matrix)
+
+# Apply gravitational effects at the event horizon
+for i in range(40):  # Adjusted for reduced number of qubits
+qc.append(gravitational_gate(), [ehq[i]])
+
+# Hawking Radiation Simulation
+for i in range(20):
+qc.ry(np.pi/2, hrq[i])
+qc. cx(cq[1], hrq[i])
+
+# Quantum Teleportation 
+qc.h(tq[0])
+qc. cx(tq[0], tq[1])
+qc. cx(tq[2], tq[0])
+qc.h(tq[2])
+qc.measure(tq[2], cr[107])
+qc.measure(tq[0], cr[108])
+
+# Measurement of Quantum Circuit
+qc.measure(ehq, cr[:40])
+qc.measure(pq, cr[40:80])
+qc.measure(hrq, cr[80:100])
+qc.measure(tq, cr[100:103])
+
+# Transpile Circuit for IBM Osaka Backend
+transpiled_qc = transpile(qc, backend)
+
+# Execute the Circuit on IBM Osaka
+job = execute(transpiled_qc, backend, shots=1000)
+
+# Fetch and Save Results
+results = job.result()
+counts = results.get_counts(qc)
+
+# Display results as a histogram
+plot_histogram(counts)
+plt. show()
+
+# Path for Saving Results (modify as needed)
+file_path = 'c:\\Users\\Documents\\BH_HW_results_data.json'
+
+# Save Results to JSON File
+with open(file_path, 'w') as file:
+json.dump(counts, file)
+
+print("Results saved to 'results.json'")
+</code></pre>
+</p>
+            
+            
+            
+        </div>
+        <img src="E8image1.png" alt="Average Colors" class="experiment-image7">
+        <p>Boxplot of State Frequencies.</p>
+        <img src="E8image2.jpeg" alt="Average Color Intensity Per Segment" class="experiment-image6">
+        <p>3D Scatter Plot.</p>
+        <img src="E8image3.jpeg" alt="Average Color Intensity Per Segment" class="experiment-image7">
+        <p>Heatmap of Temporal Evolution.</p>
+        <div class="content-block">
+            <h2>Results</h2>
+
+Most Common States:<br>
+'00000' occurred 63,678 times.<br>
+'10000' occurred 4,996 times.<br>
+'01000' occurred 4,383 times.<br>
+'00001' occurred 4,352 times.<br>
+'00100' occurred 4,151 times.<br>
+'00010' occurred 3,977 times.<br>
+'11000' occurred 1,321 times.<br>
+'01100' occurred 1,136 times.<br>
+'00011' occurred 1,036 times.<br>
+'00101' occurred 895 times.</p>
+
+<p>Mean:<br>
+The mean value of the quantum states is approximately 2 * 10^(32). This represents the average value across all quantum states.</p>
+
+<p>Standard Deviation:<br>
+The standard deviation is 1.86 * 10^(32), indicating a broad spread in the distribution of quantum states. A high standard deviation in this context suggests a wide variety of quantum states being represented in the experiment.</p>
+
+<p>Median:<br>
+The median value, 1.72 * 10^(32), provides another perspective on the distribution, indicating that half of the quantum states have values below this threshold.</p>
+
+<p>Shannon Entropy for Event Horizon Qubits (entropy_eh):<br>
+The entropy value of 0.3986 for the event horizon qubits suggests some degree of predictability or structure in these qubits' states. Higher entropy would indicate more randomness.</p>
+
+<p>Shannon Entropy for Hawking Radiation Qubits (entropy_hr):<br>
+A lower entropy value of 0.1993 for the Hawking radiation qubits implies even more structure or predictability in these states compared to the event horizon qubits.</p>
+
+<p>Event Horizon and Hawking Radiation (corr_eh_hr):<br>
+A correlation coefficient of 0.0215 suggests a very slight positive correlation between the event horizon and Hawking radiation qubits. This could imply some level of interaction or relatedness in the experiment between the phenomena represented by these qubits.</p>
+
+<p>Particle and Hawking Radiation (corr_p_hr):<br>
+The correlation coefficient of -0.0130 indicates a very slight negative correlation. This might suggest a minor inverse relationship in the experiment between the particle qubits and the Hawking radiation qubits.</p>
+
+<p>Event Horizon and Particle (corr_eh_p):<br>
+A correlation coefficient of -0.0179, again a very slight negative correlation, could indicate a minor inverse relationship between the event horizon and particle qubits in the experiment.</p>
+
+<p>Above are the correlation matrices for the Event Horizon (top) and Hawking Radiation (bottom) qubits.</p>
+
+<p>Event Horizon Qubits Correlation Matrix:<br>
+This matrix illustrates the correlations between different qubits representing the event horizon. Each cell in the matrix indicates the degree of correlation between pairs of qubits. A high correlation (closer to 1) suggests that the states of the qubits are related or influence each other, while a low correlation (closer to 0) indicates independence.</p>
+
+<p>Hawking Radiation Qubits Correlation Matrix:<br>
+Similar to the event horizon matrix, this matrix shows the correlations among the Hawking radiation qubits. The patterns here can shed light on the quantum dynamics of abstract particle creation and annihilation processes associated with Hawking radiation near black holes.</p>
+
+<p>Above is a 3D surface visualization. This visualization can be particularly useful in understanding various aspects of black hole experiments, like event horizon dynamics or gravitational effects.</p>
+
+<p>The 3D plot has three axes - X, Y, and Z. The X and Y axes span a range of values from -5 to 5. These two axes can be thought of as representing a plane in space. The Z axis represents the value of a function at each point on the X-Y plane. The function used here is cos(sqrt(x^2 + y^2)).</p>
+
+<p>sqrt(x^2 + y^2) computes the Euclidean distance from the origin (0,0) to the point (x, y) on the plane. It's the same formula used to calculate the magnitude of a vector in 2D space. The cosine function then takes this distance and maps it to a value between -1 and 1, which is typical for cosine. Peaks and valleys are formed, representing the cosine values. The closer the points are to the origin, the higher the frequency of these oscillations.</p>
+
+<p>Above is a heatmap (top) and a network graph (bottom).</p>
+
+<p>The heatmap provides a visual representation of the entanglement probabilities between two sets of qubits in the experiment (the event horizon qubits and the Hawking radiation qubits). Each cell in the heatmap corresponds to a pair of reduced quantum states (one from the event horizon, the other from Hawking radiation). The color intensity in each cell represents the frequency or probability of that particular pair of states occurring together.</p>
+
+<p>The network graph shows the entanglement relationships between different groups of qubits as a network, where each node represents a group of qubits and edges represent entanglement or interaction between these groups. A dense cluster of edges suggests a high degree of entanglement among those qubits, indicating regions of the experiment where quantum states are more interconnected.</p>
+
+<p>In the end, the experiment shows a unique and abstracted insight into black hole phenomena, particularly the event horizon and Hawking radiation. The analysis revealed a symmetric and normal-like distribution of quantum state probabilities, suggesting a balanced, non-biased diversity in outcomes without a tendency towards extreme values. The Shannon entropy values indicated a degree of structure or predictability in the quantum states, especially for the Hawking radiation qubits, implying that the simulation may have captured certain abstract theoretical aspects of black hole physics.”</p>
+
+        </div>
+    </section>
+
+    <footer>
+        <!-- Footer content -->
+        <a href="mailto:stevetippeconnic@gmail.com">Contact</a>
+    </footer>
+
+</body>
+</html>
