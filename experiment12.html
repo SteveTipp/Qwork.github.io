@@ -45,26 +45,26 @@
             border: 1px solid #00FF00; /* Matrix green border */
         }
         .experiment-image {
-            width: 1077px; /* Updated width */
-            height: 405px; /* Updated height */
+            width: 584px; /* Updated width */
+            height: 1200px; /* Updated height */
             margin: 20px auto;
             display: block;
         }
         .experiment-image2 {
-            width: 1264px; /* Updated width */
-            height: 1473px; /* Updated height */
+            width: 1200px; /* Updated width */
+            height: 1200px; /* Updated height */
             margin: 20px auto;
             display: block;
         }
          .experiment-image3 {
-            width: 1008px; /* Updated width */
-            height: 550px; /* Updated height */
+            width: 1200px; /* Updated width */
+            height: 1200px; /* Updated height */
             margin: 20px auto;
             display: block;
         }
         .experiment-image4 {
-            width: 1440px; /* Updated width */
-            height: 960px; /* Updated height */
+            width: 1200px; /* Updated width */
+            height: 800px; /* Updated height */
             margin: 20px auto;
             display: block;
         }
@@ -97,108 +97,131 @@
     </nav>
 
     <section class="content-section">
-        <h1><center>Encoding Visual Data in 25 Quantum States on IBM's 127-Qubit Quantum Computer Osaka</center></h1>
+        <h1><center>100-Qubit Quantum Entanglement on IBM's 127-Qubit Quantum Computer Osaka</center></h1>
         <div class="content-block">
          
           
 
-<p>This experiment, using IBM's 127-qubit quantum computer Osaka and Qiskit, aims to process a classical image using quantum measurement. The experiment involves encoding the color information of each pixel's RGB content of a classical image into quantum states, performing quantum measurements, and reconstructing the image based on the outcomes of those measurements. If the majority of the outcomes are '1', assign the corresponding normalized RGB values back to the pixel. If '0's are in the majority or there's an equal number of '0's and '1's, set the pixel to black. To get back the full image, including '0's, we apply a classical interpolation technique. For each black pixel or '0' run result, we replace it with the average color of its non-black neighboring pixels or '1's. This type of post error correction and classical integration can make up for some of the uncertainty in quantum mechanics.</p>
+<p>This experiment, using qiskit and IBM's 127-Qubit Osaka, creates a quantum circuit to generate a complex entangled state across 100 qubits. It involves initializing the qubits, applying Hadamard and CNOT gates to create entanglement, and then performing ancilla-assisted and system wide measurements. The aim is to observe the behavior of this large-scale quantum system when subjected to specific quantum operations and measurements.</p>
 
 <p><strong>Code Walkthrough</strong><br>
-1. Classical Image Preprocessing:<br>
-First, a classical digital image is loaded and resized to a 5x5 grid.
-The original image be represented as I_(original)​, and the resized image as I_(resized​).
-
-<p>2. Color Encoding into Quantum States:<br>
-For each pixel in I_(resized)​, extract the RGB values, R, G, B, each ranging from 0 to 255.
-Normalize these values to the range [0, 1] by dividing by 255.
-We create a quantum circuit with three qubits, each representing one color channel (Red, Green, Blue). Initialize the qubits in the state ∣000⟩.
-Apply rotation gates to encode the color information into the quantum state.
-The rotation gates used are Rx(θ_R​), Ry(θ_G​), Rz(θ_B​), where the rotation angles θ are calculated as θ_(color) ​= 2π * normalized color value.
-The final state of each qubit after these rotations is: ∣000⟩∣ψ⟩ = Rx(θ_R​) * Ry(θ_G​) * Rz(θ_B​) * ∣000⟩
-This state is a superposition of the basis states ∣000⟩, ∣001⟩, ∣010⟩, …, ∣111⟩, with complex amplitudes dependent on the rotation angles.
-
-
-<p>3. Quantum Measurement:<br>
-The quantum circuit is measured in the computational basis (∣0⟩ and ∣1⟩).
-We perform multiple measurements (shots) to gather probabilistic outcomes. The probability of measuring a state ∣q_2 * ​q_1 * ​q_0​⟩ is given by ∣⟨q_2 * ​q_1 * ​q_0 * ​∣ψ⟩∣^2.
-The color of each pixel in the reconstructed image is determined based on the majority of outcomes in these measurements.
-
-<p>4. Image Reconstruction and Post-Processing:<br>
-We construct a new image I_(reconstructed)​ based on the measurement results.
-If the majority of the outcomes are '1', assign the corresponding normalized RGB values back to the pixel.
-If '0's are in the majority or there's an equal number of '0's and '1's, set the pixel to black.
-To get back the full image, including '0's, we apply a classical interpolation technique to enhance the reconstructed image. For each black pixel, replace it with the average color of its non-black neighboring pixels.
-For each identified black pixel, the algorithm examines its immediate neighbors. In a 2D grid, each pixel (except those on the edges) has eight neighbors (top, bottom, left, right, and four diagonals).
-We extract the color information (RGB values) of these neighboring pixels.
-We then compute the average color of the non-black neighboring pixels. This is done to avoid the influence of other black pixels and to obtain a color representative of the surrounding area.
-Mathematically, if C_1​, C_2​, …, C_n​ are the RGB values of the non-black neighboring pixels, the average color C_(avg)​ is calculated as: C_(avg) ​= (1/n) * ​∑ i=1 n (​C_i)​
-This calculation is performed separately for each color channel (Red, Green, and Blue) to obtain the average RGB value.
+1. Quantum Circuit Initialization:<br>
+The circuit is set up with 100 qubits.
+The first 5 qubits are designated as ancilla qubits, and the remaining 95 qubits are system qubits.
+Let ∣ψ_0⟩ represent the initial state of the entire circuit with 100 qubits.
+<br>
+Ancilla qubits: 
+<p><center>∣ancilla⟩ = ∣00000⟩</center><br>
+This indicates that all 5 ancilla qubits are initialized in the quantum state |0⟩.
+System qubits: 
+<p><center>∣system⟩ = ∣00000...⟩ </center><br>
+This indicates that all 95 system qubits are initialized in the quantum state |0⟩.
 
 
-<p>5. Result Analysis and Comparison:<br>
-Analyze I_(reconstructed)​ in comparison with I_(original)​ and I_(resized)​ to assess the effectiveness of quantum image processing.
-We also save all result data, including the average colors and measurement results, to a json file for analysis.
+
+<p>2. Entanglement Generation:<br>
+The Hadamard gates H applied to each qubit create a superposition state. Mathematically, the action of a Hadamard gate on a single qubit is described by:
+<p><center>H∣0⟩ = 1/sqrt(2) * (∣0⟩ + ∣1⟩)</center><br>
+<p><center>H∣1⟩ = 1/sqrt(2) * (∣0⟩ − ∣1⟩)</center><br>
+Applying the H gate to a qubit initially in the ∣0⟩ state, results in an equal superposition of ∣0⟩ and ∣1⟩.
+<br>
+The CNOT gates create entanglement between qubits. A CNOT gate is represented by the matrix:
+<p><center>CNOT = (​1, 0, 0, 0​, 0, 1, 0, 0​, 0, 0, 0, 1​, 0, 0, 1, 0​)</center><br>
+The CNOT gate operates on two qubits: a control qubit and a target qubit. If the control qubit is in state ∣1⟩, the CNOT gate flips the target qubit's state, i.e., ∣0⟩ becomes ∣1⟩ and vice versa. If the control qubit is in state ∣0⟩, the target qubit remains unchanged.
+<br>
+When a CNOT gate is applied to a pair of qubits where the first (control) qubit is in a superposition (created by the H gate), it entangles the states of the two qubits. For example, if the control qubit is in the state (∣0⟩ + ∣1⟩)/sqrt(2)​ (after the H gate) and the target qubit is in state ∣0⟩, the CNOT operation will result in the entangled state (∣00⟩ + ∣11⟩)/sqrt(2)
+
+
+<p>3. Ancilla-Assisted Measurement:<br>
+We add additional ancilla qubits to indirectly measure the state of the system qubits. Additional CNOT gates entangle each ancilla qubit with a corresponding system qubit. The state of the system qubit affects the state of its paired ancilla qubit due to this entanglement.
+The measurement of a quantum state is a projection operation. When the ancilla qubits are measured, their state collapses to either ∣0⟩ or ∣1⟩. The measurement operators are M_0 ​= ∣0⟩⟨0∣ and M_1​ = ∣1⟩, which project the qubit onto the ∣0⟩ and ∣1⟩ states respectively.
+This method helps in preserving the entangled state of the system qubits, as direct measurement would collapse their quantum state.
+
+
+<p>4. Measurement:<br>
+All qubits (both ancilla and system) are measured, collapsing their quantum states into classical bits. The measurement collapses the superposition of each qubit into a definite state, which can be 0 or 1. This collapse is probabilistic and is described by the Born rule. 
+The Born Rule is a fundamental principle in quantum mechanics that provides the probability of observing a particular outcome. According to this rule, the probability P of measuring a qubit in state ∣0⟩ is P(∣0⟩) = ∣α∣^2, and similarly, the probability of measuring it in state ∣1⟩ is P(∣1⟩) = ∣β∣^2.
+Important to note that ∣α∣^2 + ∣β∣^2 = 1, ensuring the total probability sums up to 1.
+
+
+
+<p>5. Execution on Osaka:<br>
+The transpilation step optimizes the quantum circuit for execution on Osaka's hardware. This optimization involves decomposing gates into elementary gates, rearranging gates for optimal execution, and handling hardware-specific constraints. 
+The experiment is executed for 1000 shots.
+
+
+<p>6. Result Analysis: <br>
+Complex numbers and datetime objects are handled using a custom JSON serialization function.
+All results and backend data are saved to a Json for further analysis. 
 
 
 <p><center> Results:</center><br>
 
+Median: 6.05 * 10^29
+Mean: 6.18 * 10^29
+Standard Deviation: 3.61 * 10^29
+The median offers a central value around which the quantum state measurements are distributed, while the mean provides an average value. The standard deviation indicates the amount of variation or dispersion in the quantum state measurements.
+<br>
+Top ten ancilla states:
+State 01000: 10.61%
+State 00111: 10.34%
+State 00110: 10.34%
+State 10110: 10.08%
+State 00000: 10.08%
+State 01010: 10.08%
+State 01110: 10.08%
+State 11010: 9.81%
+State 00100: 9.55%
+State 01101: 9.02%
+<br>
+Top three System States:
+11011110100100110111101001101000011011111101111101011011110100011111111010011011011110010010001 (Observed 1 time)
+10110011010001001010001001111111101100001101111111100000101011110100110111000010010011101001000 (Observed 1 time)
+01000100011111111110111110010100100100110010111111101010011101010111101010010100100111100011000 (Observed 1 time)
+<br>
+There were 1000 unique system states observed in the experiment. This high number of unique states suggests a rich diversity in the quantum states explored by the system qubits. Each of the top ten system states was observed only once. Given the total of 1000 unique states, this means the top states make up only 1% of all the unique states observed. 
+<br>
+The diversity of the observed states in the system qubits indicates a high level of quantum coherence. In a coherent quantum system, qubits can exist in a superposition of many states, leading to a wide variety of possible outcomes upon measurement.
+<br>
+The broad distribution of system states suggests that the system qubits might be experiencing less pronounced decoherence compared to a scenario where a few states dominate (which would suggest a collapse into classical states).
+
+
+
+    
+
 </div>
-        <img src="E11image1.png" alt="" class="experiment-image">
+        <img src="E12image1.png" alt="" class="experiment-image">
         <p></p>
         <div class="content-block">
 
-RGB color values for each of the 25 blocks in the 5×5 grid, and binary results:
-Block (0,0): [126, 208, 255], 1
-Block (0,1): [114, 188, 231], 1
-Block (0,2): [106, 172, 210], 1
-Block (0,3): [104, 166, 202], 1
-Block (0,4): [126, 208, 255], 1
-Block (1,0): [119, 195, 239], 1
-Block (1,1): [57, 70, 77], 1
-Block (1,2): [49, 51, 52], 1
-Block (1,3): [84, 126, 150], 1
-Block (1,4): [118, 195, 240], 1
-Block (2,0): [118, 194, 238], 1
-Block (2,1): [43, 43, 44], 0
-Block (2,2): [71, 70, 70], 0
-Block (2,3): [97, 116, 127], 1
-Block (2,4): [115, 189, 232], 1
-Block (3,0): [126, 208, 255], 1
-Block (3,1): [79, 105, 120], 1
-Block (3,2): [110, 123, 131], 1
-Block (3,3): [91, 139, 167], 1
-Block (3,4): [102, 170, 202], 1
-Block (4,0): [126, 208, 255], 1
-Block (4,1): [86, 142, 174], 1
-Block (4,2): [105, 173, 212], 1
-Block (4,3): [53, 87, 107], 1
-Block (4,4): [96, 158, 189], 0
+Menger Sponge fractal:
+Above is a Menger Sponge fractal with an applied color gradient for normalized positions. The X, Y, and Z axes represent the fractal's dimensions, with the color gradient adding a visual cue to the depth and complexity of the structure.
+Each part of the fractal represents different states or stages in the quantum collapse process. 
+<br>
+3D Quantum Interaction Network:
+Also above is a 3D Quantum Interaction Network using the results data. Each node (point in 3D space) represents a quantum state, with its position corresponding to state index and frequency. The links or edges between nodes symbolize transitions between states. The thickness and color of the links represent the strength and probability of these interactions.
+<br>
+
+
+</div>
+        <img src="E12image2.png" alt="" class="experiment-image2">
+        <p></p>
+        <div class="content-block">
+
+Above is a 3D quantum harmonic oscillation visualization. Each oscillating element represents a quantum state, and its movement in 3D space illustrates the state's dynamic behavior over time. The amplitude and frequency of oscillation represents the quantum properties probability, amplitude, and energy levels. The color and size of each oscillating element can vary based on frequency of occurrence or a specific quantum metric.
 <br>
 
 
 
 
-
 </div>
-        <img src="E11image2.png" alt="" class="experiment-image2">
+        <img src="E12image3.png" alt="" class="experiment-image3">
         <p></p>
         <div class="content-block">
 
-Segment-Wise RGB Intensity Heatmap (top):
-There are three heatmaps here, one for each RGB channel. Each heatmap shows the intensity of the respective color channel across the 5x5 grid segments. Brighter areas indicate higher intensity in that segment, while darker areas indicate lower intensity.
+Above is a 3D quantum tunneling representation rendered from our experiment data. Lines or paths connect different quantum states, representing transitions between these states. The curvature of the paths visualizes the transition process. The color intensity of each path, using the Viridis colormap, represents the probability or frequency of transitions. Darker colors indicate more frequent transitions.
 <br>
-RGB Channel Correlation Heatmap (bottom):
-This heatmap displays the correlation coefficients between the red, green, and blue channels. The values range from -1 to 1, where 1 indicates a perfect positive correlation, -1 indicates a perfect negative correlation, and 0 means no correlation. This visualization helps in understanding how the different color channels are related to each other in terms of their intensities.
-
-</div>
-        <img src="E11image3.png" alt="" class="experiment-image3">
-        <p></p>
-        <div class="content-block">
-
-The line chart above has separate lines for each RGB channel's average intensity per segment. This visualization allows us to compare the intensity levels of red, green, and blue channels across the different segments of the image, providing insights into the balance and dominance of colors in different areas. ​​
-<br>
-In the end, this experiment provides a novel look into how quantum computing can be harnessed for tasks like image processing, highlighting the probabilistic nature of quantum measurements and the need for integrating quantum and classical methods for practical applications.
+In the end, a 100-qubit quantum circuit was designed and executed to capture the behavior of quantum entanglement on a large scale. We learned that the quantum circuit, initialized with both ancilla and system qubits in the |0⟩ state, demonstrates distinct behaviors between these two sets of qubits. The ancilla qubits, used here for indirect measurements, showed a higher frequency of certain states, indicating their stable and consistent role in the quantum circuit. In contrast, the system qubits exhibited a rich diversity of states, suggesting complex quantum dynamics and a higher degree of quantum coherence in this system.
 
 
 
@@ -217,143 +240,88 @@ In the end, this experiment provides a novel look into how quantum computing can
     
         
         <p>Code:<br>
-            <p><pre><code># Importing necessary libraries
-import cv2
-import numpy as np
-import matplotlib.pyplot as plt
-from qiskit import QuantumCircuit, Aer, execute, IBMQ
-from qiskit.visualization import plot_histogram
-from qiskit.quantum_info import Statevector
-from qiskit.providers.ibmq import least_busy
-from qiskit. tools.monitor import job_monitor
-from qiskit.ignis.mitigation.measurement import (complete_meas_cal, CompleteMeasFitter)
+            <p><pre><code># Imports
 import json
+from datetime import datetime
+from qiskit import QuantumCircuit, execute, transpile, IBMQ
+from qiskit.visualization import plot_histogram
+from qiskit_ibm_provider import IBMProvider
+import matplotlib.pyplot as plt
 
-# Function to encode RGB values into quantum statevectors
-def encode_rgb_to_statevector(red, green, blue):
-    normalized_red = red / 255.0
-    normalized_green = green / 255.0
-    normalized_blue = blue / 255.0
+# Enter your IBMQ API key here
+ibm_api_key = 'Your_API_Key_Mfer'
+provider = IBMProvider(ibm_api_key)
 
-    qc = QuantumCircuit(3)
-    qc.rx(2 * np.pi * normalized_red, 0)   # Encode red intensity
-    qc.ry(2 * np.pi * normalized_green, 1) # Encode green intensity
-    qc.rz(2 * np.pi * normalized_blue, 2)  # Encode blue intensity
+# backend name
+backend = provider.get_backend('ibm_osaka')  
 
-    return Statevector.from_instruction(qc)
+# Define the quantum circuit for 100 qubits
+num_qubits = 100
+ancilla_qubits = [0, 1, 2, 3, 4]  # Ancilla qubits
+system_qubits = list(range(5, num_qubits))  # System qubits
+circuit = QuantumCircuit(num_qubits, num_qubits)  # Add classical bits for measurement
 
-# Selecting a quantum provider and backend
-IBMQ. save_account('Your_IBM_Accout_Mfer', overwrite=True)
-IBMQ.load_account()
-provider = IBMQ.get_provider(hub='ibm-q')
-backend = provider.get_backend('ibm_osaka')
-print("Using backend: ", backend)
+# Function to create a complex entangled state
+def create_complex_entangled_state(circuit, num_qubits):
+    for qubit in range(num_qubits):
+        circuit.h(qubit)
+    for qubit in range(num_qubits - 1):
+        circuit. cx(qubit, qubit + 1)
 
-# Loading and processing an image
-image_path = "C:\\Users\\Pictures\\Blue mfer.jpg"
-original_image = cv2.imread(image_path)
-original_image_rgb = cv2.cvtColor(original_image, cv2.COLOR_BGR2RGB)
+# Function for Ancilla-Assisted Measurements
+def ancilla_assisted_measurement(circuit, ancilla_qubits, system_qubits):
+    for ancilla, system in zip(ancilla_qubits, system_qubits):
+        circuit. cx(system, ancilla)
 
-# Setting parameters for image processing
-grid_size = 5
-block_size = 1
+# Initialize the complex entangled state
+create_complex_entangled_state(circuit, num_qubits)
 
-resized_image = cv2.resize(original_image_rgb, (grid_size, grid_size), interpolation=cv2.INTER_AREA)
+# Apply Ancilla-Assisted Measurements
+ancilla_assisted_measurement(circuit, ancilla_qubits, system_qubits)
 
-# Initializing lists to store average colors and measurement results
-avg_colors = []
-measurement_results = []
+# Measure the ancilla qubits
+circuit.measure(ancilla_qubits, list(range(len(ancilla_qubits))))
 
-# Setting up calibration circuits for measurement error mitigation
-cal_circuits, state_labels = complete_meas_cal(qr=QuantumCircuit(3).qregs[0], circlabel='measerrormitigationcal')
-cal_jobs = execute(cal_circuits, backend=backend, shots=5)
-job_monitor(cal_jobs)
-cal_results = cal_jobs.result()
-meas_fitter = CompleteMeasFitter(cal_results, state_labels)
+# Add measurements to all system qubits
+circuit.measure(system_qubits, list(range(len(ancilla_qubits), num_qubits)))
 
-# Processing each pixel of the resized image
-for i in range(grid_size):
-    for j in range(grid_size):
-        color = resized_image[i, j]
-        avg_colors.append(color)  # Storing the color of each pixel
-        statevector = encode_rgb_to_statevector(color[0], color[1], color[2])
-        qc = QuantumCircuit(3)
-        qc.initialize(statevector. data, [0, 1, 2])
-        qc.measure_all()
-        job = execute(qc, backend=backend, shots=5)
-        job_monitor(job)
-        result = job.result()
-        counts = result.get_counts(qc)
-        measurement_results.append(1 if '1' in max(counts, key=counts.get) else 0)
+# Execute the circuit on the quantum computer
+transpiled_circuit = transpile(circuit, backend)
+job = execute(transpiled_circuit, backend, shots=1000)
+result = job.result()
 
-# Reconstructing the image based on measurement results
-reconstructed_image = np.zeros((grid_size * block_size, grid_size * block_size, 3), dtype=np.uint8)
-for i in range(grid_size):
-    for j in range(grid_size):
-        idx = i * grid_size + j
-        if measurement_results[idx]:
-            reconstructed_image[i*block_size:(i+1)*block_size, j*block_size:(j+1)*block_size] = np.array(avg_colors[idx], dtype=np.uint8)
-        else:
-            print(f"Grid Cell [{i},{j}] is set to black due to measurement result 0.")
+# Function to handle complex numbers and datetime objects for JSON serialization
+def complex_to_json(obj):
+    if isinstance(obj, complex):
+        return {"real": obj.real, "imag": obj.imag}
+    if isinstance(obj, datetime):
+        return obj.isoformat()  # Convert datetime objects to ISO format
+    raise TypeError(f"Object of type {obj.__class__.__name__} is not JSON serializable")
 
-# Function to interpolate black pixels in the image
-def interpolate_black_pixels(image):
-    height, width, _ = image.shape
-    for i in range(height):
-        for j in range(width):
-            if np.all(image[i, j] == 0):  # If the pixel is black
-                neighboring_colors = []
-                for di in range(-1, 2):
-                    for dj in range(-1, 2):
-                        ni, nj = i + di, j + dj
-                        if 0 <= ni < height and 0 <= nj < width and not (di == 0 and dj == 0):
-                            if not np.all(image[ni, nj] == 0):
-                                neighboring_colors.append(image[ni, nj])
-                if neighboring_colors:
-                    image[i, j] = np.mean(neighboring_colors, axis=0)
-    return image
-
-# Applying the interpolation function
-interpolated_reconstructed_image = interpolate_black_pixels(reconstructed_image.copy())
-
-# Plotting the original, pixelated, and reconstructed images
-fig, axs = plt.subplots(1, 3, figsize=(15, 5))
-
-axs[0].imshow(original_image_rgb)
-axs[0].set_title('Original Image')
-axs[0].axis('off')
-
-axs[1].imshow(resized_image)
-axs[1].set_title('Pixelated Image')
-axs[1].axis('off')
-
-axs[2].imshow(interpolated_reconstructed_image)
-axs[2].set_title('Reconstructed Image')
-axs[2].axis('off')
-
-plt.tight_layout()
+# Display histogram of the results
+plot_histogram(result.get_counts(circuit))
 plt. show()
 
-# Convert avg_colors to a list of lists (from a list of NumPy arrays)
-avg_colors_list = [color.tolist() for color in avg_colors]
-
-# Update the data to save
-data_to_save = {
-    'average_colors': avg_colors_list,
-    'measurement_results': measurement_results
+# Prepare data for JSON serialization
+data = {
+    "raw_counts": result.get_counts(circuit),
+    "backend_properties": backend. properties().to_dict()
 }
 
-# Save the results to a JSON file
-json_path = "C:\\Users\\Desktop\\127_5x5_quantum_image_processing_results.json"
-with open(json_path, 'w') as json_file:
-    json.dump(data_to_save, json_file, indent=4)
+# Specified path for saving the results
+json_path = 'c:\\Users\\Desktop\\100_Macro_State_Collapse_results.json'
+
+# Serialize and save the data to a JSON file
+with open(json_path, "w") as f:
+    json.dump(data, f, default=complex_to_json)
+
 print(f"Results saved to {json_path}")
 
 </code></pre>
 </p>
             
  </div>
-        <img src="E11image4.png" alt="" class="experiment-image4">
+        <img src="E12image4.png" alt="" class="experiment-image4">
         
            
             
