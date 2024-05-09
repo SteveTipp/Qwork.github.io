@@ -337,7 +337,8 @@ def batch_train_qnn(data, labels, qnn, backend, iterations=2, batch_size=10):  #
 
         # Record quantum state of first training data point 
         if backend. name == 'statevector_simulator' and it % 2 == 0:
-            sv = execute(encode_data_into_qubit(training_data[0]).compose(qnn.assign_parameters(params)), Aer.get_backend('statevector_simulator')).result().get_statevector()
+            sv = execute(encode_data_into_qubit(training_data[0]).compose(qnn.assign_parameters(params)), 
+            Aer.get_backend('statevector_simulator')).result().get_statevector()
             quantum_states.append(sv.tolist())
 
     return params, training_losses, validation_losses, quantum_states
@@ -345,7 +346,8 @@ def batch_train_qnn(data, labels, qnn, backend, iterations=2, batch_size=10):  #
 # Training and analysis
 data, labels = generate_data(50)  # Generate a smaller dataset for this training session
 qnn = create_efficient_qnn(1)  # Using a single qubit for this example
-optimized_params, training_losses, validation_losses, quantum_states = batch_train_qnn(data, labels, qnn, backend, iterations=2, batch_size=10)  # Adapted for 40 total runs
+optimized_params, training_losses, validation_losses, quantum_states = 
+batch_train_qnn(data, labels, qnn, backend, iterations=2, batch_size=10)  # Adapted for 40 total runs
 
 # serialization of results for complex numbers
 def complex_encoder(z):
