@@ -45,26 +45,26 @@
             border: 1px solid #00FF00; /* Matrix green border */
         }
         .experiment-image {
-            width: 950px; /* Updated width */
-            height: 858px; /* Updated height */
+            width: 1200px; /* Updated width */
+            height: 904px; /* Updated height */
             margin: 20px auto;
             display: block;
         }
         .experiment-image2 {
-            width: 1176px; /* Updated width */
-            height: 1200px; /* Updated height */
+            width: 1200px; /* Updated width */
+            height: 999px; /* Updated height */
             margin: 20px auto;
             display: block;
         }
          .experiment-image3 {
-            width: 985px; /* Updated width */
-            height:  815px; /* Updated height */
+            width: 1199px; /* Updated width */
+            height:  842px; /* Updated height */
             margin: 20px auto;
             display: block;
         }
         .experiment-image4 {
             width: 1200px; /* Updated width */
-            height: 776px; /* Updated height */
+            height: 779px; /* Updated height */
             margin: 20px auto;
             display: block;
         }
@@ -97,309 +97,232 @@
     </nav>
 
     <section class="content-section">
-        <h1><center>A Quantum Walk On IBM's 127-Qubit Quantum Computer Osaka</center></h1>
+        <h1><center>Exploring abstract Electron-Positron Annihilation on IBM's 127-Qubit Quantum Computer Osaka</center></h1>
         <div class="content-block">
          
           
 
-<p>This experiment aims to execute a discrete-time quantum walk on IBM's 127-Qubit Quantum Computer Osaka, utilizing Qiskit and a series of quantum gates to create the walk over a predefined number of steps. A quantum walk is the quantum mechanical counterpart of a classical random walk, set by the quantum superposition of all possible paths. It includes a 'coin' qubit for determining movement direction and multiple position qubits to represent different locations. By applying conditional rotations and Hadamard gates, the walk introduces quantum interference, leading to a non-classical distribution of position probabilities. The experiment's outcome is visualized through the measurement of position qubits at each step.</p>
+<p>Leveraging quantum computing and Qiskit, particle interactions can be abstractly represented and studied, offering a novel way for exploring complex probabilistic phenomena in particle physics. Quantum computers harness superposition and entanglement properties of quantum bits (qubits) to simulate the dynamics of particle interactions more efficiently than classical computers. By encoding the states and interactions of particles into quantum circuits, we can simulate various scattering processes, decay channels, and particle production mechanisms. Quantum computers could enable the exploration quantum tunneling effects, strong and weak force interactions, and the behavior of particles in extreme conditions such as those encountered in high energy collisions.</p>
+<p>This experiment explores the abstract annihilation process of an electron-positron pair through quantum computing. Electrons and positrons, fundamental particles with opposite charges and identical masses, exhibit unique interactions when brought together. Upon collision, they can annihilate each other, leading to the creation of various particles, such as photons, neutrinos, or muons. This experiment aims to abstractly create the beginning of this process using a quantum circuit.  </p>
 
+
+            
 <p><strong>Code Walkthrough</strong><br>
 1. Initialization: <br>
-The quantum circuit is initialized with n position qubits and 1 coin qubit. The position qubits represent the possible positions of the quantum walker, and the coin qubit determines the direction of the walk (left or right). The coin qubit is placed in a superposition state using a Hadamard gate (H), enabling both movement directions simultaneously.
+We define a quantum circuit with two qubits, symbolizing the electron and positron states.
+Applying Hadamard gates (H) to both qubits, we establish superposition states, ensuring they exist in a coherent mixture of |0⟩ and |1⟩. The superposition state can be represented by the equation:
+<p><center>∣ψ⟩ = H∣0⟩ = 1/sqrt(2) * ​(∣0⟩ + ∣1⟩)</center><br>
+Applying this to both qubits, the initial state of the system is:
+<p><center>∣ψ_initial​⟩ = 1/sqrt(2) * ​(∣00⟩ + ∣01⟩ + ∣10⟩ + ∣11⟩)</center><br>
 
 
 
 
-<p>2. Quantum Walk Steps:<br>
-The quantum walk progresses through a series of steps, each involving a conditional operation based on the state of the coin qubit.
-A conditional rotation (CR_x​) is applied between the coin qubit and each position qubit. The rotation angle is π​/(2^(i + 1)) for the i-th position qubit, introducing a phase shift that depends on both the position and the coin's state.
-The Hadamard gate is applied again to the coin qubit after each set of conditional rotations, flipping the coin to ensure a mix of deterministic and probabilistic behavior in the walk.
+<p>2. Annihilation Gate:<br>
+We define a bespoke gate, the annihilation gate, designed to emulate the interaction between the electron and positron. The annihilation process is simulated by a custom gate sequence that includes a controlled-NOT (CNOT) gate, a Hadamard gate, a Pauli-X gate, and another CNOT gate. This sequence is designed to reflect the transformation of the electron-positron pair into another state, mimicking the annihilation process. The CNOT gate entangles the qubits, reflecting the interaction between the electron and positron.
+<br>
+The annihilation gate comprises a sequence of quantum operations:
+Implement a controlled-NOT (CNOT) gate, where the electron qubit serves as the control and the positron qubit as the target. Mathematically, this gate can be represented as:
+<p><center>CNOT =​ (1, 0, 0, 0, 0, 1, 0, 0, ​0, 0, 0, 1, ​0, 0, 1, 0​) - 4x4 matrix</center><br>
+Apply a Hadamard gate to the electron qubit to generate entanglement between the qubits. Mathematically, the Hadamard gate is represented as:
+<p><center>H = 1/sqrt(2) * (1, 1, ​1, −1​) - 2x2 matrix</center><br>
+Employ a Pauli-X gate (or NOT gate) to flip the state of the electron qubit from |0⟩ to |1⟩.
+Apply another CNOT gate, this time with the positron qubit as the control and the electron qubit as the target.
 
 
 
 
-
-<p>3. Measurement and Data Collection:<br>
-At each step of the walk, all position qubits are measured, collapsing their state to a classical outcome that represents the walker's position.
-The measurement outcomes are collected over 1024 iterations (shots) to build a probability distribution of the walker's position at each step.
-This data is used to observe the evolution of the quantum walk, highlighting the quantum interference patterns that differentiate it from classical random walks.
+<p>3. Measurement:<br>
+Conduct measurements on both qubits to get the final outcome of the annihilation process. The act of measurement collapses the quantum superposition into definitive classical states. 
 
 <p>4. Data Analysis: <br>
-The collected data is analyzed to visualize the probability distribution of the walker's positions over time. This distribution showcases the properties of quantum walks, such as faster spreading and non-locality, compared to classical random walks.
+Measurement counts, transpiled circuit, backend information, job ID, and execution status are saved to a JSON.  We also generate a histogram of the frequency of different outcomes for the annihilation process.
 
 
 
 
 
 <p><center> Results:</center><br>
-
+Using backend:  ibm_kyoto<br>
+{'10': 1625, '11': 485, '00': 383, '01': 1507}<br>
+Probability of '00': 9.575%<br>
+Probability of '01': 37.675%<br>
+Probability of '10': 40.625%<br>
+Probability of '11': 12.125%<br>
 
 </div>
-        <img src="E17image1.png" alt="" class="experiment-image">
+        <img src="E18image1.png" alt="" class="experiment-image">
         <p></p>
         <div class="content-block">
 
-The heatmap above visualizes how the probability distribution spreads and evolves, highlighting areas of higher probability (warmer reds) versus lower probability (cooler reds). This helps to capture the quantum walk's dynamics, showing the transition from an initial localized state to a more distributed probability pattern.
+Above is a Feynman-like Quantum Diagram (full code below) that is based on the run data. In this diagram, blue and red lines represent the paths of an incoming electron and positron. The point where these paths converge represents the interaction vertex. Green lines represent the possible outcomes (quantum states) of this interaction, with the opacity of each line corresponding to the relative number of counts for each outcome, serving as a proxy for the probability amplitude. The labels next to the green lines indicate the quantum state and the corresponding measurement count from the simulation data.
 
 <br>
-Central Position Dominance:
-At the initial step (step 0), there's a significant concentration of counts at the central position (00000), as expected. This indicates that the walker starts in a well defined position before the walk begins.
+Probabilistic Nature vs. Deterministic Outcomes: While the quantum simulation inherently exhibits a probabilistic nature due to measurement, real-world annihilation events under specific conditions can have deterministic outcomes (e.g. exactly two photons produced). The quantum simulation mirrors the underlying quantum mechanics governing these processes, emphasizing the role of probability amplitudes and non-determinism. The higher probabilities for '01' and '10' can be abstractly interpreted as the simulation's equivalent of the conservation laws in real collisions, indicating a balance between the possible states post annihilation.
 
 <br>
-Spread and Interference Patterns:
-Unlike a classical random walk that would show a Gaussian (bell curve) distribution of probabilities over time, the quantum walk demonstrates a more complex pattern of spread. As the steps progress, the distribution of counts spreads out from the central position, indicating the quantum walker exploring the space. Notably, the spread is not uniform; certain positions exhibit higher counts than others, suggesting interference patterns that are a hallmark of quantum walks. This interference results from the superposition of multiple paths that the walker can take.
+
+Symmetry and Quantum States: 
+The simulation outcomes show a notable symmetry in probabilities, with '01' and '10' being more probable than '00' and '11'. This reflects the superposition and entanglement of quantum states where certain states are more likely due to the quantum gates applied, resembling the balanced outcomes expected in particle annihilation where different states (photon directions, polarizations) are equally probable in a symmetric setup.
+            
+            
+            
 <br>
 
+Quantum Interference: 
+The variation in probabilities can also be attributed to quantum interference effects, where the amplitude for certain outcomes constructively or destructively interferes. This is akin to the way probabilities for different quantum paths contribute to the observed outcomes in physical processes.
+<br>         
 
+
+            
 </div>
-        <img src="E17image2.png" alt="" class="experiment-image2">
+        <img src="E18image2.png" alt="" class="experiment-image2">
         <p></p>
         <div class="content-block">
 
-The network analysis chart above presents the quantum walk state transition network, constructed from the results. In this network, nodes represent quantum states and directed edges indicate transitions between states, with edge weights reflecting the transition probabilities (averaged between steps). This reveals the dynamics and relationships between different states in the quantum walk. The nodes centrality, depicted by their color intensity, highlights the 'importance' or connectivity of each state within the network, suggesting how central or peripheral they are to the quantum walk's dynamics.
+The 3D Density Plot of Quantum State Distributions above offers a way to view the distribution of measurements across different quantum states. In this plot, each point represents a measurement, with points clustered around different locations in 3D space corresponding to each quantum cluster. The density of points in each cluster reflects the count of measurements for that state.
 <br>
 
-The network analysis chart above presents the quantum walk state transition network, constructed from the results. In this network, nodes represent quantum states and directed edges indicate transitions between states, with edge weights reflecting the transition probabilities (averaged between steps). This reveals the dynamics and relationships between different states in the quantum walk. The nodes centrality, depicted by their color intensity, highlights the 'importance' or connectivity of each state within the network, suggesting how central or peripheral they are to the quantum walk's dynamics.
 
-         
-<br>
-
-Superposition and Interference:
-The results reflect superposition where the walker simultaneously exists in multiple states (positions). The interference (constructive and destructive) is evident in the varying counts across different positions, influenced by the phase relationships between the superposed states.
-            
-            
-<br>
-
-            
-Symmetry:
-The quantum walk retains a form of symmetry around the initial position, which is consistent with the walker's equal probability of moving left or right at each step, modulated by quantum effects.
-            
-            
-            
-<br>
-
-Number of Communities Detected: 2
-This suggests the network partitions into two distinct clusters, indicating a possible division in the quantum state space explored by the walk.
-            
-            
-<br>
-Communities: 
-Each community represents a cluster of closely interconnected states. For space, only the first five states of each community are shown in the network analysis chart above, but they hint at underlying structures or patterns in how the quantum walk evolves across different segments of the state space.
-The presence of communities within the network might reflect coherent subspaces or regions of the state space that the quantum walk preferentially explores or transitions between.
-<br>
-
-Centrality:
-The centrality of nodes provides insights into which states play pivotal roles in the quantum walk's evolution, possibly indicating states with significant probabilities or those that act as hubs in state transitions.
-<br>
             
 
 
 
 </div>
-        <img src="E17image3.png" alt="" class="experiment-image3">
+        <img src="E18image3.png" alt="" class="experiment-image3">
         <p></p>
         <div class="content-block">
 
-The 3D visualization above represents the evolution of selected quantum state probabilities in a quantum walk, plotted over discrete time steps. This shows how probabilities for different states evolve. The surface plot's peaks and valleys indicate varying probabilities across states at each step, reflecting the quantum superposition. This behavior underscores the fundamental differences between quantum and classical walks, showing the unique ability of quantum systems to explore multiple paths simultaneously.
+The Particle Interaction Line Chart above captures the run probabilities of the simulated 'electron' and 'positron' interactions leading to various annihilation outcomes. This chart abstractly represents the electron and positron as distinct paths, with their interaction probabilities over time. 
 <br>
 
-In the end, this analysis and visualization provides a glimpse into the dynamics of quantum walks, demonstrating their non-classical behavior. The symmetry and spreading behavior underscore the quantum walk's utility in algorithms, leveraging superposition and interference. ​​
+In the end, the simulation offers an abstract representation of an electron-positron annihilation. The higher probabilities for '01' and '10' could be abstractly interpreted as the simulation's equivalent of the conservation laws in real collisions, indicating a balance between the possible states post annihilation.
             
             
             
 <br>
+This type of quantum computation, in more complex ways, could serve as a bridge between abstract quantum theory and tangible experimental phenomena. Illustrating probabilistic principles of quantum mechanics and their possible implications for understanding the probabilities of particle interactions.
 
-            
-A Small Sample Of Runs:<br>
-[<br>
-{<br>
-"step": 0,<br>
-"counts": {<br>
-"00100": 6,<br>
-"01000": 2,<br>
-"10000": 5,<br>
-"00001": 5,<br>
-"00000": 1002,<br>
-}<br>
-},<br>
-{<br>
-"step": 1,<br>
-"counts": {<br>
-"10010": 4,<br>
-"10001": 2,<br>
-"01001": 31,<br>
-"01100": 3,<br>
-"11001": 2,<br>
-}<br>
-},<br>
-{<br>
-"step": 2,<br>
-"counts": {<br>
-"11011": 16,<br>
-"10010": 27,<br>
-"01110": 36,<br>
-"11101": 34,<br>
-"11010": 29,<br>
-}<br>
-},<br>
-{<br>
-"step": 3,<br>
-"counts": {<br>
-"01100": 65,<br>
-"00001": 22,<br>
-"10110": 39,<br>
-"11111": 33,<br>
-"10011": 20,<br>
-}<br>
-},<br>
-{<br>
-"step": 4,<br>
-"counts": {<br>
-"00110": 21,<br>
-"11010": 21,<br>
-"10011": 23,<br>
-"00101": 29,<br>
-"01000": 43,<br>
-}<br>
-},<br>
-{<br>
-"step": 5,<br>
-"counts": {<br>
-"00001": 25,<br>
-"00011": 32,<br>
-"11011": 34,<br>
-"01110": 12,<br>
-"10110": 48,<br>
-}<br>
-},<br>
-{<br>
-"step": 6,<br>
-"counts": {<br>
-"00101": 37,<br>
-"10010": 19,<br>
-"01011": 28,<br>
-"01000": 38,<br>
-"10000": 34,<br>
-}<br>
-},<br>
-{<br>
-"step": 7,<br>
-"counts": {<br>
-"11101": 39,<br>
-"01111": 28,<br>
-"00111": 32,<br>
-"01101": 28,<br>
-"11011": 28,<br>
-}<br>
-},<br>
-{<br>
-"step": 8,<br>
-"counts": {<br>
-"01011": 33,<br>
-"00101": 52,<br>
-"01001": 40,<br>
-"11010": 32,<br>
-"00001": 30,<br>
-}<br>
-},<br>
-{<br>
-"step": 9,<br>
-"counts": {<br>
-"11100": 32,<br>
-"00111": 40,<br>
-"11110": 22,<br>
-"00011": 30,<br>
-"01101": 33,<br>
-}<br>
-},<br>
-{<br>
-"step": 10,<br>
-"counts": {<br>
-"10010": 20,<br>
-"00101": 29,<br>
-"00100": 36,<br>
-"01101": 38,<br>
-"11100": 43,<br>
-}<br>
-}<br>
-]    <br>        
-            
- 
+<br> 
+
 
 
 </div>            
     
         
         <p>Code:<br>
-            <p><pre><code># Imports
-from qiskit import IBMQ, QuantumCircuit, transpile, execute
+            <p><pre><code># imports
+from qiskit import QuantumCircuit, Aer, transpile, IBMQ, execute
 from qiskit.visualization import plot_histogram
-import numpy as np
 import json
+from datetime import datetime
+import matplotlib.pyplot as plt
 
-# IBM account setup
-IBMQ. save_account('Your_IBM_Key_O-', overwrite=True)  
+# IBM Quantum api and backend
+IBMQ. save_account('Your_IBM_Key_O-', overwrite=True)
 IBMQ.load_account()
 provider = IBMQ.get_provider(hub='ibm-q')
-backend = provider.get_backend('ibm_osaka')  
+backend = provider.get_backend('ibm_kyoto')  # Adjust to your specific backend
 print("Using backend: ", backend. name())
 
-# Parameters
-num_position_qubits = 5  # Number of qubits for position (allowing for 32 positions)
-num_steps = 10  # Number of steps in the quantum walk
-shots = 1024  # Number of shots for each measurement
+# Gate for annihilation process
+def annihilation_gate(qc, electron_qubit, positron_qubit):
+    qc. cx(electron_qubit, positron_qubit)
+    qc.h(electron_qubit)
+    qc.x(electron_qubit)
+    qc. cx(positron_qubit, electron_qubit)
 
-# Function to add quantum walk steps to the circuit
-def add_quantum_walk_step(qc, num_position_qubits):
-    for pos in range(num_position_qubits):
-        qc.crx(np.pi/2**(pos+1), num_position_qubits, pos)  # Conditional rotation
-    qc.h(num_position_qubits)  # Flip the coin at each step
+# Initialize a Quantum Circuit with 2 qubits (representing electron and positron)
+qc = QuantumCircuit(2)
 
-data_for_visualization = []
+# Apply gates to represent the initial states of the electron and positron
+qc.h(0)
+qc.h(1)
 
-# Execute each step separately and measure
-for step in range(num_steps + 1):
-    qc = QuantumCircuit(num_position_qubits + 1, num_position_qubits)  # Plus one for the coin qubit, plus measurement bits
-    qc.h(num_position_qubits)  # Initialize the coin in a superposition state
-    
-    for _ in range(step):
-        add_quantum_walk_step(qc, num_position_qubits)
-    
-    # Add measurement operation to all position qubits
-    qc.measure(range(num_position_qubits), range(num_position_qubits))
-    
-    # Transpile for the backend
-    transpiled_qc = transpile(qc, backend=backend, optimization_level=3)
-    
-    # Execute the circuit on backend
-    job = execute(transpiled_qc, backend, shots=shots)
-    result = job.result()
-    counts = result.get_counts(qc)
-    
-    # Save step and counts
-    data_for_visualization.append({
-        'step': step,
-        'counts': counts
-    })
+# Apply custom annihilation gate
+annihilation_gate(qc, 0, 1)
 
-# Prepare the data for JSON 
-data_for_visualization = [{
-    'step': entry['step'],
-    'counts': entry['counts']
-} for entry in data_for_visualization]
+# Measure the qubits to observe the outcome
+qc.measure_all()
 
-json_filename = "/Users/Documents/Quantum_Walk_Result.json"
-with open(json_filename, 'w') as f:
-    json.dump(data_for_visualization, f, indent=4)
+# Transpile the circuit for the ibm_kyoto 
+transpiled_qc = transpile(qc, backend)
 
-print(f"Data for each step saved to {json_filename}."
+# Execute the circuit on the ibm_kyoto 
+job = execute(transpiled_qc, backend)
+result = job.result()
+counts = result.get_counts(transpiled_qc)
+print(counts)
 
-</code></pre>
-</p>
-            
- </div>
-        <img src="E17image4.png" alt="" class="experiment-image4">
+# Save relevant data to a JSON file
+data = {
+    'measurement_counts': counts,
+    'circuit_transpiled': transpiled_qc.qasm(),
+    'backend': backend. name(),
+    'backend_properties': backend. properties().to_dict(),
+    'job_id': job.job_id(),
+    'status': job.status(),
+    'result_data': result. to_dict(),
+    'execution_date': datetime. now().strftime("%Y-%m-%d %H:%M:%S")
+}
+output_file = '/Users/Documents/ElectronPositronAnnihilation.json'
+with open(output_file, 'w') as f:
+    json.dump(data, f, indent=4, default=str)
+
+# Display histogram of measurement results with counts
+plot_histogram(counts, title='Measurement Results', bar_labels=True)
+plt. show() 
+
+# Feynman-like Diagram from Run Result Code
+# imports
+import json
+import matplotlib.pyplot as plt
+import numpy as np
+
+# Load measurement counts from JSON 
+with open('/Users/Documents/ElectronPositronAnnihilation.json', 'r') as file:
+    measurement_counts = json.load(file)
+
+# Define the figure for the Feynman-like diagram
+fig, ax = plt.subplots(figsize=(8, 6))
+ax.axis('off')  # Remove the axis as they are not needed
+ax.set_xlim([0, 4])
+ax.set_ylim([0, 4])
+
+# Define positions for the particles and vertices in the diagram
+electron_position = (1, 3)
+positron_position = (1, 1)
+interaction_vertex = (2, 2)
+outcomes_positions = {
+    '00': (3, 3),
+    '01': (3, 2.5),
+    '10': (3, 1.5),
+    '11': (3, 1)
+}
+
+# Draw electron and positron lines to the interaction vertex
+ax.annotate('', xy=interaction_vertex, xytext=electron_position,
+            arrowprops=dict(facecolor='blue', shrink=0, width=2, headwidth=8))
+ax.annotate('', xy=interaction_vertex, xytext=positron_position,
+            arrowprops=dict(facecolor='red', shrink=0, width=2, headwidth=8))
+
+# Label the electron and positron
+ax.text(*electron_position, 'Electron (e-)', ha='right', va='center', fontsize=12, color='white')
+ax.text(*positron_position, 'Positron (e+)', ha='right', va='center', fontsize=12, color='white')
+
+# Draw outcome lines and label them, using the counts as probability amplitudes
+for state, position in outcomes_positions.items():
+    opacity = measurement_counts[state] / max(measurement_counts.values())  # Opacity based on relative count
+    ax.annotate('', xy=position, xytext=interaction_vertex,
+                arrowprops=dict(facecolor='green', alpha=opacity, shrink=0, width=2, headwidth=8))
+    ax.text(*position, f'{state}: {measurement_counts[state]}', ha='left', va='center', fontsize=10, color='white')
+
+# bg color
+fig.patch.set_facecolor('black')
+ax.set_facecolor('black')
+
+# Display the Feynman-like diagram
+plt. show()
         
            
             
