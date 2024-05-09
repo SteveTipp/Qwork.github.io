@@ -46,25 +46,25 @@
         }
         .experiment-image {
             width: 1200px; /* Updated width */
-            height: 816px; /* Updated height */
+            height: 597px; /* Updated height */
             margin: 20px auto;
             display: block;
         }
         .experiment-image2 {
             width: 1199px; /* Updated width */
-            height: 460px; /* Updated height */
+            height: 1200px; /* Updated height */
             margin: 20px auto;
             display: block;
         }
          .experiment-image3 {
-            width: 1200px; /* Updated width */
-            height:  323px; /* Updated height */
+            width: 1199px; /* Updated width */
+            height: 1028px; /* Updated height */
             margin: 20px auto;
             display: block;
         }
         .experiment-image4 {
-            width: 1200px; /* Updated width */
-            height: 778px; /* Updated height */
+            width: 1199px; /* Updated width */
+            height: 774px; /* Updated height */
             margin: 20px auto;
             display: block;
         }
@@ -97,94 +97,81 @@
     </nav>
 
     <section class="content-section">
-        <h1><center>Reducing Entropy Through Quantum Teleportation On IBM's 127-Qubit Quantum Computer Osaka</center></h1>
+        <h1><center>Using Quantum Cryptography to Create a Secure Bitcoin Key on IBM's 127-Qubit Quantum Computer Osaka</center></h1>
         <div class="content-block">
          
           
 
-<p>This experiment aims to explore the concepts presented in my thought experiment "Entropy's Observer" by implementing quantum teleportation using qiskiton IBM's 127-Qubit Quantum Computer Osaka. Quantum teleportation allows the state of a qubit to be transmitted from one location to another, without physical transfer of the particle itself. This process involves creating a Bell pair, preparing an initial state to be teleported, performing Bell state measurements, and applying appropriate corrections based on the measurement outcomes. The experiment examines how quantum information's transmission and observation can be conceptualized within the framework of entropy and observation scale.</p>
+<p>This experiment uses quantum computing to generate a secure cryptographic key, then we convert this quantum-generated key into a format compatible with Bitcoin's cryptographic system. This process utilizes the inherent randomness of quantum mechanics through superposition and measurement of qubits. The experiment is conducted on IBM's 127-qubit quantum computer Osaka, utilizing Qiskit. After generating a binary key from quantum measurements, the key undergoes post-processing to convert it into a hexadecimal format, and finally into a Wallet Import Format (WIF) key for potential use in Bitcoin transactions. This experiment shows how quantum computing can enhance cryptography, providing a true increase in randomness and thus entropy in a system.</p>
 
 <p><strong>Code Walkthrough</strong><br>
-1. Quantum Circuit Initialization:<br>
-Utilizing Qiskit, we first load the IBMQ account and select a quantum backend for the experiment.
+1. Quantum Circuit Configuration:<br>
+127 qubits are initialized in their default state, |0⟩.
+A Hadamard gate (H) is applied to each qubit. The Hadamard gate transforms the qubit into a superposition state, expressed as: 
+<p><center>H∣0⟩ = 1/sqrt(2) * ​(∣0⟩ + ∣1⟩)</center><br>
+This state implies that upon measurement, the qubit has an equal probability of being observed as |0⟩ or |1⟩, embodying quantum randomness.
+
+
+
+<p>2. Binary Key Generation:<br>
+Two runs of the quantum circuit are executed to generate two 127-bit strings. An additional "11" is appended to these strings to reach a 256-bit binary key, aligning with the standard length of a Bitcoin private key.
 
 
 
 
-<p>2. Creating a Bell Pair:<br>
-A Bell pair is created to facilitate quantum teleportation. The process involves two qubits:
-Apply a Hadamard gate H on qubit q_1. This transforms the qubit into a superposition state: 
-<p><center>1/sqrt(2) * (∣0⟩ + ∣1⟩)</center><br>
-<br>
-Apply a CNOT gate CX with q_1 as control and q_2 as target. This entangles the two qubits, resulting in the Bell state:
-<p><center>1/sqrt(2) * (∣00⟩ + ∣11⟩)</center><br>
+
+<p>3. Binary to Hexadecimal Conversion:<br>
+The 256-bit binary key is converted to a hexadecimal format using the binary to hexadecimal conversion principle, where each group of four binary digits corresponds to a single hexadecimal digit. This conversion is essential for the subsequent processing steps and aligns with common cryptographic keys.
 
 
-
-
-<p>3. Teleporting a Qubit: <br>
-The qubit's state ∣ψ⟩ to be teleported is entangled with one of the qubits in the Bell pair. The process involves:
-Applying a CNOT gate CX from the source qubit src to the intermediate qubit inter, followed by an H gate on src. 
-Measuring src and inter, collapsing their states, and sending the results to the target location.
-Based on the measurement, conditional operations (a CNOT and a CZ gate) are applied to the target qubit trg, completing the teleportation.
-
-
-<p>4. Measurement and Results: <br>
-The final step involves measuring the state of the teleported qubit and analyzing the outcomes. The experiment measures how accurately the initial qubit's state is reproduced at the target location, reflecting on quantum information's fidelity during teleportation.
+<p>4. Hexadecimal Key to Wallet Import Format (WIF) Conversion:<br>
+The hexadecimal key is prefixed with '80', indicating a private key for the Bitcoin mainnet.
+The extended key undergoes two rounds of SHA-256 hashing, a cryptographic hash function producing a 256-bit output. This step enhances the security of the key.
+The first four bytes of the second SHA-256 hash serve as a checksum, ensuring the integrity of the key during transmission or storage.
+The original extended key, now with the checksum appended, is encoded using Base58. Unlike Base64, Base58 encoding avoids similar-looking characters, reducing the risk of key misinterpretation. The result is the private key in WIF, which is more user-friendly and compatible with Bitcoin wallets.
 
 
 
 
 
 <p><center> Results:</center><br>
-
+Using backend:  ibm_osaka
+Job Status: job has successfully run
+Job Status: job has successfully run
+Generated Quantum Key (Binary): 0001100011100010000010011111000110000100101100001111110110110001000111100000100111010101101100010101101001001110101110110100011111111101001001101111000001101111101110111100010010101000101010010011001001011010001001011110010001100001111110111100110010110111
+Generated Quantum Key (Hex): 18e209f184b0fdb11e09d5b15a4ebb47fd26f06fbbc4a8a9325a25e461fbccb7
+Generated Bitcoin Key (WIF): 5J1FBbKoyTQZCjJqYYBsYRXWRBeuVrgzNogsRTC7Ft1rH2mZtwK
 
 </div>
-        <img src="E14image1.png" alt="" class="experiment-image">
+        <img src="E15image1.png" alt="" class="experiment-image">
         <p></p>
         <div class="content-block">
 
-The total counts for each distance are consistent, with 1024 measurements made in each case.
+The chart above visualizes the frequency of 0's and 1's across the bit positions from the results of the quantum computing runs. It shows the distribution of measurement outcomes for each bit position, highlighting how often each bit was measured as 0 (in skyblue) or 1 (in orange) across all shots. 
 
 <br>
-The fidelity of teleportation, which can be inferred by the proportion of '00' outcomes (indicating successful teleportation) relative to the total counts, is quite high:
-Distance 1: 99.22%
-Distance 2: 98.05%
-Distance 3: 99.41%
+Symmetry and Imbalance: 
+While some bit positions exhibit a near-symmetrical distribution between 0's and 1's, indicating unbiased quantum behavior, others show marked imbalances. This could be indicative of systematic errors, environmental noise affecting the qubits, or inherent biases in the quantum hardware.
 <br>
-The '00' outcome (indicating successful teleportation) is the most frequent across all distances, which aligns with the high fidelities calculated. The distribution of outcomes is relatively consistent across distances, which suggests that the teleportation protocol's performance is stable over these variations.
-<br>
+Quantum Randomness: 
+The spread of frequencies across bit positions illustrates the quantum randomness in generating each bit of the key. Ideally, in a perfectly balanced and noise-free system, we would expect to see a 50-50 distribution of 0's and 1's across all bit positions.<br>
 The ratio of '01' and '10' results to '00' results provides insight into the error rates during teleportation:
 <br>
-For Distance 1, we have a '01' to '00' ratio of about 0.0079 and no '10' errors.
-For Distance 2, the '01' to '00' ratio is about 0.0070, and the '10' to '00' ratio is 0.0130.
-For Distance 3, the '01' to '00' ratio decreases to approximately 0.0020, and the '10' to '00' ratio is 0.0039.
+Specific Imbalances: 
+Certain positions show significant deviation from the expected balance. For instance, position 26 shows a highly imbalanced ratio, favoring the outcome of 1's. This could be particularly interesting for further analysis to determine if specific qubits or positions consistently show such biases across multiple runs, which might indicate potential areas for hardware calibration or algorithmic adjustments.
 <br>   
-The lower ratios of '01' and '10' to '00' in Distance 3 compared to Distance 2 suggest an improved error rate, which could indicate better control or correction mechanisms in place.
-<br> 
-These high fidelity rates are indicative of effective quantum teleportation with a robust protocol, as errors ('01' and '10' states) are significantly lower compared to the successful teleportation outcomes ('00' state).
 
 
 
 
 </div>
-        <img src="E14image2.png" alt="" class="experiment-image2">
+        <img src="E15image2.png" alt="" class="experiment-image2">
         <p></p>
         <div class="content-block">
 
-The visualization above demonstrates the Evolution of Entanglement Strength Over Time, captured in three stages:
+The 3D scatter plot above visualizes a subset of the quantum measurement frequencies, focusing on  bit positions and scaled-down binary key values to manage computational complexity. Each point in the plot represents a specific quantum state's occurrence frequency, with its position along the x-axis indicating the bit position, the y-axis showing a reduced scale representation of the binary key, and the z-axis depicting the frequency of that state's occurrence.
 <br>
-Initial: 
-Before any observation, showcasing a quantum system where qubits exhibit varying degrees of entanglement with each other, represented by the strengths in the heatmap. This represents the system's high entropy state, with maximum uncertainty from the observer's perspective.
-<br>
-Post Macroscopic Observation: 
-After a macroscopic observer has interacted with the system, providing a coarse-grained measurement. Here, the entanglement strengths are slightly altered, reflecting the observer's limited impact on collapsing the system's wave function. The system still retains a relatively high entropy state, but with some macroscopic properties becoming more defined.
-<br>
-Post Microscopic Observation: 
-Following measurements by a microscopic observer, capable of resolving the state of each qubit individually. This results in a significant reduction in entanglement strengths across the system, as the fine-grained observations collapse the superpositions to definite states, thereby reducing the system's entropy and resolving quantum uncertainty at the microscopic level.
-<br>
-This visualization captures the conceptual narrative of how the scale and nature of observation - macroscopic versus microscopic - might influence the entropy of a quantum system and the definiteness of its outcomes. It visually interprets the theoretical journey from a high-entropy quantum superposition to a lower-entropy state with well-defined outcomes, highlighting the role of entanglement and coherence in this transition.
-<br>
+
 
 
 
@@ -193,32 +180,13 @@ This visualization captures the conceptual narrative of how the scale and nature
 
 
 </div>
-        <img src="E14image3.png" alt="" class="experiment-image3">
+        <img src="E15image3.png" alt="" class="experiment-image3">
         <p></p>
         <div class="content-block">
 
-Above are 3D contour plots of the experiment data:
+The heatmap above visualizes the entanglement entropy across the quantum computing job's bit positions, using frequency differences between 0's and 1's. The color map illustrates frequency difference, with darker colors indicating smaller differences, suggesting higher uniformity or entanglement, and lighter colors indicating larger differences, suggesting less entanglement. The x and y axes represent adjusted qubit positions and groups, respectively, organized to fit all 127 bit positions into a nearly square matrix for visualization purposes.
 <br>
-'00' Outcomes Contour Plot:
-This plot represents the count of '00' outcomes (indicating successful teleportation) as a function of both distance and qubit index. The varying heights and colors show how the success rates may change across different distances and qubits.<br>
-<br>
-'01' Outcomes Contour Plot:
-This plot shows the counts of '01' outcomes (a type of error) across distances and qubits. Given that these values are simulated to be lower, the contour levels are less pronounced, indicating fewer error occurrences.
-<br>
-'10' Outcomes Contour Plot:
-This plot depicts the '10' outcomes (another type of error) in a similar manner. The visualization aims to highlight how errors distribute differently across the experiment's parameters.
-<br>         
-Relation to "Entropy's Observer":
-The experiment abstractly embodies my thought experiment's concepts by demonstrating how quantum states, embodying high entropy through superposition and entanglement, can be precisely manipulated and observed. 
-<br>      
-In the context of "Entropy's Observer":
-Macroscopic Observation: 
-The overall process of preparing, entangling, and measuring qubits reflects a macroscopic observer's role. The observer sees the outcome of the teleportation (the macroscopic average state) without directly collapsing the individual qubit states during preparation.
-<br>   
-Microscopic Observation: 
-The detailed steps of entangling qubits, performing conditional operations based on classical communication, and the final measurement represent microscopic observations. These steps reduce the system's entropy by determining the exact state of each qubit, similar to the microscopic observer collapsing the wave functions to specific states.
-<br>   
-In the end, the experiment successfully demonstrates quantum teleportation, highlighting the interplay between quantum coherence, superposition, entanglement, and the role of observation in quantum mechanics. Through the precise control and observation of quantum states, the experiment aligns with the thought experiment's narrative, showing how entropy can be managed and reduced in a quantum system. The fidelity of the teleportation process, captured in the results data, underscores the potential and challenges of quantum information processing, reflecting the delicate balance between quantum uncertainty and classical certainty as influenced by the scale and nature of observation.
+In the end, this experiment demonstrates a practical application of quantum computing's inherent randomness to generate a secure cryptographic key, and to thus increase entropy in cryptographic systems. 
 
 
 
@@ -227,113 +195,104 @@ In the end, the experiment successfully demonstrates quantum teleportation, high
     
         
         <p>Code:<br>
-            <p><pre><code>from qiskit import QuantumCircuit, transpile, IBMQ, execute
+            <p><pre><code>import json
+import hashlib
+import base58
+import matplotlib.pyplot as plt
+from qiskit import QuantumCircuit, IBMQ, transpile, execute
 from qiskit. tools.monitor import job_monitor
 from qiskit.visualization import plot_histogram
-import matplotlib.pyplot as plt
-import json
-import csv
-from datetime import datetime
 
-# Encoder for handling complex numbers and datetime in JSON serialization
-def custom_encoder(obj):
-    if isinstance(obj, complex):
-        return {"real": obj.real, "imag": obj.imag}
-    elif isinstance(obj, datetime):
-        return obj.isoformat()
-    elif callable(obj):
-        return "Callable method or function"
-    raise TypeError("Object of type '%s' is not JSON serializable" % type(obj).__name__)
-
-# Load IBMQ Account
-IBMQ. save_account('Your_IBM_Key_O-`', overwrite=True)
+# IBM Quantum account setup
+IBMQ. save_account(‘YOUR_API_KEY_O-‘, overwrite=True)  # Fill in your IBM Quantum token
 IBMQ.load_account()
-
-# Select a backend
 provider = IBMQ.get_provider(hub='ibm-q')
-device = provider.get_backend('ibm_osaka')  # Example backend, replace with your choice
+backend = provider.get_backend('ibm_osaka')  # Update backend if necessary
+print("Using backend: ", backend)
 
-# Function to create Bell pair
-def create_bell_pair(qc, q1, q2):
-    qc.h(q1)
-    qc. cx(q1, q2)
+# Function to create and run a quantum circuit, generate a part of the secret key
+def generate_key_part(num_qubits, backend):
+    # Create a quantum circuit with num_qubits
+    circ = QuantumCircuit(num_qubits)
 
-# Function to teleport qubit
-def teleport_qubit(qc, src, inter, trg):
-    qc. cx(src, inter)
-    qc.h(src)
-    qc.barrier()
-    qc.measure(src, 0)
-    qc.measure(inter, 1)
-    qc.barrier()
-    qc. cx(inter, trg)
-    qc. cz(src, trg)
+    # Apply Hadamard gate to each qubit to create superposition
+    for i in range(num_qubits):
+        circ.h(i)
 
-# Prepare the results dictionary
-results = {
-    "backend_name": device. name(),
-    "backend_configuration": device.configuration().to_dict(),
-    "backend_properties": device. properties().to_dict(),
-}
+    # Measure all qubits
+    circ.measure_all()
 
-# Selected distances for teleportation
-distances = [1, 2, 3]
+    # Compile and run the quantum circuit on the backend
+    compiled_circuit = transpile(circ, backend)
+    job = backend. run(compiled_circuit)
+    job_monitor(job)  # Monitor the job's execution
 
-for distance in distances:
-    print(f"Running teleportation over distance: {distance}")
-
-    # Create the circuit
-    qc = QuantumCircuit(4, 2)
-    create_bell_pair(qc, 0, 1)
-    teleport_qubit(qc, 0, 1, 2)
-
-    # Transpile for the real backend
-    transpiled_circuit = transpile(qc, device, optimization_level=3)
-
-    # Execute the job on the real device
-    job = execute(transpiled_circuit, backend=device, shots=1024)
-    job_monitor(job)
-
-    # Get the result
+    # Retrieve the result
     result = job.result()
-    counts = result.get_counts(qc)
+    counts = result.get_counts()
 
-    # Record detailed results for this distance
-    results[f"Distance_{distance}"] = {
-        "measurement_distribution": counts,
-        "job_id": job.job_id(),
-        "execution_time": result.time_taken,
-    }
+    # Use the most frequent bitstring as part of the key
+    key_part = max(counts, key=counts.get)
 
-# Record Calibration Data
-calibration_data = {}
-try:
-    with open("/Users/Your/Documents/ibm_osaka_calibrations_2024-02-07T23_00_45Z.csv", 'r') as cal_file:
-        csv_reader = csv.DictReader(cal_file)
-        for row in csv_reader:
-            if 'qubit' in row:
-                calibration_data[row['qubit']] = row
-except Exception as e:
-    print(f"Error reading calibration data: {e}")
+    return key_part
 
-results["calibration_data"] = calibration_data
+def sha256(data):
+    return hashlib.sha256(data).digest()
 
-# Save the results to a JSON file using the encoder for complex numbers and datetime
-results_file = "/Users/Your/Documents/Fidelity_Results_HW.json"
-with open(results_file, 'w') as f:
-    json.dump(results, f, indent=4, default=custom_encoder)
+def hex_to_wif(hex_key):
+    # Add prefix (0x80 for mainnet)
+    extended_key = '80' + hex_key
+    
+    # Double SHA-256 hash
+    first_hash = sha256(bytes.fromhex(extended_key))
+    second_hash = sha256(first_hash)
+    
+    # Checksum is first 4 bytes of second hash
+    checksum = second_hash[:4]
+    
+    # Append checksum
+    final_key = extended_key + checksum.hex()
+    
+    # Base58 encode
+    wif_key = base58.b58encode(bytes.fromhex(final_key))
+    
+    return wif_key.decode('utf-8')
 
-print(f"Results saved to {results_file}")
+# Generate the secret key parts using the quantum computer
+key_part_1 = generate_key_part(127, backend)
+key_part_2 = generate_key_part(127, backend)
 
-# Plotting the histogram of the runs
-plot_histogram([results[f"Distance_{distance}"]["measurement_distribution"] for distance in distances])
-plt. show()
+# Concatenate 🐈‍⬛ the two parts and add any additional bits if needed to reach 256 bits
+quantum_key_binary = key_part_1 + key_part_2 + "11"  # Ensuring 256 bits
+quantum_key_hex = hex(int(quantum_key_binary, 2))[2:].zfill(64)
+
+# Convert the hex key to WIF
+bitcoin_key = hex_to_wif(quantum_key_hex)
+
+# Print the generated keys
+print("Generated Quantum Key (Binary):", quantum_key_binary)
+print("Generated Quantum Key (Hex):", quantum_key_hex)
+print("Generated Bitcoin Key (WIF):", bitcoin_key)
+
+# Save the keys to a json
+with open('/Users/Documents/Q_BTC_Key.json', 'w') as f:
+    json.dump({
+        "Quantum Key (Binary)": quantum_key_binary,
+        "Quantum Key (Hex)": quantum_key_hex,
+        "Bitcoin Key (WIF)": bitcoin_key
+    }, f, indent=4)
 
 </code></pre>
 </p>
-            
+
+        
  </div>
-        <img src="E14image4.png" alt="" class="experiment-image4">
+
+WARNING: While this code provides a powerful way to create quantum cryptography, it's crucial to understand that it runs on a real Quantum Computer, not simulators. Therefore, the randomness generated in this experiment IS NOT reproducible by a classical computer. DO NOT try to use this code as a key generator outside of real Quantum hardware.
+
+        
+ </div>
+        <img src="E15image4.png" alt="" class="experiment-image4">
         
            
             
