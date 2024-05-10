@@ -86,15 +86,12 @@ footer a:hover {
         display: flex;
         justify-content: center;
     }
+    header {
+            height: 200px; /* Set header height to 200px for smaller screens */
+        }
 }
 
 
- /* Media Query for devices with max width of 600px */
-    @media (max-width: 400px) {
-        header {
-            height: 200px; /* Set header height to 200px for smaller screens */
-        }
-    }
 
 
     .content-block {
