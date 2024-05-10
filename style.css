@@ -18,6 +18,8 @@ header, nav, section, article, footer {
     width: 50%; 
 }
 
+
+
 /* Navigation styles */
 nav {
     text-align: center;
@@ -87,7 +89,12 @@ footer a:hover {
 }
 
 
-
+ /* Media Query for devices with max width of 600px */
+    @media (max-width: 600px) {
+        header {
+            height: 200px; /* Set header height to 200px for smaller screens */
+        }
+    }
 
 
     .content-block {
