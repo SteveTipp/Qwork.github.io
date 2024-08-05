@@ -97,38 +97,37 @@
     </nav>
 
     <section class="content-section">
-        <h1><center>Quantum Q-Learning on IBM's 127-Qubit Quantum Computer Sherbrooke </center></h1>
+        <h1><center>Quark-Antiquark Interaction Simulation Using IBMs 127-Qubit Quantum Computer Osaka  </center></h1>
         <div class="content-block">
          
           
 
-This experiment explores a Q-learning algorithm using a quantum circuit on IBM's 127-qubit quantum computer Sherbrooke. The goal is to update Q-values by executing quantum circuits that represent state-action pairs, and subsequently use the counts from quantum measurements to adjust the Q-values. This approach integrates classical reinforcement learning with Qiskit and quantum computing to potentially enhance the learning process through quantum parallelism and noise resilience.       <br>
-
-Q-learning is a model-free reinforcement learning algorithm used to find the optimal action-selection policy for a given finite Markov decision process. The quantum-enhanced Q-learning algorithm presented here involves using quantum circuits to update Q-values based on the measurements obtained from a quantum computer.
-
+This experiment simulates the interaction between a quark and an antiquark using IBM's 127-Qubit quantum computer Osaka. By leveraging the capabilities of Qiskit, this abstractly represents the formation of a meson from a quark-antiquark pair and observes the probabilistic outcomes of the interaction. The circuit involves initializing quantum states, applying specific quantum gates to mimic the quark-antiquark interaction, and finally measuring the resulting quantum states. The experiment also visualizes the interaction through a Feynman-like diagram to provide a better understanding of the process.
+<br>
+            
 <p><strong>Code Walkthrough</strong><br>
-<p>1: Initializing Q-Table and Parameters<br>
-Initialize a Q-table Q(s, a) with zeros, where s represents the state and a represents the action. The parameters for Q-learning are set as follows:<br>
-Learning rate α = 0.1<br>
-Discount factor γ = 0.9<br>
-Initial exploration rate ϵ = 1.0<br>
-Exploration rate decay ϵ_decay = 0.995<br>
-Minimum exploration rate ϵ_min = 0.05<br>
-The state space size = 5 <br>
-The action space size is 2
+<p>1: Initialization<br>
+Start by initializing a quantum circuit with two qubits, each representing the quantum states of a quark and an antiquark. <br>
+Create a classical register with two bits to store the measurement results.<br>
+The quantum circuit is represented as:<br>
+qc = QuantumCircuit(2)<br>
+cr = ClassicalRegister(2)
 <br>
 
 
   
 
 
-<p>2. Quantum Circuit for Q-value Update<br>
-We construct a parameterized quantum circuit (quantum neuron) with one qubit and one classical bit.<br>
-A quantum circuit is designed to perform the Q-value update. The circuit is created using the following steps:<br>
-Initialize a quantum register with 127 qubits and a classical register with 1 bit.<br>
-Apply a rotation gate RY(π/4) to the qubit corresponding to the current state modulo the number of qubits.<br>
-Measure the qubit corresponding to the current state modulo the number of qubits.<br>
-The quantum circuit for a given state s and action a is denoted as QC(s, a).<br>
+<p>2. Representation of Quark and Antiquark States<br>
+Place the qubits in superposition states to represent the quark and antiquark. This is done by applying Hadamard gates to both qubits.<br>
+
+The Hadamard gate H creates a superposition of the basis states ∣0⟩ and ∣1⟩ as:<br>
+
+H∣0⟩ = 1/sqrt(2) * ​(∣0⟩ + ∣1⟩)<br>
+
+After applying the Hadamard gate to both qubits, the combined state of the system is:<br>
+
+∣ψ_initial​⟩ = 1/sqrt(2) * ​(∣00⟩ + ∣01⟩ + ∣10⟩ + ∣11⟩)<br>
 
 
 
@@ -136,165 +135,87 @@ The quantum circuit for a given state s and action a is denoted as QC(s, a).<br>
 
 
 
-<p>3. Running the Quantum Circuit<br>
-The quantum circuit is run on the IBM quantum backend using the Qiskit. We transpile the circuit for the target backend. Run the circuit using the SamplerV2 and collect measurement results. The circuit is run for 10 episodes. 
-<br>
+
+<p>3. Defining the Quark-Antiquark Interaction<br>
+To simulate the interaction between the quark and antiquark, define a custom gate sequence. This sequence represents the transformation of the quark-antiquark pair into a meson. The sequence involves:<br>
+a. A controlled-NOT (CNOT) gate is applied where the quark qubit is the control, and the antiquark qubit is the target. The CNOT gate creates entanglement between the qubits, reflecting the interaction.<br>
+CNOT=<br>
+( 1, 0, 0, 0<br>
+  0, 1, 0, 0 <br>
+  0, 0, 0, 1<br>
+  0, 0, 1, 0 )<br>
+b. A Hadamard gate is applied to the quark qubit, further manipulating the superposition and entanglement.<br>
+H = 1/sqrt(2) * ( 1, 1<br>
+                  1, -1 )<br>
+c. A Pauli-X gate (or NOT gate) is applied to flip the state of the quark qubit.<br>
+X = ( 0, 1<br>
+      1, 0 )<br>
+d. Another CNOT gate is applied, this time with the antiquark qubit as the control and the quark qubit as the target.<br>
 
 
 
 
 
-<p>4. Q-learning Loop<br>
-The Q-learning loop involves:<br>
-Interact with the environment to get the initial state.<br>
-Select an action using the epsilon-greedy policy.<br>
-Execute the quantum circuit for the selected state and action.<br>
-Calculate the reward based on the measurement results from the quantum circuit.<br>
-Update the Q-value using the Bellman equation:<br>
-Q(s, a) ← (1 − α)Q(s, a) + α(r + γ * ((max)/a′)​Q(s′, a′))<br>
-where r is the reward, s′ is the next state, and a′ is the action.  Q(s, a) is the Q-value for state s and action a. (max)/a′)​Q(s′, a′) is the maximum Q-value for the next state s′and all possible actions a′.<br>
-Decay the exploration rate ϵ after each episode.
+<p>4. Measurement of the Quantum States<br>
+After defining the interaction, measure the final states of the qubits to observe the outcome of the quark-antiquark interaction. The measurement collapses the quantum superposition into classical states ∣00⟩, ∣01⟩, ∣10⟩, or ∣11⟩, with probabilities determined by the quantum gates applied.
 <br>
   
 
 
 
-<p>5. Saving and Visualizing Results<br>
-The Q-table is saved to a JSON file, and the results are visualized using heatmaps and bar charts to display the learned policy.
-<br>
-After running the Q-learning loop for 10 episodes, the Q-table is updated based on the rewards obtained from the quantum circuit measurements. The derived policy is visualized, showing the best action for each state. The results highlight the potential of quantum computing to enhance reinforcement learning by leveraging quantum parallelism.<br>
-  
+<p>5. Transpiling and Executing the Circuit<br>
+The quantum circuit is transpiled to optimize it for Osaka. The transpiled circuit is then executed using the SamplerV2 function to run the quantum circuit multiple times (8192 shots) and obtain measurement statistics.
+<br>  
 
+<p>6. Extracting Measurement Results<br>
+The measurement results are extracted from the job result. The counts of the measured states are obtained and stored for analysis. The measurement counts provide insight into the probabilities of the different outcomes of the quark-antiquark interaction. The measurement counts, along with other relevant information (backend used, job ID, execution status, etc), are saved to a JSON file for analysis.
+<br>  
+
+<p>7. Visualizing the Results<br>
+A histogram of the measurement results is generated to visualize the distribution of the different quantum states. Additionally, a Feynman-like diagram is created to provide an intuitive understanding of the quark-antiquark interaction and the possible outcomes. The Feynman-like diagram depicts the quark and antiquark as incoming lines, with the interaction vertex representing their interaction. The outgoing lines represent the possible resulting states, with their opacity indicating the relative probability of each state.
+<br>  
 
 <p><center> Results:</center><br>
-The Q-table after 10 episodes of training is as follows:<br>
-          0              0.0325<br>
-          0.0170         0<br>
-Q =       0.0161         0<br>
-          0.0458         0.0177<br>
-          0.0279         0<br>
-<br>
 
-The Q-values for state 0, action 1 (0.0325) and state 3, action 0 (0.0458) are the highest in their respective rows, indicating that these state-action pairs yielded the highest rewards during the learning process. Most states have a higher Q-value for action 0 compared to action 1, suggesting a preference for action 0 in the current environment.
-<br>
-The Q-values represent the expected cumulative reward for taking a particular action in a given state, followed by the optimal policy thereafter. Higher values indicate better actions. The preference for action 0 in most states suggests that, under the simulated environment and the quantum circuit's influence, action 0 consistently provided better outcomes.
-<br>
-Episode Details and Q-Table Updates<br>
-Episode 1:<br>
-State: 4, Action: 0<br>
-Counts: {'0': 7078, '1': 1114}<br>
-Reward: 1114/(7078 + 1114) ≈ 0.1360<br>
-Q-Update: Q[4, 0] = 0.0136<br>
-
-Episode 2:<br>
-State: 2, Action: 0<br>
-Counts: {'0': 6873, '1': 1319}<br>
-Reward: 1319/(6873 + 1319) ≈ 0.1601<br>
-Q-Update: Q[2, 0] = 0.0161<br>
-
-Episode 3:<br>
-State: 3, Action: 0<br>
-Counts: {'0': 6966, '1': 1226}<br>
-Reward: 1226/(6966 + 1226 ≈ 0.1641<br>
-Q-Update: Q[3, 0] = 0.0164<br>
-
-Episode 4:<br>
-State: 1, Action: 0<br>
-Counts: {'0': 6919, '1': 1273}<br>
-Reward: 1273/(6919 + 1273) ≈ 0.1702<br>
-Q-Update: Q[1, 0] = 0.0170<br>
-
-Episode 5:<br>
-State: 3, Action: 0<br>
-Counts: {'0': 6898, '1': 1294}<br>
-Reward: 1294/(6898 + 1294) ≈ 0.1814<br>
-Q-Update: Q[3, 0] = 0.0321<br>
-
-Episode 6:<br>
-State: 0, Action: 1<br>
-Counts: {'0': 6936, '1': 1256}<br>
-Reward: 1256/(6936 + 1256) ≈ 0.1534<br>
-Q-Update: Q[0, 1] = 0.0182<br>
-
-Episode 7:<br>
-State: 3, Action: 1<br>
-Counts: {'0': 6975, '1': 1217}<br>
-Reward: 1217/(6975 + 1217) ≈ 0.1484<br>
-Q-Update: Q[3, 1] = 0.0177<br>
-
-Episode 8:<br>
-State: 3, Action: 0<br>
-Counts: {'1': 1262, '0': 6930}<br>
-Reward: 1262/(6930 + 1262) ≈ 0.1540<br>
-Q-Update: Q[3, 0] = 0.0458<br>
-
-Episode 9:<br>
-State: 4, Action: 0<br>
-Counts: {'0': 7025, '1': 1167}<br>
-Reward: 1167/(7025 + 1167) ≈ 0.1423<br>
-Q-Update: Q[4, 0] = 0.0279<br>
-
-Episode 10:<br>
-State: 0, Action: 1<br>
-Counts: {'0': 7008, '1': 1184}<br>
-Reward: 1184/(7008 + 1184) ≈ 0.1443<br>
-Q-Update: Q[0, 1] = 0.0325<br>
-
-The updates indicate that the learning algorithm is responsive to the rewards obtained from the quantum measurements, reflecting the expected behavior of the Q-learning process. The progression of Q-values shows an adaptive learning process where the agent improves its policy based on accumulated experience.
-<br>
-The derived policy indicates the best action to take in each state based on the highest Q-value:<br>
-State 0: Action 1<br>
-State 1: Action 0<br>
-State 2: Action 0<br>
-State 3: Action 0<br>
-State 4: Action 0<br>
-
-The policy suggests that the agent prefers action 1 only for state 0 and action 0 for all other states. The derived policy aligns with the Q-values, where action 0 generally has higher values. <br>
-<br>
 </div>
-        <img src="E24image1.jpeg" alt="" class="experiment-image">
+        <img src="E25image1.png" alt="" class="experiment-image">
         <p></p>
         <div class="content-block">
 <br>
-The bar chart above provides a clear visual representation of the best actions for each state. It highlights the dominance of action 0 and the unique preference for action 1 in state 0.
+    
+This  Feynman-like diagram above visualizes the quark-antiquark interaction, with the outcome lines' opacities representing the relative probabilities of the quantum states. The states 10 and 01 have the most prominent lines, reflecting their higher probabilities, while the 11 and 00 states are much fainter, indicating their lower likelihood.
+
+From the run, we observe the following measurement counts:
+State '10': 3973 counts
+State '01': 3813 counts
+State '11': 162 counts
+State '00': 244 counts
+
+The outcomes 10 and 01 dominate, with nearly equal counts: 3973 and 3813.
+The states 11 and 00 are much less frequent, with only 162 and 244 counts.
+
+This distribution suggests that the quark-antiquark interaction predominantly results in one of two main states: 10 and 01. This could be interpreted as a meson forming with the quark and antiquark, with the quantum system collapsing into one of these likely states. The Hadamard gate and CNOT gates applied during the interaction phase of the circuit introduce entanglement and quantum interference. The outcomes 10 and 01 result from constructive interference of the amplitudes, making them more probable. The less probable states 11 and 00 likely result from destructive interference, which diminishes their probability amplitude, hence fewer occurrences are observed.
+<br>
+</div>
+        <img src="E25image2.png" alt="" class="experiment-image">
+        <p></p>
+        <div class="content-block">
+<br>
+This heatmap above provides a top-down view of the probability distribution across the different quantum states. The states 10 and 01 have the highest probabilities (red), while the states 11 and 00 have much lower probabilities (blue).
 <br>
 
 
 </div>
-        <img src="E24image2.png" alt="" class="experiment-image">
+        <img src="E25image3.png" alt="" class="experiment-image">
         <p></p>
         <div class="content-block">
 <br>
 
-The Parallel Coordinates Plot above displays the relationship between iterations, expectation values, and objective function values. Each line represents an iteration and shows the corresponding expectation value and objective function value. The expectation value axis shows values close to 1 at the top. Most iterations start with high expectation values but vary as they move towards the objective function value axis. The objective function value axis shows values closer to 0 at the top. Lower objective function values indicate better optimization performance. Lines that remain close together suggest that the optimization process is converging. Lines that spread out indicate divergence or variability in the optimization performance.
+This 3D surface plot above visually represents the probability distribution across different quantum states derived from the experiment. The surface's peaks and valleys correspond to high and low probabilities, providing a clear, visual representation of the likelihood of each state. The X-Axis (State X) represents the discrete quantum states along one dimension. The Y-Axis (State Y) represents the same quantum states but aligned on another dimension. The Z-Axis (Probability - State Z) represents the probability associated with each quantum state. 
 <br>
-
-</div>
-        <img src="E24image3.jpeg" alt="" class="experiment-image">
-        <p></p>
-        <div class="content-block">
+In the end, this experiment successfully simulates the interaction between a quark and an antiquark using quantum computing. By applying specific quantum gates, the circuit abstractly represents the formation of a meson and observes the probabilistic nature of the resulting quantum states. The experiment highlights the power of quantum computing in modeling complex particle interactions through probabilities. The visualizations further enhance our view by depicting the interaction process reminiscent of Feynman diagrams. This approach can be extended to simulate other particle interactions (including my previous Exploring abstract Electron-Positron Annihilation on IBM's 127-Qubit Quantum Computer Osaka), offering a tool for exploring quantum and probabilistic phenomena.
 <br>
-
-The plot above shows the rewards obtained in each episode. There is a general upward trend in the rewards, indicating that the agent is improving its performance over time. The fluctuations in the rewards are normal as the agent explores different actions, but the overall increase suggests that the agent is learning to maximize cumulative rewards.
-<br>
-
-
-  
-
-Analysis of Improvements
-The Q-values for specific state-action pairs increased over time, indicating that the learning algorithm is correctly updating the expected rewards based on the outcomes of actions taken in various states. This improvement suggests that the agent is learning from its experiences and is adjusting its policy to favor actions that yield higher rewards.
-<br>
-Evidence of Learning
-The updates show that the agent is accumulating knowledge about the environment and is improving its estimates of the Q-values. The consistent updates, especially the significant jumps in Q-values for certain actions (state 3, action 0), highlight the learning process.
-<br>
-Positive Reinforcement
-Higher Q-values for certain actions imply that these actions have been positively reinforced through rewards obtained during the learning process. The agent learns to favor actions that lead to higher cumulative rewards, which is the core goal of Q-learning.
-<br>
-Early Signs of Convergence
-While full convergence is not yet achieved, the upward trend in Q-values suggests that given more episodes, the Q-values would continue to improve and stabilize. The learning process is on the right path, showing early signs of convergence towards optimal Q-values.
-<br>
-In the end, the increasing Q-values, especially the transition from 0.0136 to 0.0325, indicate that the learning algorithm is effectively updating its estimates based on the rewards obtained. This positive trend is a good sign that the Q-learning algorithm is functioning as expected, and the agent is improving its policy over time. 
-<br>
+            
 
 
 
@@ -302,129 +223,131 @@ In the end, the increasing Q-values, especially the transition from 0.0136 to 0.
         
         <p>Code:<br>
             <p><pre><code>(10 Qubit Circuit)
-# Imports
-import numpy as np
-from qiskit import QuantumCircuit, transpile
-from qiskit.circuit.library import RYGate
+# imports
+from qiskit import QuantumCircuit, transpile, ClassicalRegister
 from qiskit_ibm_runtime import QiskitRuntimeService, Session, SamplerV2
+from qiskit.visualization import plot_histogram
 import json
+from datetime import datetime
 import matplotlib.pyplot as plt
 
-# Define quantum circuit with 127 qubits
-def create_qc(state, action):
-    num_qubits = 127
-    qc = QuantumCircuit(num_qubits, 1)
-    qc.append(RYGate(np.pi / 4), [state % num_qubits])  # Example operation
-    qc.measure(state % num_qubits, 0)  # Measure the qubit
-    return qc
+# IBM Quantum API key and backend setup
+api_key = 'YOUR_IBM_API_KEY_O-`'  # Replace with your API key
+QiskitRuntimeService. save_account(channel='ibm_quantum', token=api_key, overwrite=True)
 
-# Define a function with SamplerV2
-def run_qc(qc, service, backend):
-    with Session(service=service, backend=backend) as session:
-        sampler = SamplerV2(session=session)
-        transpiled_qc = transpile(qc, backend)
-        job = sampler. run([transpiled_qc], shots=8192)
-        job.wait_for_final_state()
-        result = job.result()
-        classical_register_name = qc.cregs[0].name
-        counts = result[0].data[classical_register_name].get_counts()
-        return counts
+# Account saved and loaded
+try:
+    service = QiskitRuntimeService(channel='ibm_quantum', token=api_key)
+    print("IBM Quantum account successfully loaded.")
+except Exception as e:
+    print("Error loading IBM Quantum account:", str(e))
+    exit()
 
-# Q-learning loop with state and action space
-state_space_size = 5  # Define size of state space
-action_space_size = 2  # Define size of action space
-num_episodes = 10       # Number of Jobs
-alpha = 0.1            # Learning rate
-gamma = 0.9            # Discount factor
-epsilon = 1.0          # Initial exploration rate
-epsilon_decay = 0.995  # Exploration rate decay
-min_epsilon = 0.05     # Minimum exploration rate
+backend_name = 'ibm_osaka'  # Adjust to backend
+backend = service.backend(backend_name)
+print(f"Backend '{backend_name}' selected.")
 
-q_table = np.zeros((state_space_size, action_space_size))  # Initialize Q-table
+# Gate for quark-antiquark interaction
+def quark_antiquark_interaction_gate(qc, quark_qubit, antiquark_qubit):
+    # Interaction sequence to form a meson (e.g, pion)
+    qc. cx(quark_qubit, antiquark_qubit)
+    qc.h(quark_qubit)
+    qc.x(quark_qubit)
+    qc. cx(antiquark_qubit, quark_qubit)
 
-# Environment 
-class SimulatedEnv:
-    def reset(self):
-        return np.random.randint(0, state_space_size)
-    
-    def step(self, action):
-        next_state = np.random.randint(0, state_space_size)
-        reward = np.random.rand()
-        done = np.random.rand() > 0.9
-        return next_state, reward, done, {}
+# Initialize a Quantum Circuit with 2 qubits (representing quark and antiquark)
+qc = QuantumCircuit(2)
+cr = ClassicalRegister(2)
+qc.add_register(cr)
 
-env = SimulatedEnv()
+# Apply gates to represent the initial states of the quark and antiquark
+qc.h(0)  # Quark (e.g., up quark)
+qc.h(1)  # Antiquark (e.g., anti-down quark)
 
-# Initialize Qiskit 
-service = QiskitRuntimeService(channel="ibm_quantum", token="Your_IBM_Key_0-`")
-backend = service.get_backend('ibm_sherbrooke')  # 
- backend
+# Apply custom interaction gate
+quark_antiquark_interaction_gate(qc, 0, 1)
 
-for episode in range(num_episodes):
-    print(f"Starting episode {episode + 1}/{num_episodes}")
-    state = env.reset()  # Reset the environment to get the initial state
-    done = False
+# Measure the qubits to observe the outcome
+qc.measure([0, 1], [cr[0], cr[1]])
 
-    while not done:
-        # Select an action using an epsilon-greedy policy
-        if np.random.rand() < epsilon:
-            action = np.random.choice(action_space_size)
-        else:
-            action = np.argmax(q_table[state])
-        
-        # Execute the action in environment
-        next_state, reward, done, _ = env.step(action)
-        
-        # Create and run the quantum circuit for Q-value update
-        qc = create_qc(state, action)
-        try:
-            counts = run_qc(qc, service, backend)
-            print(f"Counts for state {state}, action {action}: {counts}")  # Debugging counts
-            done = True  # Ensure the loop ends after the job completes
-            
-            # Calculate the reward from the counts
-            reward_from_counts = counts.get('1', 0) / sum(counts.values())
-            max_next_q = np.max(q_table[next_state])
-            q_table[state, action] = (1 - alpha) * q_table[state, action] + alpha * (reward_from_counts + gamma * max_next_q)
-            print(f"Updated Q-table: {q_table}")  # Debugging Q-table
-            
-        except Exception as e:
-            print(f"An error occurred: {e}")
-            done = True  # End the episode if an error occurs
-        
-        state = next_state  # Move to the next state
-    
-    # Ensure that only one job runs per episode
-    print(f"Completed episode {episode + 1}/{num_episodes}")
+# Transpile the circuit 
+transpiled_qc = transpile(qc, backend=backend)
+print("Quantum circuit transpiled.")
 
-    # Decay the exploration rate
-    epsilon = max(min_epsilon, epsilon * epsilon_decay)
+# Execute the circuit with Qiskit Runtime
+with Session(service=service, backend=backend) as session:
+    sampler = SamplerV2(session=session)
+    job = sampler. run([transpiled_qc], shots=8192)
+    job_result = job.result()
 
-# Save Q-table to JSON file
-results_data = {"q_table": q_table.tolist()}
-file_path = 'q_table_results.json'
-with open(file_path, 'w') as f:
-    json.dump(results_data, f, indent=4)
+# Extract counts from the job result
+counts = job_result[0].data[cr. name].get_counts()
 
-# Plotting the Q-table for visualization
-plt.imshow(q_table, cmap='hot', interpolation='nearest')
-plt.colorbar()
-plt.xlabel('Action')
-plt.ylabel('State')
-plt.title('Q-Table Heatmap')
+# Save data to a JSON file
+data = {
+    'measurement_counts': counts,
+    'backend': backend_name,
+    'job_id': job.job_id(),
+    'status': job.status(),
+    'execution_date': datetime. now().strftime("%Y-%m-%d %H:%M:%S")
+}
+output_file = '/Users/Documents/QuarkAntiquarkInteraction.json'
+with open(output_file, 'w') as f:
+    json.dump(data, f, indent=4, default=str)
+
+# Display histogram of measurement results with counts
+plot_histogram(counts, title='Measurement Results', bar_labels=True)
 plt. show()
 
-# Derive policy from Q-table
-policy = np.argmax(q_table, axis=1)
-print("Derived Policy (State: Best Action):")
-for state in range(state_space_size):
-    print(f"State {state}: Action {policy[state]}")
+# Feynman-like Diagram from Run Result Code
+# imports
+import json
+import matplotlib.pyplot as plt
+import numpy as np
 
-# Visualize the policy
-plt. bar(range(state_space_size), policy)
-plt.xlabel('State')
-plt.ylabel('Best Action')
-plt.title('Derived Policy')
+# Load measurement counts from JSON 
+with open('/Users/Documents/QuarkAntiquarkInteraction.json', 'r') as file:
+    measurement_counts = json.load(file)['measurement_counts']
+
+# Define the figure for the Feynman-like diagram
+fig, ax = plt.subplots(figsize=(8, 6))
+ax.axis('off')  # Remove the axis as they are not needed
+ax.set_xlim([0, 4])
+ax.set_ylim([0, 4])
+
+# Define positions for the particles and vertices in the diagram
+quark_position = (1, 3)
+antiquark_position = (1, 1)
+interaction_vertex = (2, 2)
+outcomes_positions = {
+    '00': (3, 3),
+    '01': (3, 2.5),
+    '10': (3, 1.5),
+    '11': (3, 1)
+}
+
+# Draw quark and antiquark lines to the interaction vertex
+ax.annotate('', xy=interaction_vertex, xytext=quark_position,
+            arrowprops=dict(facecolor='blue', shrink=0, width=2, headwidth=8))
+ax.annotate('', xy=interaction_vertex, xytext=antiquark_position,
+            arrowprops=dict(facecolor='red', shrink=0, width=2, headwidth=8))
+
+# Label the quark and antiquark
+ax.text(*quark_position, 'Quark (u)', ha='right', va='center', fontsize=12, color='white')
+ax.text(*antiquark_position, 'Antiquark (anti-d)', ha='right', va='center', fontsize=12, color='white')
+
+# Draw outcome lines and label them, using the counts as probability amplitudes
+for state, position in outcomes_positions.items():
+    opacity = measurement_counts[state] / max(measurement_counts.values())  # Opacity based on relative count
+    ax.annotate('', xy=position, xytext=interaction_vertex,
+                arrowprops=dict(facecolor='green', alpha=opacity, shrink=0, width=2, headwidth=8))
+    ax.text(*position, f'{state}: {measurement_counts[state]}', ha='left', va='center', fontsize=10, color='white')
+
+# Background color
+fig.patch.set_facecolor('black')
+ax.set_facecolor('black')
+
+# Display the Feynman-like diagram
 plt. show()
 
 # End
@@ -434,7 +357,7 @@ plt. show()
 </p>
             
  </div>
-        <img src="E24image4.png" alt="" class="experiment-image4">
+        <img src="E25image4.png" alt="" class="experiment-image4">
         <p></p>
         <div class="content-block">
 
