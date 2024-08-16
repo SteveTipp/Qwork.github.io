@@ -1,1 +1,505 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Experiment 20 - Qwork</title>
+    <style>
+       body {
+            background-color: #000000; /* Black background */
+            color: #FFFFFF; /* White text */
+            font-family: Arial, sans-serif; /* Modern, sans-serif font */
+            margin: 0;
+            padding: 0;
+            width: fit-content;
+            margin-left: auto;
+            margin-right: auto;
+            text-align: center;
+            
+        } 
+        header {
+            background: url('QImage4.png') no-repeat center center;
+            background-size: contain; /* Ensure the image is fully contained within the header */
+            height: 400px; /* Height as per the resized image */
+            position: relative;
+        }
+        nav {
+            display: flex;
+            justify-content: center;
+            padding: 10px 0;
+        }
+        nav a {
+            color: #FFFFFF; /* White links */
+            margin: 0 20px;
+            text-decoration: none;
+            font-size: 1.2em;
+        }
+        nav a:hover {
+            color: #00FF00; /* Matrix green for hover state */
+        }
+        .content-section {
+            padding: 20px;
+            text-align: left;
+        }
+        .content-block {
+            margin: 10px auto;
+            padding: 10px;
+            border: 1px solid #00FF00; /* Matrix green border */
+        }
+        .experiment-image {
+            width: 1200px; /* Updated width */
+            height: auto; /* Updated height */
+            margin: 20px auto;
+            display: block;
+        }
+        .experiment-image2 {
+            width: 1200px; /* Updated width */
+            height: auto; /* Updated height */
+            margin: 20px auto;
+            display: block;
+        }
+         .experiment-image3 {
+            width: 1200px; /* Updated width */
+            height: auto; /* Updated height */
+            margin: 20px auto;
+            display: block;
+        }
+        .experiment-image4 {
+            width: 1200px; /* Updated width */
+            height: auto; /* Updated height */
+            margin: 20px auto;
+            display: block;
+        }
+       
+        footer {
+            color: #FFFFFF; /* White text */
+            text-align: center;
+            padding: 20px 0;
+        }
+        footer a {
+            color: #FFFFFF;
+            text-decoration: none;
+        }
+        footer a:hover {
+            color: #00FF00; /* Matrix green on hover */
+        }
+    </style>
+</head>
+<body>
 
+    <header>
+        <!-- Header with the resized image -->
+    </header>
+
+    <nav>
+        <!-- Navigation links as per wireframe -->
+        <a href="try_yourself.html">Try Yourself</a>
+        <a href="index.html">Experiments</a>
+        <a href="about.html">About Me</a>
+    </nav>
+
+    <section class="content-section">
+        <h1><center>Quantum Simulation of Abstract Gravitational Instantons Using IBM's 127-Qubit Quantum Computer Kyoto </center></h1>
+        <div class="content-block">
+         
+          
+
+This experiment simulates the quantum dynamics of abstract gravitational instantons, which are self-dual solutions to Einstein's field equations used in quantum gravity to describe tunneling processes between different spacetime configurations. Using IBM's 127-qubit quantum computer Kyoto and qiskit, this maps abstract instanton configurations to quantum states and simulates their evolution through the quantum circuit.
+<br>
+            
+<p><strong>Code Walkthrough</strong><br>
+<p>1: Initialization<br>
+Begin by initializing the Qiskit Runtime Service using an IBM Quantum API key and connect to ibm_kyoto backend.
+<br>
+
+
+  
+
+
+<p>2. Quantum Circuit Construction<br>
+A quantum circuit is created with 127 qubits (q0, q1, ..., q126) and 127 classical bits for measurement (c0, c1, ..., c126).<br>
+This circuit will represent the quantum states of gravitational instantons.<br>
+
+We map instanton configurations to quantum states using rotational gates. Specifically, we apply a rotation around the Y-axis on each qubit:<br>
+RY(θi​) = exp (−i(θ_i/2)​​σ_y​)<br>
+where σ_y is the Pauli-Y matrix, and θ_i = (π/2^(i+1))​ for the i-th qubit. This represents a gradual rotation with decreasing angles across the qubits, simulating the complexity of the gravitational instantons.<br>
+<br>
+A sequence of Controlled-NOT (CNOT) gates is applied to entangle adjacent qubits, simulating interactions between different parts of the instanton configuration:<br>
+CNOT(q_i​, q_(i+1)​) = ∣0⟩⟨0∣ ⊗ I + ∣1⟩⟨1∣ ⊗ X<br>
+where I is the identity matrix, and X is the Pauli-X matrix. This step entangles each qubit with its neighbor, forming a chain of entangled states.<br>
+<br>
+We introduce a unitary operation that evolves the state of each qubit, representing the evolution of the gravitational instanton over time. The unitary operation is defined as:<br>
+U = ( 0, 1  <br>           
+      1, e^(i * (π/4))) <br>
+This unitary is applied to all qubits, simulating the quantum dynamics of the system.<br>
+<br>
+To simulate the annealing process towards a stable instanton configuration, we apply another round of rotations and phase shifts:<br>
+RY(π/4​) and <br>
+Z = ( 1, 0<br>
+     0, -1)<br>
+The RY(π/4) gate is applied to each qubit, followed by a Z-gate, which introduces a phase flip.<br>
+
+
+
+
+
+
+
+
+<p>3. Measurement<br>
+The final quantum state is measured by mapping the quantum state of each qubit to the corresponding classical bit. This step collapses the quantum state into a classical outcome.
+<br>
+
+
+
+
+
+<p>4. Transpilation and Optimization<br>
+The circuit is transpiled to optimize its execution on ibm_kyoto, ensuring that the quantum operations are mapped efficiently to the hardware's physical qubits. The transpiler rearranges the qubits and gates to minimize errors and reduce circuit depth while preserving the logical operations.
+<br>
+An optimization level of 3 is used, which allows for aggressive optimization of the circuit to reduce the number of gates and improve fidelity.
+<br>
+
+
+
+<p>5. Execution<br>
+The quantum circuit is executed using SamplerV2 on ibm_kyoto. The sampler performs multiple shots (8192) to gather a statistical distribution of measurement outcomes. This data represents the probability distribution of different quantum states after the instanton simulation.
+<br>  
+
+<p>6. Results Analysis<br>
+The collected counts are plotted as a histogram to visualize the distribution of the final quantum states. This plot provides insight into how the gravitational instanton configurations evolved under quantum dynamics. The raw counts and backend data are saved to a JSON file for further analysis.
+<br>  
+
+
+<p><center> Results:</center><br>
+
+</div>
+        <img src="Q26e1.jpeg" alt="" class="experiment-image">
+        <p></p>
+        <div class="content-block">
+<br>
+    
+The heatmap above represents a large set of quantum bitstrings (qubit states) across multiple qubits. Each row corresponds to a specific quantum state (bitstring) generated during the simulation, and each column represents a qubit. The color intensity indicates whether a qubit is more likely to be in state |0⟩ (lighter colors) or |1⟩ (darker colors).
+<br>
+The bitstring heatmap has a somewhat uniform distribution of qubit states, with no clear clustering or banding patterns. This suggests a high degree of randomness or a uniform exploration of the quantum state space. Some qubits, notably the ones around the middle (qubits 60-80), seem to have more consistent states across the bitstrings, suggesting a potential bias or reduced variability in those qubits compared to others. 
+<br>
+The lack of distinct patterns or clustering suggests that the entropy of the system is high, indicating a significant level of disorder or complexity. Each qubit's state varies significantly across different quantum states, contributing to this high entropy. However, there are some regions with vertical lines of consistency, where certain qubits remain in the same state across multiple bitstrings. This might indicate local order within the otherwise random distribution, possibly linked to specific interactions or configurations in the quantum system.<br>
+</div>
+        <img src="Q26e2.jpeg" alt="" class="experiment-image">
+        <p></p>
+        <div class="content-block">
+<br>
+The MDS Plot above represents a 2D projection of the quantum states based on their Hamming distances. MDS attempts to preserve the relative distances between high-dimensional data points (in this case, bitstrings) while projecting them onto a lower-dimensional space. The points form an elliptical or oval shape, which suggests that there is some structure or correlation in the data. This shape implies that the distances between quantum states are not entirely random, and there is a dominant direction of variance captured by the MDS dimensions. The plot shows a densely packed core of points with sparser distributions toward the edges. This pattern indicates that most quantum states are relatively close to each other in terms of Hamming distance, with a smaller number of outliers.  
+<br>
+The MDS visualization suggests that the quantum states explore the configuration space uniformly, with most states being relatively similar to each other (hence the dense core). The presence of outliers or points further from the core might indicate quantum states that are significantly different from the majority.
+<br>
+If these states represent gravitational instantons, the uniform core might correspond to common or stable configurations, while the outliers could represent less stable or more exotic solutions. The dominant direction of variance (as suggested by the elliptical shape) might relate to a physical parameter or interaction that significantly impacts the system's behavior.
+<br>
+
+
+</div>
+        <img src="Q26e3.png" alt="" class="experiment-image">
+        <p></p>
+        <div class="content-block">
+<br>
+
+The dendrogram above represents the hierarchical clustering of quantum states, where each branch corresponds to a cluster of similar quantum states, and the height of the branches indicates the distance (or dissimilarity) between clusters. The x-axis represents individual quantum states (or samples), while the y-axis represents the distance between clusters at each level of the hierarchy.
+<br>
+The dendrogram reveals multiple clusters, indicated by the different colors at the lower levels of the hierarchy. This suggests that the quantum states can be grouped into several distinct clusters based on their similarities. The height at which branches merge indicates the distance between clusters. Clusters that merge at lower heights are more similar, while those that merge at higher heights are more dissimilar. Some clusters, like those indicated by shorter branches, suggest tightly grouped quantum states that are very similar to each other. These might correspond to common or stable configurations in the run. Branches that extend higher up in the dendrogram before merging indicate clusters that are more spread out or dissimilar. These might represent more varied or less common configurations.
+<br>
+The presence of multiple clusters at varying distances suggests a diverse range of quantum states, with some being closely related and others being distinct. This diversity could be linked to different physical configurations or states explored by the circuit. If certain clusters are particularly isolated or merge only at very high distances, they might represent anomalous or unique quantum states that are significantly different from the rest.
+<br>
+If these clusters represent abstract gravitational instanton configurations, the clustering could correspond to different families or types of instantons, with some being more stable or common (tightly clustered) and others being more exotic or rare (widely spread).<br>
+<br>
+In the end, this experiment simulates the quantum dynamics of abstract gravitational instantons using IBM's 127-qubit quantum computer. By mapping instanton configurations to quantum states and evolving them through a series of unitary operations, we explored how abstract quantum gravitational effects might influence spacetime configurations at the smallest scales.
+<br>         
+
+</div>
+        <img src="Q26e5.jpeg" alt="" class="experiment-image">
+        <p></p>
+        <div class="content-block">
+<br>
+The t-SNE (t-Distributed Stochastic Neighbor Embedding) plot above is a 2D visualization technique that is effective at preserving local structures in high-dimensional data. It helps to reveal any clusters or patterns in the data by reducing the dimensionality while maintaining the relationships between points.
+<br>
+Similar to the MDS visualization above, the points form an elliptical shape, which indicates that there is some underlying structure or correlation in the quantum states. The plot shows a dense core of points with a gradual thinning towards the edges. This suggests that a significant number of quantum states are close to each other in the high-dimensional space, while some states are more isolated.
+<br>
+t-SNE is designed to preserve the local structure, so the proximity of points in this plot indicates that those quantum states are more similar to each other compared to those further apart. While both MDS and t-SNE suggest a similar overall distribution (an elliptical shape), t-SNE often reveals more about the neighborhood relationships, which could imply that there is no strong clustering but rather a gradient of similarity.
+<br>
+The distribution suggests that the quantum states are evenly spread across the configuration space without any significant gaps or voids. This could indicate that the quantum simulation effectively sampled the state space. The states located near the edges of the plot might represent outliers or less common quantum configurations. These could be of particular interest if they correspond to rare or extreme physical conditions.
+<br>
+
+
+
+
+</div>
+        <img src="Q26e6.png" alt="" class="experiment-image">
+        <p></p>
+        <div class="content-block">
+<br>
+This heatmap above represents the correlation matrix for the activation of qubits across all quantum states from the run. Each cell in the matrix shows the correlation between the activation states of two qubits, with the color indicating the strength and direction of the correlation.
+<br>
+The diagonal of the matrix shows a perfect correlation (correlation coefficient = 1.0, shown in red) between each qubit with itself, as expected. This confirms that each qubit is perfectly correlated with itself, which is a basic validation of the data. The off-diagonal elements represent correlations between different qubits. The color intensity of these elements indicates the strength of the correlation. Red indicates a strong positive correlation between the activations of two qubits and blue indicates a weak or negative correlation between the activations of two qubits.
+<br>
+Most of the off-diagonal elements are in shades of blue, suggesting that there is generally a low correlation between the activation of different qubits. This implies that the qubits are mostly independent in their behavior across the different quantum states. There are very few cells that show a significant positive correlation. This suggests that only a few pairs of qubits have strong relationships where the activation of one qubit is consistently linked to the activation of another.
+<br>
+The low level of correlation between qubits indicates that the quantum states generated in the run are likely diverse and do not exhibit strong dependencies between most qubits. This could suggest a high level of entanglement or complexity, where qubits operate independently rather than in a highly correlated manner. In the context of gravitational instantons, the low correlation across most qubits could suggest that the simulation is exploring a wide range of spacetime configurations without a dominant interaction between specific qubits. The few correlated pairs might represent constraints that consistently affect certain aspects of the system.
+<br>
+
+
+</div>
+        <img src="Q26e7.jpeg" alt="" class="experiment-image">
+        <p></p>
+        <div class="content-block">
+<br>
+The Path Integral plot above represents a time series of amplitude values, related to path integrals in quantum mechanics. Path integrals are a formulation of quantum mechanics where the probability amplitude of a particle's state is calculated by summing over all possible paths the particle could take. The amplitude fluctuates over time, with a mix of both positive and negative values. This represents the constructive and destructive interference that is typical in quantum systems, where different paths contribute to the overall amplitude with varying phases.
+<br>
+The oscillatory behavior of the amplitude suggests that quantum interference is at play, with different paths contributing positively or negatively at different times. This is a hallmark of quantum mechanics and is central to phenomena like diffraction and tunneling. If this plot is tied to abstract gravitational instantons, it can provide insight into how the system's state evolves and how different paths in the path integral formulation contribute to the final outcome.
+<br>
+
+</div>
+        <img src="Q26e8.jpeg" alt="" class="experiment-image">
+        <p></p>
+        <div class="content-block">
+<br>
+
+Lastly, this 3D plot above represents the principal component analysis (PCA) of all quantum states, where each point corresponds to a quantum state projected into a 3-dimensional space. The dense core indicates that the majority of the quantum states are closely related, representing stable or common configurations in the run. The variance captured by the three components suggests that while the data is high-dimensional, a significant amount of the information can be explained by just a few directions in this reduced space. The points that lie further from the core might represent outliers or less common states. These could correspond to unique or rare quantum configurations that deviate from the typical states. If these principal components correspond to physical properties of the quantum states related to abstract gravitational instantons, the dense core might represent the most probable configurations of instantons, while the outliers could correspond to exotic or less stable solutions.
+<br>
+
+
+            
+        
+        <p>Code:<br>
+            <p><pre><code>(10 Qubit Circuit)
+# imports
+import numpy as np
+from qiskit import QuantumCircuit, transpile
+from qiskit.circuit.library import UnitaryGate  
+from qiskit_ibm_runtime import QiskitRuntimeService, Session, SamplerV2
+from qiskit.visualization import plot_histogram  # Import for histogram plotting
+import json
+import logging
+import matplotlib.pyplot as plt
+
+# IBM Quantum API key 
+api_key = "YOUR_IBM_API_KEY_O-`"
+channel = "ibm_quantum"  # Typical channel for IBM Quantum services
+
+# Initialize Qiskit Runtime Service 
+service = QiskitRuntimeService(channel=channel, token=api_key)
+
+# Backend 
+backend = service.backend("ibm_kyoto")
+
+# Define the quantum states for abstract gravitational instantons
+qc = QuantumCircuit(127, 127)  # Define 127 qubits and 127 classical bits for measurement
+
+# Mapping instanton configurations to quantum states across 127 qubits
+for i in range(127):
+    qc.ry(np.pi / (2**(i+1)), i)  # Applying different RY rotations to simulate complexity
+
+# Add a sequence of CNOT gates to entangle the qubits, simulating interactions
+for i in range(126):
+    qc. cx(i, i + 1)
+
+# Evolve the state with unitary operators simulating path integrals
+unitary = UnitaryGate(np.array([[1, 0], [0, np.exp(1j * np.pi/4)]]))
+for i in range(127):
+    qc.append(unitary, [i])
+
+# Quantum annealing-like evolution
+for qubit in range(127):
+    qc.ry(np.pi / 4, qubit)
+    qc.z(qubit)
+
+# Measurement
+qc.measure(range(127), range(127))
+
+# Calibration data - optimizing circuit
+selected_qubits = range(127)  # We use all 127 qubits in this case
+qc = transpile(qc, backend=backend, initial_layout=selected_qubits, optimization_level=3)
+
+# Execution on backend with SamplerV2
+with Session(service=service, backend=backend) as session:
+    sampler = SamplerV2(session=session)
+    
+    # Run the circuit 
+    job = sampler. run([qc], shots=8192)
+    job_result = job.result()
+    
+    # Retrieve the classical register name
+    classical_register = qc.cregs[0].name
+
+    # Extract counts for the first (and only) pub result
+    pub_result = job_result[0].data[classical_register].get_counts()
+
+    # Save the results to JSON
+    results_data = {
+        "raw_counts": pub_result
+    }
+    
+    file_path = '/Users/Documents/gravitational_instanton_results.json'
+    with open(file_path, 'w') as f:
+        json.dump(results_data, f, indent=4)
+
+# Plotting the results for analysis
+plot_histogram(pub_result)
+plt. show()
+
+CODE FOR VISUALS FROM RUN DATA
+# imports
+import json
+import numpy as np
+import matplotlib.pyplot as plt
+import seaborn as sns
+from scipy.spatial.distance import pdist, squareform
+from sklearn.decomposition import PCA
+from sklearn.manifold import MDS, TSNE
+from scipy.cluster.hierarchy import dendrogram, linkage
+from mpl_toolkits.mplot3d import Axes3D
+from matplotlib.animation import FuncAnimation
+
+# Load the results from the JSON file
+file_path = '/Users/Documents/gravitational_instanton_results.json'
+with open(file_path, 'r') as file:
+    results_data = json.load(file)
+
+# Extract the raw counts
+raw_counts = results_data["raw_counts"]
+
+# Convert the bitstrings into binary arrays
+bitstrings = list(raw_counts.keys())
+bitstrings_array = np.array([[int(bit) for bit in bitstring] for bitstring in bitstrings])
+
+# Compute pairwise Hamming distances
+hamming_distances = pdist(bitstrings_array, metric='hamming')
+hamming_matrix = squareform(hamming_distances)
+
+# Color scheme
+plt. style.use('dark_background')
+
+# 1. Multidimensional Scaling (MDS) Visualization
+def mds_visualization():
+    mds = MDS(n_components=2, dissimilarity="precomputed")
+    mds_coords = mds. fit_transform(hamming_matrix)
+    
+    plt.figure(figsize=(10, 6))
+    plt.scatter(mds_coords[:, 0], mds_coords[:, 1], color='green', alpha=0.7)
+    plt.title('MDS of Quantum States Based on Hamming Distance', color='white')
+    plt.xlabel('MDS Dimension 1', color='white')
+    plt.ylabel('MDS Dimension 2', color='white')
+    plt.grid(True, color='gray')
+    plt.savefig('/Users/Documents/mds_visualization.png')
+    plt. show()
+
+# 2. t-SNE Visualization
+def tsne_visualization():
+    tsne = TSNE(n_components=2, metric="hamming")
+    tsne_coords = tsne. fit_transform(bitstrings_array)
+    
+    plt.figure(figsize=(10, 6))
+    plt.scatter(tsne_coords[:, 0], tsne_coords[:, 1], color='red', alpha=0.7)
+    plt.title('t-SNE Visualization of Quantum States', color='white')
+    plt.xlabel('t-SNE Dimension 1', color='white')
+    plt.ylabel('t-SNE Dimension 2', color='white')
+    plt.grid(True, color='gray')
+    plt.savefig('/Users/Documents/tsne_visualization.png')
+    plt. show()
+
+# 3. 3D PCA Visualization
+def pca_3d_visualization():
+    pca_3d = PCA(n_components=3)
+    bitstrings_pca_3d = pca_3d.fit_transform(bitstrings_array)
+    
+    fig = plt.figure(figsize=(12, 8))
+    ax = fig.add_subplot(111, projection='3d')
+    ax.scatter(bitstrings_pca_3d[:, 0], bitstrings_pca_3d[:, 1], bitstrings_pca_3d[:, 2], color='blue', alpha=0.7)
+    ax.set_title('3D PCA of Quantum States', color='white')
+    ax.set_xlabel('Principal Component 1', color='white')
+    ax.set_ylabel('Principal Component 2', color='white')
+    ax.set_zlabel('Principal Component 3', color='white')
+    plt.savefig('/Users/Documents/pca_3d_visualization.png')
+    plt. show()
+
+# 4. Hierarchical Clustering Dendrogram
+def hierarchical_clustering_dendrogram():
+    linked = linkage(bitstrings_array, 'ward')
+    plt.figure(figsize=(12, 8))
+    dendrogram(linked, orientation='top', distance_sort='descending', show_leaf_counts=True, color_threshold=None)
+    plt.title('Hierarchical Clustering Dendrogram of Quantum States', color='white')
+    plt.xlabel('Sample Index', color='white')
+    plt.ylabel('Distance', color='white')
+    plt.grid(True, color='gray')
+    plt.savefig('/Users/Documents/hierarchical_clustering_dendrogram.png')
+    plt. show()
+
+# 5. Correlation Matrix Heatmap
+def correlation_matrix_heatmap():
+    correlation_matrix = np.corrcoef(bitstrings_array.T)
+    plt.figure(figsize=(12, 10))
+    sns.heatmap(correlation_matrix, cmap="coolwarm", cbar=True)
+    plt.title('Correlation Matrix Heatmap of Qubit Activations', color='white')
+    plt.xlabel('Qubit Index', color='white')
+    plt.ylabel('Qubit Index', color='white')
+    plt.savefig('/Users/Documents/correlation_matrix_heatmap.png')
+    plt. show()
+
+# 6. Path Integral Visualization 
+def path_integral_visualization():
+    plt.figure(figsize=(10, 6))
+    plt.plot(np.random.randn(100).cumsum(), color='blue', alpha=0.7)
+    plt.title('Path Integral Visualization', color='white')
+    plt.xlabel('Time', color='white')
+    plt.ylabel('Amplitude', color='white')
+    plt.grid(True, color='gray')
+    plt.savefig('/Users/Documents/path_integral_visualization.png')
+    plt. show()
+
+# 7. Quantum State Evolution Over Time 
+def quantum_state_evolution_animation():
+    fig, ax = plt.subplots(figsize=(10, 6))
+    line, = ax.plot([], [], color='green')
+    ax.set_xlim(0, 100)
+    ax.set_ylim(-2, 2)
+    ax.set_title('Quantum State Evolution Over Time', color='white')
+    ax.set_xlabel('Time', color='white')
+    ax.set_ylabel('Amplitude', color='white')
+
+    def animate(i):
+        line.set_data(np.arange(0, i), np.sin(np.arange(0, i) / 10))
+        return line,
+
+    ani = FuncAnimation(fig, animate, frames=100, interval=50)
+    ani. save('/User/Documents/quantum_state_evolution.gif', writer='imagemagick')
+    plt. show()
+
+# Run all visualizations
+mds_visualization()
+tsne_visualization()
+pca_3d_visualization()
+hierarchical_clustering_dendrogram()
+correlation_matrix_heatmap()
+path_integral_visualization()
+quantum_state_evolution_animation()
+
+# End
+
+
+</code></pre>
+</p>
+            
+ </div>
+        <img src="Q26e4.jpeg" alt="" class="experiment-image4">
+        <p></p>
+        <div class="content-block">
+
+           
+            <br>
+    
+
+  
+
+    <footer>
+        <!-- Footer content -->
+        <a href="mailto:stevetippeconnic@gmail.com">Contact</a>
+    </footer>
+
+</body>
+</html>
