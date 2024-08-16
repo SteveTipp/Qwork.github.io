@@ -195,76 +195,79 @@ The plot above shows the histogram of the measured spacings overlaid with the Ga
         <img src="E27i2.jpeg" alt="" class="experiment-image">
         <p></p>
         <div class="content-block">
-The scatter plot above represents the 2D projection of the quantum measurement outcomes, reduced using Principal Component Analysis (PCA). Each point corresponds to a bitstring, with the position determined by the most significant variations in the data.
-The clustering analysis identified 5 distinct clusters within the PCA projection of the quantum measurement outcomes. Here’s a summary of the cluster sizes:
-Cluster 0: 1419 outcomes
-Cluster 1: 1616 outcomes
-Cluster 2: 1491 outcomes
-Cluster 3: 1577 outcomes
-Cluster 4: 2089 outcomes
+The scatter plot above represents the 2D projection of the quantum measurement outcomes, reduced using Principal Component Analysis (PCA). Each point corresponds to a bitstring, with the position determined by the most significant variations in the data.<br>
+The clustering analysis identified 5 distinct clusters within the PCA projection of the quantum measurement outcomes. Here’s a summary of the cluster sizes:<br>
+Cluster 0: 1419 outcomes<br>
+Cluster 1: 1616 outcomes<br>
+Cluster 2: 1491 outcomes<br>
+Cluster 3: 1577 outcomes<br>
+Cluster 4: 2089 outcomes<br>
 
-Summary of all Cluster Correlation Results:
-Cluster 0:
-Real Parts: Weak positive correlation (Pearson r = 0.31, Spearman ρ = 0.30)
-Imaginary Parts: Weak negative correlation (Pearson r = −0.19, Spearman ρ = −0.36)
+Summary of all Cluster Correlation Results:<br>
+Cluster 0:<br>
+Real Parts: Weak positive correlation (Pearson r = 0.31, Spearman ρ = 0.30)<br>
+Imaginary Parts: Weak negative correlation (Pearson r = −0.19, Spearman ρ = −0.36)<br>
 
-Cluster 1:
-Real Parts: Strong positive correlation (Pearson r = 0.68, Spearman ρ = 0.80)
-Imaginary Parts: Weak negative correlation (Pearson r = −0.19, Spearman ρ = 0.15)
+Cluster 1:<br>
+Real Parts: Strong positive correlation (Pearson r = 0.68, Spearman ρ = 0.80)<br>
+Imaginary Parts: Weak negative correlation (Pearson r = −0.19, Spearman ρ = 0.15)<br>
 
-Cluster 2:
-Real Parts: Strong negative correlation (Pearson r = −0.69, Spearman ρ = −0.72)
-Imaginary Parts: Very strong negative correlation (Pearson r = −0.90, Spearman ρ = −0.89)
+Cluster 2:<br>
+Real Parts: Strong negative correlation (Pearson r = −0.69, Spearman ρ = −0.72)<br>
+Imaginary Parts: Very strong negative correlation (Pearson r = −0.90, Spearman ρ = −0.89)<br>
 
-Cluster 3:
-Real Parts: Moderate positive correlation (Pearson r = 0.53, Spearman ρ = 0.30)
-Imaginary Parts: Almost perfect positive correlation (Pearson r = 0.99, Spearman ρ = 1.00)
+Cluster 3:<br>
+Real Parts: Moderate positive correlation (Pearson r = 0.53, Spearman ρ = 0.30)<br>
+Imaginary Parts: Almost perfect positive correlation (Pearson r = 0.99, Spearman ρ = 1.00)<br>
 
-Cluster 4:
-Real Parts: Moderate positive correlation (Pearson r = 0.49, Spearman ρ = 0.60)
-Imaginary Parts: Almost perfect positive correlation (Pearson r = -0.36, Spearman ρ = 0)
+Cluster 4:<br>
+Real Parts: Moderate positive correlation (Pearson r = 0.49, Spearman ρ = 0.60)<br>
+Imaginary Parts: Almost perfect positive correlation (Pearson r = -0.36, Spearman ρ = 0)<br>
 
 Cluster 1 and Cluster 3 show strong positive correlations in the real and imaginary parts, suggesting that these clusters are closely aligned with specific aspects of the zeta zeros.
-
+<br>
 Cluster 2 stands out for its strong negative correlations, indicating an inverse relationship, possibly exploring opposite or reflective aspects of the zeta function.
-
+<br>
 Cluster 0 and Cluster 4 show more mixed or moderate correlations, indicating weaker alignment with the zeta zeros.
-
+<br>
 Cluster 3's strong correlation in the imaginary parts suggests that this cluster might be especially significant in understanding the periodicity or phase relations of the zeta zeros.
-
+<br>
 The strong positive correlations in Clusters 1 and 3 indicate that these clusters might be tuned to specific properties of the zeta zeros, potentially offering insights into how quantum systems could be used to study the zeta function's behavior.
-
+<br>
 The varying sizes of the clusters suggest that certain quantum states (bitstrings) are more prevalent, which might correspond to specific quantum phases or symmetries that have a higher probability of being measured. These clusters could be indicative of specific quantum states that analogously represent regions on the complex plane where the Riemann zeta function has significant behavior, particularly around its zeros.
+<br>
+In Cluster 4, the largest cluster, we identified the following common patterns in the bitstrings:<br>
+Common Prefixes:<br>
+10001: 85 occurrences<br>
+00101: 83 occurrences<br>
+00001: 82 occurrences<br>
+10011: 82 occurrences<br>
+11010: 81 occurrences<br>
 
-In Cluster 4, the largest cluster, we identified the following common patterns in the bitstrings:
-Common Prefixes:
-10001: 85 occurrences
-00101: 83 occurrences
-00001: 82 occurrences
-10011: 82 occurrences
-11010: 81 occurrences
-
-Common Suffixes:
-00100: 81 occurrences
-11101: 81 occurrences
-00011: 79 occurrences
-00110: 76 occurrences
-01111: 72 occurrences
+Common Suffixes:<br>
+00100: 81 occurrences<br>
+11101: 81 occurrences<br>
+00011: 79 occurrences<br>
+00110: 76 occurrences<br>
+01111: 72 occurrences<br>
 
 The presence of repeated prefixes and suffixes suggests that certain states or sequences are more likely to occur within this cluster. These patterns might be indicative of specific quantum states that exhibit symmetry or recurring phase relationships. If we consider these bitstring patterns as analogs to points on the complex plane, the repetition could be hinting at regions where the zeta function exhibits particular behavior, such as clusters of zeros or periodicity in the imaginary parts.
-
-Exploring the Link Between Bitstring Patterns and the Riemann Zeta Function
+<br>
+Exploring the Link Between Bitstring Patterns and the Riemann Zeta Function<br>
 The Riemann zeta function has a known functional equation that connects ζ(s) with ζ(1−s). This symmetry might manifest in quantum states that reflect similar patterns in the bitstrings, especially when considering the real and imaginary parts of potential zeros. 
+<br>
 The recurring prefixes and suffixes in Cluster 4 might hint at similar symmetry, where certain phases or rotations in the quantum circuit lead to preferred states.
-
-Periodicity and Repetition
+<br>
+Periodicity and Repetition<br>
 The zeros of the zeta function along the critical line are conjectured to be spaced in a manner that could suggest periodic behavior. If the bitstrings correspond to such zeros, we might expect to see patterns that repeat with specific periodicity.
+<br>
 The recurring bitstrings in Cluster 4, particularly those with common prefixes and suffixes, might reflect this periodicity, where certain quantum states are more likely to occur due to the underlying periodic nature of the zeta zeros.
-
-Interpretation and Theoretical Connection
+<br>
+Interpretation and Theoretical Connection<br>
 The patterns found in the bitstrings could correspond to specific ranges or clusters of zeta zeros. For example, certain prefixes might map to zeros near the critical line's real part, while suffixes could relate to the imaginary parts.
+<br>
 The presence of repeated patterns suggests that the quantum system might be exploring specific symmetrical properties of the zeta function. The binary nature of the outcomes could be reflecting this, where particular states are more likely due to symmetry or periodic effects introduced by the quantum circuit.<br>
-
+<br>
 
 </div>
         <img src="E27i3.jpeg" alt="" class="experiment-image">
@@ -273,56 +276,56 @@ The presence of repeated patterns suggests that the quantum system might be expl
 <br>
 
 The above plots show the comparison between the simulated zeta zeros (in blue) and the mapped quantum outcomes (in red) for each cluster.
-
-Cluster 0
+<br>
+Cluster 0<br>
 The quantum outcomes (in red) appear somewhat scattered with less alignment to the zeta zeros. This matches our earlier findings of weaker correlations in this cluster.
-
-Cluster 1
+<br>
+Cluster 1<br>
 There is a noticeable alignment between the quantum outcomes and the simulated zeta zeros, especially in the real parts, which aligns with the strong positive correlation observed earlier.
-
-Cluster 2
+<br>
+Cluster 2<br>
 The quantum outcomes are more spread out and inversely related to the simulated zeta zeros, consistent with the strong negative correlations we found.
-
-Cluster 3
+<br>
+Cluster 3<br>
 The quantum outcomes closely align with the simulated zeta zeros, particularly in the imaginary parts, reflecting the near-perfect correlation found in the analysis.
-
-Cluster 4
+<br>
+Cluster 4<br>
 The quantum outcomes show moderate alignment with the zeta zeros, similar to the earlier findings of moderate correlations.
-
-Cluster Insights
-Cluster 3
+<br>
+Cluster Insights<br>
+Cluster 3<br>
 The almost perfect alignment in the imaginary parts suggests that this cluster may be tapping into the periodic or phase related aspects of the Riemann zeta function. This could be highly significant, as it suggests the quantum system is accurately modeling certain characteristics of the zeta zeros, particularly in the imaginary component.
-
-Cluster 2
+<br>
+Cluster 2<br>
 The strong negative correlation suggests this cluster might be exploring a reflection or inversion of the typical zeta behavior. This could be indicative of deeper symmetries or anti-symmetries within the zeta function, possibly related to reflections about the critical line or more complex relationships.
-
-Cluster 1
+<br>
+Cluster 1<br>
 The strong alignment in the real parts indicates that this cluster might be closely related to the zeros along the critical line (Re(s) = 0.5). This could imply that the quantum circuit is effectively capturing the distribution of zeros in this region.
-
-Analysis of Cluster 3
-Kolmogorov-Smirnov Test Results for Cluster 3
-K-S Statistic: 0.30
-p-value: 0.079
+<br>
+Analysis of Cluster 3<br>
+Kolmogorov-Smirnov Test Results for Cluster 3<br>
+K-S Statistic: 0.30<br>
+p-value: 0.079<br>
 The K-S statistic of 0.30 represents the maximum difference between the cumulative distribution function (CDF) of the observed spacings and the GUE theoretical distribution. A smaller value would indicate a closer match between the distributions.
-
+<br>
 The p-value of 0.079 suggests that there is not enough evidence to reject the null hypothesis that the observed spacing distribution follows the GUE model. While there is some deviation, the alignment is not statistically significant enough to indicate a strong departure from the GUE distribution.
-
+<br>
 The test suggests that the observed spacing distribution in Cluster 3 is reasonably well-aligned with the GUE model. This strengthens the hypothesis that the quantum system in Cluster 3 is reflecting statistical properties of the zeta zeros as predicted by random matrix theory.
-
-Cross-Cluster Comparison (1 vs 3)
-Kolmogorov-Smirnov Test Results for Cluster 1
-K-S Statistic: 0.27
-p-value: 0.146
+<br>
+Cross-Cluster Comparison (1 vs 3)<br>
+Kolmogorov-Smirnov Test Results for Cluster 1<br>
+K-S Statistic: 0.27<br>
+p-value: 0.146<br>
 The K-S statistic of 0.27 represents the maximum difference between the cumulative distribution function (CDF) of the observed spacings in Cluster 1 and the GUE theoretical distribution. This value is slightly lower than what we observed in Cluster 3, indicating a somewhat closer fit.
-
+<br>
 The p-value of 0.146 suggests that there is not enough evidence to reject the null hypothesis that the observed spacing distribution in Cluster 1 follows the GUE model. Similar to Cluster 3, this indicates a reasonable alignment with the GUE distribution.
-
+<br>
 Both Cluster 1 and Cluster 3 show reasonable alignment with the GUE model, although the alignment in Cluster 3 is slightly stronger. This suggests that the quantum states in these clusters might be reflecting different but related aspects of the zeta zeros, with both clusters capturing the statistical properties predicted by random matrix theory.
-
+<br>
 The strong alignment in different parts of the zeta function (real for Cluster 1 and imaginary for Cluster 3) suggests that these clusters might be complementary. 
-
+<br>
 The distinct behavior observed in Cluster 2, which showed strong negative correlations, might indicate that quantum systems can also model reflection symmetries or other complex behaviors in the zeta function. This could point to a broader framework where different clusters model different symmetries or phase relationships within the zeta function.
-
+<br>
 If quantum systems are shown to consistently model the statistical properties of the zeta zeros, there could be potential for using these systems to make predictions about the distribution of zeros that have not yet been discovered.
 <br>         
 
