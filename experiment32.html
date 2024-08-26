@@ -97,460 +97,421 @@
     </nav>
 
     <section class="content-section">
-        <h1><center>A Quantum-Based Secure Code Authentication App </center></h1>
+        <h1><center>Quantum Computation of Scattering Amplitudes Using Twistor Theory on a 127-Qubit IBM Quantum Computer </center></h1>
         <div class="content-block">
          
           
 
-This experiment explores the use of quantum computation to generate highly secure, time-sensitive authentication codes, similar to those used in traditional two-factor authentication (2FA) applications. By leveraging the quantum superposition and randomness properties of qubits, this creates a sequence of unique codes using IBM's 127-qubit quantum computer ibm_kyoto and Qiskit. The experiment uses the SamplerV2 primitive to run quantum circuits, retrieve measurement outcomes, and hash (SHA-256) the most probable bitstring to produce a 6-character secure code. An input algorithm requires the user to enter the most recent quantum-generated code for successful authentication, ensuring that only the latest secure quantum code can grant access.<p><strong>Code Walkthrough</strong><br>
-<br>
-<p>1. Initialization<br>
-We use IBM's 127-qubit quantum backend, ibm_kyoto, due to its high qubit count, allowing for maximum randomness in code generation. 
-<br>
+This experiment aims to compute scattering amplitudes in quantum field theory using a twistor-based formulation. This experiment uses a 127-Qubit IBM Quantum Computer and qiskit to simulate the complex interactions between particles during a scattering event. By representing particle states as qubits and encoding their interactions through quantum gates, we utilize the twistor theory to perform computations. The experiment consists of initializing qubit states, applying entangling operations to simulate particle interactions, performing unitary transformations inspired by twistor theory, and measuring the final quantum states to extract scattering amplitudes.<br>
+<p>1. Initialization of the Quantum Circuit<br>
+We initialize a quantum circuit with 127 qubits and 127 classical bits. The number of qubits represents the number of particles or degrees of freedom in the scattering process.<br>
+The classical bits are used to store the measurement results of each qubit.<br>
+Quantum Circuit: C(n, n) where n = 127<br>
 
-2. Quantum Circuit Construction
-A quantum circuit qc is constructed with 127 qubits and 127 classical bits. This matches the maximum number of qubits on ibm_kyoto. To achieve maximum superposition, a Hadamard gate H is applied to each qubit:<br>
-H = 1/sqrt(2) * ​<br>
-(1, 1)<br>
-(​1, −1​)<br>
-This operation transforms each qubit into an equal superposition of ∣0⟩ and ∣1⟩:<br>
-H∣0⟩ = 1/sqrt(2) * ​(∣0⟩ + ∣1⟩)<br>
-Each qubit is then measured, collapsing the superposition into one of the basis states (either ∣0⟩ or ∣1⟩). The measurement outcomes are stored in the corresponding classical bits.<br>
+<p>2. Random Initialization of Qubit States<br>
+Each qubit is initialized to represent a possible quantum state of a particle involved in the scattering process.<br>
+For each qubit q_i​ (where i = 0, 1, …, 126), we apply a rotation around the Y-axis using a randomly generated angle θ_i​.<br>
+R_Y​(θ_i​) = exp(−i(θ_i/2)​​σ_y​)<br>
+where θ_i​ is a random angle between 0 and 2π.<br>
 
-4. Quantum Execution<br>
-A session is opened with the IBM Quantum service using SamplerV2, ensuring that the circuit execution is performed in a controlled environment. <br>
-The transpiled circuit is executed with 8192 shots to gather statistically significant results.<br>
+<p>3. Entanglement to Simulate Particle Interactions<br>
+To simulate the interactions between particles, we entangle pairs of qubits.<br>
+We apply CNOT (Controlled-NOT) gates between adjacent qubits (q_i, q_(i+1)) for i = 0, 2, 4, …, 124.<br>
+CNOT(q_i​, q_(i+1)​) = <br>
+(I, 0​)<br>
+(0, X​)<br>
+where I is the identity matrix and X is the Pauli-X matrix (NOT gate).<br>
 
-5. Data Retrieval<br>
-The measurement outcomes are retrieved, representing the frequency of each bitstring (a sequence of 127 binary values) across the 8192 shots. The bitstring with the highest occurrence probability is identified as the most probable bitstring.<br>
-The counts are specifically extracted from the classical register associated with the quantum circuit.<br>
+<p>4. Twistor-Inspired Unitary Transformations<br>
+Twistor theory provides a geometric framework that simplifies the computation of scattering amplitudes. This simulates this by applying unitary transformations to each qubit.<br>
+For each qubit q_i​, we generate a random 2x2 unitary matrix U_i and apply it as a gate.<br>
+U_i​ = U(2) where U(2) is a unitary matrix satisfying U_(i)^† ​U_i ​= I<br>
+The matrix U_i is generated using the Haar measure to ensure it is unitary.<br>
 
-6. Secure Code Generation<br>
-The most probable bitstring is hashed using the SHA-256 hashing algorithm:<br>
-Secure Code = SHA-256(Bitstring) mod10^6<br>
-This hashing process transforms the 127-bit bitstring into a unique 6-character alphanumeric code. The modulus operation ensures the final code is limited to a manageable size for use in authentication. A new secure quantum code is generated every 3 seconds with a new run.<br>
+<p>5. Additional Entanglement to Simulate Higher-Order Interactions<br>
+To simulate more complex interactions, this introduces additional entanglement between non-adjacent qubits.<br>
+We apply CNOT gates between qubits (q_i, q_(i+2)) and (q_(i + 1), q_(i + 3)) for i = 0, 4, 8, …, 120.<br>
+CNOT(q_i​, q_(i+2)​) and CNOT(q_(i + 1)​, q_(i+3)​)<br>
 
-7. Code Authentication and User Interaction<br>
-The generated secure code is displayed, and the user is prompted to enter the latest quantum secure code for validation.<br>
-The entered code is compared against the generated code. A match results in a "SUCCESS" message, while a mismatch leads to a "FAILURE" message.<br>
+<p>6. Final Rotations to Encode Scattering Amplitudes
+We apply a final set of rotations around the Z-axis to encode information about the scattering amplitudes.<br>
+For each qubit q_i, a rotation gate R_Z(ϕ_i) is applied with a randomly generated angle ϕ_i​.<br>
+R_Z​(ϕ_i​) = exp(−i(ϕ_i/2)​​σ_z​)<br>
+where ϕ_i is a random angle between 0 and 2π.<br>
 
-8. Data Recording and Visual<br>
-The generated codes and associated measurement counts (raw results) are saved to a JSON. The JSON structure includes the codes, timestamps, and the backend name.<br>
-The distribution of measurement outcomes from the last iteration is visualized using a histogram. This plot displays the frequency of different bitstrings, highlighting the most probable bitstring used for code generation.<br>
-  
+<p>7. Measurement of Qubit States<br>
+The final state of each qubit is measured and stored in the corresponding classical bit. These measurements represent the outcome of the scattering process.<br>
+Each qubit q_i is measured, and the result is stored in the classical register c_i​.<br>
+M(q_i​) → c_i ​for i = 0, 1, …, 126<br>
+
+<p>8. Transpilation and Optimization<br>
+The quantum circuit is transpiled for the IBM 127-qubit quantum computer ibm_brisbane. This performs optimization using Qiskit’s transpiler with an optimization level of 3, focusing on reducing gate depth and error rates.<br>
+
+<p>9. Execution on the IBM Quantum Backend<br>
+The quantum circuit is executed on ibm_brisbane.<br>
+The circuit is run with 8192 shots.<br>
+Run(C, shots = 8192)<br>
+
+<p>10. Extraction of Scattering Amplitudes<br>
+The measurement results (counts) are used to compute the scattering amplitudes, which represent the probabilities of different outcomes of the scattering process.<br>
+The counts are normalized to convert them into probabilities (scattering amplitudes).<br>
+P_i ​= counts(c_i​)​/total counts<br>
+
+<p>11. Saving and Visualization of Results<br>
+The computed scattering amplitudes are saved to a JSON and a histogram is plotted. <br>
+    
 <p><center> Results:</center><br>
-Run 3 times<br>
-'Quantum Authenticator Code: 18d1d0<br>
-Quantum Authenticator Code: 06f9dc<br>
-Quantum Authenticator Code: f04035<br>
-Please enter the authentication code: f04035<br>
-SUCCESS: Authentication Successful!'<br>
-
-The experiment generated three quantum authentication codes: 18d1d0, 06f9dc, and f04035. The final code, f04035, was correctly entered for authentication, resulting in a "SUCCESS" message (on screenshot below).<br>
   
 </div>
-        <img src="Q39i1.png" alt="" class="experiment-image">
+        <img src="Q31i1.jpeg" alt="" class="experiment-image">
         <p></p>
         <div class="content-block">
 <br>
-The heatmap above represents the binary values (0s and 1s) of bitstrings generated by the quantum circuit across all runs (code below). Each row corresponds to a unique bitstring, and each column represents a bit position in the 127-bit sequence. The color coding (blue for 0 and red for 1) helps quickly assess the distribution and patterns across the bitstrings.
-<br>
-The heatmap shows an even mix of blue and red across the bit positions, indicating a balanced distribution of 0s and 1s. This aligns with expectations given the application of Hadamard gates to each qubit, which should theoretically produce an equal probability for measuring 0 or 1 at each bit position.
-<br>
-The lack of any discernible patterns or clusters in the heatmap suggests a high degree of randomness in the generated bitstrings. This randomness is crucial for the security and unpredictability of the authentication codes.
-<br>
-With 8192 unique bitstrings, each 127 bits long, the heatmap's visual complexity underscores the vast potential for different outcomes. This large solution space is a fundamental reason why quantum based authentication can be more secure than classical methods.<br>
-<br>
+The histogram above (top) (code below) shows the distribution of Hamming distances between all pairs of measurement outcomes from the quantum circuit.<br>
+
+Peak at Hamming Distance ~60:<br>
+The quantum results obtained exhibit a clear concentration around a Hamming distance of ~60, suggesting that the states produced by the quantum circuit are moderately similar rather than entirely random.<br>
+The bell-shaped distribution of Hamming distances aligns with the idea that scattering amplitudes, when represented in twistor space, are not uniformly distributed but instead have a structured and symmetric pattern. This pattern may reflect the algebraic curves that support the amplitudes in twistor space.<br>
+
+Classical predictions for scattering amplitudes derived from twistor theory have shown that these amplitudes can often be simplified compared to their traditional formulations in quantum field theory. For example, Witten’s formulation of twistor string theory demonstrated that scattering amplitudes in twistor space exhibit high simplicity. These amplitudes are supported on algebraic curves, suggesting a deep connection between the geometry of twistor space and the physical scattering processes. This leads to a more compact and symmetric representation of amplitudes, often expressed in terms of Grassmannian residue formulas, polytopes, and the amplituhedron in twistor space.<br>
+
+The Fourier Transform of the mean binary string above (bottom) (code below) reveals a prominent spike at the zero frequency (DC component) and relatively low amplitudes across all other frequencies. This indicates that there is a strong constant component in the mean binary string, with very little variation in periodic components.<br>
+The significant spike at zero frequency suggests that the mean binary string has a strong constant value, indicating that most of the bits in the mean string are close to a constant value (either mostly 0s or mostly 1s). This could imply that there is a high degree of consistency in the states that are being measured, reflecting an underlying structure or symmetry.<br>
+In the context of twistor scattering amplitudes, the absence of strong periodic signals could suggest that the quantum circuit is capturing the non-periodic, continuous aspects of the scattering process. Twistor theory often simplifies scattering amplitudes by mapping complex interactions to geometrically simple objects in twistor space, but the underlying structure might not be periodic.<br>
 
           
 
 </div>
-        <img src="Q39i2.jpeg" alt="" class="experiment-image">
+        <img src="Q31i2.jpeg" alt="" class="experiment-image">
         <p></p>
         <div class="content-block">
 <br>
 
-The entropy values across the three runs above (code below) are very similar, with all runs displaying an entropy close to 0.7 (Shannon). Entropy is a measure of randomness, and in the context of a quantum authenticator application, high entropy indicates that the bitstrings generated by the quantum circuit have a high degree of unpredictability. This is crucial for secure code generation, as the more random the output, the more difficult it is for an adversary to predict or replicate the generated authentication codes.
-<br>
-The bitstring frequency distribution above (code below) shows an almost equal number of '0' and '1' outcomes across all three runs. Exactly what we would expect from a balanced quantum system where each qubit has an equal probability of collapsing into the '0' or '1' state after measurement. The even distribution of '0's and '1's across the bitstrings indicates that the quantum circuit is functioning as intended, without bias towards any particular outcome. This balance is critical for the integrity of the quantum authenticator application, ensuring that the generated codes are uniformly distributed and do not exhibit any patterns that could be exploited.
-<br>
+The PCA plot above (top) (code below) reveals that the binary strings cluster into distinct groups along the principal components, with noticeable gaps between these clusters.<br>
+The clustering observed in the PCA may indicate that the quantum circuit is sampling from distinct regions of the state space, possibly corresponding to different scattering events or configurations in twistor space. The separation of clusters suggests that the circuit outputs are not uniformly random but exhibit structured patterns, which aligns with the idea that twistor-inspired quantum circuits explore well defined regions of the state space.<br>
+
+The t-SNE plot above (bottom) (code below) shows a more continuous distribution without distinct clusters, forming an oval shaped distribution.<br>
+While t-SNE is sensitive to local similarities, the lack of distinct clustering in this plot suggests that, on a finer scale, the binary strings are more evenly distributed. This could indicate that while PCA reveals macro structure (global patterns), the quantum states are more uniformly spread when viewed through the lens of local similarities. This uniformity may suggest that the circuit captures a broader range of scattering events, each with subtle differences, which is consistent with the high complexity and variation expected in twistor scattering amplitudes.<br>
 
           
 </div>
-        <img src="Q39i3.jpeg" alt="" class="experiment-image">
+        <img src="Q31i3.jpeg" alt="" class="experiment-image">
         <p></p>
         <div class="content-block">
 <br>
-The bit position correlation heatmaps across the three runs above (code below) show that each bit position has a high correlation with itself (diagonal line of correlation = 1) and low to no correlation with other bit positions. This indicates that the bits are behaving independently from each other, which is desirable for a quantum authenticator application. If the bits were correlated, it could potentially allow an attacker to predict some bits based on the values of others, reducing the security of the generated code.
-<br>
-The Hamming distance heatmaps across the runs above (code below) display a uniform distribution of distances between bitstrings, with values hovering around the midpoint. This means that, on average, about half of the bits differ between any two given bitstrings. A uniform and high average Hamming distance between bitstrings is beneficial for a quantum authenticator. It ensures that each generated code is sufficiently different from others, making it challenging for attackers to guess subsequent codes based on previous ones.
-<br>
-The bit transition probability heatmap above shows that most bits have a low probability of transitioning between runs. This means that each bit is fairly stable, with a relatively low chance of flipping from 0 to 1 or vice versa. While stability is generally good for reliability, in the context of a quantum authenticator, some level of unpredictability (bit flipping) is necessary to ensure that each generated code is unique. The results suggest that the quantum system is functioning well, with enough variability to ensure that each authentication code is different from the previous one.
-<br>
-In the end, the experiment successfully demonstrated the use of a quantum based authenticator application by analyzing key metrics across multiple quantum runs. The results showed consistently high entropy, indicating strong randomness in the generated bitstrings, which is crucial for security. The bit position correlation heatmaps confirmed the independence of individual bits, ensuring unpredictability in the codes. The Hamming distance analysis revealed a uniform and sufficiently large distance between bitstrings, highlighting the uniqueness of each generated code. Additionally, the bit transition probabilities showed a balance between stability and variability, ensuring that while codes were distinct across runs, the underlying quantum system remained stable. This experiment shows the potential of quantum computing for secure authentication, with a reliable and secure method for generating unpredictable and unique quantum authentication codes.
-<br>
+The Correlation Matrix of Binary Strings above (top) (code below) shows strong diagonal dominance, with relatively low off-diagonal correlations. The strong diagonal suggests that each bit is largely independent of the others, which is typical for high entropy, complex quantum systems. The few areas of off diagonal correlation might indicate interactions between specific qubits, possibly linked to the structure of the scattering amplitudes. The overall low correlation between most bit positions suggests that the quantum states do not exhibit simple, pairwise correlations but rather reflect a more intricate structure.<br>
+
+Lastly, the Entropy Plot above (bottom) (code below) shows that most bit positions have high entropy, with a few positions having slightly lower values. High entropy across most bit positions indicates that the bits are highly variable and not overly constrained, which aligns with the expected complexity of twistor-based scattering processes. The lower entropy in some positions might point to specific bits being more deterministic.<br>
+
+Entropy of Hamming distances: 3.1998136310587184<br>
+Total palindromic strings found: 0<br>
+The entropy of the Hamming distances is approximately 3.2, indicating a moderate spread of distances. This moderate entropy suggests that while there is some diversity in the Hamming distances (reflecting variation in the quantum states), the distribution is not entirely random. This aligns with the earlier observations of structured patterns in the state space. <br>
+
+In the end, the results show that the quantum circuit is exploring structured regions of the state space, consistent with the complex, high-dimensional nature of twistor scattering amplitudes. The clustering observed in PCA, the broad distribution seen in t-SNE, and the high entropy across bit positions all suggest that the quantum circuit captures a wide variety of states with underlying structure. The lack of simple symmetries, such as palindromes, further supports the complexity of the twistor based model.<br>
 
             
         
         <p>Code:<br>
             <p><pre><code>(10 Qubit Circuit)
-# import
+# imports
 import numpy as np
-import time
-import json
-import logging
 from qiskit import QuantumCircuit, transpile
 from qiskit_ibm_runtime import QiskitRuntimeService, Session, SamplerV2
+from qiskit.circuit.library import UnitaryGate
 from qiskit.visualization import plot_histogram
-from hashlib import sha256
+import json
+import logging
 import matplotlib.pyplot as plt
 from datetime import datetime
+from scipy.stats import unitary_group
 
-# Initialize logging
-logging.basicConfig(level=logging. INFO)
-logger = logging.getLogger(__name__)
+# Setup logging
+logging.basicConfig(level=logging. INFO, filename='scattering_amplitudes.log',
+filemode='w', format='%(asctime)s - %(levelname)s - %(message)s')
 
-# Input your IBM Quantum API key here
-api_key = 'YOUR_IBM_KEY_O-`'
+# Function to serialize datetime objects
+def datetime_converter(o):
+if isinstance(o, datetime):
+return o.isoformat()
 
-# Load IBMQ account
+# Initialize IBM Qiskit Runtime Service 
 service = QiskitRuntimeService(
-    channel='ibm_quantum',
-    instance='ibm-q/open/main',
-    token=api_key
+channel='ibm_quantum',
+instance='ibm-q/open/main',
+token='YOUR_IBMQ_KEY_O-`' 
 )
 
-# Define backend
-backend_name = 'ibm_kyoto'
-backend = service.backend(backend_name)
+# Choose the backend 
+backend = service.backend("ibm_brisbane")
 
-# Generate Quantum Randomness for Authentication Code
-def generate_quantum_code(backend):
-    qc = QuantumCircuit(127, 127)
+# Retrieve and print calibration data for record-keeping
+calibration_data = backend. properties().to_dict()
+logging. info("Backend Calibration Data: %s", json.dumps(calibration_data, indent=4, default=datetime_converter))
 
-    # Apply Hadamard gate to all qubits for maximum superposition
-    qc.h(range(127))
+# Define number of qubits and classical bits
+num_qubits = 127
+quantum_circuit = QuantumCircuit(num_qubits, num_qubits)  # Added classical bits for measurements
 
-    # Measure all qubits
-    qc.measure(range(127), range(127))
+# Random initialization of qubit states (representing particles)
+for i in range(num_qubits):
+theta = np.random.rand() * 2 * np.pi
+quantum_circuit.ry(theta, i)
 
-    # Transpile the circuit for the backend
-    transpiled_qc = transpile(qc, backend=backend, optimization_level=3)
-    
-    return transpiled_qc
+# Entangle qubits to simulate interactions between particles
+for i in range(0, num_qubits - 1, 2):  # Ensure we don't go out of bounds
+quantum_circuit.cx(i, i+1)
 
-# Generate a new code every 3 seconds using SamplerV2
-def get_code_from_quantum_circuit(qc, backend):
-    with Session(service=service, backend=backend) as session:
-        sampler = SamplerV2(session=session)
-        
-        # Run the circuit
-        job = sampler. run([qc], shots=8192)
-        job_result = job.result()
-        
-        # Retrieve the classical register name
-        classical_register = qc.cregs[0].name
-        
-        # Extract counts for the first (and only) pub result
-        pub_result = job_result[0].data[classical_register].get_counts()
-        
-        # Find the most probable bitstring and hash it to form the authentication code
-        bitstring = max(pub_result, key=pub_result.get)
-        secure_code = sha256(bitstring.encode()).hexdigest()[:6]
-        
-        return secure_code, pub_result
+# Apply twistor Unitary transformations
+for i in range(num_qubits):
+# Generate a random unitary matrix representing twistor transformations
+u_matrix = unitary_group.rvs(2)
+unitary_gate = UnitaryGate(u_matrix)
+quantum_circuit.append(unitary_gate, [i])
 
-# Code Validation and User Interaction
-def authenticate_user(expected_code):
-    user_input = input("Please enter the authentication code: ")
-    
-    if user_input == expected_code:
-        print("SUCCESS: Authentication Successful!")
-    else:
-        print("FAILURE: Authentication Failed.")
+# Additional entanglement to mimic higher order particle interactions
+for i in range(0, num_qubits - 3, 4):  # Ensure we don't go out of bounds
+quantum_circuit.cx(i, i+2)
+quantum_circuit.cx(i+1, i+3)
 
-# Record results to a JSON 
-def record_results_to_json(data, file_path):
-    with open(file_path, 'w') as file:
-        json.dump(data, file, indent=4)
+# Final set of rotations to encode the scattering amplitude information
+for i in range(num_qubits):
+phi = np.random.rand() * 2 * np.pi
+quantum_circuit.rz(phi, i)
 
-# Main Loop to generate and display quantum codes, with validation prompt after stopping
-def quantum_authenticator_loop(backend, num_iterations=3, json_file_path='/Users/Documents/Qauth_results.json'):
-    last_code = None
-    all_pub_results = []
-    try:
-        for _ in range(num_iterations):
-            qc = generate_quantum_code(backend)
-            quantum_code, pub_result = get_code_from_quantum_circuit(qc, backend)
-            print(f"Quantum Authenticator Code: {quantum_code}")
-            last_code = quantum_code
-            all_pub_results.append(pub_result)
-            
-            # Wait for 3 seconds before generating the next code
-            time.sleep(3)
-    except KeyboardInterrupt:
-        print("\nLoop interrupted by user.")
-    
-    # After the loop or interruption, prompt for code validation
-    if last_code:
-        authenticate_user(last_code)
-    else:
-        print("No code was generated during this session.")
-    
-    # Record the generated codes and results to a JSON 
-    results_data = {
-        "quantum_codes": [last_code],
-        "pub_results": all_pub_results,
-        "timestamp": datetime. now().isoformat(),
-        "backend": backend_name
-    }
-    record_results_to_json(results_data, json_file_path)
-    print(f"Results saved to {json_file_path}")
+# Measurement to the classical bits
+quantum_circuit.measure(range(num_qubits), range(num_qubits))
 
-    # Plotting the results
-    if all_pub_results:
-        plot_histogram(all_pub_results[-1])
-        plt. show()
+# Transpile the quantum circuit
+transpiled_circuit = transpile(quantum_circuit, backend=backend, optimization_level=3)
 
-# Run the loop with a set number of iterations and save to JSON
-quantum_authenticator_loop(backend, num_iterations=3, json_file_path='/Users/Documents/Qauth_results.json')
+# Log transpiled circuit depth and gate count
+logging. info("Transpiled Circuit Depth: %d", transpiled_circuit.depth())
+logging. info("Transpiled Circuit Gate Count: %s", transpiled_circuit.count_ops())
 
-///////////////////////////////////////////////////////////
+# Execution on backend with SamplerV2
+with Session(service=service, backend=backend) as session:
+sampler = SamplerV2(session=session)
+# Run the circuit
+job = sampler. run([transpiled_circuit], shots=8192)
+job_result = job.result()
+# Retrieve the classical register name
+classical_register = quantum_circuit.cregs[0].name
+# Extract counts for the first (and only) pub result
+pub_result = job_result[0].data[classical_register].get_counts()
 
-Code for Bitstring Heatmap Visual from Run Data
+# Save the results to JSON
+results_data = {
+
+"raw_counts": pub_result
+}
+file_path = '/Users/Documents/scattering_amplitudes_result.json'
+with open(file_path, 'w') as f:
+json.dump(results_data, f, indent=4)
+# Plotting the results for analysis
+plot_histogram(pub_result)
+plt.title("Scattering Amplitudes")
+
+plt.savefig('/Users/Documents/scattering_amplitudes_histogram.png')
+plt. show()
+
+////////////////////////////////////////////////////////////////
+
+Code for Hamming Distances Visual from Run Data
 import json
 import matplotlib.pyplot as plt
+from itertools import combinations
+from scipy.spatial.distance import hamming
 import numpy as np
-import seaborn as sns
 
-# Json Run File path
-file_path = '/Users/Documents/Qauth_results.json'
-with open(file_path, 'r') as f:
-    data = json.load(f)
+# Load the results JSON file
+file_path = '/Users/Documents/scattering_amplitudes_result.json'
+with open(file_path) as f:
+    results_data = json.load(f)
 
-# Extract the bitstrings from the pub_results
-bitstrings = [list(result.keys()) for result in data['pub_results']][0]
+# Extract the binary strings (keys) from the raw counts
+binary_strings = list(results_data['raw_counts'].keys())
 
-# Histogram of Bitstring Lengths
-bitstring_lengths = [len(b) for b in bitstrings]
+# Convert binary strings to arrays of integers
+binary_arrays = [np.array(list(map(int, list(binary_string)))) for binary_string in binary_strings]
 
+# Calculate Hamming distances between all pairs of binary strings
+hamming_distances = [
+    hamming(pair[0], pair[1]) * len(binary_arrays[0])  # Convert normalized distance to absolute number of differing bits
+    for pair in combinations(binary_arrays, 2)
+]
+
+# Plot the histogram of Hamming distances
 plt.figure(figsize=(10, 6))
-plt.hist(bitstring_lengths, bins=range(126, 129), color='skyblue', edgecolor='black')
-plt.title('Histogram of Bitstring Lengths')
-plt.xlabel('Bitstring Length')
+plt.hist(hamming_distances, bins=range(0, len(binary_arrays[0]) + 1), edgecolor='black', alpha=0.7)
+plt.title('Distribution of Hamming Distances between Measurement Outcomes')
+plt.xlabel('Hamming Distance')
 plt.ylabel('Frequency')
+plt.grid(True)
+plt.savefig('/Users/steventippeconnic/Documents/QC/hamming_distance_distribution.png')  # Save the plot
 plt. show()
 
-# Bitstring Frequencies (should all be 1)
-frequencies = [1 for _ in bitstrings]  # Since each bitstring occurs exactly once
+/////////////////////////////////////////////////////////////////
 
+Code for the Fourier Transform of the mean binary string Visual with Run Data
+import json
+import numpy as np
+import matplotlib.pyplot as plt
+
+# Load the results JSON file
+file_path = '/Users/Documents/scattering_amplitudes_result.json'
+with open(file_path) as f:
+    results_data = json.load(f)
+
+# Extract the binary strings (keys) from the raw counts
+binary_strings = list(results_data['raw_counts'].keys())
+
+# Convert binary strings to arrays of integers
+binary_arrays = np.array([list(map(int, list(binary_string))) for binary_string in binary_strings])
+
+# Compute the mean binary string
+mean_binary_array = np.mean(binary_arrays, axis=0)
+
+# Perform Fourier transform on the mean binary array
+fourier_transform = np.fft.fft(mean_binary_array)
+frequencies = np.fft.fftfreq(len(mean_binary_array))
+
+# Plot the Fourier Transform results
 plt.figure(figsize=(10, 6))
-plt.hist(frequencies, bins=range(1, 3), color='lightgreen', edgecolor='black')
-plt.title('Distribution of Bitstring Frequencies')
+plt.plot(frequencies, np.abs(fourier_transform))
+plt.title('Fourier Transform of Mean Binary String')
 plt.xlabel('Frequency')
-plt.ylabel('Number of Bitstrings')
+plt.ylabel('Amplitude')
+plt.grid(True)
+plt.savefig('/Users/steventippeconnic/Documents/QC/fourier_scattering_amplitudes.png')
 plt. show()
 
-# Bitstring Heatmap
-bitarray = np.array([[int(bit) for bit in b] for b in bitstrings])
+/////////////////////////////////////////////////////////////////
 
-plt.figure(figsize=(12, 10))
-sns.heatmap(bitarray, cmap='coolwarm', cbar=False)
-plt.title('Bitstring Heatmap')
-plt.xlabel('Bit Position')
-plt.ylabel('Bitstring Index')
-plt. show()
-
-///////////////////////////////////////////////////////////
-
-Entropy Comparison Across Runs and Bitstring Frequency Distribution Visuals from Run Data
+Code for Principal Component Analysis (PCA) Visual from Run Data
 import json
-import base64
-import zlib
 import numpy as np
 import matplotlib.pyplot as plt
-from collections import Counter
-from scipy.stats import entropy
-import seaborn as sns
+from sklearn.decomposition import PCA
 
-# Json Run file paths
-file_paths = [
-    '/Users/Documents/Qauth Run Backend Results/Qauth Run Backend # 1 job-cv1w00gxrz3000899re0/Qauth Run Backend #1 job-cv1w00gxrz3000899re0-result.json',
-    '/Users/Documents/Qauth Run Backend Results/Qauth Run Backend # 2 job-cv1wmtkhtzyg008q8dsg/Qauth Run Backend #2 job-cv1wmtkhtzyg008q8dsg-result.json',
-    '/Users/Documents/Qauth Run Backend Results/Qauth Run Backend #3 job-cv1wsfx184p00089k0mg/Qauth Run Backend #3 job-cv1wsfx184p00089k0mg-result.json'
-]
+# Load the results JSON file
+file_path = '/Users/Documents/scattering_amplitudes_result.json'
+with open(file_path) as f:
+results_data = json.load(f)
 
-def decode_bitarray(encoded_data):
-    # Decode the base64 and zlib encoded data
-    decoded_data = zlib.decompress(base64.b64decode(encoded_data))
-    bitstrings = [format(byte, '08b') for byte in decoded_data]
-    return ''.join(bitstrings)
+# Extract the binary strings (keys) from the raw counts
+binary_strings = list(results_data['raw_counts'].keys())
 
-# Load the results from the three files
-results = []
-for file_path in file_paths:
-    with open(file_path, 'r') as f:
-        data = json.load(f)
-        # Navigate through the structure to get to the bitstring data
-        pub_results = data['__value__']['pub_results']
-        for result in pub_results:
-            bitarray_data = result['__value__']['data']['__value__']['fields']['c']['__value__']['array']['__value__']
-            decoded_bitstring = decode_bitarray(bitarray_data)
-            results.append(decoded_bitstring)
+# Convert binary strings to arrays of integers
+binary_arrays = np.array([list(map(int, list(binary_string))) for binary_string in binary_strings])
 
-# 1. Bitstring Frequency Comparison
-bitstring_counts_all = [Counter(result) for result in results]
+# Perform PCA
+pca = PCA(n_components=2)
+principal_components = pca. fit_transform(binary_arrays)
 
-# Plot the bitstring frequency distributions for the three runs
-plt.figure(figsize=(15, 6))
-for i, bitstring_counts in enumerate(bitstring_counts_all):
-    plt.subplot(1, 3, i + 1)
-    plt. bar(bitstring_counts.keys(), bitstring_counts.values(), color='blue')
-    plt.title(f'Bitstring Frequency Distribution - Run #{i+1}')
-    plt.xlabel('Bitstring')
-    plt.ylabel('Frequency')
-
-plt.tight_layout()
-plt. show()
-
-# 2. Entropy Comparison
-bitstring_entropies = []
-
-for bitstring_counts in bitstring_counts_all:
-    probabilities = np.array(list(bitstring_counts.values())) / sum(bitstring_counts.values())
-    bitstring_entropies.append(entropy(probabilities))
-
-# Plot the entropy for each run
+# Plot the results
 plt.figure(figsize=(10, 6))
-plt. bar(range(1, 4), bitstring_entropies, color='red')
-plt.title('Entropy Comparison Across Runs')
-plt.xlabel('Run Index')
-plt.ylabel('Entropy (Shannon)')
-plt.xticks([1, 2, 3], ['Run #1', 'Run #2', 'Run #3'])
+plt.scatter(principal_components[:, 0], principal_components[:, 1], alpha=0.7)
+plt.title('PCA of Binary Strings from Scattering Amplitudes')
+plt.xlabel('Principal Component 1')
+plt.ylabel('Principal Component 2')
+plt.grid(True)
+plt.savefig('/Users/steventippeconnic/Documents/QC/pca_scattering_amplitudes.png')
 plt. show()
 
-# 3. Bit-by-Bit Probability Comparison
-bit_probabilities_all = []
+///////////////////////////////////////////////////////////////
 
-for decoded_bitstring in results:
-    bit_array = np.array([[int(bit) for bit in decoded_bitstring]])
-    bit_probabilities = np.mean(bit_array, axis=0)
-    bit_probabilities_all.append(bit_probabilities)
-
-# Combine the bit probabilities into one array for comparison
-bit_probabilities_combined = np.vstack(bit_probabilities_all)
-
-# Plot the bit-by-bit probability heatmap comparison
-plt.figure(figsize=(12, 8))
-sns.heatmap(bit_probabilities_combined, cmap='coolwarm', cbar=True, annot=True, fmt=".2f")
-plt.title('Bit-by-Bit Probability Comparison Across Runs')
-plt.xlabel('Bit Position')
-plt.ylabel('Run Index')
-plt.yticks([0.5, 1.5, 2.5], ['Run #1', 'Run #2', 'Run #3'])
-plt. show()
-
-///////////////////////////////////////////////////////////
-
-Bit Position Correlation Runs with Hamming Distances and Bit Transition Probabilities Between Run Visuals from Run Data
+Code for t-SNE (t-Distributed Stochastic Neighbor Embedding) Visual from Run Data
 import json
-import base64
-import zlib
 import numpy as np
 import matplotlib.pyplot as plt
-import seaborn as sns
-from scipy.spatial.distance import pdist, squareform
+from sklearn.manifold import TSNE
+
+# Load the results JSON file
+file_path = '/Users/Documents/scattering_amplitudes_result.json'
+with open(file_path) as f:
+    results_data = json.load(f)
+
+# Extract the binary strings (keys) from the raw counts
+binary_strings = list(results_data['raw_counts'].keys())
+
+# Convert binary strings to arrays of integers
+binary_arrays = np.array([list(map(int, list(binary_string))) for binary_string in binary_strings])
+
+# Perform t-SNE
+tsne = TSNE(n_components=2, random_state=42)
+tsne_results = tsne. fit_transform(binary_arrays)
+
+# Plot the results
+plt.figure(figsize=(10, 6))
+plt.scatter(tsne_results[:, 0], tsne_results[:, 1], alpha=0.7)
+plt.title('t-SNE of Binary Strings from Scattering Amplitudes')
+plt.xlabel('t-SNE Component 1')
+plt.ylabel('t-SNE Component 2')
+plt.grid(True)
+plt.savefig('/Users/steventippeconnic/Documents/QC/tsne_scattering_amplitudes.png')
+plt.s how()
+
+///////////////////////////////////////////////////////////////
+
+Code for Entropy Analysis Visual from Run Data
+import json
+import numpy as np
 from scipy.stats import entropy
+import matplotlib.pyplot as plt
 
-# Json Run file paths
-file_paths = [
-    '/Users/Documents/Qauth Run Backend Results/Qauth Run Backend # 1 job-cv1w00gxrz3000899re0/Qauth Run Backend #1 job-cv1w00gxrz3000899re0-result.json',
-    '/Users/Documents/Qauth Run Backend Results/Qauth Run Backend # 2 job-cv1wmtkhtzyg008q8dsg/Qauth Run Backend #2 job-cv1wmtkhtzyg008q8dsg-result.json',
-    '/Users/Documents/Qauth Run Backend Results/Qauth Run Backend #3 job-cv1wsfx184p00089k0mg/Qauth Run Backend #3 job-cv1wsfx184p00089k0mg-result.json'
-]
+# Load the results JSON file
+file_path = '/Users/Documents/scattering_amplitudes_result.json'
+with open(file_path) as f:
+    results_data = json.load(f)
 
-def decode_bitarray(encoded_data):
-    # Decode the base64 and zlib encoded data
-    decoded_data = zlib.decompress(base64.b64decode(encoded_data))
-    bitstrings = [format(byte, '08b') for byte in decoded_data]
-    return ''.join(bitstrings)
+# Extract the binary strings (keys) from the raw counts
+binary_strings = list(results_data['raw_counts'].keys())
 
-# Load and decode bitstrings from the results
-results = []
-for file_path in file_paths:
-    with open(file_path, 'r') as f:
-        data = json.load(f)
-        pub_results = data['__value__']['pub_results']
-        for result in pub_results:
-            bitarray_data = result['__value__']['data']['__value__']['fields']['c']['__value__']['array']['__value__']
-            decoded_bitstring = decode_bitarray(bitarray_data)
-            results.append(decoded_bitstring)
+# Convert binary strings to arrays of integers
+binary_arrays = np.array([list(map(int, list(binary_string))) for binary_string in binary_strings])
 
-# Set the bitstring length to 128
-bitstring_length = 128
+# Calculate entropy for each bit position across all strings
+bitwise_entropy = [entropy(np.bincount(binary_arrays[:, i])) for i in range(binary_arrays.shape[1])]
 
-# Reshape the bit arrays into proper 2D arrays based on the bitstring length
-bit_arrays = [np.array(list(map(int, decoded_bitstring))).reshape(-1, bitstring_length) for decoded_bitstring in results]
-
-# Check the shape of each bit array 
-for i, bit_array in enumerate(bit_arrays):
-    print(f"New shape of bit array for Run #{i+1}: {bit_array.shape}")
-
-# 1. Correlation Between Bit Positions
-bit_correlations = [np.corrcoef(bit_array.T) for bit_array in bit_arrays]
-
-plt.figure(figsize=(18, 6))
-for i, corr in enumerate(bit_correlations):
-    plt.subplot(1, 3, i + 1)
-    sns.heatmap(corr, cmap='coolwarm', vmin=-1, vmax=1, cbar=True)
-    plt.title(f'Bit Position Correlation - Run #{i+1}')
-plt.tight_layout()
-plt. show()
-
-# 2. Hamming Distance Analysis
-hamming_distances = [squareform(pdist(bit_array, metric='hamming')) for bit_array in bit_arrays]
-
-plt.figure(figsize=(18, 6))
-for i, hamming in enumerate(hamming_distances):
-    plt.subplot(1, 3, i + 1)
-    sns.heatmap(hamming, cmap='viridis', cbar=True)
-    plt.title(f'Hamming Distance - Run #{i+1}')
-plt.tight_layout()
-plt. show()
-
-# 3. Bitstring Transition Probability
-transition_probabilities = []
-
-for i in range(1, len(bit_arrays)):
-    transitions = (bit_arrays[i] != bit_arrays[i - 1]).mean(axis=0)
-    transition_probabilities.append(transitions)
-
-transition_probabilities = np.vstack(transition_probabilities)
-
-plt.figure(figsize=(12, 6))
-sns.heatmap(transition_probabilities, cmap='Reds', annot=True, fmt=".2f")
-plt.title('Bit Transition Probabilities Between Runs')
+# Plot the entropy values
+plt.figure(figsize=(10, 6))
+plt. bar(range(len(bitwise_entropy)), bitwise_entropy)
+plt.title('Entropy of Each Bit Position Across All Binary Strings')
 plt.xlabel('Bit Position')
-plt.ylabel('Transition Between Runs')
+plt.ylabel('Entropy')
+plt.grid(True)
+plt.savefig('/Users/steventippeconnic/Documents/QC/entropy_scattering_amplitudes.png')
 plt. show()
 
-# 4. Run Comparison Summary Plot
-# Compare entropy and average Hamming distance for each run
-entropies = [entropy(np.mean(bit_array, axis=0)) for bit_array in bit_arrays]
-avg_hamming_distances = [np.mean(hamming) for hamming in hamming_distances]
+///////////////////////////////////////////////////////////////
 
-fig, ax = plt.subplots(1, 2, figsize=(12, 6))
+Code for Correlation Analysis Visual from Run Data
+import json
+import numpy as np
+import matplotlib.pyplot as plt
 
-ax[0].bar(range(1, 4), entropies, color='blue')
-ax[0].set_title('Entropy Comparison Across Runs')
-ax[0].set_xlabel('Run Index')
-ax[0].set_ylabel('Entropy')
+# Load the results JSON file
+file_path = '/Users/Documents/scattering_amplitudes_result.json'
+with open(file_path) as f:
+    results_data = json.load(f)
 
-ax[1].bar(range(1, 4), avg_hamming_distances, color='green')
-ax[1].set_title('Average Hamming Distance Across Runs')
-ax[1].set_xlabel('Run Index')
-ax[1].set_ylabel('Average Hamming Distance')
+# Extract the binary strings (keys) from the raw counts
+binary_strings = list(results_data['raw_counts'].keys())
 
-plt.tight_layout()
+# Convert binary strings to arrays of integers
+binary_arrays = np.array([list(map(int, list(binary_string))) for binary_string in binary_strings])
+
+# Calculate the correlation matrix
+correlation_matrix = np.corrcoef(binary_arrays, rowvar=False)
+
+# Plot the correlation matrix
+plt.figure(figsize=(10, 8))
+plt.imshow(correlation_matrix, cmap='viridis', interpolation='none')
+plt.colorbar()
+plt.title('Correlation Matrix of Binary Strings')
+plt.xlabel('Bit Position')
+plt.ylabel('Bit Position')
+plt.savefig('/Users/steventippeconnic/Documents/QC/correlation_scattering_amplitudes.png')
 plt. show()
 
 # End
@@ -560,7 +521,7 @@ plt. show()
 </p>
             
  </div>
-        <img src="Q39i4.jpeg" alt="" class="experiment-image4">
+        <img src="Q31i4.jpeg" alt="" class="experiment-image4">
         <p></p>
         <div class="content-block">
 
