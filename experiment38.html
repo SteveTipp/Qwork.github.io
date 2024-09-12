@@ -97,94 +97,67 @@
     </nav>
 
     <section class="content-section">
-        <h1><center> Twistor-Inspired Quantum Error Correction (127-Qubits) </center></h1>
+        <h1><center> Exploring Prime Factorization Using Shor’s Algorithm to Study the Riemann Hypothesis (127-Qubits) </center></h1>
         <div class="content-block">
          
-This experiment aims to explore the potential of twistor theory-inspired quantum error correction codes, using IBM's 127-Qubit ibm_kyiv. This compares twistor-based codes with traditional quantum error correction methods by encoding logical qubits into physical qubits. The experiment uses twistor-inspired quantum gates, deliberate introduction of quantum errors, and comparison of error correction efficacy through fidelity measurements and statistical analysis.
-<br>
-Twistor theory, developed by Roger Penrose, introduces a geometric framework in which spacetime events are encoded as points in a complex, higher-dimensional space known as twistor space.<br>
-<br>
+This experiment uses Shor's Algorithm on IBM's 127-qubit ibm_osaka quantum computer with qiskit to factor a large semi-prime number, N = 143, using modular exponentiation and quantum phase estimation. The goal is to explore the relationship between prime factorization and the non-trivial zeros of the Riemann zeta function.<br>
+This code successfully finds a period of r = 5 from the bitstring with the second highest frequency, a non-trivial factor of 143. Specifically, gcd⁡(33, 143) = 11. The other factor can be computed as:<br>
+143 / 11 = 13<br>
+Thus, the factors of 143 are 11 and 13.<br>
 
 
 
 
           
-<p>1. Initialization and Setup<br>
-Define a quantum circuit (qc) with 127 qubits. 7 logical qubits and 120 physical qubits. The logical qubits represent the information to be protected, while the physical qubits serve as the medium for encoding and error correction.<br>
-logical_qubits = [0, 1, 2, 3, 4, 5, 6]<br>
-physical_qubits = [7, 8, ..., 126]<br>
+<p>1. Problem Definition: Prime Factorization<br>
+The problem to be solved is the factorization of a large semi-prime number N into its prime factors. In this experiment, we factor N = 143, which is the product of two prime numbers:<br>
+N = 11 * 13.<br>
 
-<p>2. Twistor-Inspired Encoding<br>
-A custom twistor-inspired encoding function twistor_encoding (qc, qubits) is defined. The function applies a sequence of rotation gates RYGate(θ) followed by controlled-X (CX) gates to the qubits.
-<br>
-The rotation angle θ for each qubit i is given by:<br>
-θ_i​ = 4π​ * (i + 1)<br>
-The CX gates entangle each qubit with its subsequent qubit, establishing a complex correlation pattern.<br>
+<p>2. Introduction to Shor’s Algorithm<br>
+Shor's algorithm finds the prime factors of an integer N by reducing the problem to finding the order r of a randomly chosen number a (such that 1 < a < N and a is coprime to N). The order r is the smallest integer such that:<br>
+a^r ≡ 1 (mod N).<br>
+Once the period r is found, we use it to compute the potential factors of N:<br>
+Factors of N = gcd(a^(r/2) −1, N) and gcd(a^(r/2) +1, N).<br>
 
-
-<p>3. Encoding Logical Qubits<br>
-The logical qubits are encoded into the physical qubits using the twistor-inspired encoding scheme. Each logical qubit is entangled with every physical qubit through the application of CX gates:<br>
-CX(logical_qubit, physical_qubit)<br>
-This step is intended to distribute the logical information across multiple physical qubits, thereby increasing resilience to errors.<br>
+<p>3. Classical Preprocessing<br>
+Before we can factor N using quantum computing, we choose a number a such that:<br>
+1 < a < N and gcd(a, N) = 1.<br>
+In this experiment, we choose a = 2, which is coprime to N = 143.<br>
 
 
 
 
-<p>4. State Superposition<br>
-Hadamard gates are applied to each logical qubit to create an equal superposition of states:<br>
-H∣0⟩ = (​∣0⟩ + ∣1⟩​)/sqrt(2)<br>
-This step ensures that the encoded information is spread across the entire quantum state space.<br>
+<p>4. Quantum Circuit Construction<br>
+We construct a quantum circuit using two sets of qubits:<br>
+Counting qubits that are used for quantum phase estimation.<br>
+Qubits representing the modular exponentiation result that are used to hold the modular exponentiation values.<br>
+For N= 143, we use 8 counting qubits and log⁡_2(N) = 8 additional qubits.<br>
+
+Hadamard Transform<br>
+Apply Hadamard gates H to the counting qubits to create an equal superposition over all possible states:<br>
+H∣0⟩ = 1/sqrt(2) * (∣0⟩ + ∣1⟩),<br>
+so that the state of the system becomes:<br>
+1/(sqrt(2^n)) * (2^n) − 1 ∑ x = 0 ​ ∣x⟩.<br>
+
+Modular Exponentiation<br>
+Apply the modular exponentiation operation, which raises a = 2 to successive powers, modulo N = 143:<br>
+a^k mod N.<br>
+This operation is controlled by the counting qubits and updates the modular exponentiation qubits.<br>
+
+Inverse Quantum Fourier Transform (QFT)<br>
+After applying modular exponentiation, we use the Inverse Quantum Fourier Transform (QFT) to extract the period r. The QFT transforms the basis states back into the computational basis, measuring the period in the counting qubits.<br>
+The QFT for n qubits is defined by the transformation:<br>
+QFT ∣x⟩ = 1/(sqrt(2^n)) * (2^n) − 1 ∑ y = 0 (e^(2πixy/2^n) ∣y⟩)<br>
+This operation gives the periodicity information in the final state.<br>
+
+Measurement<br>
+Measure the state of the counting qubits to get a bitstring representing the outcome of the quantum phase estimation.<br>
 
 
 
-<p>5. Deliberate Error Introduction<br>
-Errors are deliberately introduced to test the robustness of the twistor-inspired error correction:<br>
-A CX gate is applied between the first logical qubit and a selected physical qubit:<br>
-CX(logical_qubit[0], physical_qubit[10])<br>
-An X gate is applied to another physical qubit to simulate a bit-flip error:<br>
-X(physical_qubit[20])<br>
-A CZ gate is applied between a physical and a logical qubit to simulate a phase error:<br>
-CZ(physical_qubit[5], logical_qubit[1])<br>
+<p>6. Saving and Plotting Results<br>
+The quantum measurement data is stored in a JSON, including the bitstring outcomes and their associated probabilities. A histogram of the results is also plotted.<br>
 
-<p>6. Reinforcement of Twistor Encoding <br>
-The twistor encoding is reapplied to reinforce the error correction scheme, ensuring that any errors are geometrically realigned within the twistor space structure.
-<br>
-
-
-<p>7. Measurement<br>
-The logical qubits are measured to determine the final state of the system after encoding, error introduction, and correction. The measurement outcomes are recorded.
-<br>
-
-
-
-<p>8. Circuit Transpilation<br>
-The quantum circuit is transpiled for ibm_kyiv using an optimization level of 3 to minimize gate counts and enhance execution fidelity:<br>
-transpiled_qc = transpile(qc, backend = ibm_kyiv, optimization_level = 3)<br>
-The circuit is split into sub-circuits if the total number of gates exceeds a specified maximum (5000 gates in this case).<br>
-
-
-
-<p>9. Execution on Quantum Backend<br>
-Each sub-circuit is executed on ibm_kyiv)using the SamplerV2, and the results are collected and combined:<br>
-all_counts[k] += v for each key-value pair in counts<br>
-The final combined results are saved as a JSON.<br>
-
-
-
-<p>10. Comparison with Traditional Encoding<br>
-A traditional quantum error correction scheme, the Steane code, is implemented for comparison. This involves applying Hadamard and CX gates to encode logical qubits into physical qubits:<br>
-H ∣lq⟩ CX(∣lq⟩, ∣physical_qubit[lq]⟩)<br>
-The traditional encoding circuit is also transpiled, executed on the same backend, and the results are saved for comparison.<br>
-
-<p>11. Fidelity Calculation<br>
-The fidelity of the twistor-based and traditional error correction schemes is computed by comparing the observed results with hypothetical ideal counts:<br>
-F = state_fidelity(observed_counts, ideal_counts)<br>
-Fidelity values are logged, indicating the accuracy of the quantum error correction schemes.<br>
-
-
-<p>12. Visualization<br>
-Histograms of the measurement outcomes are plotted for both the twistor-based and traditional error correction schemes.
-<br>
 
 
     
@@ -192,82 +165,116 @@ Histograms of the measurement outcomes are plotted for both the twistor-based an
 
   
 </div>
-        <img src="E37i1.png" alt="" class="experiment-image">
+        <img src="E38i1.png" alt="" class="experiment-image">
         <p></p>
         <div class="content-block">
 <br>
             
-Classical fidelity (Jensen-Shannon-based): 0.9744668982506327<br>
-The classical fidelity calculation above (visual 1) (code below), as calculated using the Jensen-Shannon divergence approach, is ~ 0.9745. This shows that the probability distributions of the measurement outcomes from the twistor-based and traditional error correction schemes are quite similar, with a high degree of overlap. The closer the fidelity is to 1, the more similar the two distributions are.
+The Distribution of Measurement Outcomes above (code below) shows that there are more than 200 unique bitstrings, with varying frequencies, ranging from 13 to 64 counts.<br>
+
+Given that we will use Shor's algorithm to estimate the period r, let's analyze some of the most frequent bitstrings. To do this, we will convert the top bitstrings into their decimal representations, then attempt to infer the period r.<br>
+From the top 10 most frequent bitstrings, we have:<br>
+10111110: 64 counts<br>
+00110010: 54 counts<br>
+00110101: 53 counts<br>
+10110100: 53 counts<br>
+00111000: 52 counts<br>
+
+We will compute the phase for the first two of these bitstrings by dividing the decimal representation by 2^n = 256, where n = 8 is the number of counting qubits.<br>
+
+10111110 (binary) = 190 (decimal):<br>
+θ = 190/256 ≈ 0.7421875 (~ 3/4​)<br>
+
+00110010 (binary) = 50 (decimal):<br>
+θ = 50/256 ≈ 0.1953125 (~ 1/5)<br>
+
+The bitstring with the first highest frequency is 10111110 which corresponds to 3/4​. This indicates the first potential periodicity at r = 4.<br>
+
+The bitstring with the second highest frequency is 00110010 which corresponds to 1/5​. This indicates second potential periodicity at r = 5.<br>
+
+Let's try r = 4 and r = 5.<br>
+For r = 4<br>
+We have:<br>
+N = 143<br>
+r = 4<br>
+a = 2 (this is the base we use for the exponentiation in Shor's algorithm)<br>
+Since r = 4, we need to calculate a^(r/2) = 2^(4/2) = 2^2.<br>
+2^2 = 4<br>
+Now, calculate the GCDs with N:<br>
+gcd((2^2) −1, 143) = gcd(3, 143)<br>
+gcd((2^2) + 1, 143) = gcd(5, 143)<br>
+Evaluate GCDs:
+gcd(3, 143) = 1, this does not give a factor.<br>
+gcd(5, 143) = 1, this does not give a factor.<br>
+Thus, r = 4 does not give a factor of 11. <br><br>
+
+For r = 5<br>
+We have:<br>
+N = 143<br>
+r = 5<br>
+a = 2 (base for exponentiation in Shor’s algorithm)<br>
+Since r = 5, r/2 is not an integer, so we don't directly use a^(r/2). Instead, we calculate (2^r) mod N.<br>
+Let's calculate using powers of a:<br>
+(2^r) − 1 = (2^5) −1 = 32 − 1 = 31 <br>
+(2^r) + 1 = 25 + 1 = 32 + 1 = 33<br>
+Now, calculate the GCDs:<br>
+gcd(31, 143) = 1, this does not give a factor.<br>
+gcd(33, 143) = 11, this does give a factor.<br>
+Thus, r = 5 does give a factor of 11.<br><br>
+
+With r = 5, we found a non-trivial factor of 143! Specifically, gcd⁡(33, 143) = 11. Therefore, the other factor can be computed as:<br>
+143 / 11 = 13<br>
+Thus, the factors of 143 are 11 and 13.<br><br>
+
+The Top 10 Most Frequent Bitstrings above (code below) shows 10111110 (64 counts) being the highest, followed by 00110010 (54 counts).<br>
+There is a sharp drop-off after the top few bitstrings, with the remaining bitstrings having similar frequencies between 50 to 40 counts.<br>
+Since these bitstrings are the most frequent, they likely represent rational approximations of the true phase. By converting these bitstrings to decimal and then fractions, we  were able to infer values of r.<br>
+
+The Harmonic Frequency Analysis above (code below) shows red dashed lines representing the expected harmonics of the base period between r = 4 and r = 5. The green bars indicate the actual phase frequencies from the experiment.
 <br>
-The histogram for the twistor-based scheme shows a significant concentration of measurements in the state '0000000', with 60,834 counts, indicating that the circuit effectively corrected most errors and returned the system to the expected state.
-There is also a noticeable spread across other states, with the next highest count being 3,499 in the '0000010' state, followed by several other states with lower but non-negligible counts. This spread suggests that while the twistor-based encoding was effective, it also introduced some noise or errors that were not entirely corrected.
-The histogram for the traditional error correction scheme shows a nearly perfect concentration of measurements in the '0000000' state, with all 8192 counts in that state. This indicates that the traditional encoding was highly effective in correcting errors, with no noticeable spread across other states.
-The traditional error correction scheme appears to be more robust and effective in this setup. Despite this, the high classical fidelity indicates that the twistor-based scheme's performance is still very close to that of the traditional scheme, suggesting that twistor-based encoding can be a viable approach.
-<br>
-The correlation matrix between qubits above (visual 2) (code below) shows how errors in one qubit are correlated with errors in another. The values range from -0.29 to 1.0, indicating some level of both positive and negative correlations. Most correlations between qubits are relatively low (closer to zero), indicating that errors in individual qubits are largely independent.
-The mostly low correlations suggest that the error-correcting code is effectively isolating qubit errors, which is desirable in error correction. The presence of negative correlations could indicate that certain types of errors are mutually exclusive.
-<br>
-The Heatmap of Bit-Flip Errors above (visual 3) (code below) shows the number of bit flips between the observed states and the ideal state '0000000'.
-The bit flips are relatively uniformly distributed among 1, 2, and 3-bit flips, with very few states having no bit flips (which is expected given the observed high fidelity for 0000000).
-The most common errors involve 2 or 3-bit flips, which might indicate that the noise affecting the system typically affects multiple qubits simultaneously.
-<br>
-The Mutual Information Between Qubits heatmap above (visual 4) (code below) shows the mutual information between pairs of qubits, which measures how much information is shared between them.
-Qubit pairs (0, 0), (3, 3), (4, 4), and (5, 5) show high mutual information, indicating that these qubits share a significant amount of information internally (which is expected because they are correlated with themselves).
-Some pairs, like (3, 4) and (4, 5), have non-zero mutual information, suggesting there might be some correlation between their errors. This could be due to crosstalk.
-The low mutual information values between most qubits indicate that errors in individual qubits are relatively independent. 
-<br>
-Winding Number (Topological Invariant): 1104
-The winding number, 1104, is a topological invariant that reflects the 'twisting' or 'winding' of the geometric structure formed by the state vectors.
-A high winding number indicates a complex topological structure in the error landscape. This suggests that the error syndromes are not just randomly distributed but have an intricate structure.
-Twistor Theory often deals with complex, non-trivial topological structures. The high winding number could be indicative of a non-trivial topology in the quantum state space.<br>
-<br>
-            
+The Clustering of Bitstring Frequencies above (code below) represents different clusters identified by the K-means algorithm. The most frequent bitstrings cluster at the higher frequencies, but there is no clear separation between bitstring groups.<br>
+<br>         
 </div>
-        <img src="E37i2.png" alt="" class="experiment-image">
+        <img src="E38i2.png" alt="" class="experiment-image">
         <p></p>
         <div class="content-block">
 <br>
-The heatmap of Twistor-Inspired Error Correlations above (visual 1) (code below) shows levels of correlation between qubits. <br>
-The presence of moderate correlations between certain qubit pairs indicates that these qubits are not entirely independent and could be influenced by shared crosstalk.<br>
-In Twistor Theory, correlations between different elements can reflect underlying geometric connections. The observed correlations may suggest that certain qubits are part of a structure within the twistor space that makes them more susceptible to correlated errors. 
+The Heatmap of Bitstring Frequencies above (code below) shows that the bitstrings are spread across a large range of frequencies in the run, with the darkest color representing bitstrings that occur more frequently. 
 <br>
-The geodesic paths on the Bloch Sphere visual above (visual 2) (code below) represents the evolution of qubit states in the Bloch sphere. In twistor theory, these paths might correspond to the most natural error correction trajectories that preserve certain topological features.
-The relatively short and direct paths suggest minimal error evolution, indicating that the qubits remain close to their intended states. Twistor-inspired approaches could leverage these paths to optimize error correction by maintaining the qubits along the most stable trajectories.
-<br>
-In the Harmonic Analysis of Error States visual above (visual 3) (code below), the Fourier transform reveals the frequency components of the error states. Peaks in the harmonic analysis suggest periodic errors, which could be indicative of systematic noise or recurring errors.
-<br>
-In the Topological Defect Mapping in Error Landscape above (visual 4) (code below), the red and blue points in 3D space represent distinct topological defects in the error landscape.
-The clustering of points indicates regions with higher concentrations of defects. In twistor theory, such defects correspond to singularities or disruptions in the twistor space. The spatial distribution suggests that certain regions of twistor space are more susceptible to these defects, which could be critical zones where quantum errors manifest. 
-<br>
+The Error Distribution Plot above (code below) shows a broad spread of error values, with significant counts of errors in the 0.1 to 0.4 range. <br>
+There are relatively fewer errors in the higher ranges (above 0.6).<br>
+The high concentration of errors in the 0.1 to 0.4 range suggests that most of the detected phases were somewhat close to the ideal phases.<br>
 
+The Phase vs Bitstring Index above (code below) shows no clear structure or clustering of phases around specific bitstring indices. Phases appear randomly distributed across the entire range (from 0 to 1) for different bitstrings.
+<br>
+The Error Grouped by Bitstring Index above (code below), shows a wide spread of error values across different bitstrings, with no clear clustering. Errors range from nearly 0 to close to 1.<br>
+<br>
 
 
             
 <br>
 </div>
-        <img src="E37i3.png" alt="" class="experiment-image">
+        <img src="E38i3.png" alt="" class="experiment-image">
         <p></p>
         <div class="content-block">
 <br>
 
-In the Twistor Conformal Blocks Visualization above (visual 1) (code below), the plot shows a distribution of points with varying intensity levels, representing how error syndromes map under conformal transformations.
-Twistor theory involves conformal transformations, which preserve angles but can distort other properties like distances. The variation in intensity suggests that error syndromes respond differently to these transformations. Regions of higher intensity indicate areas where errors might be less influenced by the twistor geometry, while lower intensities suggest regions where the twistor space has a stronger influence on the error structure.
+The Phase Differences Heatmap above (code below) shows a pattern of alternating regions of high and low phase differences, with some symmetries across the diagonal.<br> 
+The structure in the heatmap suggests that certain phase pairs exhibit similar differences repeatedly, which could indicate a form of underlying periodicity in the phase distribution. The symmetry across the diagonal (where the difference is 0) highlights how the phase differences evolve.
 <br>
-In the Spinor Field Visualization of Error Syndromes above (visual 2) (code below), we see a 3D vector field with arrows representing the spinor form of the error states.
-The vectors in this plot reveal how spinors are aligned in the twistor space. Patterns in the alignment and direction of these spinors indicate correlations between error states that are inherent to the underlying twistor structure. 
+The Cross-Bitstring Correlation Heatmap above (code below) shows a very low degree of correlation between most bitstrings, with slight autocorrelation along the diagonal.<br>
+The low correlation between bitstrings suggests that the states measured are largely independent from one another. The autocorrelation along the diagonal indicates that bitstrings are correlated with themselves, which is natural. The absence of strong off-diagonal correlations is a positive sign, suggesting that there are no hidden dependencies between qubits or bitstrings that could interfere with proper operation of Shor's algorithm.
 <br>
-In the Geometric Phase Evolution Across Qubits visual above (visual 3) (code below), we see a plot showing significant variations in the geometric phase across different qubits.
-Geometric phases are closely related to the curvature and structure of twistor space. The observed fluctuations indicate that the qubits experience varying phase shifts, which are linked to the underlying geometry of the twistor space. These variations highlight how the twistor space influences the quantum system's phase evolution.
-<br>
-In the Holonomy Group Visualization of Error Syndromes visual above (visual 4) (code below), the 3D vectors represent the holonomy or how error vectors change under parallel transport in the error landscape.
-In twistor theory, holonomy groups describe the curvature of the space and how it affects parallel transport. The arrangement and direction of these vectors indicate how the error syndromes are altered when moved around loops in the twistor space. These changes reveal the twistor space's curvature properties and how they influence the stability and behavior of quantum errors.
-<br>
-In the end, this experiment explored a novel twistor-inspired quantum error correction scheme and compared its performance against a traditional error correction method. The results showed a Classical fidelity (Jensen-Shannon-based) of 0.974 for the twistor-based scheme, indicating a high degree of similarity between the twistor-corrected states and the traditional encoding. The histogram of measurement outcomes for the twistor-based scheme revealed that the dominant state accounted for the majority of the counts, with significant leakage into other states, while the traditional scheme showed a single dominant state.
-<br>
-The correlation matrix between qubits and the heatmap of Bit-Flip Errors revealed the degree of interaction and error propagation across the qubits, highlighting areas where errors were more likely to occur. The Mutual Information Between Qubits heatmap and Twistor-Inspired Error Correlations heatmap showed how data was shared and correlated between different qubits under the twistor-based encoding. The geodesic paths on the Bloch Sphere and Harmonic Analysis of Error States provided geometric and spectral insights into the behavior of qubits during the experiment. The Topological Defect Mapping in the Error Landscape and Twistor Conformal Blocks Visualization allowed us to identify and characterize topological features in the error syndromes, while the Spinor Field Visualization and Holonomy Group Visualization illustrated the evolution of spinor fields and holonomy groups. The experiment demonstrated the potential of twistor theory as a foundation for developing working quantum error correction schemes.
-<br>
+The Eigenvalue Distribution from Quantum Phase Estimation above (code below) shows that the real part of the eigenvalues is heavily clustered around ±1, with relatively fewer eigenvalues around the center of the spectrum (near 0).<br>
+Eigenvalues of ±1 represent phases close to 0 or π, indicating that the algorithm detected strong periodicity at these values. The presence of fewer eigenvalues around 0 might indicate that fewer solutions or measured phases corresponded to intermediate periodicities, which might point to noisy data or insufficient sampling. Since Shor's algorithm heavily relies on detecting periodic structures in the quantum phase estimation step, this outcome suggests the algorithm was mostly successful in detecting the major periodicities (associated with ±1).<br>
 
+The Clustering of Phases in Shor's Algorithm (code below) above shows that there appears to be no clear correlation between error rate and circuit depth. <br>
+The quantum error rates don't seem to increase uniformly with deeper circuits. This may indicate that errors are more sporadic and dependent on other factors, such as gate errors or decoherence times in the qubits, rather than simply the length of the quantum circuits. 
+<br>
+In the end, this experiment applied Shor's algorithm to factor N = 143, specifically in relation to studying the Riemann Hypothesis and prime factorization. The Distribution of Measurement Outcomes and Top 10 Most Frequent Bitstrings showed the most likely periodic sequences corresponding to the factors of 143. The Harmonic Frequency Analysis and Clustering of Bitstring Frequencies gave insight into the underlying structure of the quantum states, showing resonances that hinted at periodicity crucial for factorization. The Heatmap of Bitstring Frequencies, coupled with the Error Distribution Plot, Phase vs Bitstring Index, and Error Grouped by Bitstring Index, gave a clear view of error patterns, helping to understand how measurement noise influenced the results. The Phase Differences Heatmap and Cross-Bitstring Correlation Heatmap showed correlations between measured states, finding the periodicity we were looking for. The Eigenvalue Distribution from Quantum Phase Estimation and Clustering of Phases in Shor's Algorithm showed the phase relationships responsible for generating the correct period r = 5, which led to finding a non-trivial factor of 143.<br> 
+
+The second most frequent bitstring in the measurements corresponded to r = 5, which we used to calculate gcd⁡(33, 143) = 11, a factor of 143. The other factor, 143/11 = 13, confirmed the prime factorization as 11 and 13. <br>
+<br>
 
 
 
@@ -278,242 +285,423 @@ The correlation matrix between qubits and the heatmap of Bit-Flip Errors reveale
             <p><pre><code>
 # imports
 import numpy as np
-from qiskit import QuantumCircuit, transpile
-from qiskit_ibm_runtime import QiskitRuntimeService, Session, SamplerV2
-from qiskit.visualization import plot_histogram
-from qiskit_aer.noise import NoiseModel, depolarizing_error, amplitude_damping_error, coherent_unitary_error
-from qiskit.circuit.library import RYGate, CXGate, HGate, CZGate  # Import necessary gates
 import json
-import logging
 import matplotlib.pyplot as plt
-
-# Setup logging
-logging.basicConfig(level=logging. INFO)
-logger = logging.getLogger(__name__)
-
-# Load IBMQ account 
-service = QiskitRuntimeService(
-    channel='ibm_quantum',
-    instance='ibm-q/open/main',
-    token='YOUR_IBMQ_KEY_O-`' 
-)
-backend = service.backend('ibm_kyiv')
-
-#  Twistor-inspired quantum gates 
-def twistor_encoding(qc, qubits):
-    for i in range(len(qubits)):
-        theta = np.pi / 4 * (i + 1)
-        qc.append(RYGate(theta), [qubits[i]])
-        if i < len(qubits) - 1:
-            qc.append(CXGate(), [qubits[i], qubits[i + 1]])
-    qc.barrier()
-
-# Twistor-inspired Logical qubit encoding
-def encode_logical_qubits(qc, logical_qubits, physical_qubits):
-    twistor_encoding(qc, physical_qubits)
-    for lq in logical_qubits:
-        for pq in physical_qubits:
-            qc. cx(lq, pq)
-    qc.barrier()
-
-# Function to split a circuit into sub-circuits
-def split_circuit(qc, max_gates):
-    subcircuits = []
-    current_qc = QuantumCircuit(qc.num_qubits, qc.num_clbits)
-    gate_count = 0
-    
-    for instruction in qc. data:
-        if gate_count + len(instruction[1]) > max_gates:
-            subcircuits.append(current_qc)
-            current_qc = QuantumCircuit(qc.num_qubits, qc.num_clbits)
-            gate_count = 0
-        current_qc.append(instruction[0], instruction[1], instruction[2])
-        gate_count += len(instruction[1])
-    
-    subcircuits.append(current_qc)
-    return subcircuits
-
-# Define qubits
-num_logical_qubits = 7  
-num_physical_qubits = 127
-
-logical_qubits = list(range(num_logical_qubits))
-physical_qubits = list(range(num_logical_qubits, num_physical_qubits))
-
-# Initialize quantum circuit
-qc = QuantumCircuit(num_physical_qubits, num_logical_qubits)
-
-# Twistor-inspired encoding logical qubits into physical
-encode_logical_qubits(qc, logical_qubits, physical_qubits)
-
-# Apply Hadamard gates to logical qubits (for state superposition)
-for lq in logical_qubits:
-    qc.h(lq)
-
-# Introduce deliberate errors for testing purposes
-qc. cx(logical_qubits[0], physical_qubits[10])
-qc.x(physical_qubits[20])
-qc. cz(physical_qubits[5], logical_qubits[1])
-
-# Apply twistor encoding again to reinforce the encoding
-twistor_encoding(qc, physical_qubits)
-
-# Measure the logical qubits
-qc.measure(logical_qubits, range(num_logical_qubits))
-
-# Transpile the circuit
-transpiled_qc = transpile(qc, backend=backend, optimization_level=3)
-
-# Manually set a gate limit
-max_gates = 5000  
-
-# Split the circuit into sub-circuits
-subcircuits = split_circuit(transpiled_qc, max_gates)
-
-# Run each sub-circuit on the backend and collect results
-all_counts = {}
-with Session(service=service, backend=backend) as session:
-    sampler = SamplerV2(session=session)
-    
-    for idx, sub_qc in enumerate(subcircuits):
-        job = sampler. run([sub_qc], shots=8192)
-        job_result = job.result()
-        
-        # Retrieve the classical register name
-        classical_register = sub_qc.cregs[0].name
-
-        # Extract counts for the first (and only) pub result
-        pub_result = job_result[0].data[classical_register].get_counts()
-
-        # Combine the results
-        for key, value in pub_result.items():
-            if key in all_counts:
-                all_counts[key] += value
-            else:
-                all_counts[key] = value
-
-# Save the combined results
-results_data = {
-    "raw_counts": all_counts
-}
-file_path = '/Users/Documents/twistor_error_correction_results.json'
-with open(file_path, 'w') as f:
-    json.dump(results_data, f, indent=4)
-
-# Visualize the combined results
-plot_histogram(all_counts)
-plt. show()
-
-///////////////////////////////////////////////////////////////////////
-
-Code that computes the classical fidelity between the Twistor-based and Traditional Error Correction results using Jensen-Shannon divergence
-# imports
-import numpy as np
+from fractions import Fraction
+import logging
 from qiskit import QuantumCircuit, transpile
-from qiskit_ibm_runtime import QiskitRuntimeService, Session, SamplerV2
+from qiskit.circuit.library import QFT
 from qiskit.visualization import plot_histogram
-import json
-import logging
-import matplotlib.pyplot as plt
-from scipy.spatial.distance import jensenshannon
+from qiskit_ibm_runtime import QiskitRuntimeService, Session, SamplerV2
 
-# Logging
-logging.basicConfig(level=logging. INFO)
-logger = logging.getLogger(__name__)
-
-# Load IBMQ account 
+# Load IBMQ Account
 service = QiskitRuntimeService(
     channel='ibm_quantum',
     instance='ibm-q/open/main',
     token='YOUR_IBMQ_KEY_O-`'
 )
-backend = service.backend('ibm_kyiv')
 
-# Load twistor error correction results from JSON 
-twistor_file_path = '/Users/Documents/twistor_error_correction_results.json'
-with open(twistor_file_path, 'r') as f:
-    twistor_counts = json.load(f)['raw_counts']
+# Set up ibm_osaka backend
+backend_name = 'ibm_brisbane'
+backend = service.backend(backend_name)
 
-# Define qubits
-num_logical_qubits = 7  # Example of logical qubits (can be adjusted)
-num_physical_qubits = 127
+# Logging setup
+logging.basicConfig(level=logging. INFO)
+logger = logging.getLogger(__name__)
 
-logical_qubits = list(range(num_logical_qubits))
-physical_qubits = list(range(num_logical_qubits, num_physical_qubits))
+# Large semi-prime number to factor using Shor's algorithm
+N = 143  #  143 = 11 * 13
+a = 2    # A coprime integer to N
 
-# Initialize traditional quantum circuit
-qc_traditional = QuantumCircuit(num_physical_qubits, num_logical_qubits)
+# Function to create the modular exponentiation circuit
+def c_amod15(a, power, n):
+    """Controlled multiplication by a mod N."""
+    U = QuantumCircuit(n)
+    for iteration in range(power):
+        for qubit in range(n):
+            U. cx(qubit, (qubit + 1) % n)
+    U = U. to_gate()
+    U. name = f"{a}^{power} mod {N}"
+    c_U = U.control()
+    return c_U
 
-# Traditional encoding scheme (Steane code)
-def encode_logical_qubits_traditional(qc, logical_qubits, physical_qubits):
-    for lq in logical_qubits:
-        qc.h(lq)
-        qc. cx(lq, physical_qubits[lq])
-    qc.barrier()
+# Create the quantum circuit for Shor's algorithm
+def create_shor_circuit(N, a):
+    """Creates a quantum circuit for Shor's algorithm to factor N."""
+    n_count = 8  # Number of counting qubits 
+    n_qubits = int(np.ceil(np.log2(N)))  # Minimum number of qubits to represent N
 
-encode_logical_qubits_traditional(qc_traditional, logical_qubits, physical_qubits)
+    qc = QuantumCircuit(n_count + n_qubits, n_count)
 
-# Transpile the traditional circuit
-transpiled_qc_traditional = transpile(qc_traditional, backend=backend, optimization_level=3)
+    # Apply Hadamard gates to counting qubits
+    for q in range(n_count):
+        qc.h(q)
 
-# Run the traditional circuit 
+    # Initialize the qubits representing the number 1
+    qc.x(n_count + n_qubits - 1)
+
+    # Apply controlled modular exponentiation gates
+    for q in range(n_count):
+        exponent = 2 ** q
+        c_U = c_amod15(a, exponent, n_qubits)
+        qc.append(c_U, [q] + [i + n_count for i in range(n_qubits)])
+
+    # Apply inverse QFT to counting qubits
+    qc.append(QFT(n_count, inverse=True, do_swaps=False).to_gate(), range(n_count))
+
+    # Measure counting qubits
+    qc.measure(range(n_count), range(n_count))
+
+    return qc
+
+# Generate the Shor's algorithm circuit for N
+qc_shor = create_shor_circuit(N, a)
+
+# Transpile the circuit 
+transpiled_qc = transpile(qc_shor, backend=backend, optimization_level=3)
+
+# Initialize session and sampler
 with Session(service=service, backend=backend) as session:
     sampler = SamplerV2(session=session)
     
-    job_traditional = sampler. run([transpiled_qc_traditional], shots=8192)
-    job_result_traditional = job_traditional.result()
+    # Run the circuit 
+    logger. info("Running Shor's algorithm on ibm_osaka backend")
+    job = sampler. run([transpiled_qc], shots=8192)
+    
+    # Wait for the job to complete
+    job.wait_for_final_state()
 
-    # Get the traditional results
-    classical_register_traditional = qc_traditional.cregs[0].name
-    counts_traditional = job_result_traditional[0].data[classical_register_traditional].get_counts()
+    # Retrieve the job result after the job has completed
+    job_result = job.result()
+    
+    # Retrieve the classical register name
+    classical_register = qc_shor.cregs[0].name
 
-# Save the traditional results
-traditional_file_path = '/Users/Documents/traditional_error_correction_results.json'
-with open(traditional_file_path, 'w') as f:
-    json.dump(counts_traditional, f, indent=4)
+    # Extract counts for the first (and only) result
+    counts = job_result[0].data[classical_register].get_counts()
 
-# Normalize counts to probability distribution
-def normalize_counts(counts, shots):
-    return {state: count / shots for state, count in counts.items()}
+    # Log the results
+    logger. info(f"Resulting counts: {counts}")
 
-# Normalize the count distributions
-total_shots = 8192  
-twistor_probs = normalize_counts(twistor_counts, total_shots)
-traditional_probs = normalize_counts(counts_traditional, total_shots)
+# Analyze the measurement results to determine the period (r) of modular exponentiation
+def analyze_shor_results(counts, n_count):
+    """Analyzes the results from Shor's algorithm to extract the period r."""
+    # Get the most frequent measurement outcomes
+    measured_phases = []
+    for output in counts:
+        decimal = int(output, 2)
+        phase = decimal / (2 ** n_count)
+        measured_phases.append(phase)
 
-# Calculate Jensen-Shannon divergence fidelity
-all_states = set(twistor_probs.keys()).union(set(traditional_probs.keys()))
-twistor_vector = np.array([twistor_probs.get(state, 0) for state in all_states])
-traditional_vector = np.array([traditional_probs.get(state, 0) for state in all_states])
+    # Find the best approximation for each measured phase
+    fractions = [Fraction(phase).limit_denominator(N) for phase in measured_phases]
+    rs = [frac.denominator for frac in fractions]
 
-# Compute the Jensen-Shannon divergence
-js_divergence = jensenshannon(twistor_vector, traditional_vector)
-classical_fidelity = 1 - js_divergence ** 2
+    # Filter out trivial periods
+    r_candidates = [r for r in rs if r > 1 and r % 2 == 0]
 
-# Logging the results
-logger. info(f'Classical fidelity (Jensen-Shannon-based): {classical_fidelity}')
+    if not r_candidates:
+        logger.warning("No valid periods found.")
+        return None
 
-# Visualize the comparison of results
-fig, axs = plt.subplots(1, 2, figsize=(14, 5))
+    # Return the smallest valid period
+    r = min(r_candidates)
+    return r
 
-# Plot the twistor-based histogram
-axs[0].set_title('Twistor-Based Error Correction')
-plot_histogram(twistor_counts, ax=axs[0])
+# Extract period r from the results
+n_count = 8  # Same as the number of counting qubits used
+r = analyze_shor_results(counts, n_count)
 
-# Plot the traditional histogram
-axs[1].set_title('Traditional Error Correction')
-plot_histogram(counts_traditional, ax=axs[1])
+# Use the period r to compute the factors of N
+def compute_factors(N, a, r):
+    """Computes the potential factors of N using the period r."""
+    if r is None:
+        return None
 
+    # Check if r is even and compute factors
+    if r % 2 != 0:
+        logger.warning("Period r is not even. Cannot compute factors.")
+        return None
+    
+    # Compute the possible factors
+    plus_factor = np.gcd(a ** (r // 2) + 1, N)
+    minus_factor = np.gcd(a ** (r // 2) - 1, N)
+
+    # Check for non-trivial factors
+    if plus_factor not in [1, N]:
+        return plus_factor, N // plus_factor
+    elif minus_factor not in [1, N]:
+        return minus_factor, N // minus_factor
+    else:
+        logger.warning("Non-trivial factors not found.")
+        return None
+
+factors = compute_factors(N, a, r)
+
+if factors:
+    logger. info(f"Factors of {N} are {factors[0]} and {factors[1]}")
+else:
+    logger.warning("No non-trivial factors found.")
+
+# Save the results to JSON
+results_data = {
+    'counts': counts,
+    'N': N,
+    'a': a,
+    'r': r if r else "No valid period found",
+    'factors': factors if factors else "No non-trivial factors found"
+}
+
+file_path = '/Users/Documents/ShorsRiemannResult_0.json' 
+with open(file_path, 'w') as file:
+    json.dump(results_data, file, indent=4)
+
+# Plot the histogram 
+plot_histogram(counts)
 plt. show()
 
-# End.  
+logger. info("Experiment complete.")
+
+# End.
+
+////////////////////////////////////////////////////////////////////
+
+Code for all visualizations from Run Data
+
+# imports
+import matplotlib.pyplot as plt
+import json
+from collections import Counter
+
+# Load the JSON 
+with open('/Users/Documents/ShorsRiemannResult_0.json') as f:
+    data = json.load(f)
+
+counts = data['counts']
+
+# Convert counts data to a list of tuples for sorting
+sorted_counts = sorted(counts.items(), key=lambda x: x[1], reverse=True)
+
+# Plot Top 10 Frequent Measurement Outcomes
+top_counts = sorted_counts[:10]  # Top 10 most frequent outcomes
+bitstrings = [x[0] for x in top_counts]
+frequencies = [x[1] for x in top_counts]
+
+plt.figure(figsize=(10, 6))
+plt. bar(bitstrings, frequencies)
+plt.title('Top 10 Most Frequent Measurement Outcomes in Shor’s Algorithm')
+plt.xlabel('Bitstring (Measurement Outcome)')
+plt.ylabel('Frequency')
+plt.xticks(rotation=45)
+plt.tight_layout()
+plt. show()
+
+# Plot Full Distribution of Measurement Counts
+all_bitstrings = [x[0] for x in sorted_counts]
+all_frequencies = [x[1] for x in sorted_counts]
+
+plt.figure(figsize=(14, 8))
+plt. bar(all_bitstrings, all_frequencies)
+plt.title('Distribution of Measurement Outcomes in Shor’s Algorithm')
+plt.xlabel('Bitstring (Measurement Outcome)')
+plt.ylabel('Frequency')
+plt.xticks(rotation=90)
+plt.tight_layout()
+plt. show()
+
+//////////////////////////////////////////////////////
+
+# imports
+import seaborn as sns
+import matplotlib.pyplot as plt
+import json
+import numpy as np
+from sklearn.cluster import KMeans
+
+# Load the JSON
+file_path = '/Users/Documents/ShorsRiemannResult_0.json'
+with open(file_path) as f:
+    data = json.load(f)
+
+counts = data['counts']
+
+# Convert counts data to a list of tuples for sorting
+sorted_counts = sorted(counts.items(), key=lambda x: x[1], reverse=True)
+bitstrings = [x[0] for x in sorted_counts]
+frequencies = [x[1] for x in sorted_counts]
+
+# Heatmap of Bitstring Frequencies
+plt.figure(figsize=(14, 6))
+data_heatmap = np.array(frequencies).reshape(1, len(frequencies))
+sns.heatmap(data_heatmap, cmap="Blues", annot=False, cbar=True, xticklabels=bitstrings, yticklabels=False)
+plt.title('Heatmap of Bitstring Frequencies in Shor\'s Algorithm')
+plt.xticks(rotation=90)
+plt.tight_layout()
+plt. show()
+
+# Phase Distribution Plot
+# Convert bitstrings to decimals
+decimals = [int(bs, 2) for bs in bitstrings]
+phases = [d / 256 for d in decimals] 
+
+# Harmonic Frequency Analysis
+# Compute harmonic frequencies (multiples of 1/r)
+r = 4  
+harmonics = [m/r for m in range(1, 6)] 
+
+# Overlay these harmonics on the phase distribution
+plt.figure(figsize=(10, 6))
+plt.hist(phases, bins=50, color='green', alpha=0.7, label='Phases')
+for harmonic in harmonics:
+    plt.axvline(harmonic, color='red', linestyle='--', label=f'Harmonic {harmonic:.2f}')
+plt.title('Harmonic Frequency Analysis of Shor\'s Algorithm')
+plt.xlabel('Phase')
+plt.ylabel('Frequency')
+plt.legend()
+plt. show()
+
+# Clustering of Similar Bitstrings
+# Convert bitstrings to vectors of 0s and 1s
+bit_vectors = np.array([[int(bit) for bit in bitstring] for bitstring in bitstrings])
+
+# Perform clustering (e.g., 4 clusters)
+kmeans = KMeans(n_clusters=4)
+kmeans. fit(bit_vectors)
+labels = kmeans.labels_
+
+# Plot the clustering results
+plt.figure(figsize=(10, 6))
+plt.scatter(range(len(bitstrings)), frequencies, c=labels, cmap='viridis')
+plt.title('Clustering of Bitstring Frequencies in Shor\'s Algorithm')
+plt.xlabel('Bitstring Index')
+plt.ylabel('Frequency')
+plt.tight_layout()
+plt. show()
+
+# Error Distribution Plot
+ideal_phases = np.linspace(0, 1, len(phases))
+errors = np.abs(np.array(phases) - ideal_phases)
+
+plt.figure(figsize=(10, 6))
+plt.hist(errors, bins=50, color='red')
+plt.title('Error Distribution between Detected Phases and Ideal Phases')
+plt.xlabel('Error')
+plt.ylabel('Frequency')
+plt.tight_layout()
+plt. show()
+
+# Phase vs. Bitstring Index Plot
+plt.figure(figsize=(10, 6))
+plt.scatter(range(len(bitstrings)), phases, color='purple')
+plt.title('Phase vs Bitstring Index')
+plt.xlabel('Bitstring Index')
+plt.ylabel('Phase')
+plt.tight_layout()
+plt. show()
+
+///////////////////////////////////////////////////////
+
+# imports
+import matplotlib.pyplot as plt
+import numpy as np
+import seaborn as sns
+from scipy.fftpack import fft
+import json
+
+# Load the JSON 
+file_path = '/Users/Documents/ShorsRiemannResult_0.json'
+with open(file_path) as f:
+    data = json.load(f)
+
+counts = data['counts']
+
+# Convert counts data to a list of tuples for sorting
+sorted_counts = sorted(counts.items(), key=lambda x: x[1], reverse=True)
+bitstrings = [x[0] for x in sorted_counts]
+frequencies = [x[1] for x in sorted_counts]
+
+# Convert bitstrings to decimals and calculate phases
+decimals = [int(bs, 2) for bs in bitstrings]
+phases = [d / 256 for d in decimals]
+
+# Noise Analysis and Error Patterns 
+# Calculate errors between phases and ideal phases
+ideal_phases = np.linspace(0, 1, len(phases))
+errors = np.abs(np.array(phases) - ideal_phases)
+
+# Boxplot of Errors Grouped by Bitstring Index
+plt.figure(figsize=(10, 6))
+sns.boxplot(x=np.arange(len(errors)), y=errors)
+plt.title('Error Grouped by Bitstring Index')
+plt.xlabel('Bitstring Index')
+plt.ylabel('Error')
+plt.xticks(rotation=45)
+plt.tight_layout()
+plt. show()
+
+# Phase Differences Heatmap 
+# Calculate pairwise phase differences
+phase_diff_matrix = np.abs(np.subtract.outer(phases, phases))
+
+plt.figure(figsize=(10, 6))
+sns.heatmap(phase_diff_matrix, cmap="coolwarm", annot=False)
+plt.title('Phase Differences Heatmap')
+plt.xlabel('Phase Index')
+plt.ylabel('Phase Index')
+plt.tight_layout()
+plt. show()
+
+# Cross-Bitstring Correlation 
+# Convert bitstrings to vectors of 0s and 1s
+bit_vectors = np.array([[int(bit) for bit in bitstring] for bitstring in bitstrings])
+
+# Cross-correlation matrix for bitstrings
+bit_corr_matrix = np.corrcoef(bit_vectors)
+
+plt.figure(figsize=(10, 6))
+sns.heatmap(bit_corr_matrix, cmap="coolwarm", annot=False)
+plt.title('Cross-Bitstring Correlation Heatmap')
+plt.tight_layout()
+plt. show()
+
+# Eigenvalue Distribution (Quantum Phase Estimation)
+# Histogram of estimated eigenvalues derived from phases.
+eigenvalues = [np.exp(2j * np.pi * phase) for phase in phases]
+
+# Plot the real part of eigenvalues
+plt.figure(figsize=(10, 6))
+plt.hist([np.real(ev) for ev in eigenvalues], bins=50, color='green')
+plt.title('Eigenvalue Distribution from Quantum Phase Estimation')
+plt.xlabel('Real Part of Eigenvalue')
+plt.ylabel('Frequency')
+plt.tight_layout()
+plt. show()
+
+# Clustering of Phases 
+phase_data = np.array(phases).reshape(-1, 1)
+
+# Apply k-means clustering with 3 clusters 
+kmeans = KMeans(n_clusters=3)
+kmeans. fit(phase_data)
+labels = kmeans.labels_
+
+# Scatter plot of phases colored by cluster
+plt.figure(figsize=(10, 6))
+plt.scatter(np.arange(len(phases)), phases, c=labels, cmap='viridis')
+plt.title('Clustering of Phases in Shor\'s Algorithm')
+plt.xlabel('Index')
+plt.ylabel('Phase')
+plt.tight_layout()
+plt. show()
+
+# End.
 
 
 </code></pre>
 </p>
             
  </div>
-        <img src="E37i4.png" alt="" class="experiment-image4">
+        <img src="E38i4.png" alt="" class="experiment-image4">
         <p></p>
         <div class="content-block">
 
