@@ -97,82 +97,123 @@
     </nav>
 
     <section class="content-section">
-        <h1><center> Testing the Goldbach Conjecture using Shor’s Algorithm on a 127-Qubit IBM Quantum Computer (127-Qubits) </center></h1>
+        <h1><center> Quantum Field Simulation in Curved Spacetime with a 127-Qubit Computer </center></h1>
         <div class="content-block">
          
-The Goldbach Conjecture posits that every even integer greater than 2 can be expressed as the sum of two primes. This experiment, using IBM's 127-qubit quantum comptuter 'ibm_brisbane' and Qiskit, uses Shor's algorithm for prime factorization and the power of quantum parallelism. This tests whether an even integer N can be decomposed into two prime numbers using modular exponentiation, quantum Fourier transforms, and measurement techniques. <br>
-
-This experiment successfully identifies 31 prime pairs that satisfy the equation:<br>
-N = p_1​ + p_2​.<br>
+This experiment simulates a quantum field propagating in a curved spacetime environment using IBM’s 127-qubit quantum computer, ibm_sherbrooke and qiskit. By constructing a quantum lattice and applying unitary transformations corresponding to curvature induced effects, this investigates how quantum states evolve in a non flat spacetime geometry. The primary observable of interest is the Pauli-Z expectation value, which provides insight into the field’s configuration in this simulated curved spacetime.
+<br>
 
 
           
-<p>1. Selecting an Even Integer to Test the Goldbach Conjecture<br>
-This selects an even integer N = 2024 to test the conjecture. According to Goldbach's Conjecture, this number can be expressed as the sum of two prime numbers.​<br>
-The goal is to decompose N = 2024 into two prime numbers p_1​ and p_2​, such that:​<br>
+<p>1: Initialization<br>
+Initialize the IBM Quantum Service and Backend​<br>
 N = p_1​ + p_2​<br>
 
-<p>2. Quantum Circuit Initialization <br>
-This creates a quantum circuit QC with 10 qubits, which is used to explore all possible prime number pairs that could sum to the even integer N. The number of qubits is chosen to balance the computational load within the 127-qubit limit.
+<p>2: Lattice Construction – Mapping Qubits to Spacetime<br>
+The quantum field is simulated on a 2D lattice, where each qubit represents a point in discretized spacetime. Construct a 13 x 10 grid to place the 127 qubits. The qubit layout is padded with -1 for extra slots, ensuring all available qubits are used effectively.
+<br>
+Each position on the grid corresponds to a qubit, and the qubits represent spacetime points in this simulated curved geometry.
 <br>
 
-<p>3. Superposition and Prime Pair Search<br>
-Apply the Hadamard gate to each of the qubits to place them into a superposition state, allowing the quantum system to explore all possible prime number combinations at once.<br>
-H = 1/sqrt(2) * <br>
-​(1, 1)<br>
-​(1, −1​)<br>
-The Hadamard gate creates the state 1/sqrt(2) * (∣0⟩ + ∣1⟩) for each qubit, providing quantum parallelism.<br>
-State of the System (before modular exponentiation):<br>
-1/sqrt(2) * i = 0 ∑ (2^n) − 1 ​∣i⟩<br>
-where n is the number of qubits, and i represents the possible states of the system.<br>
+<p>3: Construct the Quantum Circuit<br>
+Initialize a quantum circuit using the 127 qubits. This circuit will represent the quantum field evolution in curved spacetime.
+<br>
 
 
 
 
-<p>4. Modular Exponentiation<br>
-We simulate modular exponentiation by applying a series of controlled-X gates. Modular exponentiation is critical for performing the periodicity detection needed to factor numbers in Shor’s algorithm.<br>
-The controlled-X gate operates as follows:<br>
-CNOT(∣a⟩ ∣b⟩) = ∣a⟩ ∣a ⊕ b⟩ <br>
-where a is the control qubit and b is the target qubit. This entangles qubits and applies the modular exponentiation needed for prime testing.<br>
+<p>4: Simulate Curvature - Apply Curvature Based Gates<br>
+To simulate the effects of curvature, introduce quantum gates that act as unitary transformations. These gates represent how the quantum field behaves when propagating through a curved geometry. Specifically, apply:
+Controlled-Z (CZ) gates between neighboring qubits to represent curvature-induced entanglement.
+
+Controlled-RZ (CRZ) gates to introduce phase shifts that vary with curvature.
+CZ gate: U_(cz) ​= 
+1, 0, 0, 0
+0. 1. 0, 0
+0, 0 , 1, 0
+0, 0, 0, -1 
+<br>
+
+CRZ gate: U_(crz)​(θ) = 
+1, 0, 0, 0
+0. 1. 0, 0
+0, 0 , 1, 0
+0, 0, 0, e^(iθ)​​
+<br>
+
+The phase angle θ used for each qubit in the CRZ gate is π/4​, representing the impact of spacetime curvature on the field’s evolution.
 
 
 
 
-<p>5. Quantum Fourier Transform (QFT)<br>
-After modular exponentiation, apply the Quantum Fourier Transform (QFT) to the qubits to extract phase information corresponding to the factors of N. The QFT is crucial for efficiently performing the periodicity detection that allows us to determine the prime factors.<br>
-The QFT on an n-qubit state ∣x⟩ is represented as:<br>
-QFT ∣x⟩ = 1/sqrt(2) * (2^n) −1 ∑ k = 0 (e^(2πixk/2^n) ∣k⟩)<br>
-The QFT allows us to extract periodic information from the modular exponentiation process, which will help identify the prime factors.<br>
+
+    
+<br>
 
 
 
-<p>6. Measurement<br>
-Once the QFT is applied, we measure all the qubits to collapse their quantum states and retrieve classical information about the factors of N. 
-The outcome of the measurement gives a binary string corresponding to the potential factors of N, allowing us to test if these factors correspond to primes.
+
+<p>5: Introduce Entanglement in the Quantum Field<br>
+Next, entangle neighboring qubits using Hadamard gates (H) and controlled-X (CNOT) gates. This models the quantum correlations that arise in a curved spacetime.
+
+<br>    
+H = 
+1/sqrt(2) * 
+1, 1
+1, -1
+<br>
+CNOT: U_(cx) ​= 
+1, 0, 0, 0
+0. 1. 0, 0
+0, 0, 0, 1
+0, 0, 1, 0
+<br>
+The Hadamard gate creates superpositions, and the CNOT gate entangles pairs of qubits. This setup prepares the quantum field for evolution in curved spacetime.
+    
+<br>
 
 
-<p>7. Classical Processing and Prime Pair Validation<br>
-After measuring the qubits, we extract the classical measurement results. Using the classical register associated with the circuit, we convert the binary results into decimal numbers.<br>
-For each result, we check whether the factors are prime numbers using a classical algorithm:<br>
-is_prime(p) = <br>
-{True, ​if p is prime<br>
-False, otherwise​<br>
-If both numbers p_1​ and p_2​ are prime, the result confirms that N can indeed be written as p_1 + p_2​.   <br>
+
+<p>6: Global Phase Shift - Simulate Gravitational Field Effects<br>
+To simulate a global gravitational effect, apply an RZ rotation on each qubit. The rotation introduces a phase shift of π/8​ on each qubit, representing the influence of spacetime curvature on the quantum field.
+<br>
+RZ(θ) = 
+1, 0
+0, e^(iθ)​​
+<br>
+Where θ = π/8​ for all qubits.
+<br>
+
+<p>7: Transpile the Circuit for the IBM Backend<br>
+Transpile the constructed quantum circuit to match the physical qubit layout and gate set of ibm_sherbrooke. 
+<br>
 
 
-<p>8. Running the Experiment<br>
-The quantum circuit is transpiled for the ibm_brisbane backend. The transpilation ensures that the circuit is compatible with the backend’s gate set and qubit connectivity.<br>
-The transpiled circuit is executed using SamplerV2 on ibm_brisbane with 8192 shots. <br>
+<p>8: Define the Pauli-Z Observable<br>
+Define a Pauli-Z observable for the entire system to measure the quantum state. The Pauli-Z observable checks whether each qubit is in the ∣0⟩ or ∣1⟩ state, which is crucial for understanding how the curvature affects the quantum field’s configuration.
+<br>
+Z = 
+1, 0
+0, -1​
+<br>
+
+The total observable is a tensor product of Pauli-Z gates acting on all 127 qubits. 
+<br>
 
 
 
-<p>9. Result Extraction<br>
-The results are extracted by retrieving the counts of the measured states from the classical register. <br>
+<p>9: Run the Circuit and Measure the Expectation Value<br>
+Using the EstimatorV2 primitive, run the quantum circuit and calculate the expectation value of the Pauli-Z observable. The expectation value reflects how the quantum field behaves under the influence of curved spacetime.
+<br>                 
+⟨Z⟩ = 1/n n∑i = 1 ⟨ψ∣Z∣ψ⟩
+<br>                
+The EstimatorV2 primitive computes this expectation value based on the outcomes of the quantum circuit.
+<br>
     
 
-<p>10. Result Extraction<br>
-The measurement results are visualized using a histogram, showing the frequency of each outcome. The results, including the prime pair counts, are saved in a JSON.
-
+<p>10: Retrieve and Save the Expectation Value<br>
+After running the job on the ibm_sherbrooke backend, retrieve the expectation value from the result object. 
+<br>
 
 
 
@@ -185,78 +226,64 @@ The measurement results are visualized using a histogram, showing the frequency 
     
 <p><center> Results:</center><br>
 
-
-he JSON results contain two main sections:
-Counts, which is a dictionary where the keys are binary strings representing the measurement outcomes (states of the qubits), and the values represent the number of times that particular state was observed during the 8192 shots.<br>
-Prime Pairs, which is a field that confirms the quantum experiment has successfully found prime pairs for the even number N = 2024, returning true.<br>
-We have identified 31 prime pairs that satisfy the equation:<br>
-N = p_1​ + p_2​<br>
-
-Prime pairs for 2024: [(7, 2017), (13, 2011), (31, 1993), (37, 1987), (73, 1951), (151, 1873), <br>
-(157, 1867), (163, 1861), (193, 1831), (223, 1801), (241, 1783), (271, 1753), (277, 1747), <br>
-(283, 1741), (331, 1693), (367, 1657), (397, 1627), (457, 1567), (541, 1483), (571, 1453), <br>
-(577, 1447), (601, 1423), (643, 1381), (727, 1297), (733, 1291), (787, 1237), (811, 1213), <br>
-(823, 1201), (853, 1171), (907, 1117), (937, 1087), (991, 1033)].<br>
-    
+Expectation Value: 0.0107421875.
+<br>
+This suggests that, on average, the quantum field's configuration is almost balanced between the |0⟩ and |1⟩ states. This slight positive bias could indicate that, in the curved spacetime scenario, the field is slightly more likely to be in the |0⟩ state (aligned with the Z-axis).
+<br>
+The small positive expectation value may reflect how the simulated curvature affects the quantum field's state. In flat spacetime, you might expect the expectation value to be exactly 0 (equal probabilities of being in |0⟩ or |1⟩). The deviation from 0 suggests that the curvature introduces a small perturbation, shifting the balance of probabilities slightly toward the |0⟩ state.
+<br>
+This shift could relate to the effects of curvature on quantum states as predicted by some quantum gravity theories. The small deviation suggests that curvature has a non-negligible but subtle effect on quantum states, which is precisely what you'd want to explore to understand how quantum fields behave in curved spacetime.
+<br>
+The value might also reflect how entanglement evolves in the presence of curvature. Since entanglement tends to 'spread out' quantum information across qubits, the expectation value of a global observable like Pauli-Z can reveal how localized or delocalized the quantum information is.
+<br>
 
   
 </div>
-        <img src="E39i1.png" alt="" class="experiment-image">
+        <img src="E30i1.png" alt="" class="experiment-image">
         <p></p>
         <div class="content-block">
 <br>
             
-In the Histogram of Binary Outcomes above (code below), the counts are relatively uniform across many outcomes, suggesting that the quantum system did not strongly favor any specific measurement state. <br> 
-While most outcomes are close in frequency (ranging from around 10 to 18 counts), a few states show slightly higher occurrences, which could indicate certain binary states were favored during the modular exponentiation or QFT steps.<br> 
-This suggests that the system is exploring the entire state space evenly, which could be expected for a general factorization task.<br> 
-
-The Heatmap of Quantum Measurement Frequencies above (code above) shows that the right half (red) regions are more frequently observed states, which might represent parts of the quantum state space where the system found strong periodicity or resonance during the QFT step. These periodic patterns are crucial for extracting factors in Shor’s algorithm.<br> 
- The left half (blue) shows regions that correspond to states that were less frequently measured, suggesting they might be less relevant to the modular exponentiation or factorization. This is expected, as only a subset of all possible states should encode valid information about the factors of the number N = 2024.<br> 
-
-The Histogram of the Top 10 Most Frequent Outcomes above (code above) shows the most common binary states (101111, 010011, 110111) were measured 17 or 18 times, indicating that these particular qubit configurations were favored by the system.<br> 
-The difference in frequencies between the most common outcomes is minimal, with all values hovering between 16 and 18. This suggests that the system explored several 'best' solutions, but no single outcome dominated.<br> 
-<br>         
+The above Quantum Field Simulation Plot (code below) looks at expectation values and errors. The expectation values are mostly concentrated near zero, except for a prominent peak at data point 3. This peak indicates that one region has significantly higher expectation values compared to others. The field is almost entirely flat (near zero) in the rest of the data points.
+<br>
+The standard deviation around the peak (data point 3) is relatively large, indicating higher variability in the quantum state's behavior for this particular point. The shaded region suggests that the results at this point have a broader spread, meaning the quantum state fluctuates more in this region, possibly due to local spacetime curvature or quantum noise effects.
+<br>
+The red error bars (ensemble standard error) are visible for each data point, with a significant error bar at the peak. This large ensemble standard error at the peak indicates that the precision of the expectation value at this point is lower, meaning the results for this region of the quantum field are less reliable or have higher uncertainty. For the other data points (near zero expectation values), the ensemble standard error is quite small, suggesting high precision in those regions.
+<br>
+The data point 3 (the peak) stands out dramatically. This could represent a localized quantum effect caused by the simulated curvature or noise in that particular region of the quantum field. It might reflect an area of high curvature or quantum entanglement concentration.<br>         
+<br>
 </div>
-        <img src="E39i2.png" alt="" class="experiment-image">
+        <img src="E30i2.png" alt="" class="experiment-image">
         <p></p>
         <div class="content-block">
 <br>
-The Distribution of Top 20 Binary Measurement Outcomes (Decimal) above (code above) shows that the quantum system is consistently returning different outcomes, which is typical behavior in a noisy or structured quantum system. However, the spread of outcomes is low, which suggests that the system is limited in its exploration of the full possible outcome space.
+In the Histogram of Expectation Values above (code below), the majority of the expectation values are clustered around zero, as seen from the large bar at the far left of the histogram. This confirms the earlier observation that most data points exhibit minimal deviation from zero.
 <br>
-The Prime Factor Residual Heatmap above (code above) shows high residuals (differences) between the binary outcomes and the prime sums. The residual values range between 1200 and 2000, meaning that most outcomes are far from the prime pair sums. The fact that residuals are high for all prime sums indicates that the quantum outcomes are not closely aligned with the prime sums.
+There is a single bar at the far right (around 8 * 10^(252)) representing the high expectation value observed at data point 3. This further highlights that the majority of the quantum field behaves predictably, while the outlier at data point 3 stands out significantly.
 <br>
-The Residual Distribution for Each Prime Pair above (code above) shows a nearly uniform curve for each prime pair, indicating that the differences between quantum measurement outcomes and prime sums are consistently distributed across all prime pairs.<br>
-This uniformity across prime pairs suggests that there is no significant bias in how the quantum system handles any particular prime sum. The outcomes are generally far from the prime sums, which is why the residuals tend to be high. However, the fact that all residuals follow the same pattern shows that the quantum outcomes are not randomly scattered - they are somewhat structured.
-<br>
-The Quantum Outcome Spread Across All Prime Pairs  above (code above) shows that for most prime pairs, the quantum measurement outcomes are widely distributed, with the highest concentration of values around the midrange (~1000). The lighter bands indicate lower residuals (closer outcomes to prime sums), but these bands are relatively narrow.<br>
-The system’s outcomes tend to cluster in certain regions, but the overall spread is quite broad. Most outcomes are spread far from the prime sums, which reinforces the earlier observations that the system isn't accurately calculating prime sums but is instead returning outcomes scattered across a wide range.<br>
-
 
             
 <br>
 </div>
-        <img src="E39i3.png" alt="" class="experiment-image">
+        <img src="E30i3.png" alt="" class="experiment-image">
         <p></p>
         <div class="content-block">
 <br>
 
-The Outcome Distribution by Prime Pais above (code above) shows the distance between the quantum measurement outcomes and the prime pair sums. We see a near uniform pattern of red and blue lines for all prime pairs. <br>
-The uniformity of the heatmap across all prime pairs suggests that the quantum outcomes are consistently far from the actual prime sums, with no particular prime pair showing a significant advantage or correlation.<br>
-
-The Prime Sum Distance vs. Outcome Frequency above (code above) shows no clear pattern or correlation between the distance from prime sums and the frequency of quantum outcomes.<br>
-The random spread of data points across different distances suggests that there is no meaningful relationship between how far off a quantum outcome is from a prime sum and how frequently that outcome occurs.<br>
-
-The Prime Sum Difference Heatmap above (code above) shows the differences between quantum measurement outcomes and the prime sums for each prime pair.<br>
-The differences between the quantum outcomes and prime sums are fairly uniform across all prime pairs. The darker regions indicate larger deviations, suggesting some outcomes deviate significantly from the prime sums.<br>
-
-The Heatmap of Z-Scores above (code above) for Residuals above shows a z-score distribution of the residuals (difference between the quantum outcome and prime sums). The z-scores quantify how far the residuals deviate from the mean residual.<br>
-Since the heatmap indicates that the residuals hover around z-scores near 0, this suggests that the deviation between the prime sums and quantum outcomes tends to be consistent across multiple quantum measurements. This consistency reinforces that the quantum measurements do not significantly favor any particular prime sums.<br>
-
-In the end,  the Histogram of Binary Outcomes and the Heatmap of Quantum Measurement Frequencies gave insights into how quantum randomness influenced outcome distributions. These highlighted the most frequent outcomes, with clear clustering and probabilistic trends across the measurement space. Others, like the Prime Factor Residual Heatmap and the Outcome Distribution by Prime Pairs, offered a more focused look at how measurement results related to prime sums, showing the distribution of residuals (the differences between quantum outcomes and prime sums) and the spread of outcomes across all prime pairs.
+The 3D surface plot above (code below) shows how the expectation values vary across the dataset. The most prominent feature is the tall peak seen in the middle of the surface. This peak corresponds to data point 3 (as seen in the previous 2D plots), where the expectation value is significantly higher than in the other regions.
 <br>
-We identified 31 prime pairs that satisfy the Goldbach equation. This stands out because it suggests that despite the inherent randomness of quantum measurements, we were able to align a portion of outcomes with prime sums. <br>
+The majority of the surface is flat at zero expectation values, confirming that most of the data points exhibit little to no deviation from zero. This further supports the idea that the quantum field remains stable and unaffected by curvature in these regions.
 <br>
-
+This flatness aligns with the expectation that in regions of minimal or no curvature, the quantum field's state should remain relatively undisturbed, leading to near-zero expectation values.
+<br>
+The transition between the flat, stable region (near zero) and the tall spike at data point 3 is very sharp, suggesting that this region may be a localized anomaly or an area where the quantum field is influenced by significant curvature.
+<br>
+The abrupt nature of the transition indicates that the effect of curvature on the quantum field is highly localized and doesn’t gradually spread to neighboring regions.
+<br>
+In the end, this code simulated the behavior of a quantum field in curved spacetime with 127 qubits. The primary goal was to observe how spacetime curvature influences the quantum field, particularly through expectation values measured with Pauli-Z observables. From the data, a sharp, localized peak at data point 3 stood out in all visuals, indicating a significant perturbation in the quantum field. This suggests that curvature has a highly localized effect, creating an anomaly where quantum states fluctuate more, leading to higher expectation values and increased uncertainty.
+<br>
+In contrast, the rest of the data points showed stable behavior with expectation values close to zero, indicating that most of the quantum field remains unaffected by curvature. The 3D surface plot further highlighted the stark contrast between the anomalous region and the flat, stable regions elsewhere. This may hint how quantum fields behave in non-flat spacetime, showing that curvature may lead to localized quantum effects, while the majority of the field remains undisturbed. 
+<br>
 
 
        
@@ -265,388 +292,229 @@ We identified 31 prime pairs that satisfy the Goldbach equation. This stands out
             <p><pre><code>
 # imports
 import numpy as np
-import json
 from qiskit import QuantumCircuit, transpile
-from qiskit_ibm_runtime import QiskitRuntimeService, Session, SamplerV2
-from qiskit.circuit.library import QFT
-from qiskit.visualization import plot_histogram
-import matplotlib.pyplot as plt
+from qiskit_ibm_runtime import QiskitRuntimeService, Session, EstimatorV2
+from qiskit.quantum_info import Pauli, SparsePauliOp
+import json
 
-# Load IBMQ account
+# Initialize IBM runtime 
 service = QiskitRuntimeService(
     channel='ibm_quantum',
     instance='ibm-q/open/main',
-    token='YOUR_IBMQ_KEY_O-`'
+    token='Your_IBMQ_API_KEY_O-`'  
 )
-
-# Load backend calibration data (download most recent)
-calibration_file_path = '/Users/Documents/ibm_brisbane_calibrations_2024-09-14T17_25_48Z copy.csv'
-calibration_data = np.genfromtxt(calibration_file_path, delimiter=',', skip_header=1)
 
 # Select backend
 backend = service.backend('ibm_brisbane')
 
-# Choose an even integer to check Goldbach's conjecture
-N = 2024  
+# Create a lattice of qubits to represent spacetime
+num_qubits = 127  # qubits
+lattice_size = (13, 10)  # Shape with 130 slots, pad with -1
+qubit_layout = np.arange(num_qubits).tolist() + [-1] * (130 - num_qubits)
+qubit_layout = np.array(qubit_layout).reshape(lattice_size)
 
-# Function to check whether a number is prime
-def is_prime(num):
-    if num < 2:
-        return False
-    for i in range(2, int(np.sqrt(num)) + 1):
-        if num % i == 0:
-            return False
-    return True
+# Initialize quantum circuit
+qc = QuantumCircuit(num_qubits)
 
-# Prepare quantum circuits to check possible prime pairs
-def create_shors_prime_check_circuit(even_number):
-    """
-    Quantum circuit to check if a given even number can be decomposed into two primes.
-    This will use quantum factorization to check primes for decomposition.
-    """
-    
-    # Define quantum registers and ancillary qubits
-    num_qubits = 10 
-    qc = QuantumCircuit(num_qubits)
+# define a function to add curvature based gates
+def add_curvature_effects(qc, qubit_layout):
+    # Simulate curvature using phase shifts and controlled rotations
+    for i in range(lattice_size[0]):
+        for j in range(lattice_size[1]):
+            qubit = qubit_layout[i, j]
+            if qubit != -1:  # Skip unused slots
+                if i < lattice_size[0] - 1:
+                    neighbor_qubit = qubit_layout[i + 1, j]
+                    if neighbor_qubit != -1:
+                        qc. cz(qubit, neighbor_qubit)  
+                if j < lattice_size[1] - 1:
+                    neighbor_qubit = qubit_layout[i, j + 1]
+                    if neighbor_qubit != -1:
+                        qc.crz(np.pi / 4, qubit, neighbor_qubit)  # Curvature-induced phase shift
 
-    # Superposition to explore all possible pairs of primes
-    for i in range(num_qubits):
-        qc.h(i)  # Apply Hadamard gates to create superposition
-    
-    # Modular exponentiation and prime factorization
-    for i in range(num_qubits):
-        qc. cx(i, (i+1) % num_qubits)  # Apply a controlled-X (CNOT) gate in a loop
-    
-    # Perform Quantum Fourier Transform to factorize
-    qft = QFT(num_qubits)
-    qc.append(qft, range(num_qubits))
-    
-    # Measurement to check prime results
-    qc.measure_all()
+# Simulate the quantum field evolution in curved spacetime
+add_curvature_effects(qc, qubit_layout)
 
-    return qc
+# Add entangling operations to simulate entanglement in curved spacetime
+for i in range(0, num_qubits, 2):
+    qc.h(i)  # apply Hadamard gates for superposition
+    if i + 1 < num_qubits:
+        qc. cx(i, i + 1)  # entangle neighboring qubits
 
-# Factorize even number and check prime sums
-def check_goldbach_conjecture(even_number):
-    prime_pairs = []
-    
-    # Iterate over all possible prime numbers
-    for p in range(2, even_number//2 + 1):
-        if is_prime(p) and is_prime(even_number - p):
-            prime_pairs.append((p, even_number - p))
-    
-    # If no prime pairs found, return that the conjecture failed
-    if len(prime_pairs) == 0:
-        print(f"Goldbach conjecture failed for {even_number}.")
-        return False
-    
-    print(f"Prime pairs for {even_number}: {prime_pairs}")
-    return True
+# Simulate some gravitational field effect by adding global phase shifts
+for qubit in range(num_qubits):
+    qc.rz(np.pi / 8, qubit)
 
-# Transpile the quantum circuit
-qc = create_shors_prime_check_circuit(N)
+# Transpile 
 transpiled_qc = transpile(qc, backend=backend, optimization_level=3)
 
-# Run
+# Create a Pauli-Z observable for all qubits
+observable = SparsePauliOp.from_list([('Z' * num_qubits, 1)])
+
+#  Estimator to measure expectation value of the observable
+def calculate_expectation_value(qc, observable, session):
+    # Run the estimator with a wrapped circuit and observable
+    estimator = EstimatorV2(session=session, backend=backend)
+    job = estimator. run([(qc, observable)])  
+    result = job.result()
+
+    # Access the expectation value from the result 
+    expectation_value = result._pub_results[0].data.evs  # Extract 'evs' from 'data'
+    return expectation_value
+
+# Run the job
 with Session(service=service, backend=backend) as session:
-    sampler = SamplerV2(session=session)
-    # Run the circuit
-    job = sampler. run([transpiled_qc], shots=8192)
-    job_result = job.result()
+    # Calculate the expectation value of the observable for the full circuit
+    expectation_value = calculate_expectation_value(transpiled_qc, observable, session)
 
-    # Retrieve the classical register name
-    classical_register = qc.cregs[0].name
+    # Save the JSON 
+    results_data = {
+        'expectation_value': expectation_value.tolist(), 
+    }
 
-    # Extract counts for the first (and only) pub result
-    pub_result = job_result[0].data[classical_register].get_counts()
+    file_path = '/Users/Documents/Quantum Spacetime_curved_1.json'
+    with open(file_path, 'w') as file:
+        json.dump(results_data, file, indent=4)
 
-# Plot the histogram of results
-plot_histogram(pub_result)
-plt. show()
+    # Print the result
+    print("Expectation Value:", expectation_value)
 
-# Save results to JSON
-results_data = {
-    'counts': pub_result,
-    'prime_pairs': check_goldbach_conjecture(N)
-}
-file_path = '/Users/Documents/goldbach_conjecture_result_2024.json'
-with open(file_path, 'w') as file:
-    json.dump(results_data, file, indent=4)
+# End 
 
-print("Results saved to JSON.")
+///////////////////////////////////////////
 
-# End.
-
-///////////////////////////////////////////////////////////
-
-Code for All Visualizations (in order)
-# imports
+Code for Expectation Values and Errors Histogram from Run data.
+import numpy as np
 import json
 import matplotlib.pyplot as plt
-from qiskit.visualization import plot_histogram
-import seaborn as sns
-import numpy as np
+import base64
+import zlib
 
-# Load results
-file_path = '/Users/Documents/goldbach_conjecture_result_2024.json'
+# Function to decode the base64-encoded and compressed numpy arrays
+def decode_ndarray(encoded_str):
+    decoded_data = base64.b64decode(encoded_str)
+    decompressed_data = zlib.decompress(decoded_data)
+    return np.frombuffer(decompressed_data, dtype=np.float64)
 
+# Load the results from JSON (backend result)
+file_path = '/Users/Documents/Quantum Spacetime_curve_backend_data/job-cw477adjz3x0008jgkz0/job-cw477adjz3x0008jgkz0-result.json'
 with open(file_path, 'r') as f:
-    results_data = json.load(f)
+    data = json.load(f)
 
-# Extract counts and prime pairs
-counts = results_data['counts']
-prime_pairs = [INPUT_RUN_DATA]
+# Extract the encoded data fields
+evs_encoded = data['__value__']['pub_results'][0]['__value__']['data']['__value__']['fields']['evs']['__value__']
+stds_encoded = data['__value__']['pub_results'][0]['__value__']['data']['__value__']['fields']['stds']['__value__']
+ensemble_error_encoded = data['__value__']['pub_results'][0]['__value__']['data']['__value__']['fields']['ensemble_standard_error']['__value__']
 
-# Convert binary strings to integers
-def binary_to_decimal(binary_str):
-    return int(binary_str, 2)
+# Decode the data
+evs = decode_ndarray(evs_encoded)
+stds = decode_ndarray(stds_encoded)
+ensemble_errors = decode_ndarray(ensemble_error_encoded)
 
-# Histogram of Measurement Outcomes
-print("Plotting Histogram of Measurement Outcomes")
-plot_histogram(counts)
-plt.title("Distribution of Quantum Measurement Outcomes")
-plt. show()
-
-# Heatmap of Measurement Frequencies
-# Convert the counts to a 2D heatmap-like structure
-print("\nPlotting Heatmap of Measurement Frequencies")
-binary_keys = list(counts.keys())
-binary_counts = list(counts.values())
-
-heatmap_data = np.zeros((32, 32))  # Adjust based on the size of the binary string
-
-for i, binary_key in enumerate(binary_keys):
-    decimal_value = binary_to_decimal(binary_key)
-    x = decimal_value % 32  # mapping into grid
-    y = decimal_value // 32
-    heatmap_data[y, x] = binary_counts[i]
-
-# Plotting the heatmap
-plt.figure(figsize=(10, 8))
-sns.heatmap(heatmap_data, annot=False, cmap="coolwarm")
-plt.title("Heatmap of Quantum Measurement Frequencies")
-plt. show()
-
-# Sort the measurement outcomes by frequency 
-most_frequent_outcomes = sorted(counts.items(), key=lambda x: x[1], reverse=True)[:10]
-
-# Prepare for histogram
-top_10_binary = [outcome[0] for outcome in most_frequent_outcomes]  # Binary strings
-top_10_decimal = [binary_to_decimal(outcome) for outcome, _ in most_frequent_outcomes]  # Decimal values
-frequencies = [outcome[1] for outcome in most_frequent_outcomes]  # Frequencies
-
-# Plot the histogram
+# Plotting the expectation values
 plt.figure(figsize=(10, 6))
-plt. bar(top_10_binary, frequencies, color='blue')
-plt.xlabel('Measurement Outcomes (Binary)')
+plt.plot(evs, label='Expectation Values', marker='o')
+plt.fill_between(range(len(evs)), evs - stds, evs + stds, color='gray', alpha=0.5, label='Standard Deviation')
+plt.errorbar(range(len(evs)), evs, yerr=ensemble_errors, fmt='o', capsize=5, label='Ensemble Standard Error', color='red')
+plt.title('Quantum Field Simulation - Expectation Values and Errors')
+plt.xlabel('Data Points')
+plt.ylabel('Expectation Values')
+plt.legend()
+plt.grid(True)
+
+# Show the plot
+plt. show()
+
+/////////////////////////////////////////
+
+Code for Histogram of Expectation Values
+import numpy as np
+import json
+import matplotlib.pyplot as plt
+import base64
+import zlib
+
+# Function to decode the base64-encoded and compressed numpy arrays
+def decode_ndarray(encoded_str):
+    decoded_data = base64.b64decode(encoded_str)
+    decompressed_data = zlib.decompress(decoded_data)
+    return np.frombuffer(decompressed_data, dtype=np.float64)
+
+# Load the results from JSON (backend result)
+file_path = '/Users/Documents/Quantum Spacetime_curve_backend_data/job-cw477adjz3x0008jgkz0/job-cw477adjz3x0008jgkz0-result.json'
+with open(file_path, 'r') as f:
+    data = json.load(f)
+
+# Extract the encoded data fields
+evs_encoded = data['__value__']['pub_results'][0]['__value__']['data']['__value__']['fields']['evs']['__value__']
+stds_encoded = data['__value__']['pub_results'][0]['__value__']['data']['__value__']['fields']['stds']['__value__']
+ensemble_error_encoded = data['__value__']['pub_results'][0]['__value__']['data']['__value__']['fields']['ensemble_standard_error']['__value__']
+
+# Decode data
+evs = decode_ndarray(evs_encoded)
+stds = decode_ndarray(stds_encoded)
+ensemble_errors = decode_ndarray(ensemble_error_encoded)
+
+#  Histogram of Expectation Values
+plt.figure(figsize=(10, 6))
+plt.hist(evs, bins=10, edgecolor='black', color='skyblue')
+plt.title('Histogram of Expectation Values')
+plt.xlabel('Expectation Value')
 plt.ylabel('Frequency')
-plt.title('Top 10 Most Frequent Quantum Measurement Outcomes')
-plt.xticks(rotation=90)
+plt.grid(True)
+
+# Show histogram
 plt. show()
 
-# Print the range of binary outcomes and prime pair sums
-binary_outcome_range = [binary_to_decimal(outcome) for outcome in counts.keys()]
-prime_sum_range = [sum(pair) for pair in prime_pairs]
+////////////////////////////////////////////
 
-print(f"Binary outcomes range: {min(binary_outcome_range)} to {max(binary_outcome_range)}")
-print(f"Prime sums range: {min(prime_sum_range)} to {max(prime_sum_range)}")
+Code for 3D Surface Plot of Expectation Values
+import numpy as np
+import json
+import matplotlib.pyplot as plt
+from mpl_toolkits.mplot3d import Axes3D
+import base64
+import zlib
 
-# Distribution of Binary Measurement Outcomes
-print("Plotting Distribution of Binary Measurement Outcomes")
+# Function to decode the base64-encoded and compressed numpy arrays
+def decode_ndarray(encoded_str):
+    decoded_data = base64.b64decode(encoded_str)
+    decompressed_data = zlib.decompress(decoded_data)
+    return np.frombuffer(decompressed_data, dtype=np.float64)
 
-# Sort outcomes by frequency
-sorted_counts = sorted(counts.items(), key=lambda x: x[1], reverse=True)
+# Load the results from JSON (backend result)
+file_path = '/Users/Documents/Quantum Spacetime_curve_backend_data/job-cw477adjz3x0008jgkz0/job-cw477adjz3x0008jgkz0-result.json'
+with open(file_path, 'r') as f:
+    data = json.load(f)
 
-# Prepare data for the plot (Top 20 most frequent outcomes)
-binary_outcomes = [binary_to_decimal(outcome[0]) for outcome in sorted_counts[:20]]
-frequencies = [outcome[1] for outcome in sorted_counts[:20]]
+# Extract the encoded data fields
+evs_encoded = data['__value__']['pub_results'][0]['__value__']['data']['__value__']['fields']['evs']['__value__']
+stds_encoded = data['__value__']['pub_results'][0]['__value__']['data']['__value__']['fields']['stds']['__value__']
+ensemble_error_encoded = data['__value__']['pub_results'][0]['__value__']['data']['__value__']['fields']['ensemble_standard_error']['__value__']
 
-# Plot the distribution of binary states
-plt.figure(figsize=(12, 6))
-plt. bar(binary_outcomes, frequencies, color='green')
-plt.title("Distribution of Top 20 Binary Measurement Outcomes (Decimal)")
-plt.xlabel("Binary Outcome (as Decimal)")
-plt.ylabel("Frequency")
-plt.xticks(rotation=90)
-plt.grid(True)
-plt. show()
+# Decode the data
+evs = decode_ndarray(evs_encoded)
+stds = decode_ndarray(stds_encoded)
+ensemble_errors = decode_ndarray(ensemble_error_encoded)
 
-# Prime Factor Residual Analysis
-print("Plotting Prime Factor Residual Heatmap")
+# Create a grid for the 3D plot
+x = np.arange(len(evs))
+y = np.arange(len(evs))
 
-# Residual matrix (rows: prime pairs, columns: measurement outcomes)
-residual_matrix = np.zeros((len(prime_pairs), len(counts)))
+X, Y = np.meshgrid(x, y)
 
-# Calculate residuals 
-binary_outcomes = list(counts.keys())
-for i, prime_pair in enumerate(prime_pairs):
-    prime_sum = sum(prime_pair)
-    for j, binary_str in enumerate(binary_outcomes):
-        residual_matrix[i, j] = abs(prime_sum - binary_to_decimal(binary_str))
+# 3D Surface Plot 
+fig = plt.figure(figsize=(10, 8))
+ax = fig.add_subplot(111, projection='3d')
 
-# Plot the residual heatmap
-plt.figure(figsize=(12, 6))
-sns.heatmap(residual_matrix, cmap="coolwarm", annot=False)
-plt.title('Prime Factor Residual Heatmap')
-plt.xlabel('Binary Measurement Outcomes')
+# Surface plot of expectation values
+ax.plot_surface(X, Y, np.tile(evs, (len(evs), 1)), cmap='viridis')
+ax.set_title('3D Surface Plot of Expectation Values')
+ax.set_xlabel('X Axis - Data Points')
+ax.set_ylabel('Y Axis - Data Points')
+ax.set_zlabel('Expectation Values')
 
-# Set the tick positions and the labels for prime pairs
-plt.yticks(ticks=np.arange(len(prime_pairs)), labels=[f"{p1} + {p2}" for p1, p2 in prime_pairs], rotation=0)
-plt.xticks(rotation=90)
-plt.grid(True)
-plt. show()
-
-# Extract counts and prime pairs
-counts = results_data['counts']
-prime_pairs = [INPUT_RUN_DATA]
-
-# Convert binary strings to integers 
-def binary_to_decimal(binary_str):
-    return int(binary_str, 2)
-
-# Get decimal outcomes
-binary_outcomes = [binary_to_decimal(outcome) for outcome in counts.keys()]
-
-# Prime Pair Residual Distribution for Each Prime Pair
-print("Plotting Prime Pair Residual Distribution")
-
-# Prepare the residuals for each prime pair
-residuals_per_prime_pair = {}
-for prime_pair in prime_pairs:
-    prime_sum = sum(prime_pair)
-    residuals_per_prime_pair[f"{prime_pair[0]} + {prime_pair[1]}"] = [
-        abs(binary_to_decimal(binary_str) - prime_sum) for binary_str in counts.keys()
-    ]
-
-# Plot the distribution of residuals for each prime pair
-plt.figure(figsize=(14, 8))
-for prime_pair, residuals in residuals_per_prime_pair.items():
-    sns.kdeplot(residuals, label=prime_pair)
-
-plt.title("Residual Distribution for Each Prime Pair")
-plt.xlabel("Residual (Difference between Outcome and Prime Sum)")
-plt.ylabel("Density")
-plt.legend(title="Prime Pairs")
-plt.grid(True)
-plt. show()
-
-# Quantum Outcome Spread Across All Prime Pairs
-print("Plotting Quantum Outcome Spread Across All Prime Pairs")
-
-# Matrix to store the number of occurrences of each binary outcome per prime pair sum
-outcome_matrix = np.zeros((len(prime_pairs), len(counts)))
-
-for i, prime_pair in enumerate(prime_pairs):
-    prime_sum = sum(prime_pair)
-    for j, binary_str in enumerate(counts.keys()):
-        decimal_value = binary_to_decimal(binary_str)
-        outcome_matrix[i, j] = abs(prime_sum - decimal_value)
-
-# Plot the heatmap of quantum outcome spread
-plt.figure(figsize=(12, 6))
-sns.heatmap(outcome_matrix, cmap="Blues", cbar=True)
-plt.title("Quantum Outcome Spread Across All Prime Pairs")
-plt.xlabel("Quantum Measurement Outcome (Decimal)")
-plt.ylabel("Prime Pairs (Summed)")
-plt.xticks(rotation=90)
-plt.yticks(ticks=np.arange(len(prime_pairs)), labels=[f"{p1} + {p2}" for p1, p2 in prime_pairs], rotation=0)
-plt.grid(True)
-plt. show()
-
-# Create a matrix 
-outcome_matrix = np.zeros((len(prime_pairs), len(counts)))
-
-for i, prime_pair in enumerate(prime_pairs):
-    prime_sum = sum(prime_pair)
-    for j, binary_str in enumerate(counts.keys()):
-        decimal_value = binary_to_decimal(binary_str)
-        outcome_matrix[i, j] = abs(prime_sum - decimal_value)
-
-# Plot the heatmap 
-plt.figure(figsize=(12, 6))
-sns.heatmap(outcome_matrix, cmap="coolwarm", cbar=True)
-plt.title("Outcome Distribution by Prime Pair")
-plt.xlabel("Quantum Measurement Outcome (Decimal)")
-plt.ylabel("Prime Pairs (Summed)")
-plt.xticks(rotation=90)
-plt.yticks(ticks=np.arange(len(prime_pairs)), labels=[f"{p1} + {p2}" for p1, p2 in prime_pairs], rotation=0)
-plt.grid(True)
-plt. show()
-
-# Prime Sum Distance vs Outcome Frequency
-print("Plotting Prime Sum Distance vs Outcome Frequency")
-
-# Prepare data 
-outcome_frequencies = list(counts.values())
-prime_sum_distances = []
-for binary_str in counts.keys():
-    decimal_value = binary_to_decimal(binary_str)
-    min_distance = min([abs(decimal_value - sum(pair)) for pair in prime_pairs])
-    prime_sum_distances.append(min_distance)
-
-# Plot 
-plt.figure(figsize=(10, 6))
-plt.scatter(prime_sum_distances, outcome_frequencies, color='green', alpha=0.6)
-plt.title("Prime Sum Distance vs Outcome Frequency")
-plt.xlabel("Distance from Prime Sum")
-plt.ylabel("Outcome Frequency")
-plt.grid(True)
-plt. show()
-
-# Prime Sum Difference Heatmap 
-print("Plotting Prime Sum Difference Heatmap")
-
-# Create a matrix 
-difference_matrix = np.zeros((len(prime_pairs), len(binary_outcomes)))
-
-for i, prime_pair in enumerate(prime_pairs):
-    prime_sum = sum(prime_pair)
-    for j, outcome in enumerate(binary_outcomes):
-        difference_matrix[i, j] = abs(prime_sum - outcome)
-
-# Plot the heatmap
-plt.figure(figsize=(12, 6))
-sns.heatmap(difference_matrix, cmap="RdBu_r", cbar=True, center=0)
-plt.title("Prime Sum Difference Heatmap")
-plt.xlabel("Quantum Measurement Outcome (Decimal)")
-plt.ylabel("Prime Pair Sums")
-plt.xticks(rotation=90)
-plt.yticks(ticks=np.arange(len(prime_pairs)), labels=[f"{p1} + {p2}" for p1, p2 in prime_pairs], rotation=0)
-plt.grid(True)
-plt.  show()
-
-# Extracting counts from the data
-quantum_outcomes = data.get('counts', {})  # This holds the quantum measurement outcomes
-
-# Checking prime_pairs data
-prime_pairs = data.get('prime_pairs', None)
-
-# If prime_pairs is boolean or None, raise an error or regenerate them
-if prime_pairs is None or isinstance(prime_pairs, bool):
-    print("Warning: prime_pairs is not correctly formatted. Regenerating prime pairs.")
-
-    # Prime pairs
-prime_pairs = [INPUT_RUN_DATA]
-
-# Generate quantum outcomes as a list
-outcomes = []
-for k, v in quantum_outcomes.items():
-    outcomes.extend([int(k, 2)] * v)  # Converting binary keys to integers
-
-# Calculate the prime sums from the prime pairs
-prime_sums = [p1 + p2 for p1, p2 in prime_pairs]
-
-# Calculate residuals and other metrics
-residuals = np.abs(np.array(outcomes)[:, None] - np.array(prime_sums))
-
-# Heatmap of Z-Scores for Residuals
-z_scores = zscore(residuals, axis=0)
-
-plt.figure(figsize=(12, 8))
-sns.heatmap(z_scores, cmap='coolwarm', xticklabels=prime_sums, yticklabels=False)
-plt.title("Heatmap of Z-Scores for Residuals")
-plt.xlabel("Prime Sums")
-plt.ylabel("Quantum Outcomes (hidden)")
+# Show the plot
 plt. show()
 
 # End.
@@ -657,7 +525,7 @@ plt. show()
 </p>
             
  </div>
-        <img src="E39i4.png" alt="" class="experiment-image4">
+        <img src="E30i4.png" alt="" class="experiment-image4">
         <p></p>
         <div class="content-block">
 
