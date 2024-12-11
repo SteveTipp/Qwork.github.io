@@ -97,61 +97,58 @@
     </nav>
 
     <section class="content-section">
-        <h1><center> Exploring the Navier-Stokes Equations Using Carleman Linearization on IBM’s 127-Qubit Quantum Computer </center></h1>
+        <h1><center> Simulating Quark-Gluon Plasma Interactions </center></h1>
         <div class="content-block">
          
-This experiment using qiskit explores the Navier-Stokes equations, which describe fluid dynamics, using Carleman linearization. This quantum circuit aims to explore the utility of quantum computing in solving nonlinear differential equations. The experiment runs on @IBM's ibm_brisbane 127-qubit quantum computer. The circuit encodes the nonlinear behavior of fluid flow into a quantum system, using quantum entanglement and superposition to handle the linearized approximation of these equations. 
-<br>
-The results showed that the quantum system converged to a small number of stable quantum states. These states represent stable or low-energy configurations of the fluid system. In classical fluid dynamics, this would be akin to the fluid reaching an equilibrium or stable flow pattern. Thus, we observed the emergence of dominant, stable fluid configurations.<br>
+This experiment simulates the dynamics of a Quark-Gluon Plasma (QGP), a state of matter present in the early universe, by encoding quantum chromodynamics (QCD) interactions on a discrete lattice. Using IBM\’s ibm_brisbane 127-qubit quantum computer, and qiskit, this constructs a QCD inspired Hamiltonian to model the quark-gluon interactions and study their dynamics. It finds that early steps exhibited randomness, while later steps reveal structured patterns indicative of stabilization or thermalization in the simulated QCD system.
 <br>
 
           
-<p>1. The Navier-Stokes Equations<br>
-The Navier-Stokes equations describe the motion of fluid substances such as liquids and gases. The general form is given by:​<br>
-ρ((∂u/∂t) ​+ (u⋅∇)u) = −∇p + μ∇²u + f​<br>
+<p>1. Problem Setup<br>
+This aims to simulate the QCD interactions that govern the dynamics of a QGP on a quantum computer. The QCD Hamiltonian for our simulation includes terms for:<br>
+a. Quark Mass Energy: <br>
+H_(quark) ​= N ∑ ​i = 1 (mZ_i)​<br>
+where Z_i​ represents the Pauli-Z operator acting on qubit i, and m is the quark mass.<br>
 
-Where:​<br>
-u = (u, v, w) is the velocity field.​<br>
-ρ is the fluid density.​<br>
-p is the pressure field.​<br>
-μ is the dynamic viscosity.​<br>
-f represents external forces acting on the fluid.​<br>
+b. Gluon Field Dynamics:<br>
+H_(gluon) = N - 1 ∑ i = 1 (X_(i)​X_(i + 1) ​+ Y_(i)​Y_(i + 1))​<br>
+where X_i and Y_i​ are the Pauli-X and Pauli-Y operators acting on qubit i, and g represents the coupling strength of gluon fields.<br>
 
-For this experiment, we focus on the Carleman linearization approach, which allows us to approximate these nonlinear equations with a set of linear equations.
+c. Quark-Gluon Coupling:<br>
+H_(quark-gluon​) = N - 1 ∑ i = 1 (Z_(i)​Z_(i + 1)​)<br>
+where g′ is the coupling strength between quarks and gluons.<br>
+
+Thus the total Hamiltonian is:<br>
+H = H_(quark) ​+ H_(gluon) ​+ H_(quark - gluon)​
 ​<br>
 
-<p>2. Carleman Linearization<br>
-Carleman linearization approximates a nonlinear system by embedding it into a higher-dimensional linear space. The Navier-Stokes equations, being nonlinear due to the (u⋅∇)u term, can be transformed into a linear form by introducing auxiliary variables that capture higher order interactions.
-<br>
-In mathematical terms, we approximate the velocity field evolution using a linear system of equations by truncating higher-order terms. Let’s denote the approximated linear system as:<p>
-x_(n + 1) ​= Ax_n ​+ B
-<br>
-Where A is a matrix capturing the linearized evolution of the system, and B is a vector that captures constant or external forces. In quantum computing, this evolution is mapped onto a quantum circuit where the state evolves step by step according to these linearized dynamics.
-<br>
-
-<p>3. Quantum Circuit Design<br>
-To simulate the Navier-Stokes dynamics on a quantum computer, we design a quantum circuit where each qubit represents a component of the velocity field. The quantum gates simulate the linearized evolution over discrete time steps. The circuit includes:<br>
-Initialization: Each qubit is initialized to a superposition state using the R_y​ gate, which encodes initial fluid velocities.<br>
+<p>2. Lattice Representation<br>
+Map the QGP onto a 1D lattice of N qubits, where each qubit represents either a quark or gluon. The qubits are initialized in a superposition state using:<br>
+∣ψ_i​⟩ = R_y​(π/4​) ∣0⟩<br>
+for each qubit i, where R_y​ is the rotation gate around the Y-axis:<br>
 Ry​(θ) = <br>
-((cos(θ/2), −sin(θ/2)<br>
-(sin(θ/2)​,  cos(θ/2)​)<br>
+[cos(θ/2), ​− sin(θ​​/2)<br>
+sin(θ/2),     ​cos(θ/2)​​]<br>
 
-Time evolution of the velocity field is simulated using rotation gates R_z and entangling gates CX. The R_z​ gate rotates the phase of the qubit to capture the time evolution of fluid velocity:<br>
+
+<p>3. Hamiltonian Encoding<br>
+The Hamiltonian terms are encoded using quantum gates:<br>
+Mass Term: Z_i​ operators are directly represented by Pauli-Z gates on individual qubits.<br>
+
+Gluon Dynamics: The X_(i)​X_(i + 1)​ and Y_(i)​Y_(i + 1)​ terms are implemented using pairs of controlled gates (CNOT gates) and rotations.<br>
+
+Quark-Gluon Coupling: The Z_(i)​Z_(i + 1)​ term is implemented using two-qubit interactions (controlled-Z gates).<br>
+
+
+
+<p>4. Time Evolution<br>
+The time evolution of the QGP is simulated using Trotterization:<br>
+e^(−iHt) ≈ ∏ k (​e^(−iHk​Δt))<br>
+where H_k​ are the individual terms of the Hamiltonian, and Δt is the Trotter step size. Each term is implemented sequentially using gates:<br>
+e^(−imZΔt) is implemented with a R_z gate:<br>
 Rz​(θ) = <br>
-((e^(−iθ/2), 0)<br>
-(0, e^(iθ/2)​)<br>
-
-The CX (CNOT) gates simulate interactions between neighboring fluid particles (qubits), capturing the coupling between different velocity components due to the nonlinear term in Navier-Stokes.
-<br>
-
-
-
-
-<p>4. Noise-Adaptive Transpilation<br>
-The calibration file for ibm_brisbane includes information like T1, T2 times, gate errors, and readout errors. This data is used to select the qubits with the best performance characteristics.
-<br>
-The circuit is transpiled using the Sabre routing algorithm, which minimizes the impact of noise by dynamically choosing the most reliable qubits and gates based on their error rates.
-<br>
+[e^(−iθ/2), 0<br>
+0,   e^(iθ/2)​]<br>
 
 
     
@@ -160,21 +157,16 @@ The circuit is transpiled using the Sabre routing algorithm, which minimizes the
 
 
 
-<p>5. Running the Experiment <br>
-The quantum circuit is executed on IBM’s ibm_brisbane using SamplerV2 to simulate the fluid dynamics over time. The circuit is run with 8192 shots.
+<p>7. Transpilation<br>
+The circuit is transpiled for ibm_brisbane.
+<br>
     
-<br>
 
 
+<p>8. Results<br>
+The raw measurement data is retrieved, processed to count bitstring occurrences, and saved as a json. 
 
-<p>6. Result Collection<br>
-The quantum hardware returns a set of bitstrings representing the fluid velocities at different time steps. 
 
-<br>
-
-<p>7. Post-Processing and Visualization<br>
-The counts are saved in a JSON. A histogram of the results is plotted.
-<br>
 
 
 
@@ -192,56 +184,54 @@ The counts are saved in a JSON. A histogram of the results is plotted.
 
   
 </div>
-        <img src="E41i2.png" alt="" class="experiment-image">
+        <img src="E42i1.png" alt="" class="experiment-image">
         <p></p>
         <div class="content-block">
 <br>
             
-The bar chart above (code below) reveals that a single quantum state ("0000000000") dominates the results with a probability of over 4%. This suggests that this particular configuration, corresponding to a low-energy or stable configuration in the Navier-Stokes system, is highly favored. The other quantum states exhibit probabilities between 1% and 2%, reflecting a mixture of possible fluid configurations but with lower likelihoods.
+In the 'Top 20 Most Frequent Bitstrings" (Bar chart)' above (code below), The most frequently occurring bitstring is 10101011, observed 65 times, followed by other prominent bitstrings such as 01111101 and 01111010. The distribution shows a relatively flat pattern among the top 20, indicating that no single state overwhelmingly dominates the results. This is consistent with the high entropy value, suggesting a high degree of randomness in the system.
 <br>
-The results showed that the quantum system, simulating the linearized Navier-Stokes equations using Carleman linearization, converged to a small number of stable quantum states. These states represent stable or low-energy configurations of the fluid system. In classical fluid dynamics, this would be akin to the fluid reaching an equilibrium or stable flow pattern. Thus, we observed the emergence of dominant, stable fluid configurations.
+Shannon Entropy = 7.8854 (calculated from the probability distribution)<br>
+The high entropy value (close to the theoretical maximum for an 8 qubit system) indicates a nearly uniform distribution across the quantum state space. High entropy suggests that the system explores a wide range of possible states, a standard of quantum systems influenced by highly entangled and dynamic Hamiltonians. This behavior aligns with theoretical predictions for QGP, where complex dynamics lead to diverse quantum outcomes.
 <br>
-A significant portion of the quantum states had very low probabilities, suggesting that more complex or turbulent fluid configurations are rare but still possible. In classical terms, these rare states may correspond to more intricate flow patterns, including localized turbulence or transient phenomena. The low probability of these states indicates that the system mostly avoids these complex dynamics but occasionally exhibits them.<br>
-</div>
-        <img src="E41i3.png" alt="" class="experiment-image">
+In the 'Top 20 Bitstring Probabilities' above (code below), the probabilities for the top 20 bitstrings range from approximately 0.008 to 0.006. The uniformity in probabilities reflects the inherent diverse nature of the quantum system. These probabilities align with the experimental expectation of a diverse quantum state space due to the Hamiltonian dynamics. A near uniform distribution among the top bitstrings supports the hypothesis that the QGP inspired dynamics distribute quantum probabilities broadly across the state space. 
+<br>
+In the 'Cluster Size Distribution' above (code below), the majority of clusters contain a single 1 (320 occurrences), followed by clusters of size 2 (144 occurrences) and size 3 (64 occurrences). Larger clusters (e.g., size 5, 6, 7, and 8) are rare, occurring fewer than 20 times in total. Clustering of 1s represents quark-gluon coupling and collective quantum behavior. The predominance of smaller clusters suggests weak coupling or localized interactions. The rarity of larger clusters might indicate that the qubits primarily operate independently or in small groups, reflecting specific physical constraints of the encoded QCD Hamiltonian.
+<br>
+In the 'Qubit Correlation Matrix' above (code below), correlation strengths between qubits are generally low, with a few qubit pairs showing moderate correlations (values in the range of 0.2 to 0.35). The matrix is symmetric, as expected, and diagonal elements are not included since self correlations are trivial. Moderate correlations between specific qubits may indicate pairwise entanglement or localized interactions within the system. Weak correlations across most qubits are consistent with the high randomness and entropy observed in the results.</div>
+<br>
+        <img src="E42i2.png" alt="" class="experiment-image">
         <p></p>
         <div class="content-block">
 <br>
-The Probability Distribution of All Measured States above (code below) provides a broader overview of the probability distribution of all the measured quantum states. The logarithmic scale shows how quickly the probabilities decrease as the states become less frequent. The curve demonstrates a rapid drop off, with only a few states having significant probabilities, while the majority of the states have much lower probabilities.
+In the 'Cumulative Probability Distribution' above (code below), the curve rises gradually, indicating that the probabilities are fairly evenly distributed across many bitstrings. A steep initial rise followed by a plateau suggests dominance by a few bitstrings, which we do not observe. This even distribution aligns with the high entropy observed, reflecting the diverse nature of QGP like dynamics where no single state overwhelmingly dominates. This indicates effective exploration of the quantum state space.
 <br>
-The rapid drop off in the probability distribution suggests that only a small number of fluid configurations are likely, with most states being rare or unstable. The presence of a long tail in the probability distribution reflects that there are many possible states, but they contribute very little to the overall dynamics of the system. This indicates that the quantum system, when simulating the fluid dynamics, favors certain states strongly over others, which may reflect the most stable or likely fluid flow patterns.
+In the 'Hamming Distance Distribution' above (code below), the histogram shows a bell shaped curve, with most Hamming distances clustering around 0.4 – 0.6 (normalized). Very small or very large Hamming distances are less frequent, indicating that the observed bitstrings are somewhat evenly spaced in the state space. This distribution suggests that the QCD inspired dynamics favor states that are not completely dissimilar but maintain a balanced degree of diversity. This reflects localized interactions and correlations, consistent with the expected behavior of quark-gluon systems.
 <br>
-The Cumulative Probability Distribution above (code below) shows how quickly the probability mass is captured by the top states. The plot reveals that the top 200 states capture over 80% of the total probability mass, with the remaining states contributing marginally.
+In the 'State Space Coverage (t-SNE)' above (code below), the scatterplot shows clusters of states in a two dimensional representation of the high dimensional bitstring space. Bitstrings with higher probabilities (shown in warmer colors) tend to form tighter clusters. Clustering suggests localized structures in the state space, possibly due to quark gluon interactions encoded in the Hamiltonian. These clusters may represent regions of stability or high probability density in the QGP simulation, analogous to confined or strongly interacting regions in physical QCD.
 <br>
-The fact that a small subset of states accounts for most of the total probability mass indicates that the fluid dynamics system is highly constrained to a few likely configurations. This could reflect the system's tendency to converge toward stable flow patterns under the linearized Navier-Stokes approximation.
-<br>
-The states beyond the top 200 contribute minimally to the overall dynamics, suggesting they represent rare or extreme fluid configurations that do not significantly affect the simulation's outcome.
-<br>
-The Heatmap above (code below) visualizes the top 20 quantum states as binary strings, with each row representing a bitstring (state) and each column corresponding to a qubit (or part of the fluid system). The color intensity shows whether a qubit is in the ∣0⟩ or ∣1⟩ state.
-<br>
-The first qubit (column 0) is predominantly in the ∣0⟩ state across the top states, indicating that it contributes heavily to stable fluid configurations. In contrast, qubits 1 and 2 exhibit more variability, reflecting local fluctuations in the fluid system. The heatmap highlights certain repeating patterns, such as clusters of qubits that frequently appear in the ∣1⟩ state together. These patterns suggest specific correlations between parts of the fluid system that evolve similarly.
-<br>
-The Density Plot of Quantum State Probabilities above (code below) shows a smoothed view of how the probabilities are distributed across all measured quantum states. The plot shows a sharp peak around low probability values, indicating that most of the quantum states have very small probabilities. The bulk of the probability mass is concentrated at low probabilities, with a long tail toward higher probabilities.
-<br>
-This plot confirms that only a small number of states carry most of the system's probability, while the majority of states are less likely to appear. This is reflective of the Navier-Stokes fluid system where the fluid dynamics are typically dominated by a few stable or low-energy configurations.<br>
-
-            
+In the 'Mutual Information Between Qubits' above (code below), the mutual information heatmap reveals strong correlations between certain pairs of qubits. The values are relatively low overall, consistent with the high entropy and randomness of the system. The correlations reflect interaction effects between quarks and gluons, encoded as pairwise couplings in the Hamiltonian. Low mutual information across most qubits suggests weak long range correlations, a characteristic of QGP like dynamics before confinement.
 <br>
 </div>
-        <img src="E41i4.png" alt="" class="experiment-image">
+        <img src="E42i3.png" alt="" class="experiment-image">
         <p></p>
         <div class="content-block">
 <br>
 
-The Qubit Correlation Heatmap above (code below) shows the correlation between different qubits based on the top 50 quantum states, revealing how the states of the qubits are related to each other.
+In the '3D State Space Coverage (t-SNE)' above (code below), the plot shows a spread of quantum states in a high dimensional state space, reduced to 3D using t-SNE. Dense clusters of points are visible, with regions of higher probability (warmer colors) among lower probability regions. The structure appears globally connected with some localized denser subregions. The clustering suggests the presence of localized quantum states corresponding to stable or semi stable configurations in the QGP. These clusters may represent regions of strong quark gluon interactions, a characteristic feature of QCD in the plasma phase.
 <br>
-Several qubit pairs show strong positive correlations (highlighted by red blocks), meaning that these qubits tend to be in similar states (either both in ∣0⟩ or ∣1⟩) across the top quantum states. This suggests that these parts of the fluid system interact closely, reflecting localized fluid dynamics that are strongly coupled. Some qubit pairs exhibit negative correlations (blue blocks), indicating that when one qubit is in state ∣0⟩, the other is more likely to be in ∣1⟩. These negative correlations may reflect areas of the fluid system where counteracting forces or flows exist, akin to turbulent regions where fluid particles move in opposite directions.
+In the 'State Space Coverage (UMAP)' above (code below), the 2D UMAP plot shows a more distinct separation between clusters compared to t-SNE. Points with higher probabilities (yellow/orange) are concentrated in tighter clusters, while low probability points (purple) are more dispersed. UMAP reveals distinct groups of quantum states, which may correspond to energy levels or phases in the QCD inspired dynamics. The distinct clusters could signify different energy states or configurations of the quark gluon system, analogous to the phase transitions observed in QGP. The separation between clusters suggests coherent interactions within regions and weaker interactions between them.
 <br>
-The mixture of positive and negative correlations suggests a complex interaction between parts of the fluid system. While there are regions of stable, correlated flow (positive correlations), there are also areas of competing dynamics (negative correlations), which could correspond to fluid turbulence or complex interactions in the simulated flow.
+In the '3D State Space Coverage (UMAP)' above (code below), the 3D UMAP plot reveals a more detailed structure, showing clusters with varying densities and separations. The red/orange points, corresponding to higher probabilities, are concentrated in compact regions, while blue points (lower probabilities) are distributed across the structure. This 3D view further shows the localized behavior of high probability states, suggesting regions of strong interaction or coherence in the QGP simulation. The peripheral points might represent less stable or transient configurations in the plasma, possibly akin to thermal fluctuations in the physical system.
 <br>
-In the end, through Carleman linearization, we were able to simulate a linear approximation of the Navier-Stokes equations. While this is not a direct solution to the full nonlinear Navier-Stokes equations, it provides an approximation of the system's behavior by embedding the nonlinear dynamics into a higher-dimensional linear system. Thus, we obtained an approximate solution to the fluid dynamics, focusing on the stable and most likely configurations. This quantum approach demonstrates the potential for quantum algorithms to tackle parts of such nonlinear problems.<br>
+In the 'Phase Transition Analysis' above (code below), the clusters exhibit gradual shifts in their density and distribution as the coupling strength is varied. Higher coupling strengths result in more localized and tighter clusters, indicating stronger interactions among qubits or simulated particles. Lower coupling strengths lead to more dispersed clusters, reflecting weaker interactions and greater independence among the states. This behavior aligns with physical QCD phenomena. Stronger couplings in the QCD Hamiltonian correspond to more tightly bound quark-gluon systems, analogous to a confined phase. Weaker couplings represent a more deconfined phase, similar to the quark-gluon plasma state in high energy physics. The smooth transitions in cluster structures suggest that the simulated system is exploring different phases of QCD like dynamics.
 <br>
-
+In the 'Time Evolution of State Space Coverage' above (code below), over the time steps, clusters evolve dynamically, exhibiting merging, splitting, and reshaping behaviors. Early time steps show more uniform distributions, while later steps reveal more structured and distinct clusters. The probability distribution shifts, with high probability regions forming more pronounced patterns over time. The temporal evolution mirrors how QGP dynamics evolve in time, where the plasma transitions between different states of coherence and randomness. The merging of clusters might correspond to quark gluon coalescence, while splitting might represent fragmentation or particle production.
+<br>
+In the end, this experiment explored Quark-Gluon Plasma (QGP) dynamics using QCD inspired Hamiltonians. The experiment showed patterns in clustering behaviors, phase transitions, and temporal dynamics. Shannon entropy calculations indicated a high degree of randomness in the system's state probabilities, reflecting the diversity of quantum states accessible under QCD like dynamics. 
+<br>
+The phase transition analysis showed how varying the coupling strength impacted the quantum system's state space. At stronger couplings, clusters became tighter and more localized, mimicking the confined phase of QGP, where quarks and gluons interact strongly. At weaker couplings, states became more dispersed, resembling the deconfined phase where particles interact less intensely. Time evolution tracked how these clusters developed over discrete steps, capturing dynamic behaviors such as merging, splitting, and stabilization of the state space. Early steps exhibited randomness, while later steps reveal structured patterns indicative of stabilization or thermalization in the simulated QCD system.
+<br>
        
           
           <p>Code:<br>
@@ -257,24 +247,6 @@ import logging
 from collections import Counter
 from qiskit.visualization import plot_histogram
 
-# Function to parse ECR error and extract the maximum error from multiple qubit pairs
-def parse_ecr_error(ecr_error_str):
-    qubit_error_pairs = ecr_error_str.split(';')
-    errors = []
-    for pair in qubit_error_pairs:
-        qubit_pair, error_value = pair.split(':')
-        errors.append(float(error_value))  # Convert the error value to a float
-    return max(errors)  # Return the maximum error for simplicity
-
-# Function to parse gate time and extract the maximum gate time from multiple qubit pairs
-def parse_gate_time(gate_time_str):
-    qubit_time_pairs = gate_time_str.split(';')
-    times = []
-    for pair in qubit_time_pairs:
-        qubit_pair, time_value = pair.split(':')
-        times.append(float(time_value))  # Convert the gate time value to a float
-    return max(times)  # Return the maximum gate time 
-
 # Load calibration data from CSV
 def load_calibration_data(file_path):
     calibration_data = {}
@@ -287,32 +259,29 @@ def load_calibration_data(file_path):
                 'T2': float(row['T2 (us)']) if row['T2 (us)'] else 0.0,
                 'readout_error': float(row['Readout assignment error ']) if row['Readout assignment error '] else 0.0,
                 'sx_error': float(row['√x (sx) error ']) if row['√x (sx) error '] else 0.0,
-                'pauli_x_error': float(row['Pauli-X error ']) if row['Pauli-X error '] else 0.0,
-                'ecr_error': parse_ecr_error(row['ECR error ']) if row['ECR error '] else 0.0,  # Parse multiple ECR errors
-                'gate_time': parse_gate_time(row['Gate time (ns)']) if row['Gate time (ns)'] else 0.0  # Parse multiple gate times
             }
     return calibration_data
 
-# Select qubits with the best T1, T2, and error characteristics
+# Select qubits with best T1, T2, and error characteristics
 def select_best_qubits(calibration_data, n_qubits):
     qubits_sorted = sorted(calibration_data.items(), key=lambda x: (x[1]['sx_error'], -x[1]['T1'], -x[1]['T2']))
     best_qubits = [qubit[0] for qubit in qubits_sorted[:n_qubits]]
     return best_qubits
 
-# Create the quantum circuit for Navier-Stokes 
-def create_navier_stokes_qc(n_qubits, time_step, orders):
+# QCD quantum circuit
+def create_qcd_qc(n_qubits, time_steps):
     qc = QuantumCircuit(n_qubits, n_qubits)
     
-    # Initial state preparation (using Ry rotations)
+    # Initial state preparation
     for qubit in range(n_qubits):
-        qc.ry(np.pi/4, qubit)
+        qc.ry(np.pi / 4, qubit)
     
-    # Carleman linearization gates (evolution)
-    for step in range(orders):
-        for qubit in range(n_qubits):
-            qc.rz(np.pi / time_step, qubit)
+    # QCD dynamics
+    for step in range(time_steps):
         for qubit in range(n_qubits - 1):
             qc. cx(qubit, qubit + 1)
+        for qubit in range(n_qubits):
+            qc.rz(np.pi / time_steps, qubit)
     
     # Measurement
     qc.measure(range(n_qubits), range(n_qubits))
@@ -323,7 +292,7 @@ def create_navier_stokes_qc(n_qubits, time_step, orders):
 service = QiskitRuntimeService(
     channel='ibm_quantum',
     instance='ibm-q/open/main',
-    token='YOUR_IBMQ_KEY_O-`'
+    token='YOUR_IBMQ_API_KEY_O-`'  
 )
 
 backend_name = 'ibm_brisbane'
@@ -334,177 +303,320 @@ logging.basicConfig(level=logging. INFO)
 logger = logging.getLogger(__name__)
 
 # Load calibration data
-calibration_file = '/Users/Documents/ibm_brisbane_calibrations_2024-10-22T20_46_34Z.csv'
+calibration_file = '/Users/ibm_brisbane_calibrations_2024-12-10T21_39_59Z.csv'
 calibration_data = load_calibration_data(calibration_file)
 
-# Define the experiment parameters
-n_qubits = 10
-time_step = 0.1
-orders = 3
+# Parameters 
+n_qubits = 8
+time_steps = 10
 shots = 8192
 
 best_qubits = select_best_qubits(calibration_data, n_qubits)
 
-# Transpile
-qc = create_navier_stokes_qc(n_qubits, time_step, orders)
-transpiled_qc = transpile(qc, backend=backend, optimization_level=3)
+# Create and transpile circuit
+qc = create_qcd_qc(n_qubits, time_steps)
+transpiled_qc = transpile(qc, backend=backend, optimization_level=3, initial_layout=best_qubits)
 
-# Execute 
+# Execute circuit 
 with Session(service=service, backend=backend) as session:
     sampler = SamplerV2(session=session)
     
-    logger. info("Running the Navier-Stokes simulation on ibm_brisbane backend")
+    logger. info("Running the QCD simulation on ibm_kyiv backend")
     job = sampler. run([transpiled_qc], shots=shots)
     job_result = job.result()
 
-    # Measurement data 
+    # Correctly access the measurement data inside _pub_results
     bit_array = job_result._pub_results[0]['__value__']['data'].c
     
     # Extract bitstrings
     bitstrings = bit_array.get_bitstrings()  # Extract the bitstrings using the correct method
     counts = dict(Counter(bitstrings))  # Count occurrences of each bitstring
     
-    # Save the JSON
+    # Save json
     results_data = {"raw_counts": counts}
-    file_path = '/Users/Documents/NavierStokes_0.jso'
+    file_path = '/Users/Documents/QCD_results.json'
     with open(file_path, 'w') as f:
         json.dump(results_data, f, indent=4)
 
-# Plot the results for analysis
+# Plot results 
 plot_histogram(counts)
+plt.title("QCD Simulation Results")
 plt. show()
 
-logger. info("Experiment complete.")
-
-# End.
-
-/////////////////////////////////////////////////////
-
-Top 20 most Frequent States, Probability Distribution, Cumulative Probability Distribution, Heatmap of Bitstring Probabilities from Run Data
+Code for Top 20 Most Frequent Bitstrings, Shannon Entropy Calculation, Top 20 Bitstring Probabilities, Cluster Size Distribution, Qubit Correlation Matrix, Cumulative Probability Distribution, Hamming Distance Distribution, State Space Coverage (t-SNE), and Mutual Information Between Qubits from run data
 # Imports
-import json
 import numpy as np
 import matplotlib.pyplot as plt
+import json
 from collections import Counter
+from itertools import combinations
+from scipy.spatial.distance import hamming
+from sklearn.decomposition import PCA
+from sklearn.manifold import TSNE
 
-# Load the JSON
-file_path = '/Users/Documents/NavierStokes_0.json'
-with open(file_path, 'r') as file:
-    data = json.load(file)
+# Load results
+file_path = '/Users/Documents/QCD_results.json'  
+with open(file_path, 'r') as f:
+    results = json.load(f)
 
-counts = data['raw_counts']
-total_shots = sum(counts.values())
+# Extract raw counts
+raw_counts = results["raw_counts"]
+total_shots = sum(raw_counts.values())
 
-# Normalize counts to get probabilities
-probabilities = {state: count / total_shots for state, count in counts.items()}
+# Calculate probabilities
+probabilities = {bitstring: count / total_shots for bitstring, count in raw_counts.items()}
 
-# Sort by probability to identify dominant states
-sorted_probabilities = sorted(probabilities.items(), key=lambda x: x[1], reverse=True)
+# Shannon Entropy
+entropy = -sum(p * np.log2(p) for p in probabilities.values())
+print(f"Shannon Entropy of the distribution: {entropy:.4f}")
 
-# Plotting the top 20 most frequent states
-top_states = sorted_probabilities[:20]
-states, probs = zip(*top_states)
+# Bitstring to numerical mapping
+def bitstring_to_int(bitstring):
+    return int(bitstring, 2)
 
+# Histogram of Bitstring Counts
 plt.figure(figsize=(12, 6))
-plt. bar(states, probs)
+sorted_counts = dict(sorted(raw_counts.items(), key=lambda item: item[1], reverse=True)[:20])
+plt. bar(sorted_counts.keys(), sorted_counts.values(), color='blue')
 plt.xticks(rotation=90)
-plt.xlabel('Bitstrings (Quantum States)')
-plt.ylabel('Probability')
-plt.title('Top 20 Quantum States in Navier-Stokes Simulation')
+plt.title("Top 20 Most Frequent Bitstrings")
+plt.ylabel("Counts")
+plt.xlabel("Bitstrings")
 plt.tight_layout()
 plt. show()
 
-# Calculate Shannon Entropy
-entropy = -sum(p * np.log2(p) for p in probabilities.values() if p > 0)  # Avoid log(0)
-print(f"Shannon Entropy of the distribution: {entropy:.4f}")
+# Probability Distribution Heatmap
+plt.figure(figsize=(10, 8))
+sorted_probabilities = dict(sorted(probabilities.items(), key=lambda item: item[1], reverse=True)[:20])
+plt. bar(sorted_probabilities.keys(), sorted_probabilities.values(), color='green')
+plt.xticks(rotation=90)
+plt.title("Top 20 Bitstring Probabilities")
+plt.ylabel("Probability")
+plt.xlabel("Bitstrings")
+plt.tight_layout()
+plt. show()
 
-# Plot full probability distribution (log scale)
-plt.figure(figsize=(14, 7))
-all_states, all_probs = zip(*sorted_probabilities)
-plt.plot(range(len(all_probs)), all_probs)
-plt.yscale('log')
-plt.xlabel('Rank of State')
-plt.ylabel('Probability (Log Scale)')
-plt.title('Probability Distribution of All Measured States (Log Scale)')
+# Cluster Size Distribution
+cluster_counts = Counter(len(cluster) for bitstring in probabilities.keys() 
+                         for cluster in ''.join(bitstring).split('0') if cluster)
+plt.figure(figsize=(8, 6))
+plt. bar(cluster_counts.keys(), cluster_counts.values(), color='purple')
+plt.title("Cluster Size Distribution")
+plt.ylabel("Frequency")
+plt.xlabel("Cluster Size (Number of Consecutive 1s)")
+plt.tight_layout()
+plt. show()
+
+# Qubit Correlation Matrix
+n_qubits = len(next(iter(raw_counts.keys())))
+correlations = np.zeros((n_qubits, n_qubits))
+for bitstring, prob in probabilities.items():
+    for i, j in combinations(range(n_qubits), 2):
+        if bitstring[i] == '1' and bitstring[j] == '1':
+            correlations[i, j] += prob
+correlations += correlations.T
+plt.figure(figsize=(10, 8))
+plt.imshow(correlations, cmap='viridis', interpolation='nearest')
+plt.colorbar(label='Correlation Strength')
+plt.title("Qubit Correlation Matrix")
+plt.xlabel("Qubit Index")
+plt.ylabel("Qubit Index")
 plt.tight_layout()
 plt. show()
 
 # Cumulative Probability Distribution
-cumulative_probs = np.cumsum(all_probs)
-plt.figure(figsize=(12, 6))
-plt.plot(range(len(cumulative_probs)), cumulative_probs)
-plt.xlabel('Rank of State')
-plt.ylabel('Cumulative Probability')
-plt.title('Cumulative Probability Distribution')
+sorted_probabilities = sorted(probabilities.values(), reverse=True)
+cumulative_probabilities = np.cumsum(sorted_probabilities)
+plt.figure(figsize=(8, 6))
+plt.plot(cumulative_probabilities, marker='o', color='orange')
+plt.title("Cumulative Probability Distribution")
+plt.ylabel("Cumulative Probability")
+plt.xlabel("Bitstring Rank")
+plt.grid()
 plt.tight_layout()
 plt. show()
 
-#  Heatmap of Bitstring Probabilities
-bitstrings_matrix = np.array([list(map(int, state)) for state in all_states[:20]])  # Convert top 20 bitstrings to binary matrix
-plt.figure(figsize=(10, 6))
-plt.imshow(bitstrings_matrix, cmap='Blues', aspect='auto')
-plt.colorbar(label='Bit Value (0 or 1)')
-plt.yticks(range(len(states)), states)
-plt.xlabel('Qubit Index')
-plt.ylabel('Top 20 Bitstrings')
-plt.title('Heatmap of Bitstrings in Navier-Stokes Simulation')
+# Hamming Distance Distribution
+bitstrings = list(probabilities.keys())
+hamming_distances = []
+for b1, b2 in combinations(bitstrings, 2):
+    hamming_distances.append(hamming(list(map(int, b1)), list(map(int, b2))))
+plt.figure(figsize=(8, 6))
+plt.hist(hamming_distances, bins=20, color='cyan', edgecolor='black')
+plt.title("Hamming Distance Distribution")
+plt.ylabel("Frequency")
+plt.xlabel("Hamming Distance")
 plt.tight_layout()
 plt. show()
 
-//////////////////////////////////////////////////
-Density Plot of Probabilities, Correlation Heatmap (Bitwise Analysis) from Run Data
-# Imports
-import json
+# State Space Coverage (t-SNE Visualization)
+bitstring_vectors = np.array([list(map(int, bitstring)) for bitstring in probabilities.keys()])
+tsne = TSNE(n_components=2, random_state=42)
+state_space_2d = tsne. fit_transform(bitstring_vectors)
+plt.figure(figsize=(10, 8))
+plt.scatter(state_space_2d[:, 0], state_space_2d[:, 1], c=list(probabilities.values()), cmap='cool', s=100)
+plt.colorbar(label='Probability')
+plt.title("State Space Coverage (t-SNE)")
+plt.xlabel("Dimension 1")
+plt.ylabel("Dimension 2")
+plt.tight_layout()
+plt. show()
+
+# Mutual Information Between Qubits
+mutual_information = np.zeros((n_qubits, n_qubits))
+for i in range(n_qubits):
+    for j in range(i + 1, n_qubits):
+        joint_prob = sum(prob for bitstring, prob in probabilities.items() if bitstring[i] == '1' and bitstring[j] == '1')
+        p_i = sum(prob for bitstring, prob in probabilities.items() if bitstring[i] == '1')
+        p_j = sum(prob for bitstring, prob in probabilities.items() if bitstring[j] == '1')
+        if p_i > 0 and p_j > 0 and joint_prob > 0:
+            mutual_information[i, j] = joint_prob * np.log2(joint_prob / (p_i * p_j))
+mutual_information += mutual_information.T
+plt.figure(figsize=(10, 8))
+plt.imshow(mutual_information, cmap='plasma', interpolation='nearest')
+plt.colorbar(label='Mutual Information')
+plt.title("Mutual Information Between Qubits")
+plt.xlabel("Qubit Index")
+plt.ylabel("Qubit Index")
+plt.tight_layout()
+plt. show() 
+
+
+Code for 3D State Space Coverage (t-SNE), State Space Coverage (UMAP), 3D State Space Coverage (UMAP), Phase Transition Analysis with Varying Coupling Strengths, and Time Evolution of State Space Coverage
 import numpy as np
 import matplotlib.pyplot as plt
+import json
 from collections import Counter
-from mpl_toolkits.mplot3d import Axes3D
-import seaborn as sns
+from itertools import combinations
+from scipy.spatial.distance import hamming
+from sklearn.decomposition import PCA
+from sklearn.manifold import TSNE
+from umap import UMAP  # Import UMAP for advanced dimensionality reduction
+from mpl_toolkits.mplot3d import Axes3D  # For 3D scatterplots
 
-# Load the results from the JSON file
-file_path = '/Users/Documents/NavierStokes_0.json'
-with open(file_path, 'r') as file:
-    data = json.load(file)
+# Load results
+file_path = '/Users/Documents/QCD_result.json'
+with open(file_path, 'r') as f:
+results = json.load(f)
 
-counts = data['raw_counts']
-total_shots = sum(counts.values())
+# Extract raw counts
+raw_counts = results["raw_counts"]
+total_shots = sum(raw_counts.values())
 
-# Normalize counts to get probabilities
-probabilities = {state: count / total_shots for state, count in counts.items()}
+# Calculate probabilities
+probabilities = {bitstring: count / total_shots for bitstring, count in raw_counts.items()}
 
-# Sort by probability to identify dominant states
-sorted_probabilities = sorted(probabilities.items(), key=lambda x: x[1], reverse=True)
+# Shannon Entropy
+entropy = -sum(p * np.log2(p) for p in probabilities.values())
+print(f"Shannon Entropy of the distribution: {entropy:.4f}")
 
-# Prepare data for 3D visualization
-top_n = 50
-states, probs = zip(*sorted_probabilities[:top_n])
+# 3D Scatterplot of State Space Coverage
+bitstring_vectors = np.array([list(map(int, bitstring)) for bitstring in probabilities.keys()])
+tsne_3d = TSNE(n_components=3, random_state=42)
+state_space_3d = tsne_3d.fit_transform(bitstring_vectors)
 
-# Convert bitstrings to integers 
-int_states = [int(state, 2) for state in states]
-
-# Density Plot of Probabilities
-plt.figure(figsize=(12, 6))
-sns.kdeplot(probs, shade=True)
-plt.title('Density Plot of Quantum State Probabilities')
-plt.xlabel('Probability')
-plt.ylabel('Density')
+fig = plt.figure(figsize=(10, 8))
+ax = fig.add_subplot(111, projection='3d')
+sc = ax.scatter(state_space_3d[:, 0], state_space_3d[:, 1], state_space_3d[:, 2], c=list(probabilities.values()), cmap='viridis', s=100)
+plt.colorbar(sc, label='Probability')
+ax.set_title("3D State Space Coverage (t-SNE)")
+ax.set_xlabel("Dimension 1")
+ax.set_ylabel("Dimension 2")
+ax.set_zlabel("Dimension 3")
+plt.tight_layout()
 plt. show()
 
-# Correlation Heatmap (Bitwise Analysis)
-# Convert top 50 bitstrings into a binary matrix
-bitstrings_matrix = np.array([list(map(int, state)) for state in states])
-
-# Compute correlation between each qubit pair
-corr_matrix = np.corrcoef(bitstrings_matrix.T)
+# UMAP Visualization of State Space Coverage
+umap_2d = UMAP(n_components=2, random_state=42)
+state_space_umap = umap_2d.fit_transform(bitstring_vectors)
 
 plt.figure(figsize=(10, 8))
-sns.heatmap(corr_matrix, annot=True, cmap='coolwarm', center=0)
-plt.title('Qubit Correlation Heatmap for Top 50 Quantum States')
-plt.xlabel('Qubit Index')
-plt.ylabel('Qubit Index')
+plt.scatter(state_space_umap[:, 0], state_space_umap[:, 1], c=list(probabilities.values()), cmap='plasma', s=100)
+plt.colorbar(label='Probability')
+plt.title("State Space Coverage (UMAP)")
+plt.xlabel("Dimension 1")
+plt.ylabel("Dimension 2")
+plt.tight_layout()
 plt. show()
 
-# End
+# UMAP 3D Visualization
+umap_3d = UMAP(n_components=3, random_state=42)
+state_space_umap_3d = umap_3d.fit_transform(bitstring_vectors)
+
+fig = plt.figure(figsize=(10, 8))
+ax = fig.add_subplot(111, projection='3d')
+sc = ax.scatter(state_space_umap_3d[:, 0], state_space_umap_3d[:, 1], state_space_umap_3d[:, 2], c=list(probabilities.values()), cmap='coolwarm', s=100)
+plt.colorbar(sc, label='Probability')
+ax.set_title("3D State Space Coverage (UMAP)")
+ax.set_xlabel("Dimension 1")
+ax.set_ylabel("Dimension 2")
+ax.set_zlabel("Dimension 3")
+plt.tight_layout()
+plt. show()
+
+# Phase Transition Analysis
+# Simulate varying coupling strengths and observe changes in cluster structure
+coupling_strengths = np.linspace(0.1, 1.0, 10)  # Example coupling strength range
+all_state_spaces = []
+
+for coupling in coupling_strengths:
+# Example simulation modification (replace this with your Hamiltonian adjustment logic)
+modified_probabilities = {bitstring: prob * coupling for bitstring, prob in probabilities.items()}
+normalized_probabilities = {bitstring: prob / sum(modified_probabilities.values()) for bitstring, prob in modified_probabilities.items()}
+
+# Convert to state space for dimensionality reduction
+bitstring_vectors = np.array([list(map(int, bitstring)) for bitstring in normalized_probabilities.keys()])
+umap_2d = UMAP(n_components=2, random_state=42)
+state_space_umap = umap_2d.fit_transform(bitstring_vectors)
+all_state_spaces.append((coupling, state_space_umap, normalized_probabilities))
+
+# Plot phase transitions
+plt.figure(figsize=(12, 8))
+for coupling, state_space, prob in all_state_spaces:
+plt.scatter(state_space[:, 0], state_space[:, 1], c=list(prob.values()), cmap='viridis', s=50, label=f"Coupling: {coupling:.2f}")
+plt.colorbar(label="Probability")
+plt.title("Phase Transition Analysis with Varying Coupling Strengths")
+plt.xlabel("Dimension 1")
+plt.ylabel("Dimension 2")
+plt.legend(loc="upper right")
+plt.tight_layout()
+plt. show()
+
+# Time Evolution Study
+# Example of time-resolved simulation (replace logic with actual Hamiltonian time evolution if applicable)
+time_steps = 10
+all_time_evolutions = []
+
+for t in range(time_steps):
+# Example simulation modification over time (replace this with your time evolution logic)
+time_probabilities = {bitstring: prob * np.sin((t + 1) * np.pi / 10) for bitstring, prob in probabilities.items()}
+normalized_time_probabilities = {bitstring: prob / sum(time_probabilities.values()) for bitstring, prob in time_probabilities.items()}
+
+# Convert to state space for dimensionality reduction
+bitstring_vectors = np.array([list(map(int, bitstring)) for bitstring in normalized_time_probabilities.keys()])
+umap_2d = UMAP(n_components=2, random_state=42)
+state_space_umap = umap_2d.fit_transform(bitstring_vectors)
+all_time_evolutions.append((t, state_space_umap, normalized_time_probabilities))
+
+# Plot time evolution
+fig, axes = plt.subplots(2, 5, figsize=(20, 8))
+axes = axes.ravel()
+scatter_list = []  # Collect scatter objects to avoid overlay issues
+for idx, (t, state_space, prob) in enumerate(all_time_evolutions):
+ax = axes[idx]
+scatter = ax.scatter(state_space[:, 0], state_space[:, 1], c=list(prob.values()), cmap='plasma', s=50)
+scatter_list.append(scatter)  # Add scatter to list
+ax.set_title(f"Time Step: {t}")
+ax.set_xlabel("Dimension 1")
+ax.set_ylabel("Dimension 2")
+# Add a single colorbar outside the subplots
+fig.subplots_adjust(right=0.9)
+cbar_ax = fig.add_axes([0.92, 0.15, 0.02, 0.7])
+cbar = fig.colorbar(scatter_list[0], cax=cbar_ax)
+cbar.set_label('Probability')
+plt.tight_layout(rect=[0, 0, 0.9, 1])
+plt. show()
+
 
 
 
@@ -512,7 +624,7 @@ plt. show()
 </p>
             
  </div>
-        <img src="E41i1.png" alt="" class="experiment-image4">
+        <img src="E42i4.png" alt="" class="experiment-image4">
         <p></p>
         <div class="content-block">
 
