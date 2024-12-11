@@ -496,7 +496,140 @@ plt.ylabel("Qubit Index")
 plt.tight_layout()
 plt. show() 
   
-# End.
+Code for 3D Visuals.
+import numpy as np
+import matplotlib.pyplot as plt
+import json
+from collections import Counter
+from itertools import combinations
+from scipy.spatial.distance import hamming
+from sklearn.decomposition import PCA
+from sklearn.manifold import TSNE
+from umap import UMAP  # Import UMAP for advanced dimensionality reduction
+from mpl_toolkits.mplot3d import Axes3D  # For 3D scatterplots
+
+# Load results
+file_path = '/Users/Documents/QCD_0.json'
+with open(file_path, 'r') as f:
+results = json.load(f)
+
+# Extract raw counts
+raw_counts = results["raw_counts"]
+total_shots = sum(raw_counts.values())
+
+# Calculate probabilities
+probabilities = {bitstring: count / total_shots for bitstring, count in raw_counts.items()}
+
+# Shannon Entropy
+entropy = -sum(p * np.log2(p) for p in probabilities.values())
+print(f"Shannon Entropy of the distribution: {entropy:.4f}")
+
+# 3D Scatterplot of State Space Coverage
+bitstring_vectors = np.array([list(map(int, bitstring)) for bitstring in probabilities.keys()])
+tsne_3d = TSNE(n_components=3, random_state=42)
+state_space_3d = tsne_3d.fit_transform(bitstring_vectors)
+
+fig = plt.figure(figsize=(10, 8))
+ax = fig.add_subplot(111, projection='3d')
+sc = ax.scatter(state_space_3d[:, 0], state_space_3d[:, 1], state_space_3d[:, 2], c=list(probabilities.values()), cmap='viridis', s=100)
+plt.colorbar(sc, label='Probability')
+ax.set_title("3D State Space Coverage (t-SNE)")
+ax.set_xlabel("Dimension 1")
+ax.set_ylabel("Dimension 2")
+ax.set_zlabel("Dimension 3")
+plt.tight_layout()
+plt. show()
+
+# UMAP Visualization of State Space Coverage
+umap_2d = UMAP(n_components=2, random_state=42)
+state_space_umap = umap_2d.fit_transform(bitstring_vectors)
+
+plt.figure(figsize=(10, 8))
+plt.scatter(state_space_umap[:, 0], state_space_umap[:, 1], c=list(probabilities.values()), cmap='plasma', s=100)
+plt.colorbar(label='Probability')
+plt.title("State Space Coverage (UMAP)")
+plt.xlabel("Dimension 1")
+plt.ylabel("Dimension 2")
+plt.tight_layout()
+plt. show()
+
+# UMAP 3D Visualization
+umap_3d = UMAP(n_components=3, random_state=42)
+state_space_umap_3d = umap_3d.fit_transform(bitstring_vectors)
+
+fig = plt.figure(figsize=(10, 8))
+ax = fig.add_subplot(111, projection='3d')
+sc = ax.scatter(state_space_umap_3d[:, 0], state_space_umap_3d[:, 1], state_space_umap_3d[:, 2], c=list(probabilities.values()), cmap='coolwarm', s=100)
+plt.colorbar(sc, label='Probability')
+ax.set_title("3D State Space Coverage (UMAP)")
+ax.set_xlabel("Dimension 1")
+ax.set_ylabel("Dimension 2")
+ax.set_zlabel("Dimension 3")
+plt.tight_layout()
+plt. show()
+
+# Phase Transition Analysis
+# Simulate varying coupling strengths and observe changes in cluster structure
+coupling_strengths = np.linspace(0.1, 1.0, 10)  # Example coupling strength range
+all_state_spaces = []
+
+for coupling in coupling_strengths:
+# Example simulation modification (replace this with your Hamiltonian adjustment logic)
+modified_probabilities = {bitstring: prob * coupling for bitstring, prob in probabilities.items()}
+normalized_probabilities = {bitstring: prob / sum(modified_probabilities.values()) for bitstring, prob in modified_probabilities.items()}
+
+# Convert to state space for dimensionality reduction
+bitstring_vectors = np.array([list(map(int, bitstring)) for bitstring in normalized_probabilities.keys()])
+umap_2d = UMAP(n_components=2, random_state=42)
+state_space_umap = umap_2d.fit_transform(bitstring_vectors)
+all_state_spaces.append((coupling, state_space_umap, normalized_probabilities))
+
+# Plot phase transitions
+plt.figure(figsize=(12, 8))
+for coupling, state_space, prob in all_state_spaces:
+plt.scatter(state_space[:, 0], state_space[:, 1], c=list(prob.values()), cmap='viridis', s=50, label=f"Coupling: {coupling:.2f}")
+plt.colorbar(label="Probability")
+plt.title("Phase Transition Analysis with Varying Coupling Strengths")
+plt.xlabel("Dimension 1")
+plt.ylabel("Dimension 2")
+plt.legend(loc="upper right")
+plt.tight_layout()
+plt. show()
+
+# Time Evolution Study
+# Example of time-resolved simulation (replace logic with actual Hamiltonian time evolution if applicable)
+time_steps = 10
+all_time_evolutions = []
+
+for t in range(time_steps):
+# Example simulation modification over time (replace this with your time evolution logic)
+time_probabilities = {bitstring: prob * np.sin((t + 1) * np.pi / 10) for bitstring, prob in probabilities.items()}
+normalized_time_probabilities = {bitstring: prob / sum(time_probabilities.values()) for bitstring, prob in time_probabilities.items()}
+
+# Convert to state space for dimensionality reduction
+bitstring_vectors = np.array([list(map(int, bitstring)) for bitstring in normalized_time_probabilities.keys()])
+umap_2d = UMAP(n_components=2, random_state=42)
+state_space_umap = umap_2d.fit_transform(bitstring_vectors)
+all_time_evolutions.append((t, state_space_umap, normalized_time_probabilities))
+
+# Plot time evolution
+fig, axes = plt.subplots(2, 5, figsize=(20, 8))
+axes = axes.ravel()
+scatter_list = []  # Collect scatter objects to avoid overlay issues
+for idx, (t, state_space, prob) in enumerate(all_time_evolutions):
+ax = axes[idx]
+scatter = ax.scatter(state_space[:, 0], state_space[:, 1], c=list(prob.values()), cmap='plasma', s=50)
+scatter_list.append(scatter)  # Add scatter to list
+ax.set_title(f"Time Step: {t}")
+ax.set_xlabel("Dimension 1")
+ax.set_ylabel("Dimension 2")
+# Add a single colorbar outside the subplots
+fig.subplots_adjust(right=0.9)
+cbar_ax = fig.add_axes([0.92, 0.15, 0.02, 0.7])
+cbar = fig.colorbar(scatter_list[0], cax=cbar_ax)
+cbar.set_label('Probability')
+plt.tight_layout(rect=[0, 0, 0.9, 1])
+plt. show()
 
 
 
