@@ -97,46 +97,48 @@
     </nav>
 
     <section class="content-section">
-        <h1><center> Exploring Plasma Turbulence Using Hierarchical Qubit Clusters on IBM’s 127-Qubit Quantum Computer </center></h1>
+        <h1><center> Quantum Algorithm Design for Warehouse Route Optimization on IBM’s 127-Qubit Quantum Computer </center></h1>
         <div class="content-block">
          
-This experiment explores the use of quantum computing to simulate plasma turbulence, a complex phenomenon characterized by nonlinear energy transfer and chaotic dynamics. Using IBM’s ibm_brisbane quantum computer with 127 qubits and qiskit, the experiment uses a hierarchical simulation model where qubits are grouped into clusters representing localized turbulence, and inter-cluster couplings simulate large scale interactions. This circuit uses quantum gates to evolve the system dynamics, measures the resulting quantum states, and extracts energy distribution patterns that mirror real world plasma behavior. 
+This experiment explores the optimization of item collection sequences in a warehouse setting using quantum computing. Treating the warehouse's storage locations as nodes in a graph, this aims to minimize travel distance through quantum entanglement, superposition, and interference. The experiment is run on IBM's 'ibm_brisbane' quantum backend using 127 qubits and qiskit. The quantum circuit encodes warehouse locations as qubits, applies a Bloch sphere evolution to simulate travel costs, and measures quantum states to successfully determine the optimal picking sequence.<br>
 <br>
-
 
           
-<p>1. Problem Setup<br>
-Plasma turbulence involves the chaotic movement of charged particles in a plasma due to electromagnetic forces, leading to nonlinear energy transfer across scales. The primary goal is to model the energy distribution and dissipation in turbulent plasmas using quantum mechanics principles.​<br>
-The system is divided into:​<br>
-a. Clusters of qubits representing localized turbulent regions.​<br>
-b. Interactions between clusters simulating large scale energy cascades.
+<p>1. Problem Definition<br>
+This models a warehouse optimization problem as a variation of the Traveling Salesman Problem (TSP). Let:<br>
+N be the number of locations in the warehouse.<br>
+A quantum state ∣q_i​⟩ represents the i-th location.<br>
+The goal is to find the optimal sequence that minimizes the cost C, where <br>
+         N − 1<br>
+C = ∑  (d(q_i, q_(i + 1))) <br>
+         i = 1<br>
+and d(q_i​, q_j​) is the distance between locations q_i​ and q_j.
 ​<br>
 
-<p>2. Mathematical Representation<br>
-The dynamics of plasma turbulence are derived from the Navier-Stokes equations coupled with Maxwell’s equations in fluid form:<br>
-(∂v​/∂v​) + v ∇v = − (∇P/ρ) + ν∇²v + F<br>
-where:<br>
-v is the velocity field<br>
-P is pressure<br>
-ρ is density<br>
-ν is the kinematic viscosity<br>
-F represents external forces<br>
-To simulate this system, discretize the equations using Carleman linearization, converting the nonlinear terms into linear terms suitable for quantum circuits. These linearized dynamics are represented as unitary evolutions.<br>
+<p>2. Prepare Quantum Registers<br>
+This circuit Initializes:<br>
+a. A quantum register qr with N + 1 qubits. One for the Bloch clock qubit (control) and N for the locations.<br>
+b. A classical register cr with N + 1 bits to store measurement results.<br>
 
 
-<p>3. Qubit Allocation<br>
-127 qubits are divided into clusters of 7 qubits each.<br>
-Each cluster represents a local turbulent region, and inter-cluster gates represent interactions between these regions.
-<br>
+<p>3. Initialize the Bloch Clock Qubit<br>
+The Bloch clock qubit q_0 is initialized in a superposition state: ∣q_0⟩ = (∣0⟩ + ∣1⟩) / sqrt(2)<br>
+This is achieved using a Hadamard gate: <br>
+H: H ∣0⟩ = ∣+⟩<br>
 
 
 
 
 
-<p>4. Circuit Initialization<br>
-The quantum circuit begins with an initial superposition state:<br>
-∣ψ_(init)​⟩ = H^(⊗n) ∣0⟩^(⊗n)<br>
-where H is the Hadamard gate, applied to all n = 127 qubits. This initializes a uniform probability distribution over all possible quantum states.<br>
+<p>4. Create Superposition of Locations<br>
+Each location qubit q_i (i = 1, 2, ..., N) is initialized in superposition: ∣q_i⟩ = (∣0⟩ + ∣1⟩) / sqrt(2). <br>
+​This is achieved by applying H to each location qubit: <br>
+H ∣0⟩ = ∣+⟩<br>
+This step creates a quantum state representing all possible combinations of paths simultaneously:<br>
+                             N<br>
+∣ψ⟩ = ∣q_0​⟩ ⊗  ∏  (∣q_i​⟩)<br>
+                             i = 1<br>
+
 
 
 
@@ -146,45 +148,53 @@ where H is the Hadamard gate, applied to all n = 127 qubits. This initializes a 
 
 
 
-<p>5. Intra-Cluster Turbulence Dynamics <br>
-Each cluster evolves independently using single qubit rotations and entangling gates:<br>
-Single-qubit rotations: These simulate local turbulence evolution:<br>
-R_x​(θ) = e^(−iθX/2)<br>
-R_z​(ϕ) = e^(−iϕZ/2)<br>
-Here, θ = π/(t + 1) and ϕ = 2π/cluster_size.<br>
-Entangling gates: Controlled-Z (CZ) gates are applied between adjacent qubits within each cluster to simulate nonlinear coupling.<br>
+<p>5. Entangle the Bloch Clock with Locations <br>
+The Bloch clock qubit q_0 is entangled with all location qubits using Controlled-X (CNOT) gates: <br>
+CNOT(q_0, q_i). <br>
+This creates dependencies between the clock and location qubits.<br>
+
     
 
 
 
 
-<p>6. Inter-Cluster Energy Transfer<br>
-To simulate large-scale interactions, CZ gates are applied between qubits at the boundaries of adjacent clusters:<br>
-CZ : ∣q_1​, q_2​⟩ → (−1)^(q_1​q_2) ​∣q_1​, q_2​⟩
+<p>6. Encode Costs with Rotations<br>
+Travel costs between locations are encoded as rotations on the Bloch clock qubit. The rotation angle is proportional to the cost: <br>
+R_x(θ_i) ∣q0⟩ = cos⁡(θ_i/2) ∣0⟩ + sin⁡(θ_i/2) ∣1⟩. <br>
+Here, θ_i = π/(2i)​ encodes increasing costs.<br>
+A series of controlled rotations CR_x(θ_i) are applied to q_0 with each q_i acting as the control: <br>
+CR_x(θ_i)(q_i, q_0)<br>
+
+
+
+    
+<p>7. Evolve the Bloch Clock Qubit<br>
+To introduce interference patterns simulating quantum cost evolution, the Bloch clock qubit undergoes rotations about all axes:<br>
+X-axis rotation: R_x (π/4) ∣q_0⟩<br>
+Y-axis rotation: Ry (π/4) ∣q_0⟩<br>
+Z-axis rotation: Rz (π/4) ∣q_0⟩<br>
+This simulates the dynamic evolution of the cost function.<br>
+
+<p>8. Measure the Quantum State<br>
+The entire quantum register is measured: <br>
+Measure q_i → cr_i<br>
+​This collapses the superposition into a classical state representing one path.<br>
+
+
+<p>9. Transpile<br>
+The circuit is transpiled for ibm_brisbane. The experiment is executed with 8192 shots to gather statistical distributions of results.
 <br>
 
-<p>7. Time Evolution<br>
-The circuit evolves over multiple timesteps t = 1, 2, …, T, where T = 5. For each timestep:<br>
-a. Apply intra-cluster gates (local dynamics)<br>
-b. Apply inter-cluster gates (large-scale coupling)<br>
-The quantum state at any timestep t is:<br>
-∣ψ_t​⟩ = U_(global) ​U_(local) ​∣ψ_(t − 1)​⟩,<br>
-where U_(local) and U_(global)​ are the unitary operators corresponding to intra- and inter-cluster gates.<br>
 
-<p>8. Measurement<br>
-At the end of the evolution, all qubits are measured in the computational basis:<br>
-∣ψ_(final)​⟩ → {0, 1}^(127)<br>
-The measurement results represent the distribution of states after the turbulent dynamics.<br>
-
-
-<p>9. Results Processing and Visual<br>
-The raw measurement data (bitstrings) are counted to determine the state probabilities:<br>
-P(x) = Counts(x)​/Total_Shots<br>
-where x is a 127-bit string. This distribution is analyzed to extract patterns related to energy distribution and dissipation. The results are saved as a json and a histogram is visualized of shot counts. <br>
-
-
-
-
+<p>10. Results Saved<br>
+The measured states are collected as a frequency distribution. Each bitstring corresponds to a potential path, and the frequency indicates the likelihood of that path. The results are saved as: <br>
+JSON: {"raw_counts": bitstring: frequency}<br>
+Each bitstring is a binary representation of a path, where:<br>
+A 1 indicates that a specific location (associated with the bit’s position) is included in the route.<br>
+A 0 indicates that the location is skipped in that route.<br>
+For example:<br>
+The bitstring 111110011 means locations 1, 2, 3, 4, 5, and 8 are visited, while locations 6, 7, and 9 are skipped.<br>
+The bitstring 011110101 means locations 2, 3, 4, 5, and 7 are visited, while locations 1, 6, 8, and 9 are skipped.<br>
 
 
 
@@ -192,454 +202,401 @@ where x is a 127-bit string. This distribution is analyzed to extract patterns r
     
 <p><center> Results:</center><br>
 
+The experiment identified the ten most frequent bitstrings, representing the most optimal picking paths in the warehouse. These bitstrings, along with their respective frequencies, are:<br>
+111110011 - 40 occurrences<br>
+111101111 - 38 occurrences<br>
+011110101 - 36 occurrences<br>
+110100011 - 35 occurrences<br>
+110100111 - 34 occurrences<br>
+111010101 - 33 occurrences<br>
+101100101 - 32 occurrences<br>
+110010001 - 31 occurrences<br>
+011011111 - 30 occurrences<br>
+111101011 - 30 occurrences<br>
+
+The results indicate that these bitstrings frequently describe efficient picking paths, with the binary values representing the sequence of locations (qubits) involved. Most of the optimal paths included 4 - 6 active locations, confirming the practical limit of items to pick in a single route. Also, the strong correlations between certain qubits suggest that some locations are frequently picked together, providing actionable insights for reconfiguring storage layouts to further enhance efficiency. 
+<br>
+    
   
 </div>
-        <img src="E43i1.png" alt="" class="experiment-image">
+        <img src="E44i1.png" alt="" class="experiment-image">
         <p></p>
         <div class="content-block">
 <br>
             
-Entropy = 13.0.<br>
-A high entropy value indicates that the quantum plasma turbulence simulation produced a state distribution with a high degree of randomness and complexity. This is consistent with turbulent systems, where energy dissipation leads to diverse state representations.
+The Histogram of Frequencies (Top 30 Most Frequent Bitstrings) above (code below), shows the top 30 bitstrings from the experiment with their corresponding frequencies. The most frequent bitstring is 11110011, with a frequency of 40. The most frequent bitstrings represent the quantum system's favored solutions, indicating high likelihoods of these paths being optimal or near optimal. Bitstring 11110011 likely corresponds to a sequence of locations where travel costs are minimized. This matches the interference patterns constructed in the quantum circuit.
 <br>
-In the Distribution of Measured Quantum State Probabilities above (code below), the distribution is highly varied, with a majority of states concentrated near zero probability and a small number of states having measurable probabilities. This aligns with the physical intuition of turbulence, where energy dissipates unevenly, and only a few configurations dominate at any given time. 
+The Heatmap of Top 100 Bitstrings above (code below), represents the top 100 bitstrings, with each row corresponding to a bitstring and each column representing a qubit state. Bright (white) regions represent qubits in the 1 state, and dark (blue) regions represent qubits in the 0 state. Patterns in the heatmap suggest dependencies or correlations between specific qubits (locations). For example, if certain columns consistently align across high frequency bitstrings, those locations may have lower relative travel costs. The 1 states dominate in specific qubits, showing that those locations are part of the most optimal paths. 
 <br>
-In the Qubit Correlation Heatmap above (code below), the heatmap shows strong self correlations (diagonal elements) as expected, but off diagonal correlations are weak with a few localized regions of slightly stronger interactions. The few pockets of slightly stronger correlations might represent localized energy transfers or transient interactions between qubits, potentially indicative of small scale structures within the turbulence.
+The Frequency Distribution of Bitstrings above (code below) shows the overall distribution of bitstring frequencies across the experiment. Most bitstrings have frequencies between 10 and 25, with a small number of highly frequent bitstrings (30 - 40). The long tail distribution indicates that the quantum system explored a broad solution space but concentrated probabilities on a few optimal paths. This supports the effectiveness of quantum interference in favoring certain paths while exploring suboptimal options probabilistically.
 <br>
-In the Cluster Sizes Based on Qubit Correlations above (code below), all clusters have a size of 1, meaning there were no significant correlations between qubits strong enough to group them into larger clusters. This lack of clustering aligns with a highly chaotic turbulent system, where energy interactions are predominantly localized rather than forming larger coherent structures.
+The Bloch Sphere for Dominant Path above (code below) shows the quantum states corresponding to the most frequent bitstring 11110011. Each sphere visualizes a single qubit’s quantum state. The Bloch sphere positions (close to |1⟩ for most qubits) confirm that qubits in the dominant path are in well defined states, representing the optimal sequence of locations. The alignment of qubits with |1⟩ indicates that these locations contribute significantly to the minimized travel cost.<br>
 <br>
-In the Logarithmic Bitstring Probability Distribution above (code below), the bitstring probabilities are highly sparse, with most probabilities near zero, except for a few slightly higher values. The sparsity reflects the localized energy dissipation that is a standard of turbulent systems.
-<br>
-In the Heatmap of High Probability States above (code below), the heatmap shows a varied configuration of qubit states for the top 20 bitstrings, with a mix of 0s and 1s. The diverse configurations support that quantum plasma turbulence results in highly varied but localized quantum states.<br>        
-<br>
-        <img src="E43i2.png" alt="" class="experiment-image">
+            
+        <img src="E44i2.png" alt="" class="experiment-image">
         <p></p>
         <div class="content-block">
 <br>
-In the Qubit Entanglement Heatmap above (code below), the heatmap shows mutual information values between qubits, with most values close to zero. A few qubit pairs have relatively higher mutual information, indicating localized interactions. The predominantly low values suggest that the energy transfer between qubits is sparse, consistent with the sparse probability distribution observed earlier.
+The Cumulative Distribution of Bitstring Frequencies above (code below) shows the most frequent bitstrings to the overall probability. It shows a smooth curve approaching 1, with a gradual slope. The curve indicates that a significant portion of the probability is distributed across a large number of bitstrings. The most frequent bitstrings dominate early on, but contributions from less frequent bitstrings collectively add up to a considerable portion of the total. The results show a balanced exploration of the solution space, with the quantum circuit prioritizing optimal paths while still considering less probable alternatives. This is important for identifying diverse solutions in scenarios with varying constraints.
 <br>
-In the State Probability Evolution above (code below), the cumulative probability increases linearly with state rank, indicating a uniform contribution of states to the total probability. 
+The Pairwise Qubit Correlation Heatmap above (code below) shows correlation coefficients between qubits (locations). Red indicates strong positive correlation, blue indicates strong negative correlation, and lighter colors indicate weaker correlations. Strong correlations (red) between specific qubits suggest that certain locations are frequently part of the same optimized paths. Conversely, anti correlations (blue) suggest locations that are rarely included together in a sequence. Diagonal red cells (perfect correlation) confirm the accuracy of individual qubit data. The heatmap shows interdependencies between locations, which can inform decisions about batching or reconfiguring the warehouse layout. For example, highly correlated locations may be better grouped closer together physically.
 <br>
-In the Binary Pattern Frequency in Dominant States above (code below), Certain binary patterns (010, 000, 100) are more frequent in the top states. These repeating patterns represent quantum configurations that dominate under the simulated conditions. They might correspond to regions where energy interactions stabilize, forming recurring turbulence structures.
+The Frequency Contribution by Bitstring Length above (code below) shows the contribution of bitstrings grouped by the number of 1s (active locations) to the total probability distribution. The chart has a roughly bell shaped distribution, peaking at bitstrings with 4 - 6 active locations. Bitstrings with a moderate number of active locations contribute the most to the probability distribution. This shows that the quantum circuit is favoring paths that balance efficiency with a reasonable number of stops. Few bitstrings with very high or very low numbers of active locations appear, likely due to their high cost or improbability. This analysis can inform warehouse operations by identifying an optimal number of stops for minimizing costs, which could be used to define order batching strategies.
 <br>
-In the Probability Heatmap Across Top 100 States above (code below), the heatmap shows a high degree of randomness, with no discernible patterns in the qubit states of the top 100 most probable states. 
-<br>
-In the Frequency of State Transitions (Hamming Distance) above (code below), the Hamming distances between states form a nearly Gaussian distribution, centered around half the number of qubits. This aligns with turbulence models, where the system explores states with widespread energy redistribution rather than small, incremental changes.<br>
-<br>
+The Top 20 Bitstrings by Weighted Probability above (code below) shows the top 20 bitstrings ranked by their weighted probability. The most frequent bitstring, 11110011, still has the highest probability, with others slightly trailing. The ranking reaffirms that certain bitstrings are strongly favored by the quantum system due to constructive interference and optimized travel costs. <br>
 </div>
-        <img src="E43i3.png" alt="" class="experiment-image">
+        <img src="E44i3.png" alt="" class="experiment-image">
         <p></p>
         <div class="content-block">
 <br>
 
-In the Correlation Network Density above (code below), the number of edges drops sharply as the correlation threshold increases, with almost all correlations disappearing by a threshold of 0.2. This rapid decline suggests weak correlations between qubits in the system, indicative of a highly chaotic and uncorrelated state.
+The 3D Scatter Plot of Bitstring Frequencies above (code below) represents the distribution of bitstrings in a 3D space, where each axis corresponds to the state of one qubit. Bitstrings corresponding to specific qubit states are concentrated in clusters. These clusters highlight high frequency patterns of certain qubit combinations, which may correspond to the most efficient picking paths in the warehouse. The intensity of color (frequency) indicates which qubit combinations are most common, suggesting their chance of being part of the shortest path. 
 <br>
-In the Qubit Stability Analysis above (code below), the stability of qubits is uniform across the system, with most qubits having stability values around 0.5. A few qubits exhibit slightly higher stability values. The relatively uniform stability supports the model's depiction of turbulence as a system wide phenomenon without clear localization of stability.
+The 3D Bar Chart and Frequency Contribution by Bitstring Length above (code below) shows how the probability contribution changes with the number of active qubits (locations visited). The most significant contributions come from bitstrings with 4 to 6 active locations (1s). This implies that optimal paths likely involve picking items from this range of locations. Rare contributions from bitstrings with 1 or 9 active locations suggest inefficiency in those cases, possibly due to unnecessary travel.
 <br>
-In the 3D Probability Landscape above (code below), the 3D landscape reveals regions with slightly higher probabilities, but the overall distribution appears highly chaotic and distributed across states. The uniformity and lack of significant peaks suggest a turbulence model where energy dissipation is widespread and not strongly localized.
+The 3D Surface Plot of Qubit Correlations above (code below) visualizes correlations between pairs of qubits, showing how strongly their states are related. High correlation regions (peaks) indicate dependencies between certain qubits. For example, if Qubit A and Qubit B are strongly correlated, visiting one location often requires visiting the other. Low correlations (valleys) suggest independence, where visiting one location does not necessitate visiting another.
 <br>
-In the Qubit State Heatmap Across Time above (code below), the heatmap shows rapid, seemingly random state changes over time for most qubits. 
+The Sankey Diagram of Qubit Transitions in Top Bitstrings above (code on Qwork) shows the flow of transitions between qubit states (locations) for the most frequent bitstrings (top paths). The Sankey diagram highlights the dominant transitions between qubits in top paths, showing which locations (qubits) are frequently connected in optimal routes. 
 <br>
-In the Energy Distribution Across Clusters above (code below), the bar chart shows that energy (probabilities) is spread fairly evenly across clusters, with no single cluster dominating the energy landscape.
-<br>
-In the end, the quantum plasma turbulence experiment successfully simulated and analyzed energy dissipation and distribution in a chaotic quantum system. The simulation used qubit interactions to model turbulence dynamics, capturing the dynamic energy redistribution and localized interactions inherent to turbulent plasma systems. <br>
-<br>
-       
+In the end, the Warehouse Picking Optimization experiment used IBM's 127-qubit quantum computer to model a challenging combinatorial problem: determining the most efficient sequence for picking items from a warehouse to minimize travel distance or time. This circuit encoded storage locations as qubits and modeled the problem as a shortest path optimization task, with transitions between qubits representing item retrieval sequences. By analyzing the quantum measurement results, the circuit successfully identified high probability bitstrings corresponding to the most optimal picking routes.<br>
+<br>      
           
           <p>Code:<br>
             <p><pre><code>
-Code (Main Circuit)
 # Imports
 import numpy as np
 import json
-import matplotlib.pyplot as plt
-from qiskit import QuantumCircuit, transpile
-from qiskit_ibm_runtime import QiskitRuntimeService, Session, SamplerV2
-import csv
+import pandas as pd
 import logging
+from qiskit import QuantumCircuit, QuantumRegister, ClassicalRegister, transpile
+from qiskit_ibm_runtime import QiskitRuntimeService, Session, SamplerV2
+from qiskit.visualization import plot_histogram
+import matplotlib.pyplot as plt
 from collections import Counter
 from qiskit.visualization import plot_histogram
 
-# Parse calibration 
-def parse_field(field_str, parser=float, separator=";"):
-    values = [parser(item.split(":")[1]) for item in field_str.split(separator) if ":" in item]
-    return max(values) if values else 0.0
-
-# Load calibration 
-def load_calibration_data(file_path):
-    calibration_data = {}
-    with open(file_path, 'r') as file:
-        reader = csv.DictReader(file)
-        for row in reader:
-            qubit = int(row['Qubit'])
-            calibration_data[qubit] = {
-                'T1': float(row['T1 (us)'] or 0),
-                'T2': float(row['T2 (us)'] or 0),
-                'readout_error': float(row['Readout assignment error '] or 0),
-                'sx_error': float(row['√x (sx) error '] or 0),
-                'ecr_error': parse_field(row['ECR error '] or ""),
-                'gate_time': parse_field(row['Gate time (ns)'] or "", parser=float)
-            }
-    return calibration_data
-
-# Select best qubits based on error rates / coherence 
-def select_best_qubits(calibration_data, num_qubits):
-    sorted_qubits = sorted(
-        calibration_data.items(),
-        key=lambda x: (x[1]['sx_error'], -x[1]['T1'], -x[1]['T2'])
-    )
-    return [q[0] for q in sorted_qubits[:num_qubits]]
-
-# Hierarchical plasma turbulence  
-def create_hierarchical_turbulence_circuit(num_qubits, cluster_size, timesteps):
-    qc = QuantumCircuit(num_qubits, num_qubits)
-
-    # Initialize clusters with superposition
-    for qubit in range(num_qubits):
-        qc.h(qubit)
-
-    # Intra-cluster turbulence dynamics
-    for t in range(timesteps):
-        for cluster_start in range(0, num_qubits, cluster_size):
-            for qubit in range(cluster_start, min(cluster_start + cluster_size, num_qubits) - 1):
-                qc. cz(qubit, qubit + 1)  
-                qc.rx(np.pi / (t + 1), qubit)
-                qc.rz(2 * np.pi / cluster_size, qubit)
-
-        # Inter-cluster interactions
-        for cluster_start in range(0, num_qubits - cluster_size, cluster_size):
-            if cluster_start + cluster_size < num_qubits:
-                qc. cz(cluster_start, cluster_start + cluster_size)  
-
-    # Measurement
-    qc.measure(range(num_qubits), range(num_qubits))
-    return qc
-
-# Logging 
-logging.basicConfig(level=logging. INFO)
+# Logging
+logging.basicConfig(level=logging. INFO, format='%(asctime)s - %(levelname)s - %(message)s')
 logger = logging.getLogger(__name__)
 
-# Calibration data
-calibration_file = '/Users/Downloads/ibm_brisbane_calibrations_2024-12-11T20_28_38Z.csv'
+# Calibration logging
+def load_calibration_data(file_path):
+    logger. info("Loading calibration data from %s", file_path)
+    calibration_data = pd.r ead_csv(file_path)
+    calibration_data.columns = calibration_data.columns.str.strip()  
+    logger. info("Calibration data loaded successfully")
+    return calibration_data
+
+# Parse calibration data
+def select_best_qubits(calibration_data, n_qubits):
+    logger. nfo("Selecting the best qubits based on T1, T2, and error rates")
+    qubits_sorted = calibration_data.sort_values(by=['√x (sx) error', 'T1 (us)', 'T2 (us)'], ascending=[True, False, False])
+    best_qubits = qubits_sorted['Qubit'].head(n_qubits).tolist()
+    logger. info("Selected qubits: %s", best_qubits)
+    return best_qubits
+
+# Load Backend calibration data
+calibration_file = '/Users/Downloads/ibm_brisbane_calibrations_2024-12-13T20_08_45Z.csv'
 calibration_data = load_calibration_data(calibration_file)
 
-# Parameters
-num_qubits = 127  
-cluster_size = 7  
-timesteps = 5 
-shots = 8192  
-
-# Select the best qubits
-selected_qubits = select_best_qubits(calibration_data, num_qubits)
+# Select the best qubits on T1, T2, and error rates
+num_locations = 8
+best_qubits = select_best_qubits(calibration_data, num_locations + 1)
 
 # IBMQ 
+logger. info("Setting up IBM Q service")
 service = QiskitRuntimeService(
     channel='ibm_quantum',
     instance='ibm-q/open/main',
-    token='YOUR_IBMQ_API_O-`'
+    token='YOUR_IBMQ_API_KEY'
 )
 
-# Backend
 backend_name = 'ibm_brisbane'
 backend = service.backend(backend_name)
+logger. info("Backend selected: %s", backend_name)
 
-# Tanspile 
-qc = create_hierarchical_turbulence_circuit(num_qubits, cluster_size, timesteps)
-transpiled_qc = transpile(qc, backend=backend, initial_layout=selected_qubits, optimization_level=3)
+# Quantum and classical registers
+qr = QuantumRegister(num_locations + 1)  
+cr = ClassicalRegister(num_locations + 1)
+qc = QuantumCircuit(qr, cr)
+
+# Bloch clock qubit
+qc.h(qr[0])  
+
+# Warehouse locations as qubits in superposition
+for i in range(1, num_locations + 1):
+    qc.h(qr[i]) 
+
+# Entanglement for dependencies between locations
+for i in range(1, num_locations + 1):
+    qc. cx(qr[0], qr[i])  
+
+# Encoding travel distances on Bloch sphere
+for i in range(1, num_locations + 1):
+    qc.crx(np.pi / (2 * i), qr[0], qr[i])  
+
+# Apply a series of rotations to evolve Bloch clock
+qc.rx(np.pi / 4, qr[0])
+qc.ry(np.pi / 4, qr[0])
+qc.rz(np.pi / 4, qr[0])
+
+# Measure the quantum states to find shortest path
+qc.measure(qr, cr)
+
+# Transpile
+logger. info("Transpiling the quantum circuit for the backend")
+qc_transpiled = transpile(qc, backend=backend, optimization_level=3)
+logger.i nfo("Circuit transpilation complete")
 
 # Execute 
+shots = 8192
 with Session(service=service, backend=backend) as session:
     sampler = SamplerV2(session=session)
-    logger. info("Executing hierarchical plasma turbulence simulation on ibm_sherbrooke...")
-    job = sampler. run([transpiled_qc], shots=shots)
+    logger. info("Executing the circuit on the backend")
+    job = sampler. run([qc_transpiled], shots=shots)
     job_result = job.result()
 
-    # Results
-    counts = dict(Counter(job_result._pub_results[0]['__value__']['data'].c.get_bitstrings()))
-    results_data = {"counts": counts}
-    output_file = '/Users/Documents/quantum_plasma_turbulence_results_0.json'
-    with open(output_file, 'w') as f:
+    # Get results
+    pub_results = job_result._pub_results[0]['__value__']
+    data = pub_results['data']
+    bit_array = data['c0']
+    bitstrings = bit_array.get_bitstrings()  
+    counts = dict(Counter(bitstrings)) 
+
+    # Save results to json
+    results_data = {"raw_counts": counts}
+    file_path = '/Users/Documents/QWarehouse_0.json'
+    with open(file_path, 'w') as f:
         json.dump(results_data, f, indent=4)
+    logger. info("Results saved to %s", file_path)
 
-# Plot results
+# Visualization
 plot_histogram(counts)
-plt.title("Hierarchical Plasma Turbulence Simulation Results")
 plt. show()
+logger. info("Experiment complete")
 
-logger. info("Experiment completed successfully.")
-
-Visual Code 1
+Code for all Visualizations from Run Data
 # Imports
-import json
 import matplotlib.pyplot as plt
+import seaborn as sns
 import numpy as np
-
-# Load results 
-file_path = '/Users/Documents/quantum_plasma_turbulence_results_0.json'
-with open(file_path, 'r') as file:
-    results_data = json.load(file)
-
-# Extract counts 
-counts = results_data['counts']
-
-# Normalize counts to probabilities
-total_shots = sum(counts.values())
-probabilities = {bitstring: count / total_shots for bitstring, count in counts.items()}
-
-# Compute entropy of distribution
-entropy = -sum(p * np.log2(p) for p in probabilities.values())
-
-# Histogram of probabilities
-prob_values = list(probabilities.values())
-plt.figure(figsize=(12, 6))
-plt.hist(prob_values, bins=50, color='blue', alpha=0.7)
-plt.title('Distribution of Measured Quantum State Probabilities')
-plt.xlabel('Probability')
-plt.ylabel('Frequency')
-plt.grid(True)
-plt. show()
-
-# Heatmap of qubit correlations
-qubit_matrix = np.array([list(map(int, list(bitstring))) for bitstring in probabilities.keys()])
-correlation_matrix = np.corrcoef(qubit_matrix.T)
-
-plt.figure(figsize=(10, 8))
-plt.imshow(correlation_matrix, cmap='viridis', aspect='auto')
-plt.colorbar(label='Correlation Coefficient')
-plt.title('Qubit Correlation Heatmap')
-plt.xlabel('Qubit Index')
-plt.ylabel('Qubit Index')
-plt. show()
-
-# Print entropy result
-print(f"Entropy of the distribution: {entropy}")
-
-Visual Code 2
-# Imports
-import json
-import matplotlib.pyplot as plt
-import numpy as np
-import networkx as nx
-from scipy.cluster.hierarchy import linkage, fcluster
 from collections import Counter
+import json
+from qiskit.visualization import plot_bloch_multivector
+from qiskit.quantum_info import Statevector
+from matplotlib.sankey import Sankey
 
-# Load results 
-file_path = '/Users/Documents/quantum_plasma_turbulence_results_0.json'
+# Load json result
+file_path = '/Users/Documents/QWarehouse_0.json'
 with open(file_path, 'r') as file:
-    results_data = json.load(file)
+    data = json.load(file)
 
-# Extract counts 
-counts = results_data['counts']
+# Extract raw counts
+raw_counts = data['raw_counts']
 
-# Normalize counts to probabilities
-total_shots = sum(counts.values())
-probabilities = {bitstring: count / total_shots for bitstring, count in counts.items()}
+# Sort counts by frequency 
+sorted_counts = sorted(raw_counts.items(), key=lambda x: x[1], reverse=True)
+bitstrings, frequencies = zip(*sorted_counts)
 
-# Convert bitstrings into a matrix of qubit states (0s and 1s) for correlation analysis
-qubit_matrix = np.array([list(map(int, list(bitstring))) for bitstring in probabilities.keys()])
-correlation_matrix = np.corrcoef(qubit_matrix.T)
+# Histogram of Frequencies
+def plot_histogram_of_frequencies(bitstrings, frequencies):
+    plt.figure(figsize=(12, 6))
+    plt. bar(bitstrings[:30], frequencies[:30])  # Top 30 bitstrings
 
-# Cluster Analysis (Bar Chart) 
-Z = linkage(correlation_matrix, method='ward')
-clusters = fcluster(Z, t=correlation_threshold, criterion='distance')
-cluster_counts = Counter(clusters)
+    plt.xticks(rotation=90)
+    plt.xlabel('Bitstrings')
+    plt.ylabel('Frequency')
+    plt.title('Top 30 Most Frequent Bitstrings')
+    plt.tight_layout()
+    plt. show()
 
-plt.figure(figsize=(10, 6))
-plt. bar(cluster_counts.keys(), cluster_counts.values(), color='blue', alpha=0.7)
-plt.title('Cluster Sizes Based on Qubit Correlations')
-plt.xlabel('Cluster Index')
-plt.ylabel('Cluster Size')
-plt.grid(True)
-plt. show()
+# Bitstring Frequency Heatmap
+def plot_heatmap_of_bitstrings(bitstrings, raw_counts):
+    top_bitstrings = list(raw_counts.keys())[:100]  # Top 100 bitstrings
+    frequencies = [raw_counts[bs] for bs in top_bitstrings]
+    bitstring_matrix = np.array([list(map(int, bs)) for bs in top_bitstrings])
 
-# Bitstring Probability Distribution (Logarithmic) 
-sorted_probabilities = sorted(probabilities.values(), reverse=True)
+    plt.figure(figsize=(12, 6))
+    sns.heatmap(bitstring_matrix, annot=False, cbar=True, cmap="YlGnBu", yticklabels=top_bitstrings)
+    plt.xlabel('Qubit States')
+    plt.ylabel('Bitstrings')
+    plt.title('Heatmap of Top 100 Bitstrings')
+    plt. show()
 
-plt.figure(figsize=(12, 6))
-plt.plot(sorted_probabilities, marker='o', markersize=3, linestyle='-', color='blue', alpha=0.7)
-plt.yscale('log')
-plt.title('Logarithmic Bitstring Probability Distribution')
-plt.xlabel('Bitstring Index (Sorted)')
-plt.ylabel('Probability (Log Scale)')
-plt.grid(True, which='both', linestyle='--', linewidth=0.5)
-plt. show()
+# Frequency Distribution Curve
+def plot_frequency_distribution(frequencies):
+    plt.figure(figsize=(10, 5))
+    plt.hist(frequencies, bins=20, color='skyblue', edgecolor='black')
+    plt.xlabel('Frequency')
+    plt.ylabel('Count of Bitstrings')
+    plt.title('Frequency Distribution of Bitstrings')
+    plt. show()
 
-# Heatmap of High Probability States 
-top_bitstrings = sorted(probabilities.items(), key=lambda x: x[1], reverse=True)[:20]
-top_states = np.array([list(map(int, list(bitstring))) for bitstring, _ in top_bitstrings])
+# Bloch Sphere for Dominant Path
+def plot_bloch_sphere_of_dominant_path(raw_counts):
+    dominant_bitstring = max(raw_counts, key=raw_counts.get)
+    state = [int(bit) for bit in dominant_bitstring]
+    bloch_vector = Statevector.from_int(int(dominant_bitstring, 2), 2**len(state))
+    fig = plot_bloch_multivector(bloch_vector)
+    fig.suptitle('Bloch Sphere for Dominant Path: {}'.format(dominant_bitstring), fontsize=16)
+    plt. show()
 
-plt.figure(figsize=(12, 8))
-plt.imshow(top_states, cmap='Blues', aspect='auto', interpolation='none')
-plt.colorbar(label='Qubit State (0 or 1)')
-plt.title('Heatmap of High-Probability States')
-plt.xlabel('Qubit Index')
-plt.ylabel('Bitstring Rank')
-plt.xticks(range(top_states.shape[1]), fontsize=8, rotation=90)
-plt.yticks(range(len(top_bitstrings)), [f"#{i+1}" for i in range(len(top_bitstrings))], fontsize=8)
-plt. show()
+# Call all visualizations
+plot_histogram_of_frequencies(bitstrings, frequencies)
+plot_heatmap_of_bitstrings(bitstrings, raw_counts)
+plot_frequency_distribution(frequencies)
+plot_bloch_sphere_of_dominant_path(raw_counts)
 
-# Qubit Entanglement Heatmap
-mutual_info_matrix = -np.log2(np.abs(correlation_matrix + 1e-9))  # Mutual information calculation
-np.fill_diagonal(mutual_info_matrix, 0)
+# Cumulative Distribution of Bitstring Frequencies
+def plot_cumulative_frequency_distribution(raw_counts):
+    sorted_counts = sorted(raw_counts.values(), reverse=True)
+    cumulative = np.cumsum(sorted_counts) / sum(sorted_counts)
 
-plt.figure(figsize=(10, 8))
-plt.imshow(mutual_info_matrix, cmap='coolwarm', aspect='auto', interpolation='none')
-plt.colorbar(label='Mutual Information')
-plt.title('Qubit Entanglement Heatmap')
-plt.xlabel('Qubit Index')
-plt.ylabel('Qubit Index')
-plt. show()
+    plt.figure(figsize=(10, 5))
+    plt.plot(cumulative, marker='o', color='purple')
+    plt.xlabel('Number of Bitstrings (Cumulative)')
+    plt.ylabel('Cumulative Probability')
+    plt.title('Cumulative Distribution of Bitstring Frequencies')
+    plt.grid()
+    plt. show()
 
-# State Probability Evolution
-sorted_probs = sorted(probabilities.values(), reverse=True)
-cumulative_probs = np.cumsum(sorted_probs)
+# Pairwise Qubit Correlation Heatmap
+def plot_qubit_correlation_heatmap(raw_counts):
+    # Convert bitstrings to a binary matrix
+    bitstrings = list(raw_counts.keys())
+    frequencies = list(raw_counts.values())
+    binary_matrix = np.array([list(map(int, bs)) for bs in bitstrings])
+    
+    # Weight by frequencies
+    weighted_matrix = binary_matrix.T * frequencies
+    correlation_matrix = np.corrcoef(weighted_matrix)
+    
+    # Plot heatmap
+    plt.figure(figsize=(10, 8))
+    sns.heatmap(correlation_matrix, annot=False, cmap="coolwarm", cbar=True)
+    plt.title('Pairwise Qubit Correlation Heatmap')
+    plt.xlabel('Qubits')
+    plt.ylabel('Qubits')
+    plt. show()
 
-plt.figure(figsize=(12, 6))
-plt.plot(cumulative_probs, color='blue', linewidth=2)
-plt.title('State Probability Evolution')
-plt.xlabel('State Rank (Sorted)')
-plt.ylabel('Cumulative Probability')
-plt.grid(True, linestyle='--', linewidth=0.5)
-plt. show()
+# Frequency Contribution by Bitstring Length
+def plot_bitstring_length_contribution(raw_counts):
+    length_contribution = Counter()
+    total_counts = sum(raw_counts.values())
+  
+    for bitstring, count in raw_counts.items():
+        num_ones = bitstring.count('1')
+        length_contribution[num_ones] += count / total_counts
+    
+    lengths, contributions = zip(*sorted(length_contribution.items()))
+    
+    plt.figure(figsize=(10, 5))
+    plt. bar(lengths, contributions, color='teal', edgecolor='black')
+    plt.xlabel('Number of Active Locations (1s)')
+    plt.ylabel('Probability Contribution')
+    plt.title('Frequency Contribution by Bitstring Length')
+    plt. show()
 
-# Binary Pattern Frequency
-top_bitstrings = [bitstring for bitstring, _ in top_states]
-substring_length = 3  
-substring_counts = Counter()
+# Top Bitstrings Sorted by Weighted Probability
+def plot_top_weighted_bitstrings(raw_counts):
+    sorted_counts = sorted(raw_counts.items(), key=lambda x: x[1], reverse=True)
+    top_bitstrings, top_frequencies = zip(*sorted_counts[:20])  # Top 20
+    total_counts = sum(raw_counts.values())
+    probabilities = [freq / total_counts for freq in top_frequencies]
+    
+    plt.figure(figsize=(12, 6))
+    plt. bar(top_bitstrings, probabilities, color='orange', edgecolor='black')
+    plt.xticks(rotation=90)
+    plt.xlabel('Bitstrings')
+    plt.ylabel('Weighted Probability')
+    plt.title('Top 20 Bitstrings by Weighted Probability')
+    plt.tight_layout()
+    plt. show()
 
-for bitstring in top_bitstrings:
-for i in range(len(bitstring) - substring_length + 1):
-substring = bitstring[i:i + substring_length]
-substring_counts[substring] += 1
+# Call all visualizations
+plot_cumulative_frequency_distribution(raw_counts)
+plot_qubit_correlation_heatmap(raw_counts)
+plot_bitstring_length_contribution(raw_counts)
+plot_top_weighted_bitstrings(raw_counts)
 
-# Sort and plot top 10 substrings
-most_common_substrings = substring_counts.most_common(10)
-labels, values = zip(*most_common_substrings)
+# 3D Scatter Plot of Bitstring Frequencies
+def plot_3d_bitstring_frequencies(raw_counts):
+    bitstrings = list(raw_counts.keys())
+    frequencies = list(raw_counts.values())
+    binary_matrix = np.array([list(map(int, bs)) for bs in bitstrings])
+    x, y, z = binary_matrix[:, 0], binary_matrix[:, 1], binary_matrix[:, 2]  # First three qubits
 
-plt.figure(figsize=(10, 6))
-plt. bar(labels, values, color='blue', alpha=0.7)
-plt.title('Binary Pattern Frequency in Dominant States')
-plt.xlabel('Binary Pattern')
-plt.ylabel('Frequency')
-plt.grid(axis='y', linestyle='--', linewidth=0.5)
-plt. show()
+    fig = plt.figure(figsize=(10, 8))
+    ax = fig.add_subplot(111, projection='3d')
+    scatter = ax.scatter(x, y, z, s=np.array(frequencies) * 2, c=frequencies, cmap='viridis', alpha=0.8)
+    fig.colorbar(scatter, ax=ax, label='Frequency')
+    ax.set_xlabel('Qubit 1 State')
+    ax.set_ylabel('Qubit 2 State')
+    ax.set_zlabel('Qubit 3 State')
+    ax.set_title('3D Scatter Plot of Bitstring Frequencies')
+    plt. show()
 
-# Probability Heatmap Across All States 
-sorted_indices = np.argsort(state_probs)[::-1]  # Sort states by probability (descending)
-sorted_probs = np.array(state_probs)[sorted_indices]
-heatmap_matrix = np.array([list(map(int, state_list[i])) for i in sorted_indices[:100]])  # Top 100 states
+# 3D Bar Chart of Frequency Contribution by Bitstring Length
+def plot_3d_frequency_contribution_by_length(raw_counts):
+    length_contribution = Counter()
+    total_counts = sum(raw_counts.values())
+    
+    for bitstring, count in raw_counts.items():
+        num_ones = bitstring.count('1')
+        length_contribution[num_ones] += count / total_counts
+    
+    lengths, contributions = zip(*sorted(length_contribution.items()))
 
-plt.figure(figsize=(12, 8))
-plt.imshow(heatmap_matrix, cmap='Blues', aspect='auto', interpolation='none')
-plt.colorbar(label='Qubit State (0 or 1)')
-plt.title('Probability Heatmap Across Top 100 States')
-plt.xlabel('Qubit Index')
-plt.ylabel('State Rank')
-plt. show()
+    fig = plt.figure(figsize=(10, 8))
+    ax = fig.add_subplot(111, projection='3d')
+    xpos = np.arange(len(lengths))
+    ypos = np.zeros_like(xpos)
+    zpos = np.zeros_like(xpos)
+    dx = np.ones_like(xpos)
+    dy = np.ones_like(xpos)
+    dz = contributions
 
-# Frequency of State Transitions (Hamming Distance) 
-hamming_distances = []
-for i, state1 in enumerate(state_list):
-for state2 in state_list[i + 1:]:
-hamming_distances.append(int(hamming(list(map(int, state1)), list(map(int, state2))) * len(state1)))
+    ax.bar3d(xpos, ypos, zpos, dx, dy, dz, color='teal', alpha=0.7)
+    ax.set_xticks(xpos)
+    ax.set_xticklabels(lengths)
+    ax.set_xlabel('Number of Active Locations (1s)')
+    ax.set_ylabel('Y-Axis (Fixed)')
+    ax.set_zlabel('Probability Contribution')
+    ax.set_title('3D Bar Chart: Frequency Contribution by Bitstring Length')
+    plt. show()
 
-hamming_counts = np.bincount(hamming_distances)
+# 3D Surface Plot of Bitstring Correlations
+def plot_3d_correlation_surface(raw_counts):
+    bitstrings = list(raw_counts.keys())
+    frequencies = list(raw_counts.values())
+    binary_matrix = np.array([list(map(int, bs)) for bs in bitstrings])
+    
+    # Weight by frequencies
+    weighted_matrix = binary_matrix.T * frequencies
+    correlation_matrix = np.corrcoef(weighted_matrix)
 
-plt.figure(figsize=(10, 6))
-plt. bar(range(len(hamming_counts)), hamming_counts, color='blue', alpha=0.7)
-plt.title('Frequency of State Transitions by Hamming Distance')
-plt.xlabel('Hamming Distance')
-plt.ylabel('Frequency')
-plt.grid(axis='y', linestyle='--', linewidth=0.5)
-plt. show()
+    x = np.arange(correlation_matrix.shape[0])
+    y = np.arange(correlation_matrix.shape[1])
+    x, y = np.meshgrid(x, y)
+    z = correlation_matrix
 
-# Correlation Network Density 
-correlation_matrix = np.corrcoef(qubit_matrix.T)
-thresholds = np.linspace(0, 1, 50)
-edge_counts = []
+    fig = plt.figure(figsize=(12, 8))
+    ax = fig.add_subplot(111, projection='3d')
+    surface = ax.plot_surface(x, y, z, cmap='coolwarm', edgecolor='k', alpha=0.8)
+    fig.colorbar(surface, ax=ax, label='Correlation Coefficient')
+    ax.set_xlabel('Qubits')
+    ax.set_ylabel('Qubits')
+    ax.set_zlabel('Correlation')
+    ax.set_title('3D Surface Plot of Qubit Correlations')
+    plt. show()
 
-for threshold in thresholds:
-edge_count = np.sum(np.abs(correlation_matrix) > threshold) - len(correlation_matrix)  
-edge_counts.append(edge_count / 2)  
+# Call all visualizations
+plot_3d_bitstring_frequencies(raw_counts)
+plot_3d_frequency_contribution_by_length(raw_counts)
+plot_3d_correlation_surface(raw_counts)
+plot_sankey_diagram(raw_counts) (code on qwork)
 
-plt.figure(figsize=(12, 6))
-plt.plot(thresholds, edge_counts, marker='o', color='blue', alpha=0.7)
-plt.title('Correlation Network Density')
-plt.xlabel('Correlation Threshold')
-plt.ylabel('Number of Edges')
-plt.grid(True, linestyle='--', linewidth=0.5)
-plt. show()
-
-# Qubit Stability Analysis 
-stability = (qubit_matrix == qubit_matrix[0]).mean(axis=0)  
-
-plt.figure(figsize=(10, 6))
-plt. bar(range(len(stability)), stability, color='blue', alpha=0.7)
-plt.title('Qubit Stability Analysis')
-plt.xlabel('Qubit Index')
-plt.ylabel('Stability (%)')
-plt.grid(axis='y', linestyle='--', linewidth=0.5)
-plt. show()
-
-# 3D Probability Landscape 
-x = np.arange(qubit_matrix.shape[1])
-y = np.arange(len(state_probs))
-x, y = np.meshgrid(x, y)
-z = np.array([state_probs[i] * qubit_matrix[i] for i in range(len(state_probs))])
-
-fig = plt.figure(figsize=(12, 8))
-ax = fig.add_subplot(111, projection='3d')
-ax.plot_surface(x, y, z, cmap='viridis')
-ax.set_title('3D Probability Landscape')
-ax.set_xlabel('Qubit Index')
-ax.set_ylabel('State Index')
-ax.set_zlabel('Probability')
-plt. show()
-
-# Qubit State Heatmap 
-timesteps = 10 
-
-# Extract bitstrings and probabilities
-bitstrings = list(results_data['counts'].keys())
-bit_probs = list(results_data['counts'].values())
-bit_probs = np.array(bit_probs) / sum(bit_probs)  
-
-# Sort bitstrings by their probabilities in descending order
-sorted_indices = np.argsort(bit_probs)[::-1]  # Sort indices by probability (highest to lowest)
-selected_bitstrings = [bitstrings[i] for i in sorted_indices[:timesteps]]  
-
-# Convert bitstrings into a binary matrix for heatmap visualization
-state_evolution = np.array([list(map(int, bitstring)) for bitstring in selected_bitstrings])
-
-# Plot heatmap
-plt.figure(figsize=(12, 8))
-plt.imshow(state_evolution, cmap='binary', aspect='auto', interpolation='none')
-plt.colorbar(label='Qubit State (0 or 1)')
-plt.title('Qubit State Heatmap Across Time')
-plt.xlabel('Qubit Index')
-plt.ylabel('Timestep')
-plt. show()
-
-# Energy Distribution Across Clusters 
-Z = linkage(qubit_matrix, method='ward')
-clusters = fcluster(Z, t=10, criterion='distance')  
-cluster_counts = Counter(clusters)
-cluster_energies = {cluster: 0 for cluster in cluster_counts.keys()}
-
-# Calculate energy distribution across clusters
-for state, cluster in zip(state_probs, clusters):
-cluster_energies[cluster] += state
-
-# Plot cluster energy distribution
-plt.figure(figsize=(10, 6))
-plt. bar(cluster_energies.keys(), cluster_energies.values(), color='blue', alpha=0.7)
-plt.title('Energy Distribution Across Clusters')
-plt.xlabel('Cluster Index')
-plt.ylabel('Total Energy')
-plt.grid(axis='y', linestyle='--', linewidth=0.5)
-plt. show() 
-
-# End.
+# End
 
 
 
@@ -647,7 +604,7 @@ plt. show()
 </p>
             
  </div>
-        <img src="E43i4.png" alt="" class="experiment-image4">
+        <img src="E44i4.png" alt="" class="experiment-image4">
         <p></p>
         <div class="content-block">
 
