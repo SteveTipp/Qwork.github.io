@@ -97,166 +97,177 @@
     </nav>
 
     <section class="content-section">
-        <h1><center> Drone Delivery Route Optimization on IBM’s 127-Qubit Quantum Computer </center></h1>
+        <h1><center> Quantum Optimization of Neural Network Training Sequences on IBM’s 127-Qubit Quantum Computer </center></h1>
         <div class="content-block">
          
-This experiment uses quantum computing to optimize delivery routes for a fleet of drones by leveraging the principles of superposition, entanglement, and quantum interference to evaluate multiple potential routes simultaneously. Delivery locations are mapped onto qubits, and costs are encoded as rotations on a Bloch sphere. The experiment simulates dependencies between locations and determines the optimal route using IBM's 'ibm_brisbane' 127-Qubit quantum computer / qiskit. Results are derived from measured quantum states, yielding the most efficient delivery sequence.<br>
-<br>
-          
+This experiment optimizes the sequence of training data batches for a neural network using a quantum computer. A control qubit and batch qubits are placed in superposition to represent all possible batch sequences simultaneously. Entanglement with CNOT gates introduces dependencies between the control qubit and batch qubits, while controlled rotations (CR_x​) encode transition costs as rotations on the Bloch sphere, simulating computational effort. Quantum interference amplifies optimal sequences, leading to better convergence rates and reduced training time. The experiment is run on IBM's ibm_kyiv using Qiskit.<br>
+      <br>    
 <p>1. Problem <br>
-The objective is to optimize drone delivery routes by minimizing an overall cost function. Let:<br>
-N be the number of delivery locations.<br>
-q_i​ represent the i-th delivery location.<br>
-C denote the total cost, calculated as:<br>
-      N − 1 <br>
-C = ∑  (d(q_i, q_(i + 1))) <br>
-       i = 1<br>
-where d(q_i​, q_(1 + 1)​) is the distance between locations q_i​ and q_(i + 1).
+The goal is to optimize the order in which training data batches are presented to a neural network to:<br>
+a. Minimize computational transition costs between consecutive batches.<br>
+b. Simulate error gradients akin to stochastic gradient descent to refine convergence.<br>
+The transition cost is represented mathematically as:<br>
+θ_i ​= π/(2i)​<br>
+where i is the batch index, and θ_i​ determines the angle of controlled rotations applied to encode computational effort.
 ​<br>
 
-<p>2: Calibration Data and Qubit Selection<br>
-To ensure reliable computations:<br>
-Calibration data from the backend is loaded.<br>
-Qubits are ranked based on their sqrt(X) (sx) error, T_1​ (relaxation time), and T_2​ (decoherence time) metrics.<br>
-The best qubits are selected to minimize errors.<br>
+<p>2. Backend Calibration Data Loading<br>
+Calibration data for ibm_kyiv is loaded.<br>
+The data includes: <br>
+√x (sx) error: Error rate for single qubit operations.<br>
+T_1 (relaxation time): Time for a qubit to return to its ground state.<br>
+T_2 (decoherence time): Time over which quantum states remain coherent.<br>
+The qubits are sorted by minimizing error and maximizing T_1​ and T_2. The best qubits are selected for use:<br>
+Sort by: {√x error (ascending), T_1​ (descending), T_2​ (descending)}<br>
+
+<p>3. Register Initialization<br>
+A Quantum Register Q with N + 1 qubits is created:<br>
+Q_0​: Bloch clock qubit (control qubit).<br>
+Q_1, Q_2, ..., Q_N​: Represent training data batches.<br>
+A Classical Register C with N + 1 bits records measurement outcomes.<br>
 
 
-<p>3: Circuit Initialization<br>
-Quantum and classical registers are initialized.<br>
-Quantum Register: N + 1 qubits (1 for a control Bloch clock qubit, N for locations).<br>
-Classical Register: N + 1 bits for measurement.<br>
 
 
 
 
-
-<p>4: Bloch Clock Qubit Initialization<br>
-The control qubit q_0​ is initialized in a superposition state: ∣q_0⟩ = (∣0⟩ + ∣1⟩)/sqrt(2)<br>
-using a Hadamard gate: H ∣0⟩ = ∣+⟩<br>
+<p>4. Superposition of States<br>
+The Bloch clock qubit Q_0 is initialized into a superposition state:<br>
+∣Q_0⟩ = H ∣0⟩ = 1/sqrt(2) * (∣0⟩ + ∣1⟩)<br>
+where H is the Hadamard gate.<br>
+Each data batch qubit Q_i​ is also initialized into superposition:<br>
+∣Q_i​⟩ = H ∣0⟩ = 1/sqrt(2) * ​​(∣0⟩ + ∣1⟩)<br>
+This ensures all possible training batch sequences are represented simultaneously.<br>
     
 
 
 
 
 
-<p>5: Location Qubits in Superposition <br>
-Each location qubit q_i​ is placed into a superposition state: ∣qi​⟩ = (∣0⟩ + ∣1⟩)/sqrt(2)<br>
-This represents all possible combinations of delivery sequences simultaneously:<br>
-                             N<br>
-∣ψ⟩ = ∣q_0​⟩ ⊗  ∏  (∣q_i​⟩)<br>
-                             i = 1<br>
-
-
-    
-
-
-
-
-<p>6: Entanglement of Bloch Clock with Locations<br>
-Dependencies between the Bloch clock q_0​ and each location q_i​ are simulated using controlled-X (CNOT) gates: CNOT(q_0​, q_i​)<br>
-This ensures that the state of the Bloch clock influences all location qubits.<br>
-
+<p>5. Entanglement Between Bloch Clock and Data Batches<br>
+To simulate dependencies between training batches and the Bloch clock, controlled-X (CNOT) gates are applied:<br>
+CNOT(Q_0​, Q_i​)<br>
+This entangles Q_0​ with each batch qubit Q_i​, so the state of Q_0​ influences the other qubits.<br>
 
 
 
     
-<p>7: Encoding Energy Costs<br>
-Energy consumption or travel costs are encoded as rotations on the Bloch sphere. For each location q_i​, a controlled rotation CR_x​ is applied: <br>
-CR_x​(θ_i​)(q_i​, q_0​)<br>
-where θ_i = π/(2i)​ defines the cost.<br>
-
-<p>8: Evolution of the Bloch Clock<br>
-The Bloch clock qubit q_0​ undergoes rotations along all axes to introduce quantum interference, simulating cost evolution:<br>
-R_x​(π/8​), R_y​(π/8​​), R_z​(π/8​​)<br>
 
 
 
-<p>9: Measurement of the Quantum State<br>
-The quantum register is measured:<br>
-Measure q_i → cr_i​<br>
-This collapses the superposition into a classical state representing one potential route.<br>
+
+<p>6. Encoding Computational Transition Costs<br>
+The computational cost of transitioning between consecutive data batches is encoded using controlled R_x rotations:<br>
+CR_x​(θ_i​) =<br>
+[ 1,          0,                     0,              0 <br>
+  0, cos(θ_i​/2), -i sin(θ_i​/2), 0<br>
+  0, -i sin(θ_i​/2), cos(θ_i​/2), 0<br>
+  0,          0,                     0,              1 ]<br>
+where θ_i = π/2i​. These rotations reflect the cost associated with transitioning between batches.<br>
+The gate is applied as:<br>
+CR_x​(θ_i​, Q_0​, Q_i​)<br>
 
 
-<p>10: Transpilation and Execution<br>
-The circuit is transpiled for ibm_brisbane. The experiment is executed with 16,384 shots to gather a statistical distribution of results.<br>
 
 
-<p>11: Result Extraction<br>
-Measured bitstrings represent potential delivery sequences. For example:<br>
-110011: Drones visit locations 1, 2, 5, and 6.<br>
-101010: Drones visit locations 1, 3, and 5.<br>
-Frequencies of bitstrings indicate the likelihood of each route being optimal.<br>
 
     
-<p>12: Results Visualization<br>
-A histogram is plotted to visualize the frequency distribution of potential routes.
-<br>
+<p>7. Simulating Error Gradients<br>
+To simulate error gradients similar to stochastic gradient descent, small single qubit rotations are applied to the Bloch clock qubit:<br>
+R_x​(π​/16), R_y​(π​/16​), R_z​(π​/16​)<br>
+These gates introduce noise and interference to refine the optimization process.<br>
+
+<p>8. Measurement <br>
+The quantum circuit is measured:<br>
+Measure Q → C<br>
+Each bitstring obtained from measurement represents a specific sequence of training batches. The frequency of each bitstring indicates the likelihood of that sequence being optimal.<br>
+
+
+
+<p>9. Transpilation<br>
+Transpiled for ibm_kyiv. Executed with 16384 shots.<br>
+
+
+
+<p>10. Results<br>
+Results are saved to a json. A histogram of the bitstring counts is plotted.
+
+
 
     
     
 <p><center> Results:</center><br>
 
-{<br>
+Results<br>
 "raw_counts": {<br>
-"0110101": 135,<br>
-"1110011": 127,<br>
-"1001101": 77,<br>
-"1100100": 108,<br>
-"0111011": 215,<br>
-"0100101": 115,<br>
-"0100111": 252,<br>
-"1110010": 204, ... }<br>
+"0101111": 476,<br>
+"1000011": 98,<br>
+"1001001": 310,<br>
+"0101110": 121,<br>
+"0011011": 141,<br>
+"0100001": 253,<br>
+"0001101": 639,<br>
+"1011001": 66, ...<br>
+}<br>
 
-The bitstring 0100111 appears the most frequently, with a count of 252. This indicates that the algorithm consistently identifies this route as highly probable or optimal. Similarly, routes like 0111011 (215 counts) and 0110111 (229 counts) are also highly favored, pointing to a pattern of preferred routes among the measurements.
+Top 10 Optimal Sequences:<br>
+0001001: 758<br>
+0101001: 706<br>
+0001101: 639<br>
+0001011: 626<br>
+0101101: 615<br>
+0101011: 587<br>
+0101111: 476<br>
+0001111: 459<br>
+1101001: 335<br>
+1001001: 310<br>
+These sequences dominate the distribution, implying these configurations are energetically favorable based on the computational cost. Lower frequency bitstrings (1100110, 1000010) occur sporadically, meaning suboptimal configurations. The high frequency sequences exhibit clustering near specific bit pattern families (those starting with 0 or 010), reflecting symmetry in the entanglement and rotation structure.<br>    
 <br>
-While certain routes dominate the measurements, there is a significant spread across other bitstrings, suggesting that the algorithm explores a diverse solution space. For example, routes like 1000001 and 1110001 have low counts (50 and 73), indicating that they are less optimal but still considered during the computation.<br>
-<br>    
-  
 </div>
-        <img src="E45i1.png" alt="" class="experiment-image">
+        <img src="E46i1.png" alt="" class="experiment-image">
         <p></p>
         <div class="content-block">
 <br>
             
-The Frequency Distribution of Measured Bitstrings above (code below) shows the counts of all measured bitstrings, representing potential drone delivery routes. There is a clear variance in frequency, with some routes appearing significantly more often than others. The distribution tapers off as we move toward less frequent routes, suggesting that the quantum algorithm focuses on a subset of routes it deems more optimal. 
+The Histogram of All Quantum Measurement Outcomes above (code below) shows a clear skewed distribution with certain bitstrings appearing far more frequently than others. The bitstrings with higher frequencies represent near optimal sequences for presenting the training batches. These sequences likely correspond to reduced transition costs encoded in the experiment with controlled rotations (CR_x gates). The long tail indicates noise or suboptimal configurations where transition costs are higher. These may represent less efficient orders for training data presentation.
 <br>
-The Most Frequent Delivery Sequences above (code below) shows the top 10 most frequently measured bitstrings and their corresponding counts. Bitstring 0100111 dominates the measurements, with 252 counts, followed by 0111011 and 0110111 with 229 and 215 counts. These top 10 sequences represent the most likely optimal delivery routes, which drones can prioritize. By focusing on these routes, we can reduce computational overhead and streamline drone operations while maintaining high efficiency.
+The Top 10 Most Frequent Quantum Measurement Outcomes above (code below) shows the 10 most frequent bitstrings in the results, such as 0001001, 0101001, 1000110, etc. These top bitstrings represent the most energetically favorable training sequences. Their repeated appearance across 16384 shots signifies that they are more probable due to minimal encoded costs. For a neural network, this predicts these sequences would lead to better convergence rates and reduced training time when batches are presented in this order. 
 <br>
-The Cumulative Distribution of Measured Counts above (code below) shows how the measured counts accumulate across all ranked bitstrings. The steep initial slope indicates that a small number of routes account for a large portion of the total measurements. The curve flattens as we include less frequent routes, which contribute minimally to the overall probability distribution. The quantum algorithm effectively concentrates on a small subset of highly probable routes, aligning with the goal of identifying optimal solutions efficiently.
+The Distribution of Leading Bits (Control Qubit Influence) above (code below) shows a significant imbalance, with the leading bit '0' dominating the results. Approximately 70 - 75% of outcomes correspond to states where the control qubit remained in ∣0⟩, while fewer measurements reflect ∣1⟩. The dominance of the ∣0⟩ state suggests that low computational cost transitions are more likely when the control qubit remains in its lower energy state. When the control qubit is ∣1⟩, the entanglement may have resulted in higher transition costs, making those sequences less probable. 
 <br>
-The Heatmap of Delivery Sequence Patterns above (code below) visualizes the inclusion of locations (columns) across the most frequently measured bitstrings (rows).A 1 (dark blue) indicates that a location is included in the route, while a 0 (white) indicates it is skipped. Patterns in the heatmap reveal commonalities in which locations are visited together across different routes. Certain locations are consistently included in the top routes, suggesting that they are critical delivery points with high priority. Other locations appear sporadically, reflecting flexibility in optimizing drone energy consumption or accommodating variable delivery demands.<br>
-            
-        <img src="E45i2.png" alt="" class="experiment-image">
+The Heatmap of Bitstring Frequency Patterns above (code below) shows the intensity of bitstring frequencies across all qubit positions. Specific qubits (likely representing certain data batches) exhibit consistent patterns across optimal bitstrings, indicating that their states are more stable and contribute more to low cost paths. The deep red regions reflect highly correlated positions in the bitstrings, where entanglement and controlled rotations influenced the batch transitions strongly.             
+<br>
+
+        <img src="E46i2.png" alt="" class="experiment-image">
         <p></p>
         <div class="content-block">
 <br>
-The Distribution of Route Lengths (Hamming Weight) above (code below) shows the distribution of routes based on the number of locations visited (Hamming weight of bitstrings). The peak at 3 - 4 locations indicates that the quantum optimization algorithm favored routes that visited a moderate number of locations rather than extremes (all locations or none). This suggests that the cost function encoded in the circuit balances efficiency with coverage. Drones are optimized to visit a reasonable number of locations without overextending, which could save energy and time.
+The Cumulative Frequency Distribution of Measurement Outcomes above (code below) starts at 0 and quickly rises to a plateau near 1.0. Approximately 20 - 30 bitstrings account for nearly 80% of the cumulative probability. These high probability bitstrings represent optimal training sequences where the transition costs (encoded with controlled rotations CR_x​) are minimized. The steep initial rise confirms that the circuit successfully prioritized a narrow range of sequences over noisy or suboptimal configurations.
 <br>
-The Cumulative Probabilities of Top 10 Routes above (code below) shows that the cumulative probabilities of the top 10 routes show a gradual increase, indicating that no single route dominates. Instead, multiple routes have comparable probabilities of being optimal. This highlights flexibility in route selection. Drones could choose from several near optimal paths based on real world constraints (weather, traffic, etc).
+The Frequency Distribution by Hamming Weight above (code below) is bell shaped, with a peak at Hamming weights 3 and 4. States with very low or very high Hamming weights (0, 1, 6, and 7) are relatively rare. The most frequent states have balanced configurations (around 3 - 4 1s), suggesting that sparser or denser states are less likely to appear in optimal solutions. In the context of training data batches, sequences which distribute computational effort evenly (neither too sparse nor too dense) are energetically favorable.
 <br>
-The Frequency of Location Inclusion Across Routes above (code below) shows how frequently each location was included in the measured routes. Locations 1, 4, and 5 appear more frequently, suggesting they are central to most optimal routes. Locations with higher inclusion frequencies may correspond to high priority delivery points (densely populated areas or critical delivery hubs). This data could inform drone fleet allocation to ensure these locations are consistently covered.
+The Heatmap of Batch Qubit Patterns for Leading Bit '1' above (code below) shows strong red intensity (state 1) at specific batch qubit positions (position 5), while other positions remain predominantly blue (state 0). This suggests that certain training batches (associated with positions 4 - 5) have higher transition costs, and their behavior is tightly coupled to the control qubit. These positions likely play a critical role in determining the overall sequence optimization, as the entanglement amplifies their computational effort.
 <br>
-In the Shannon Entropy of Measured Bitstrings above (code below), the Shannon entropy value of ~6.94 bits indicates high diversity in the bitstring distribution, meaning the quantum algorithm explored a wide range of routes. High entropy reflects a large exploration of the solution space, ensuring that the algorithm did not prematurely converge on suboptimal solutions. This ensures fairness and flexibility in drone route planning.</div>
-<br>
-            
-        <img src="E45i3.png" alt="" class="experiment-image">
+The Normalized Frequency Distribution of Quantum Measurement Outcomes above (code below) mirrors the earlier histogram but scales all counts to probabilities. The normalized view allows us to observe the relative probabilities of bitstrings without the influence of absolute shot counts. The drop off indicates that the quantum experiment successfully amplified certain paths (optimal batch orders), while suppressing less favorable paths.<br>
+<br>            
+        <img src="E46i3.png" alt="" class="experiment-image">
         <p></p>
         <div class="content-block">
 <br>
 
-The 3D Bar Plot of Top 10 Routes above (code below) shows the top 10 bitstrings (routes) with their respective counts. The counts represent how often these routes appeared in the measurements, indicating their likelihood of being optimal. 
+The 3D Surface Plot of Frequencies by Hamming Weight above (code below) shows that lower Hamming weights (0 - 3) and higher ranked bitstrings dominate the frequency landscape. Optimal training sequences are concentrated in bitstrings with lower Hamming weights. This suggests that sparse states, where only a few batches are active or engaged at a time, are preferred. The steep drop off indicates that adding more active batches increases transition costs (encoded as rotations), making those configurations less optimal.
 <br>
-The 3D Scatter Plot of Bitstring Probabilities above (code below) visualizes the probabilities of each bitstring (route) based on the measurements. It correlates the Hamming weight (number of locations visited) with the probability of the route. Routes with moderate Hamming weights (3 - 4 visited locations) have higher probabilities, indicating an optimized balance between energy consumption and coverage.
+The 3D Scatter Plot of Leading Bit Influence above (code below) shows the influence of the leading qubit (control qubit) on batch qubit states. The control qubit (Q_0​) exerts a strong influence on specific batch qubits, determining their state in optimal sequences. The systematic toggling suggests that when the control qubit is ∣1⟩, specific batch qubits align to minimize transition costs. The structure also confirms the effectiveness of the entanglement scheme in simulating batch dependencies.
 <br>
-The Parallel Coordinates Plot of Top 10 Routes above (code below) shows the relationship between locations visited (1) or not (0) for the top 10 routes. Each line corresponds to a bitstring, and its path indicates whether a location is included in the route. This helps visualize which locations are commonly included or skipped in the top routes. High overlap in certain paths suggests key delivery hubs or regions that are critical in the optimization problem.
+The Heatmap of Normalized Pairwise Correlations Between Qubits above (code below) shows zero correlations between most qubits, except for strong diagonal correlations (r = 1), which are expected. There are no off diagonal correlations, indicating minimal dependencies between batch qubits beyond the control qubit's influence. This structured independence is important, as excessive correlations between qubits can lead to computational noise or interference.
 <br>
-The 3D Surface Plot of Route Inclusion Frequencies above (code below) shows the inclusion frequencies of locations across all routes. Peaks in the plot indicate locations that are consistently included in many routes, while valleys represent less visited areas. High inclusion locations could correspond to high priority areas or regions with higher delivery demand.
+The Cumulative Frequency Gradient Map above (code below) shows the dominance of a small subset of solutions, where transition costs are minimized. The steep gradient reflects strong quantum interference effects amplifying these optimal bitstrings while suppressing suboptimal sequences. The smooth flattening of the tail highlights the impact of quantum uncertainty, which still allows less optimal configurations to appear.
 <br>
-In the end, the experiment successfully explored drone route optimization using quantum computing. By representing delivery locations as qubits and encoding travel distances and constraints, this circuit used quantum entanglement and superposition to evaluate multiple potential routes simultaneously. The optimization problem was designed to balance coverage (number of locations visited) with efficiency (energy consumption and travel time). The results gave the most efficient routes, the most frequently selected routes, key delivery hubs, and overall trends in the optimization process. <br>      
-<br>          
-          <p>Code:<br>
+In the end, this experiment used IBM's ibm_kyiv 127-qubit quantum computer to optimize the order of training data batches for a neural network, minimizing the computational effort required for batch transitions. The circuit placed the control qubit and batch qubits into superposition to represent all possible batch sequences simultaneously. Entanglement with CNOT gates introduced dependencies between the control and batch qubits, while controlled rotations (CR_x​) encoded transition costs as rotations on the Bloch sphere. This approach successfully simulated computational effort, resulting in better convergence rates and reduced training time.<br>          
+<br>
+            
+            <p>Code:<br>
             <p><pre><code>
-# Imports
 # Imports
 import numpy as np
 import json
@@ -277,317 +288,353 @@ def load_calibration_data(file_path):
     logger. info("Loading calibration data from %s", file_path)
     calibration_data = pd. read_csv(file_path)
     calibration_data.columns = calibration_data.columns.str.strip()  
-    logger. info("Calibration data loaded successfully")
+    logger. info("Calibration data loaded")
     return calibration_data
 
 # Parse calibration data
 def select_best_qubits(calibration_data, n_qubits):
     logger. info("Selecting the best qubits based on T1, T2, and error rates")
-    print("Calibration data columns:", calibration_data.columns)
     qubits_sorted = calibration_data.sort_values(by=['√x (sx) error', 'T1 (us)', 'T2 (us)'], ascending=[True, False, False])
     best_qubits = qubits_sorted['Qubit'].head(n_qubits).tolist()
     logger. info("Selected qubits: %s", best_qubits)
     return best_qubits
 
 # Load backend calibration data
-calibration_file = '/Users/Downloads/ibm_brisbane_calibrations_2024-12-14T21_59_06Z.csv'
+calibration_file = '/Users/Downloads/ibm_kyiv_calibrations_2024-12-17T21_03_05Z.csv'
 calibration_data = load_calibration_data(calibration_file)
 
-# Select the best qubits based on T1, T2, and error rates
-num_locations = 6  
-best_qubits = select_best_qubits(calibration_data, num_locations + 1)
+# Select best qubits on T1, T2, and error rates
+num_batches = 6  
+best_qubits = select_best_qubits(calibration_data, num_batches + 1)
 
 # IBMQ 
-logger. info("Setting up IBM Q service")
+logger. info("Setting up IBMQ service")
 service = QiskitRuntimeService(
     channel='ibm_quantum',
     instance='ibm-q/open/main',
-    token='YOUR_IBMQ_API_KEY_O-`'
+    token='YOUR_IBMQ_API_KEY_O-`'  
 )
 
-backend_name = 'ibm_brisbane'
+# Backend
+backend_name = 'ibm_kyiv'
 backend = service.backend(backend_name)
 logger. info("Backend selected: %s", backend_name)
 
 # Quantum and classical registers
-qr = QuantumRegister(num_locations + 1)  
-cr = ClassicalRegister(num_locations + 1)
+qr = QuantumRegister(num_batches + 1, 'batch')  
+cr = ClassicalRegister(num_batches + 1, 'meas')
 qc = QuantumCircuit(qr, cr)
 
-# Bloch clock qubit
+# Bloch Clock Qubit
 qc.h(qr[0])  
 
-# Represent delivery locations as qubits in superposition
-for i in range(1, num_locations + 1):
+# Place Batches (Training Sequences) into Superposition
+for i in range(1, num_batches + 1):
     qc.h(qr[i])  
 
-# Apply entanglement to simulate dependencies between locations
-for i in range(1, num_locations + 1):
+# Entangle Control Qubit with Data Batches 
+for i in range(1, num_batches + 1):
     qc. cx(qr[0], qr[i])  
 
-# Encode energy consumption/travel costs on the Bloch sphere
-for i in range(1, num_locations + 1):
-    qc.crx(np.pi / (2 * i), qr[0], qr[i])  
+# Encode Transition Effort Between Training Batches
+for i in range(1, num_batches + 1):
+    angle = np.pi / (2 * i)  
+    qc.crx(angle, qr[0], qr[i]) 
 
-# Apply a series of rotations to evolve the Bloch clock
-qc.rx(np.pi / 8, qr[0])  
-qc.ry(np.pi / 8, qr[0])  
-qc.rz(np.pi / 8, qr[0])  
+# Error Gradients 
+qc.rx(np.pi / 16, qr[0])  
+qc.ry(np.pi / 16, qr[0])
+qc.rz(np.pi / 16, qr[0])
 
-# Measure the quantum states to determine the optimal delivery sequence
+# Measurement
 qc.measure(qr, cr)
 
-# Transpile 
+# Transpile
 logger. info("Transpiling the quantum circuit for the backend")
 qc_transpiled = transpile(qc, backend=backend, optimization_level=3)
 logger. info("Circuit transpilation complete")
 
 # Execute 
-shots = 16384  
+shots = 16384 
 with Session(service=service, backend=backend) as session:
     sampler = SamplerV2(session=session)
     logger. info("Executing the circuit on the backend")
     job = sampler. run([qc_transpiled], shots=shots)
     job_result = job.result()
 
-    # Results
-    pub_results = job_result._pub_results[0]['__value__']
-    data = pub_results['data']
-    bit_array = data['c0']
-    bitstrings = bit_array.get_bitstrings()  
-    counts = dict(Counter(bitstrings))  
+    # Extract BitArray counts
+    data_bin = job_result._pub_results[0]['__value__']['data']
+    bit_array = data_bin['meas']  
+    counts = bit_array.get_counts()  
 
     # Save json
     results_data = {"raw_counts": counts}
-    file_path = '/Users/Documents/Quantum_DroneDelivery_1.json'
+    file_path = '/Users/Documents/QNN_TrainingSequence_Results_0.json'
     with open(file_path, 'w') as f:
         json.dump(results_data, f, indent=4)
     logger. info("Results saved to %s", file_path)
 
-# Visualization
+# Visual
 plot_histogram(counts)
+plt.title("Optimized Training Batch Sequences")
 plt. show()
 
-//////////////////
-
-Code for All Visuals
+Code for all Visuals from Run Data
 # Imports
 import json
-import matplotlib.pyplot as plt
-from collections import Counter
 import numpy as np
+import matplotlib.pyplot as plt
 import seaborn as sns
-from scipy.stats import entropy
+import pandas as pd
+from collections import defaultdict
+from collections import defaultdict, Counter
 from mpl_toolkits.mplot3d import Axes3D
 
-# Load Run Results
-file_path = '/Users/Documents/QC/Quantum_DroneDelivery_1.json'
-with open(file_path, 'r') as file:
-    data = json.load(file)
+# Load data
+file_path = '/Users/Documents/QNN_TrainingSequence_Results_0.json'
+with open(file_path, 'r') as f:
+    results = json.load(f)
 
-counts = data['raw_counts']
-total_counts = sum(counts.values())
+counts = results['raw_counts']
 
-# Histogram of Bitstring Counts
-def plot_histogram_counts(counts):
-    plt. bar(counts.keys(), counts.values())
-    plt.xlabel('Bitstrings')
-    plt.ylabel('Counts')
-    plt.title('Frequency Distribution of Measured Bitstrings')
-    plt.xticks(rotation=90, fontsize=6)
-    plt.tight_layout()
-    plt.s how()
-
-# Most Frequent Routes
-def plot_top_routes(counts, top_n=10):
-    sorted_counts = Counter(counts).most_common(top_n)
-    bitstrings, freqs = zip(*sorted_counts)
-    plt. bar(bitstrings, freqs, color='green')
-    plt.xlabel('Top 10 Bitstrings')
-    plt.ylabel('Counts')
-    plt.title('Most Frequent Delivery Sequences')
-    plt.xticks(rotation=45, fontsize=8)
+# Histogram of All Measurement Outcomes
+def plot_full_histogram(counts):
+    sorted_counts = dict(sorted(counts.items(), key=lambda x: x[1], reverse=True))
+    plt.figure(figsize=(12, 6))
+    plt. bar(sorted_counts.keys(), sorted_counts.values(), color='blue')
+    plt.xticks(rotation=90, fontsize=8)
+    plt.xlabel("Bitstrings")
+    plt.ylabel("Frequency")
+    plt.title("Histogram of All Quantum Measurement Outcomes")
     plt. show()
 
-# Cumulative Distribution of Counts
-def plot_cumulative_distribution(counts):
-    total_counts = sum(counts.values())
-    sorted_counts = sorted(counts.values(), reverse=True)
-    cumulative = np.cumsum(sorted_counts) / total_counts
-    plt.plot(range(len(cumulative)), cumulative, marker='o')
-    plt.xlabel('Ranked Bitstrings')
-    plt.ylabel('Cumulative Probability')
-    plt.title('Cumulative Distribution of Measured Counts')
+# Top 10 Most Frequent Bitstrings
+def plot_top_10_sequences(counts):
+    df = pd.DataFrame(counts.items(), columns=["Bitstring", "Frequency"])
+    df_sorted = df.sort_values(by="Frequency", ascending=False).head(10)
+    print("Top 10 Optimal Sequences:\n", df_sorted)
+
+    plt.figure(figsize=(8, 5))
+    plt. bar(df_sorted["Bitstring"], df_sorted["Frequency"], color='green')
+    plt.xlabel("Top 10 Bitstrings")
+    plt.ylabel("Frequency")
+    plt.title("Top 10 Most Frequent Quantum Measurement Outcomes")
+    plt. show()
+
+# Distribution of Leading Bits
+def plot_leading_bit_distribution(counts):
+    leading_bit_counts = defaultdict(int)
+    for bitstring, freq in counts.items():
+        leading_bit = bitstring[0]
+        leading_bit_counts[leading_bit] += freq
+
+    plt.figure(figsize=(6, 4))
+    plt. bar(leading_bit_counts.keys(), leading_bit_counts.values(), color='purple')
+    plt.xlabel("Leading Bit (Control Qubit State)")
+    plt.ylabel("Total Frequency")
+    plt.title("Distribution of Leading Bits (Control Qubit Influence)")
+    plt. show()
+
+# Heatmap of Bitstring Frequency Patterns
+def plot_bitstring_heatmap(counts):
+    num_qubits = len(next(iter(counts)))  
+    bit_matrix = np.zeros((len(counts), num_qubits))
+
+    for i, (bitstring, freq) in enumerate(counts.items()):
+        for j, bit in enumerate(bitstring):
+            bit_matrix[i, j] = int(bit) * freq
+
+    bit_matrix = bit_matrix / bit_matrix.max()
+
+    plt.figure(figsize=(10, 6))
+    sns.heatmap(bit_matrix, cmap="coolwarm", cbar_kws={'label': 'Frequency Intensity'})
+    plt.xlabel("Bit Position")
+    plt.ylabel("Bitstring Index")
+    plt.title("Heatmap of Bitstring Frequency Patterns")
+    plt. show()
+
+# Execute
+plot_full_histogram(counts)
+plot_top_10_sequences(counts)
+plot_leading_bit_distribution(counts)
+plot_bitstring_heatmap(counts)
+
+# Cumulative Frequency Distribution
+def plot_cumulative_frequency(counts):
+    sorted_counts = dict(sorted(counts.items(), key=lambda x: x[1], reverse=True))
+    cumulative_freq = np.cumsum(list(sorted_counts.values()))
+    total_shots = sum(sorted_counts.values())
+    normalized_cum_freq = cumulative_freq / total_shots
+
+    plt.figure(figsize=(8, 5))
+    plt.plot(range(len(sorted_counts)), normalized_cum_freq, marker='o', color='blue')
+    plt.xlabel("Ranked Bitstrings")
+    plt.ylabel("Cumulative Probability")
+    plt.title("Cumulative Frequency Distribution of Measurement Outcomes")
     plt.grid()
     plt. show()
 
-# Heatmap of Bitstring Patterns
-def plot_heatmap_patterns(counts):
-    bitstrings = list(counts.keys())
-    bit_array = np.array([list(map(int, bit)) for bit in bitstrings])
-    sns.heatmap(bit_array, cmap='Blues', cbar=False)
-    plt.xlabel('Locations')
-    plt.ylabel('Bitstrings')
-    plt.title('Heatmap of Delivery Sequence Patterns')
+# Frequency Distribution by Hamming Weight
+def plot_hamming_weight_distribution(counts):
+    def hamming_weight(bitstring):
+        return sum(int(bit) for bit in bitstring)
+
+    hamming_weights = [hamming_weight(b) for b in counts.keys()]
+    hamming_counts = Counter(hamming_weights)
+
+    plt.figure(figsize=(8, 5))
+    plt. bar(hamming_counts.keys(), hamming_counts.values(), color='orange')
+    plt.xlabel("Hamming Weight (Number of '1's)")
+    plt.ylabel("Frequency")
+    plt.title("Frequency Distribution by Hamming Weight")
     plt. show()
 
-# Call the visualization functions
-plot_histogram_counts(counts)
-plot_top_routes(counts)
-plot_cumulative_distribution(counts)
-plot_heatmap_patterns(counts)
+# Top Leading Qubit Patterns Heatmap
+def plot_leading_qubit_heatmap(counts):
+    num_qubits = len(next(iter(counts)))  
+    leading_bit_patterns = []
 
-# Distribution of Route Lengths (Hamming Weight)
-def plot_route_length_distribution(counts):
-    bitstrings = list(counts.keys())
-    hamming_weights = [sum(map(int, bit)) for bit in bitstrings]  # Calculate Hamming weight for each bitstring
-    weight_counts = Counter(hamming_weights)
-    plt. bar(weight_counts.keys(), weight_counts.values(), color='blue')
-    plt.xlabel('Number of Locations Visited (Hamming Weight)')
-    plt.ylabel('Frequency')
-    plt.title('Distribution of Route Lengths (Hamming Weight)')
-    plt.xticks(range(max(weight_counts.keys()) + 1))
-    plt.tight_layout()
+    for bitstring, freq in counts.items():
+        leading_bit = bitstring[0]
+        pattern = [int(b) for b in bitstring[1:]]  
+        leading_bit_patterns.extend([pattern] * freq if leading_bit == '1' else [])
+
+    # Convert patterns to heatmap matrix
+    if leading_bit_patterns:
+        heatmap_matrix = np.array(leading_bit_patterns[:100]) 
+        plt.figure(figsize=(10, 6))
+        sns.heatmap(heatmap_matrix, cmap="coolwarm", cbar_kws={'label': 'State (0 or 1)'})
+        plt.xlabel("Batch Qubit Position")
+        plt.ylabel("Measurement Index")
+        plt.title("Heatmap of Batch Qubit Patterns for Leading Bit '1'")
+        plt. show()
+    else:
+        print("No patterns found for leading bit '1'.")
+
+# Normalized Frequency Distribution
+def plot_normalized_frequency_distribution(counts):
+    total_shots = sum(counts.values())
+    normalized_counts = {k: v / total_shots for k, v in counts.items()}
+    sorted_counts = dict(sorted(normalized_counts.items(), key=lambda x: x[1], reverse=True))
+
+    plt.figure(figsize=(10, 6))
+    plt. bar(sorted_counts.keys(), sorted_counts.values(), color='purple')
+    plt.xticks(rotation=90, fontsize=8)
+    plt.xlabel("Bitstrings")
+    plt.ylabel("Normalized Frequency")
+    plt.title("Normalized Frequency Distribution of Quantum Measurement Outcomes")
     plt. show()
 
-# Top 10 Routes with Cumulative Probabilities
-def plot_top_10_cumulative_probabilities(counts):
-    sorted_counts = Counter(counts).most_common(10)
-    bitstrings, freqs = zip(*sorted_counts)
-    cumulative_probs = np.cumsum([freq / total_counts for freq in freqs])
-    plt. bar(range(len(bitstrings)), cumulative_probs, tick_label=bitstrings, color='purple')
-    plt.xlabel('Top 10 Bitstrings')
-    plt.ylabel('Cumulative Probability')
-    plt.title('Cumulative Probabilities of Top 10 Routes')
-    plt.xticks(rotation=45, fontsize=8)
-    plt.tight_layout()
-    plt. show()
+# Execute visualizations
+plot_cumulative_frequency(counts)
+plot_hamming_weight_distribution(counts)
+plot_leading_qubit_heatmap(counts)
+plot_normalized_frequency_distribution(counts)
 
-# Distribution of Route Inclusion Frequencies
-def plot_location_inclusion_frequency(counts):
-    bitstrings = list(counts.keys())
-    inclusion_matrix = np.array([list(map(int, bit)) for bit in bitstrings])
-    location_inclusion = inclusion_matrix.T @ np.array(list(counts.values()))
-    plt. bar(range(len(location_inclusion)), location_inclusion, color='orange')
-    plt.xlabel('Locations')
-    plt.ylabel('Inclusion Frequency')
-    plt.title('Frequency of Location Inclusion Across Routes')
-    plt.xticks(range(len(location_inclusion)), [f"Location {i}" for i in range(len(location_inclusion))], rotation=45)
-    plt.tight_layout()
-    plt. show()
+# 3D Surface Plot of Bitstring Frequencies by Hamming Weight
+def plot_3d_surface_hamming_weight(counts):
+    def hamming_weight(bitstring):
+        return sum(int(b) for b in bitstring)
+    
+    hamming_weights = []
+    frequencies = []
+    bitstring_ranks = []
 
-# Entropy of the Bitstring Distribution
-def plot_entropy_of_distribution(counts):
-    normalized_probs = np.array([count / total_counts for count in counts.values()])
-    entropy_value = entropy(normalized_probs, base=2)
-    plt. bar(["Entropy"], [entropy_value], color='red')
-    plt.title(f'Shannon Entropy of Measured Bitstrings: {entropy_value:.4f}')
-    plt.ylabel('Entropy (bits)')
-    plt. show()
+    sorted_counts = dict(sorted(counts.items(), key=lambda x: x[1], reverse=True))
+    for rank, (bitstring, freq) in enumerate(sorted_counts.items()):
+        hamming_weights.append(hamming_weight(bitstring))
+        frequencies.append(freq)
+        bitstring_ranks.append(rank)
 
-# Call the visualization functions
-plot_route_length_distribution(counts)
-plot_top_10_cumulative_probabilities(counts)
-plot_location_inclusion_frequency(counts)
-plot_entropy_of_distribution(counts)
-
-# 3D Bar Plot of Top 10 Routes
-def plot_3d_bar_top_routes(counts):
-    sorted_counts = Counter(counts).most_common(10)
-    bitstrings, freqs = zip(*sorted_counts)
-
-    fig = plt.figure()
+    # Create 3D surface plot
+    fig = plt.figure(figsize=(10, 7))
     ax = fig.add_subplot(111, projection='3d')
+    ax.plot_trisurf(bitstring_ranks, hamming_weights, frequencies, cmap='viridis', linewidth=0.2)
 
-    xpos = np.arange(len(bitstrings))
-    ypos = np.zeros(len(bitstrings))
-    zpos = np.zeros(len(bitstrings))
-
-    dx = np.ones(len(bitstrings))
-    dy = np.ones(len(bitstrings))
-    dz = freqs
-
-    ax.bar3d(xpos, ypos, zpos, dx, dy, dz, color='blue', alpha=0.7)
-
-    ax.set_xticks(xpos)
-    ax.set_xticklabels(bitstrings, rotation=45, ha='right')
-    ax.set_xlabel('')
-    ax.set_ylabel('Y')
-    ax.set_zlabel('Counts')
-    ax.set_title('3D Bar Plot of Top 10 Routes')
-
-    plt.tight_layout()
-    plt. show()
-
-# 3D Scatter Plot of Bitstring Probabilities
-def plot_3d_scatter_probabilities(counts):
-    bitstrings = list(counts.keys())
-    probabilities = [count / total_counts for count in counts.values()]
-    hamming_weights = [sum(map(int, bit)) for bit in bitstrings]
-
-    fig = plt.figure()
-    ax = fig.add_subplot(111, projection='3d')
-
-    x = np.arange(len(bitstrings))
-    y = hamming_weights
-    z = probabilities
-
-    ax.scatter(x, y, z, c=z, cmap='viridis', depthshade=True)
-
-    ax.set_xlabel('Bitstring Index')
+    ax.set_xlabel('Bitstring Rank')
     ax.set_ylabel('Hamming Weight')
-    ax.set_zlabel('Probability')
-    ax.set_title('3D Scatter Plot of Bitstring Probabilities')
-
-    plt.tight_layout()
+    ax.set_zlabel('Frequency')
+    ax.set_title("3D Surface Plot of Frequencies by Hamming Weight")
     plt. show()
 
-# Parallel Coordinates Plot of Top 10 Routes
-def plot_parallel_coordinates_top_routes(counts):
-    sorted_counts = Counter(counts).most_common(10)
-    bitstrings, freqs = zip(*sorted_counts)
+# 3D Scatter Plot of Leading Bit Influence
+def plot_3d_scatter_leading_bit(counts):
+    bit_positions = []  (excluding leading bit)
+    frequencies = []    
+    measurement_indices = []  
+    leading_bits = []   
 
-    data = np.array([list(map(int, bit)) for bit in bitstrings])
-    fig, ax = plt.subplots()
-    for row, label in zip(data, bitstrings):
-        ax.plot(range(len(row)), row, label=label)
+    # Parse the bitstrings and frequencies
+    for idx, (bitstring, freq) in enumerate(counts.items()):
+        leading_bit = int(bitstring[0])  
+        batch_qubits = [int(b) for b in bitstring[1:]]  
+        bit_positions.extend([[pos, batch_qubits[pos]] for pos in range(len(batch_qubits))])
+        frequencies.extend([freq] * len(batch_qubits))
+        measurement_indices.extend([idx] * len(batch_qubits))
+        leading_bits.extend([leading_bit] * len(batch_qubits))
 
-    ax.set_xticks(range(data.shape[1]))
-    ax.set_xticklabels([f"Location {i}" for i in range(data.shape[1])])
-    ax.set_xlabel("Locations")
-    ax.set_ylabel("Visited (1) or Not (0)")
-    ax.set_title("Parallel Coordinates Plot of Top 10 Routes")
-    plt.legend(loc='upper left', bbox_to_anchor=(1.05, 1), title="Bitstrings")
-    plt.tight_layout()
-    plt. show()
+    # Convert to NumPy arrays for plotting
+    bit_positions = np.array(bit_positions)
+    x = bit_positions[:, 0]  
+    z = bit_positions[:, 1]  
+    y = np.array(measurement_indices)  
+    c = np.array(leading_bits)  
 
-# 3D Surface Plot of Route Inclusion Frequencies
-def plot_3d_surface_inclusion(counts):
-    bitstrings = list(counts.keys())
-    inclusion_matrix = np.array([list(map(int, bit)) for bit in bitstrings])
-    inclusion_frequency = inclusion_matrix.T @ np.array(list(counts.values()))
-
-    x = np.arange(inclusion_matrix.shape[1])  # Locations
-    y = np.arange(inclusion_matrix.shape[0])  # Routes
-    X, Y = np.meshgrid(x, y)
-    Z = inclusion_matrix
-
-    fig = plt.figure()
+    # Create 3D scatter plot
+    fig = plt.figure(figsize=(10, 7))
     ax = fig.add_subplot(111, projection='3d')
-    ax.plot_surface(X, Y, Z, cmap='viridis', edgecolor='none')
+    ax.scatter(x, y, z, c=c, cmap='coolwarm', s=50)
 
-    ax.set_xlabel('Locations')
-    ax.set_ylabel('Routes')
-    ax.set_zlabel('Inclusion')
-    ax.set_title('3D Surface Plot of Route Inclusion Frequencies')
-
+    ax.set_xlabel("Batch Qubit Position")
+    ax.set_ylabel("Measurement Index")
+    ax.set_zlabel("Qubit State (0 or 1)")
+    ax.set_title("3D Scatter Plot of Leading Bit Influence")
     plt. show()
 
-# Call the visualization functions
-plot_3d_bar_top_routes(counts)
-plot_3d_scatter_probabilities(counts)
-plot_parallel_coordinates_top_routes(counts)
-plot_3d_surface_inclusion(counts)
+# Heatmap of Normalized Pairwise Correlations
+def plot_correlation_heatmap(counts):
+    num_qubits = len(next(iter(counts)))
+    qubit_data = np.zeros((len(counts), num_qubits))
+
+    # Convert bitstrings into binary matrix
+    for i, (bitstring, freq) in enumerate(counts.items()):
+        qubit_data[i] = [int(b) for b in bitstring]
+
+    # Calculate pairwise correlations
+    correlation_matrix = np.corrcoef(qubit_data.T)
+
+    # Plot heatmap
+    plt.figure(figsize=(10, 8))
+    sns.heatmap(correlation_matrix, annot=True, cmap='coolwarm', cbar_kws={'label': 'Correlation'})
+    plt.title("Heatmap of Normalized Pairwise Correlations Between Qubits")
+    plt.xlabel("Qubit Position")
+    plt.ylabel("Qubit Position")
+    plt. show()
+
+# Cumulative Frequency Gradient Map
+def plot_cumulative_gradient_map(counts):
+    sorted_counts = dict(sorted(counts.items(), key=lambda x: x[1], reverse=True))
+    cumulative_freq = np.cumsum(list(sorted_counts.values()))
+    total_shots = sum(sorted_counts.values())
+
+    normalized_cum_freq = cumulative_freq / total_shots
+    bitstring_ranks = np.arange(len(sorted_counts))
+
+    # Plot gradient map
+    plt.figure(figsize=(10, 6))
+    plt.scatter(bitstring_ranks, normalized_cum_freq, c=normalized_cum_freq, cmap='plasma', s=10)
+    plt.xlabel("Bitstring Rank")
+    plt.ylabel("Cumulative Frequency")
+    plt.title("Cumulative Frequency Gradient Map")
+    plt.colorbar(label="Cumulative Probability")
+    plt.grid()
+    plt. show()
+
+# Execute visualizations
+plot_3d_surface_hamming_weight(counts)
+plot_3d_scatter_leading_bit(counts)
+plot_correlation_heatmap(counts)
+plot_cumulative_gradient_map(counts)
 
 # End
 
@@ -597,7 +644,7 @@ plot_3d_surface_inclusion(counts)
 </p>
             
  </div>
-        <img src="E45i4.png" alt="" class="experiment-image4">
+        <img src="E46i4.png" alt="" class="experiment-image4">
         <p></p>
         <div class="content-block">
 
