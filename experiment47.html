@@ -97,57 +97,53 @@
     </nav>
 
     <section class="content-section">
-        <h1><center> Quantum Optimization of Neural Network Training Sequences on IBM’s 127-Qubit Quantum Computer </center></h1>
+        <h1><center> Quantum Optimization of Protein Folding Pathways on IBM’s 127-Qubit Quantum Computer </center></h1>
         <div class="content-block">
          
-This experiment optimizes the sequence of training data batches for a neural network using a quantum computer. A control qubit and batch qubits are placed in superposition to represent all possible batch sequences simultaneously. Entanglement with CNOT gates introduces dependencies between the control qubit and batch qubits, while controlled rotations (CR_x​) encode transition costs as rotations on the Bloch sphere, simulating computational effort. Quantum interference amplifies optimal sequences, leading to better convergence rates and reduced training time. The experiment is run on IBM's ibm_kyiv using Qiskit.<br>
-      <br>    
+This experiment aims to predict the folding pathway of a protein by representing intermediate configurations as quantum states and encoding the transition energies between these configurations as rotations on a Bloch sphere. The goal is to minimize the protein’s free energy by identifying the most energetically favorable folding sequence. Using quantum superposition and interference, the circuit evaluates all possible folding pathways simultaneously. This experiment is run on IBM’s ibm_brisbane using Qiskit.      <br>    
+<br>
 <p>1. Problem <br>
-The goal is to optimize the order in which training data batches are presented to a neural network to:<br>
-a. Minimize computational transition costs between consecutive batches.<br>
-b. Simulate error gradients akin to stochastic gradient descent to refine convergence.<br>
-The transition cost is represented mathematically as:<br>
+The protein folding pathway problem is modeled as a sequence of transitions between intermediate configurations. Each transition has an associated energy cost, and the goal is to identify the pathway that minimizes the total free energy. The transition energy between two configurations is encoded using the controlled rotation angle:<br>
 θ_i ​= π/(2i)​<br>
-where i is the batch index, and θ_i​ determines the angle of controlled rotations applied to encode computational effort.
+where i is the index of the intermediate configuration.
 ​<br>
 
-<p>2. Backend Calibration Data Loading<br>
-Calibration data for ibm_kyiv is loaded.<br>
-The data includes: <br>
+<p>2. Backend Calibration Data<br>
+To make sure optimal circuit execution, backend calibration data is loaded and analyzed. Key metrics include:<br>
 √x (sx) error: Error rate for single qubit operations.<br>
-T_1 (relaxation time): Time for a qubit to return to its ground state.<br>
-T_2 (decoherence time): Time over which quantum states remain coherent.<br>
-The qubits are sorted by minimizing error and maximizing T_1​ and T_2. The best qubits are selected for use:<br>
-Sort by: {√x error (ascending), T_1​ (descending), T_2​ (descending)}<br>
+T_1​ (Relaxation time): Time for a qubit to return to its ground state.<br>
+T_2​ (Decoherence time): Time over which a qubit maintains coherence.<br>
+The best qubits are selected based on the following sorting criteria:<br>
+Minimize √x​ error (ascending order).<br>
+Maximize T_1​ (descending order).<br>
+Maximize T_2​ (descending order).<br>
+This makes sure the most reliable qubits are used for the experiment.<br>
 
-<p>3. Register Initialization<br>
-A Quantum Register Q with N + 1 qubits is created:<br>
-Q_0​: Bloch clock qubit (control qubit).<br>
-Q_1, Q_2, ..., Q_N​: Represent training data batches.<br>
-A Classical Register C with N + 1 bits records measurement outcomes.<br>
+<p>3. Quantum Circuit Setup<br>
+The circuit is designed with N + 1 qubits, where N represents the number of intermediate configurations.<br>
+Control qubit (Q_0​) represents the initial state of the protein.<br>
+Intermediate configuration qubits (Q_1, Q_2, ..., Q_N​) represent possible protein folding states.<br>
+Classical register (C) records measurement outcomes.<br>
 
 
 
 
 
 
-<p>4. Superposition of States<br>
-The Bloch clock qubit Q_0 is initialized into a superposition state:<br>
-∣Q_0⟩ = H ∣0⟩ = 1/sqrt(2) * (∣0⟩ + ∣1⟩)<br>
-where H is the Hadamard gate.<br>
-Each data batch qubit Q_i​ is also initialized into superposition:<br>
+<p>4. Initialization of Superposition States<br>
+All qubits are initialized into a superposition state to represent all possible folding pathways simultaneously:<br>
 ∣Q_i​⟩ = H ∣0⟩ = 1/sqrt(2) * ​​(∣0⟩ + ∣1⟩)<br>
-This ensures all possible training batch sequences are represented simultaneously.<br>
+where H is the Hadamard gate. This step ensures that the quantum system explores every potential folding pathway concurrently.<br>
     
 
 
 
 
 
-<p>5. Entanglement Between Bloch Clock and Data Batches<br>
-To simulate dependencies between training batches and the Bloch clock, controlled-X (CNOT) gates are applied:<br>
+<p>5. Entanglement Between Configurations<br>
+The control qubit (Q_0​) is entangled with each intermediate configuration qubit (Q_i​) using controlled-X (CNOT) gates:<br>
 CNOT(Q_0​, Q_i​)<br>
-This entangles Q_0​ with each batch qubit Q_i​, so the state of Q_0​ influences the other qubits.<br>
+This step introduces dependencies between the control qubit (initial state) and intermediate configurations, enabling the encoding of meaningful correlations.<br>
 
 
 
@@ -156,116 +152,101 @@ This entangles Q_0​ with each batch qubit Q_i​, so the state of Q_0​ influ
 
 
 
-<p>6. Encoding Computational Transition Costs<br>
-The computational cost of transitioning between consecutive data batches is encoded using controlled R_x rotations:<br>
+<p>6. Encoding Transition Energies<br>
+Transition energies between configurations are represented as controlled R_x​ rotations:<br>
 CR_x​(θ_i​) =<br>
 [ 1,          0,                     0,              0 <br>
   0, cos(θ_i​/2), -i sin(θ_i​/2), 0<br>
   0, -i sin(θ_i​/2), cos(θ_i​/2), 0<br>
   0,          0,                     0,              1 ]<br>
-where θ_i = π/2i​. These rotations reflect the cost associated with transitioning between batches.<br>
-The gate is applied as:<br>
-CR_x​(θ_i​, Q_0​, Q_i​)<br>
-
+The controlled rotation gate CR_x(θ_i) is applied between the control qubit and each intermediate configuration qubit. The angle θ_i = π/2i reflects the energy cost of transitioning to configuration i.
+<br>
 
 
 
 
     
-<p>7. Simulating Error Gradients<br>
-To simulate error gradients similar to stochastic gradient descent, small single qubit rotations are applied to the Bloch clock qubit:<br>
-R_x​(π​/16), R_y​(π​/16​), R_z​(π​/16​)<br>
-These gates introduce noise and interference to refine the optimization process.<br>
+<p>7. Simulating Perturbations<br>
+To simulate realistic energy fluctuations and refine pathway selection, small perturbations are applied to the control qubit:<br>
+R_x​(π/16), R_y​(π/16), R_z​(π/16)<br>
+These gates mimic stochastic effects similar to those in protein folding environments.<br>
 
 <p>8. Measurement <br>
-The quantum circuit is measured:<br>
-Measure Q → C<br>
-Each bitstring obtained from measurement represents a specific sequence of training batches. The frequency of each bitstring indicates the likelihood of that sequence being optimal.<br>
-
+The quantum circuit is measured, with each bitstring representing a specific folding pathway. The frequency of each bitstring in the measurement results corresponds to the likelihood of that pathway being energetically favorable.
+<br>
 
 
 <p>9. Transpilation<br>
-Transpiled for ibm_kyiv. Executed with 16384 shots.<br>
+The circuit is transpiled for ibm_brisbane. <br>
 
 
 
 <p>10. Results<br>
-Results are saved to a json. A histogram of the bitstring counts is plotted.
+The transpiled circuit is executed with 16,384 shots. Measurement results are extracted, and the counts for each bitstring are analyzed.
 
+<p>11. Visual<br>
+A histogram of the bitstring counts is plotted.
 
 
     
     
 <p><center> Results:</center><br>
 
-Results<br>
-"raw_counts" {<br>
-0101111 -- 476,<br>
-1000011 -- 98,<br>
-1001001 -- 310,<br>
-0101110 -- 121,<br>
-0011011 -- 141,<br>
-0100001 -- 253,<br>
-0001101 -- 639,<br>
-1011001 -- 66, ...<br>
-}<br>
-
-Top 10 Optimal Sequences:<br>
-0001001 -- 758<br>
-0101001 -- 706<br>
-0001101 -- 639<br>
-0001011 -- 626<br>
-0101101 -- 615<br>
-0101011 -- 587<br>
-0101111 -- 476<br>
-0001111 -- 459<br>
-1101001 -- 335<br>
-1001001 -- 310<br>
-These sequences dominate the distribution, implying these configurations are energetically favorable based on the computational cost. Lower frequency bitstrings (1100110, 1000010) occur sporadically, meaning suboptimal configurations. The high frequency sequences exhibit clustering near specific bit pattern families (those starting with 0 or 010), reflecting symmetry in the entanglement and rotation structure.<br>    
+Top String: 01110100111 with 28 counts.<br>
+Top 10 Strings (by frequency):<br>
+01110100111 -  28 counts<br>
+01110100001 -  21 counts<br>
+01000110010 -  25 counts<br>
+01110011011 -  24 counts<br>
+11000110001 -  23 counts<br>
+01110001011 -  23 counts<br>
+01110111101 - 22 counts<br>
+11110110111 - 22 counts<br>
+11110100001 - 22 counts<br>
+11100011101 - 21 counts<br>
+These results confirm that specific folding pathways are energetically preferred, as indicated by their high recurrence.
 <br>
 </div>
-        <img src="E46i1.png" alt="" class="experiment-image">
+        <img src="E47i1.png" alt="" class="experiment-image">
         <p></p>
         <div class="content-block">
 <br>
             
-The Histogram of All Quantum Measurement Outcomes above (code below) shows a clear skewed distribution with certain bitstrings appearing far more frequently than others. The bitstrings with higher frequencies represent near optimal sequences for presenting the training batches. These sequences likely correspond to reduced transition costs encoded in the experiment with controlled rotations (CR_x gates). The long tail indicates noise or suboptimal configurations where transition costs are higher. These may represent less efficient orders for training data presentation.
+The Histogram of Protein Folding Pathway Frequencies above (code below) displays the frequencies of each bitstring (protein folding pathway) from the experiment, highlighting the most frequently measured pathways. Pathways with the highest frequencies represent the most energetically favorable folding states based on the quantum interference of the circuit. Dominant bitstrings indicate folding pathways with minimal free energy, aligning with the physical objective of protein folding. Lesser frequent bitstrings might reflect noise or energetically less favorable pathways.
 <br>
-The Top 10 Most Frequent Quantum Measurement Outcomes above (code below) shows the 10 most frequent bitstrings in the results, such as 0001001, 0101001, 1000110, etc. These top bitstrings represent the most energetically favorable training sequences. Their repeated appearance across 16384 shots signifies that they are more probable due to minimal encoded costs. For a neural network, this predicts these sequences would lead to better convergence rates and reduced training time when batches are presented in this order. 
+The Cumulative Frequency Distribution of Pathways above (code below) shows the frequencies of pathways in ranked order to show how many pathways contribute to the majority of measurements. A steep initial rise in the cumulative frequency curve indicates that a small subset of pathways accounts for a large portion of the measurements. This aligns with the expected behavior that a few energetically favorable configurations dominate the folding process.
 <br>
-The Distribution of Leading Bits (Control Qubit Influence) above (code below) shows a significant imbalance, with the leading bit '0' dominating the results. Approximately 70 - 75% of outcomes correspond to states where the control qubit remained in ∣0⟩, while fewer measurements reflect ∣1⟩. The dominance of the ∣0⟩ state suggests that low computational cost transitions are more likely when the control qubit remains in its lower energy state. When the control qubit is ∣1⟩, the entanglement may have resulted in higher transition costs, making those sequences less probable. 
+The Heatmap of Transition Costs Across Pathways above (code below) maps the bit values (0 or 1) for different pathways and qubits, effectively showing the structure of transitions between intermediate protein configurations. Clustering patterns or repetitive structures in the heatmap suggest symmetries in the folding process or recurring structural motifs in the protein. Areas with high contrast might represent configurations where energy differences between transitions are pronounced. 
 <br>
-The Heatmap of Bitstring Frequency Patterns above (code below) shows the intensity of bitstring frequencies across all qubit positions. Specific qubits (likely representing certain data batches) exhibit consistent patterns across optimal bitstrings, indicating that their states are more stable and contribute more to low cost paths. The deep red regions reflect highly correlated positions in the bitstrings, where entanglement and controlled rotations influenced the batch transitions strongly.             
+The Cluster Analysis of Protein Folding Pathways above (code below), using PCA and K-means clustering, plots groups pathways into clusters based on similarity in their bitstring representation. Distinct clusters represent families of folding pathways with shared structural or energetic properties. Clusters with higher density likely correspond to dominant folding patterns, while sparse clusters may reflect rare or suboptimal configurations.<br>
 <br>
-
-        <img src="E46i2.png" alt="" class="experiment-image">
+        <img src="E47i2.png" alt="" class="experiment-image">
         <p></p>
         <div class="content-block">
 <br>
-The Cumulative Frequency Distribution of Measurement Outcomes above (code below) starts at 0 and quickly rises to a plateau near 1.0. Approximately 20 - 30 bitstrings account for nearly 80% of the cumulative probability. These high probability bitstrings represent optimal training sequences where the transition costs (encoded with controlled rotations CR_x​) are minimized. The steep initial rise confirms that the circuit successfully prioritized a narrow range of sequences over noisy or suboptimal configurations.
+The Pathway Dominance Pie Chart chart above (code below) shows the proportion of measurement results contributed by the top pathways compared to others. 'Others' represents the sum of frequencies for all pathways outside the top contributors. The top pathways each contribute a small but significant percentage, indicating a long tail distribution where a few pathways dominate the remaining minority. The chart shows the quantum system’s ability to focus probability amplitudes on specific folding pathways.
 <br>
-The Frequency Distribution by Hamming Weight above (code below) is bell shaped, with a peak at Hamming weights 3 and 4. States with very low or very high Hamming weights (0, 1, 6, and 7) are relatively rare. The most frequent states have balanced configurations (around 3 - 4 1s), suggesting that sparser or denser states are less likely to appear in optimal solutions. In the context of training data batches, sequences which distribute computational effort evenly (neither too sparse nor too dense) are energetically favorable.
+The Energy Landscape Bar Plot above (code below) maps folding pathways (bitstrings) to their estimated transition energies. Lower transition energies represent more favorable pathways. The flat top clustering of energies at higher levels may indicate degeneracies or pathways that are energetically similar but less favorable. The lowest energy pathways are more likely to represent the protein’s folded state, minimizing free energy.
 <br>
-The Heatmap of Batch Qubit Patterns for Leading Bit '1' above (code below) shows strong red intensity (state 1) at specific batch qubit positions (position 5), while other positions remain predominantly blue (state 0). This suggests that certain training batches (associated with positions 4 - 5) have higher transition costs, and their behavior is tightly coupled to the control qubit. These positions likely play a critical role in determining the overall sequence optimization, as the entanglement amplifies their computational effort.
+The Entropy Distribution above (code below) calculates the Shannon entropy as more pathways are included, showing how spread out or uncertain the measurements are across pathways. The steep initial rise in entropy indicates a diverse set of pathways contributing to the initial results. The curve eventually flattens, suggesting a saturation point where additional pathways contribute minimally to the overall uncertainty. High entropy in the early pathways reflects the inherent complexity and probabilistic nature of protein folding, while the saturation implies the quantum system’s focus on key pathways.
 <br>
-The Normalized Frequency Distribution of Quantum Measurement Outcomes above (code below) mirrors the earlier histogram but scales all counts to probabilities. The normalized view allows us to observe the relative probabilities of bitstrings without the influence of absolute shot counts. The drop off indicates that the quantum experiment successfully amplified certain paths (optimal batch orders), while suppressing less favorable paths.<br>
+The Principal Component Trajectory of Pathways above (code below) reduces the high dimensional bitstring data into two components, grouping pathways by similarity. The size and color intensity of points correspond to their frequency. Dense clusters represent groups of pathways with similar folding properties, indicating common structural or energetic patterns. Outliers or sparsely distributed points may represent rare configurations that are less probable.<br>            
+<br>
+        <img src="E47i3.png" alt="" class="experiment-image">
+        <p></p>
+        <div class="content-block">
+<br>
+
+The 3D Energy Landscape of Protein Folding Pathways above (code below) shows the transition energy of pathways along their indices. The peaks and valleys represent different energy levels, showing how certain pathways dominate. High energy pathways are sparse, indicating a small number of configurations requiring significant computational effort. The clustering of lower energy pathways suggests that the majority of configurations are energetically favorable, reinforcing the idea that proteins naturally fold into low energy states.
+<br>
+The Transition Pathway Network above (code below) graphs where nodes represent pathways and the edges show possible transitions between them. The connectivity suggests that proteins can transition between multiple configurations before settling into their final folded state. The symmetry and density of the network highlight strength in the folding process, where multiple pathways may lead to similar final states.
+<br>
+The 2D Heatmap of Aggregated Pathway Frequencies above (code below) shows a grid based heatmap where the color intensity corresponds to the frequency of configurations associated with the first two qubits. Pathways starting with specific qubit states (Qubit 1: 0 and Qubit 2: 1) are more likely to be energetically favorable. The asymmetry in the heatmap suggests that certain initial conditions (qubit states) strongly influence the folding pathway's likelihood.
+<br>
+The Cumulative Energy Distribution Across Pathways above (code below) shows how the total energy accumulates as pathways are sorted by their energy. Most of the energy is concentrated in a small subset of pathways, aligning with the expectation that proteins fold through energetically efficient paths. The long tail of high energy states suggests that outlier configurations exist but contribute minimally.
+<br>
+In the end, this experiment explored protein folding optimization using IBM's 127-qubit quantum computer. The goal was to simulate folding pathways as quantum states, where each pathway represents a configuration of the protein, and the transitions between configurations correspond to the computational effort required to achieve minimal free energy. By encoding the folding landscape into quantum superpositions, entanglement, and rotations, the circuit used quantum interference to identify the most energetically favorable pathways.<br>
 <br>            
-        <img src="E46i3.png" alt="" class="experiment-image">
-        <p></p>
-        <div class="content-block">
-<br>
-
-The 3D Surface Plot of Frequencies by Hamming Weight above (code below) shows that lower Hamming weights (0 - 3) and higher ranked bitstrings dominate the frequency landscape. Optimal training sequences are concentrated in bitstrings with lower Hamming weights. This suggests that sparse states, where only a few batches are active or engaged at a time, are preferred. The steep drop off indicates that adding more active batches increases transition costs (encoded as rotations), making those configurations less optimal.
-<br>
-The 3D Scatter Plot of Leading Bit Influence above (code below) shows the influence of the leading qubit (control qubit) on batch qubit states. The control qubit (Q_0​) exerts a strong influence on specific batch qubits, determining their state in optimal sequences. The systematic toggling suggests that when the control qubit is ∣1⟩, specific batch qubits align to minimize transition costs. The structure also confirms the effectiveness of the entanglement scheme in simulating batch dependencies.
-<br>
-The Heatmap of Normalized Pairwise Correlations Between Qubits above (code below) shows zero correlations between most qubits, except for strong diagonal correlations (r = 1), which are expected. There are no off diagonal correlations, indicating minimal dependencies between batch qubits beyond the control qubit's influence. This structured independence is important, as excessive correlations between qubits can lead to computational noise or interference.
-<br>
-The Cumulative Frequency Gradient Map above (code below) shows the dominance of a small subset of solutions, where transition costs are minimized. The steep gradient reflects strong quantum interference effects amplifying these optimal bitstrings while suppressing suboptimal sequences. The smooth flattening of the tail highlights the impact of quantum uncertainty, which still allows less optimal configurations to appear.
-<br>
-In the end, this experiment used IBM's ibm_kyiv 127-qubit quantum computer to optimize the order of training data batches for a neural network, minimizing the computational effort required for batch transitions. The circuit placed the control qubit and batch qubits into superposition to represent all possible batch sequences simultaneously. Entanglement with CNOT gates introduced dependencies between the control and batch qubits, while controlled rotations (CR_x​) encoded transition costs as rotations on the Bloch sphere. This approach successfully simulated computational effort, resulting in better convergence rates and reduced training time.<br>          
-<br>
-            
             <p>Code:<br>
             <p><pre><code>
 # Imports
@@ -277,7 +258,6 @@ from qiskit import QuantumCircuit, QuantumRegister, ClassicalRegister, transpile
 from qiskit_ibm_runtime import QiskitRuntimeService, Session, SamplerV2
 from qiskit.visualization import plot_histogram
 import matplotlib.pyplot as plt
-from collections import Counter
 
 # Logging
 logging.basicConfig(level=logging. INFO, format='%(asctime)s - %(levelname)s - %(message)s')
@@ -287,75 +267,72 @@ logger = logging.getLogger(__name__)
 def load_calibration_data(file_path):
     logger. info("Loading calibration data from %s", file_path)
     calibration_data = pd. read_csv(file_path)
-    calibration_data.columns = calibration_data.columns.str.strip()  
-    logger. info("Calibration data loaded")
+    calibration_data.columns = calibration_data.columns.str.strip()
+    logger. info("Calibration data loaded successfully")
     return calibration_data
 
 # Parse calibration data
 def select_best_qubits(calibration_data, n_qubits):
     logger. info("Selecting the best qubits based on T1, T2, and error rates")
-    qubits_sorted = calibration_data.sort_values(by=['√x (sx) error', 'T1 (us)', 'T2 (us)'], ascending=[True, False, False])
+    qubits_sorted = calibration_data.sort_values(by=['\u221ax (sx) error', 'T1 (us)', 'T2 (us)'], ascending=[True, False, False])
     best_qubits = qubits_sorted['Qubit'].head(n_qubits).tolist()
     logger. info("Selected qubits: %s", best_qubits)
     return best_qubits
 
 # Load backend calibration data
-calibration_file = '/Users/Downloads/ibm_kyiv_calibrations_2024-12-17T21_03_05Z.csv'
+calibration_file = '/Users/Downloads/ibm_brisbane_calibrations_2024-12-18T17_08_04Z.csv'
 calibration_data = load_calibration_data(calibration_file)
 
-# Select best qubits on T1, T2, and error rates
-num_batches = 6  
-best_qubits = select_best_qubits(calibration_data, num_batches + 1)
+# Select best qubits based on T1, T2, and error rates
+num_intermediate_configs = 10  
+best_qubits = select_best_qubits(calibration_data, num_intermediate_configs + 1)
 
 # IBMQ 
-logger. info("Setting up IBMQ service")
+logger. info("Setting up IBM Q service")
 service = QiskitRuntimeService(
     channel='ibm_quantum',
     instance='ibm-q/open/main',
     token='YOUR_IBMQ_API_KEY_O-`'  
 )
 
-# Backend
-backend_name = 'ibm_kyiv'
+backend_name = 'ibm_brisbane'
 backend = service.backend(backend_name)
 logger. info("Backend selected: %s", backend_name)
 
 # Quantum and classical registers
-qr = QuantumRegister(num_batches + 1, 'batch')  
-cr = ClassicalRegister(num_batches + 1, 'meas')
+qr = QuantumRegister(num_intermediate_configs + 1, 'config')  
+cr = ClassicalRegister(num_intermediate_configs + 1, 'meas')
 qc = QuantumCircuit(qr, cr)
 
-# Bloch Clock Qubit
+# Initialize Control Qubit which represents the initial state of the protein and intermediate configurations represent possible folding states
 qc.h(qr[0])  
+for i in range(1, num_intermediate_configs + 1):
+    qc.h(qr[i])
 
-# Place Batches (Training Sequences) into Superposition
-for i in range(1, num_batches + 1):
-    qc.h(qr[i])  
+# Entangle Control Qubit with Intermediate Protein Configurations
+for i in range(1, num_intermediate_configs + 1):
+    qc. cx(qr[0], qr[i])
 
-# Entangle Control Qubit with Data Batches 
-for i in range(1, num_batches + 1):
-    qc. cx(qr[0], qr[i])  
+# Encode Transition Energies Between Configurations (Transition energies represent the free energy difference between folding states)
+for i in range(1, num_intermediate_configs + 1):
+    energy_angle = np.pi / (2 * i)  
+    qc.crx(energy_angle, qr[0], qr[i])
 
-# Encode Transition Effort Between Training Batches
-for i in range(1, num_batches + 1):
-    angle = np.pi / (2 * i)  
-    qc.crx(angle, qr[0], qr[i]) 
-
-# Error Gradients 
-qc.rx(np.pi / 16, qr[0])  
+# Apply Energy Perturbations to Simulate Noise in Folding Pathway
+qc.rx(np.pi / 16, qr[0])
 qc.ry(np.pi / 16, qr[0])
 qc.rz(np.pi / 16, qr[0])
 
-# Measurement
+# Measures the most likely folding pathways
 qc.measure(qr, cr)
 
-# Transpile
+# Transpile 
 logger. info("Transpiling the quantum circuit for the backend")
 qc_transpiled = transpile(qc, backend=backend, optimization_level=3)
 logger. info("Circuit transpilation complete")
 
 # Execute 
-shots = 16384 
+shots = 16384
 with Session(service=service, backend=backend) as session:
     sampler = SamplerV2(session=session)
     logger. info("Executing the circuit on the backend")
@@ -364,287 +341,282 @@ with Session(service=service, backend=backend) as session:
 
     # Extract BitArray counts
     data_bin = job_result._pub_results[0]['__value__']['data']
-    bit_array = data_bin['meas']  
-    counts = bit_array.get_counts()  
+    bit_array = data_bin['meas']  # Extract the BitArray
+    counts = bit_array.get_counts()  # Use get_counts method
 
     # Save json
     results_data = {"raw_counts": counts}
-    file_path = '/Users/Documents/QNN_TrainingSequence_Results_0.json'
+    file_path = '/Users/Documents/QProtein_Folding_Results_0.json'
     with open(file_path, 'w') as f:
         json.dump(results_data, f, indent=4)
     logger. info("Results saved to %s", file_path)
 
-# Visual
+# Visualizes the likelihood of each folding pathway 
 plot_histogram(counts)
-plt.title("Optimized Training Batch Sequences")
+plt.title("Optimized Protein Folding Pathways")
 plt. show()
 
-Code for all Visuals from Run Data
+Code For All Visuals From Run Data
 # Imports
-import json
-import numpy as np
 import matplotlib.pyplot as plt
-import seaborn as sns
-import pandas as pd
-from collections import defaultdict
-from collections import defaultdict, Counter
+from collections import Counter
+import numpy as np
+import json
+from scipy.stats import entropy
+from sklearn.decomposition import PCA
 from mpl_toolkits.mplot3d import Axes3D
+import networkx as nx
+from scipy.stats import gaussian_kde
 
-# Load data
-file_path = '/Users/Documents/QNN_TrainingSequence_Results_0.json'
+# Load results
+file_path = '/Users/Documents/QProtein_Folding_Results_0.json'
 with open(file_path, 'r') as f:
-    results = json.load(f)
+    data = json.load(f)
 
-counts = results['raw_counts']
+raw_counts = data['raw_counts']
 
-# Histogram of All Measurement Outcomes
-def plot_full_histogram(counts):
-    sorted_counts = dict(sorted(counts.items(), key=lambda x: x[1], reverse=True))
-    plt.figure(figsize=(12, 6))
-    plt. bar(sorted_counts.keys(), sorted_counts.values(), color='blue')
+# Histogram of Bitstring Frequencies
+def plot_histogram(raw_counts):
+    sorted_counts = sorted(raw_counts.items(), key=lambda x: x[1], reverse=True)
+    bitstrings, frequencies = zip(*sorted_counts[:50])  
+    plt.figure(figsize=(15, 8))
+    plt. bar(bitstrings, frequencies, color='blue', alpha=0.7)
     plt.xticks(rotation=90, fontsize=8)
-    plt.xlabel("Bitstrings")
+    plt.xlabel("Bitstrings (Protein Folding Pathways)")
     plt.ylabel("Frequency")
-    plt.title("Histogram of All Quantum Measurement Outcomes")
+    plt.title("Histogram of Protein Folding Pathway Frequencies")
     plt. show()
-
-# Top 10 Most Frequent Bitstrings
-def plot_top_10_sequences(counts):
-    df = pd.DataFrame(counts.items(), columns=["Bitstring", "Frequency"])
-    df_sorted = df.sort_values(by="Frequency", ascending=False).head(10)
-    print("Top 10 Optimal Sequences:\n", df_sorted)
-
-    plt.figure(figsize=(8, 5))
-    plt. bar(df_sorted["Bitstring"], df_sorted["Frequency"], color='green')
-    plt.xlabel("Top 10 Bitstrings")
-    plt.ylabel("Frequency")
-    plt.title("Top 10 Most Frequent Quantum Measurement Outcomes")
-    plt. show()
-
-# Distribution of Leading Bits
-def plot_leading_bit_distribution(counts):
-    leading_bit_counts = defaultdict(int)
-    for bitstring, freq in counts.items():
-        leading_bit = bitstring[0]
-        leading_bit_counts[leading_bit] += freq
-
-    plt.figure(figsize=(6, 4))
-    plt. bar(leading_bit_counts.keys(), leading_bit_counts.values(), color='purple')
-    plt.xlabel("Leading Bit (Control Qubit State)")
-    plt.ylabel("Total Frequency")
-    plt.title("Distribution of Leading Bits (Control Qubit Influence)")
-    plt. show()
-
-# Heatmap of Bitstring Frequency Patterns
-def plot_bitstring_heatmap(counts):
-    num_qubits = len(next(iter(counts)))  
-    bit_matrix = np.zeros((len(counts), num_qubits))
-
-    for i, (bitstring, freq) in enumerate(counts.items()):
-        for j, bit in enumerate(bitstring):
-            bit_matrix[i, j] = int(bit) * freq
-
-    bit_matrix = bit_matrix / bit_matrix.max()
-
-    plt.figure(figsize=(10, 6))
-    sns.heatmap(bit_matrix, cmap="coolwarm", cbar_kws={'label': 'Frequency Intensity'})
-    plt.xlabel("Bit Position")
-    plt.ylabel("Bitstring Index")
-    plt.title("Heatmap of Bitstring Frequency Patterns")
-    plt. show()
-
-# Execute
-plot_full_histogram(counts)
-plot_top_10_sequences(counts)
-plot_leading_bit_distribution(counts)
-plot_bitstring_heatmap(counts)
 
 # Cumulative Frequency Distribution
-def plot_cumulative_frequency(counts):
-    sorted_counts = dict(sorted(counts.items(), key=lambda x: x[1], reverse=True))
-    cumulative_freq = np.cumsum(list(sorted_counts.values()))
-    total_shots = sum(sorted_counts.values())
-    normalized_cum_freq = cumulative_freq / total_shots
-
-    plt.figure(figsize=(8, 5))
-    plt.plot(range(len(sorted_counts)), normalized_cum_freq, marker='o', color='blue')
-    plt.xlabel("Ranked Bitstrings")
-    plt.ylabel("Cumulative Probability")
-    plt.title("Cumulative Frequency Distribution of Measurement Outcomes")
-    plt.grid()
-    plt. show()
-
-# Frequency Distribution by Hamming Weight
-def plot_hamming_weight_distribution(counts):
-    def hamming_weight(bitstring):
-        return sum(int(bit) for bit in bitstring)
-
-    hamming_weights = [hamming_weight(b) for b in counts.keys()]
-    hamming_counts = Counter(hamming_weights)
-
-    plt.figure(figsize=(8, 5))
-    plt. bar(hamming_counts.keys(), hamming_counts.values(), color='orange')
-    plt.xlabel("Hamming Weight (Number of '1's)")
-    plt.ylabel("Frequency")
-    plt.title("Frequency Distribution by Hamming Weight")
-    plt. show()
-
-# Top Leading Qubit Patterns Heatmap
-def plot_leading_qubit_heatmap(counts):
-    num_qubits = len(next(iter(counts)))  
-    leading_bit_patterns = []
-
-    for bitstring, freq in counts.items():
-        leading_bit = bitstring[0]
-        pattern = [int(b) for b in bitstring[1:]]  
-        leading_bit_patterns.extend([pattern] * freq if leading_bit == '1' else [])
-
-    # Convert patterns to heatmap matrix
-    if leading_bit_patterns:
-        heatmap_matrix = np.array(leading_bit_patterns[:100]) 
-        plt.figure(figsize=(10, 6))
-        sns.heatmap(heatmap_matrix, cmap="coolwarm", cbar_kws={'label': 'State (0 or 1)'})
-        plt.xlabel("Batch Qubit Position")
-        plt.ylabel("Measurement Index")
-        plt.title("Heatmap of Batch Qubit Patterns for Leading Bit '1'")
-        plt. show()
-    else:
-        print("No patterns found for leading bit '1'.")
-
-# Normalized Frequency Distribution
-def plot_normalized_frequency_distribution(counts):
-    total_shots = sum(counts.values())
-    normalized_counts = {k: v / total_shots for k, v in counts.items()}
-    sorted_counts = dict(sorted(normalized_counts.items(), key=lambda x: x[1], reverse=True))
-
+def plot_cumulative_frequency(raw_counts):
+    sorted_frequencies = sorted(raw_counts.values(), reverse=True)
+    cumulative = np.cumsum(sorted_frequencies) / sum(sorted_frequencies)
     plt.figure(figsize=(10, 6))
-    plt. bar(sorted_counts.keys(), sorted_counts.values(), color='purple')
-    plt.xticks(rotation=90, fontsize=8)
-    plt.xlabel("Bitstrings")
-    plt.ylabel("Normalized Frequency")
-    plt.title("Normalized Frequency Distribution of Quantum Measurement Outcomes")
-    plt. show()
-
-# Execute visualizations
-plot_cumulative_frequency(counts)
-plot_hamming_weight_distribution(counts)
-plot_leading_qubit_heatmap(counts)
-plot_normalized_frequency_distribution(counts)
-
-# 3D Surface Plot of Bitstring Frequencies by Hamming Weight
-def plot_3d_surface_hamming_weight(counts):
-    def hamming_weight(bitstring):
-        return sum(int(b) for b in bitstring)
-    
-    hamming_weights = []
-    frequencies = []
-    bitstring_ranks = []
-
-    sorted_counts = dict(sorted(counts.items(), key=lambda x: x[1], reverse=True))
-    for rank, (bitstring, freq) in enumerate(sorted_counts.items()):
-        hamming_weights.append(hamming_weight(bitstring))
-        frequencies.append(freq)
-        bitstring_ranks.append(rank)
-
-    # Create 3D surface plot
-    fig = plt.figure(figsize=(10, 7))
-    ax = fig.add_subplot(111, projection='3d')
-    ax.plot_trisurf(bitstring_ranks, hamming_weights, frequencies, cmap='viridis', linewidth=0.2)
-
-    ax.set_xlabel('Bitstring Rank')
-    ax.set_ylabel('Hamming Weight')
-    ax.set_zlabel('Frequency')
-    ax.set_title("3D Surface Plot of Frequencies by Hamming Weight")
-    plt. show()
-
-# 3D Scatter Plot of Leading Bit Influence
-def plot_3d_scatter_leading_bit(counts):
-    bit_positions = []  (excluding leading bit)
-    frequencies = []    
-    measurement_indices = []  
-    leading_bits = []   
-
-    # Parse the bitstrings and frequencies
-    for idx, (bitstring, freq) in enumerate(counts.items()):
-        leading_bit = int(bitstring[0])  
-        batch_qubits = [int(b) for b in bitstring[1:]]  
-        bit_positions.extend([[pos, batch_qubits[pos]] for pos in range(len(batch_qubits))])
-        frequencies.extend([freq] * len(batch_qubits))
-        measurement_indices.extend([idx] * len(batch_qubits))
-        leading_bits.extend([leading_bit] * len(batch_qubits))
-
-    # Convert to NumPy arrays for plotting
-    bit_positions = np.array(bit_positions)
-    x = bit_positions[:, 0]  
-    z = bit_positions[:, 1]  
-    y = np.array(measurement_indices)  
-    c = np.array(leading_bits)  
-
-    # Create 3D scatter plot
-    fig = plt.figure(figsize=(10, 7))
-    ax = fig.add_subplot(111, projection='3d')
-    ax.scatter(x, y, z, c=c, cmap='coolwarm', s=50)
-
-    ax.set_xlabel("Batch Qubit Position")
-    ax.set_ylabel("Measurement Index")
-    ax.set_zlabel("Qubit State (0 or 1)")
-    ax.set_title("3D Scatter Plot of Leading Bit Influence")
-    plt. show()
-
-# Heatmap of Normalized Pairwise Correlations
-def plot_correlation_heatmap(counts):
-    num_qubits = len(next(iter(counts)))
-    qubit_data = np.zeros((len(counts), num_qubits))
-
-    # Convert bitstrings into binary matrix
-    for i, (bitstring, freq) in enumerate(counts.items()):
-        qubit_data[i] = [int(b) for b in bitstring]
-
-    # Calculate pairwise correlations
-    correlation_matrix = np.corrcoef(qubit_data.T)
-
-    # Plot heatmap
-    plt.figure(figsize=(10, 8))
-    sns.heatmap(correlation_matrix, annot=True, cmap='coolwarm', cbar_kws={'label': 'Correlation'})
-    plt.title("Heatmap of Normalized Pairwise Correlations Between Qubits")
-    plt.xlabel("Qubit Position")
-    plt.ylabel("Qubit Position")
-    plt. show()
-
-# Cumulative Frequency Gradient Map
-def plot_cumulative_gradient_map(counts):
-    sorted_counts = dict(sorted(counts.items(), key=lambda x: x[1], reverse=True))
-    cumulative_freq = np.cumsum(list(sorted_counts.values()))
-    total_shots = sum(sorted_counts.values())
-
-    normalized_cum_freq = cumulative_freq / total_shots
-    bitstring_ranks = np.arange(len(sorted_counts))
-
-    # Plot gradient map
-    plt.figure(figsize=(10, 6))
-    plt.scatter(bitstring_ranks, normalized_cum_freq, c=normalized_cum_freq, cmap='plasma', s=10)
-    plt.xlabel("Bitstring Rank")
+    plt.plot(cumulative, marker='o', linestyle='-', color='green')
+    plt.xlabel("Number of Pathways (Ranked)")
     plt.ylabel("Cumulative Frequency")
-    plt.title("Cumulative Frequency Gradient Map")
-    plt.colorbar(label="Cumulative Probability")
-    plt.grid()
+    plt.title("Cumulative Frequency Distribution of Pathways")
+    plt.grid(True)
     plt. show()
 
-# Execute visualizations
-plot_3d_surface_hamming_weight(counts)
-plot_3d_scatter_leading_bit(counts)
-plot_correlation_heatmap(counts)
-plot_cumulative_gradient_map(counts)
+# Heatmap of Transition Costs
+def plot_heatmap(raw_counts):
+    pathway_matrix = []
+    for bitstring, frequency in raw_counts.items():
+        pathway_matrix.append([int(bit) for bit in bitstring])
+    pathway_matrix = np.array(pathway_matrix)
+    plt.figure(figsize=(12, 10))
+    plt.imshow(pathway_matrix, aspect='auto', cmap='viridis')
+    plt.colorbar(label="Bit Value (0 or 1)")
+    plt.xlabel("Qubit Index (Configurations)")
+    plt.ylabel("Pathway Index")
+    plt.title("Heatmap of Transition Costs Across Pathways")
+    plt. show()
+
+# Cluster Analysis of Pathways
+from sklearn.decomposition import PCA
+from sklearn.cluster import KMeans
+
+def plot_cluster_analysis(raw_counts):
+    pathway_matrix = np.array([[int(bit) for bit in bitstring] for bitstring in raw_counts.keys()])
+    pca = PCA(n_components=2)
+    reduced_data = pca. fit_transform(pathway_matrix)
+    kmeans = KMeans(n_clusters=5).fit(reduced_data)  
+    labels = kmeans.labels_
+
+    plt.figure(figsize=(10, 6))
+    for i in range(5):
+        cluster_data = reduced_data[labels == i]
+        plt.scatter(cluster_data[:, 0], cluster_data[:, 1], label=f'Cluster {i+1}', alpha=0.6)
+    plt.xlabel("PCA Component 1")
+    plt.ylabel("PCA Component 2")
+    plt.title("Cluster Analysis of Protein Folding Pathways")
+    plt.legend()
+    plt.grid(True)
+    plt. show()
+
+# Call
+plot_histogram(raw_counts)
+plot_cumulative_frequency(raw_counts)
+plot_heatmap(raw_counts)
+plot_cluster_analysis(raw_counts)
+
+# Pathway Dominance Pie Chart
+def plot_pathway_dominance_pie(raw_counts):
+    top_paths = Counter(raw_counts).most_common(8)  
+    labels, values = zip(*top_paths)
+    other_sum = sum(raw_counts.values()) - sum(values)
+    labels = list(labels) + ["Others"]
+    values = list(values) + [other_sum]
+    
+    # Calculate percentages
+    total = sum(values)
+    percentages = [f"{(value / total) * 100:.1f}%" for value in values]
+    
+    plt.figure(figsize=(10, 8))
+    wedges = plt.pie(
+        values, labels=None, startangle=140, colors=plt. cm.Paired.colors
+    )[0]  
+    
+    # Add legend 
+    legend_labels = [f"{label}: {percent}" for label, percent in zip(labels, percentages)]
+    plt.legend(wedges, legend_labels, title="Top Pathways", loc="center left", bbox_to_anchor=(1, 0.5))
+    plt.title("Dominance of Top Protein Folding Pathways")
+    plt. show()
+
+# Energy Landscape Bar Plot
+def plot_energy_landscape(raw_counts):
+    bitstrings = list(raw_counts.keys())
+    frequencies = list(raw_counts.values())
+    
+    energies = [1 / freq if freq > 0 else 0 for freq in frequencies]
+    sorted_indices = np.argsort(energies)
+    sorted_energies = np.array(energies)[sorted_indices]
+    sorted_bitstrings = np.array(bitstrings)[sorted_indices]
+    
+    plt.figure(figsize=(12, 6))
+    plt. bar(sorted_bitstrings[:30], sorted_energies[:30], color='orange', alpha=0.7)
+    plt.xticks(rotation=90, fontsize=8)
+    plt.xlabel("Bitstrings (Protein Folding Pathways)")
+    plt.ylabel("Transition Energy (Arbitrary Units)")
+    plt.title("Energy Landscape of Protein Folding Pathways")
+    plt. show()
+
+# Entropy Distribution
+def plot_entropy_distribution(raw_counts):
+    frequencies = list(raw_counts.values())
+    total = sum(frequencies)
+    probabilities = [freq / total for freq in frequencies]
+    entropy_values = [entropy(probabilities[:k]) for k in range(1, len(probabilities) + 1)]
+    
+    plt.figure(figsize=(10, 6))
+    plt.plot(range(1, len(probabilities) + 1), entropy_values, color='purple', linewidth=2)
+    plt.xlabel("Number of Pathways Considered")
+    plt.ylabel("Shannon Entropy")
+    plt.title("Entropy Distribution of Protein Folding Pathways")
+    plt.grid(True)
+    plt. show()
+
+# Principal Component Trajectory
+def plot_pca_trajectory(raw_counts):
+    pathway_matrix = np.array([[int(bit) for bit in bitstring] for bitstring in raw_counts.keys()])
+    pca = PCA(n_components=2)
+    reduced_data = pca. fit_transform(pathway_matrix)
+    frequencies = np.array(list(raw_counts.values()))
+    sizes = frequencies / frequencies.max() * 100  
+
+    plt.figure(figsize=(10, 6))
+    plt.scatter(reduced_data[:, 0], reduced_data[:, 1], s=sizes, c=sizes, cmap='coolwarm', alpha=0.8)
+    plt.colorbar(label="Frequency (Scaled)")
+    plt.xlabel("PCA Component 1")
+    plt.ylabel("PCA Component 2")
+    plt.title("Principal Component Trajectory of Protein Folding Pathways")
+    plt.grid(True)
+    plt. show()
+
+# Call
+plot_pathway_dominance_pie(raw_counts)
+plot_energy_landscape(raw_counts)
+plot_entropy_distribution(raw_counts)
+plot_pca_trajectory(raw_counts)
+
+# 3D Energy Landscape
+def plot_3d_energy_landscape(raw_counts):
+    bitstrings = list(raw_counts.keys())
+    frequencies = list(raw_counts.values())
+    
+    energies = [1 / freq if freq > 0 else 0 for freq in frequencies]
+    indices = range(len(bitstrings))
+    
+    fig = plt.figure(figsize=(10, 8))
+    ax = fig.add_subplot(111, projection='3d')
+    ax. bar(indices, energies, zs=0, zdir='y', alpha=0.8, color='orange')
+    
+    ax.set_xlabel("Pathway Index")
+    ax.set_ylabel("Energy (Arbitrary Units)")
+    ax.set_zlabel("Transition Energy")
+    ax.set_title("3D Energy Landscape of Protein Folding Pathways")
+    plt. show()
+
+# Transition Pathway Network
+def plot_transition_pathway_network(raw_counts):
+    bitstrings = list(raw_counts.keys())
+    G = nx.Graph()
+    
+    for i, bs1 in enumerate(bitstrings):
+        for j, bs2 in enumerate(bitstrings):
+            if i < j and sum(c1 != c2 for c1, c2 in zip(bs1, bs2)) == 1:
+                G.add_edge(bs1, bs2)
+    
+    plt.figure(figsize=(12, 8))
+    plt.title("Transition Pathway Network")
+    pos = nx.spring_layout(G, seed=42)  
+    nx.draw(G, pos, with_labels=False, node_size=10, edge_color="blue", alpha=0.6)
+    plt. show()
+
+# Probability Density Heatmap
+def plot_2d_heatmap_pathways(raw_counts):
+    # Convert pathways to matrix form
+    pathway_matrix = np.array([[int(bit) for bit in bitstring] for bitstring in raw_counts.keys()])
+    frequencies = np.array(list(raw_counts.values()))
+
+    grid_size = (2, 2)  
+    heatmap = np.zeros(grid_size, dtype=float)
+
+    for bits, freq in zip(pathway_matrix, frequencies):
+        if len(bits) >= 2:  
+            row, col = bits[:2]  
+            heatmap[row, col] += freq
+
+    # Normalize the heatmap
+    heatmap /= heatmap.max()
+
+    # Plot the 2D heatmap
+    plt.figure(figsize=(8, 6))
+    plt.imshow(heatmap, cmap="viridis", interpolation="nearest")
+    plt.colorbar(label="Normalized Frequency")
+    plt.xticks(ticks=[0, 1], labels=["Qubit 2: 0", "Qubit 2: 1"])
+    plt.yticks(ticks=[0, 1], labels=["Qubit 1: 0", "Qubit 1: 1"])
+    plt.xlabel("Qubit 2")
+    plt.ylabel("Qubit 1")
+    plt.title("2D Heatmap of Aggregated Pathway Frequencies")
+    plt. show()
+
+# Energy Distribution Curve
+def plot_cumulative_energy_distribution(raw_counts):
+    # Extract frequencies and compute energies
+    frequencies = np.array(list(raw_counts.values()))
+    energies = np.array([1 / freq if freq > 0 else 0 for freq in frequencies])  # Energy inversely proportional to frequency
+
+    # Sort energies in ascending order
+    sorted_energies = np.sort(energies)
+
+    # Compute cumulative energy
+    cumulative_energy = np.cumsum(sorted_energies)
+
+    # Plot the cumulative energy distribution
+    plt.figure(figsize=(10, 6))
+    plt.plot(sorted_energies, cumulative_energy, color='blue', linewidth=2)
+    plt.xlabel("Sorted Pathways (By Energy)")
+    plt.ylabel("Cumulative Energy")
+    plt.title("Cumulative Energy Distribution Across Pathways")
+    plt.grid(True)
+    plt. show()
+
+# Call
+plot_3d_energy_landscape(raw_counts)
+plot_transition_pathway_network(raw_counts)
+plot_2d_heatmap_pathways(raw_counts)
+plot_cumulative_energy_distribution(raw_counts)
 
 # End
-
 
 
 </code></pre>
 </p>
             
  </div>
-        <img src="E46i4.png" alt="" class="experiment-image4">
+        <img src="E47i4.png" alt="" class="experiment-image4">
         <p></p>
         <div class="content-block">
 
