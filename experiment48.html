@@ -97,19 +97,14 @@
     </nav>
 
     <section class="content-section">
-        <h1><center> Quantum Optimization of Protein Folding Pathways on IBM’s 127-Qubit Quantum Computer </center></h1>
+        <h1><center> Exploring the Traveling Salesman Problem in Non-Euclidean Spaces on IBM’s 127-Qubit Quantum Computer </center></h1>
         <div class="content-block">
          
-This experiment aims to predict the folding pathway of a protein by representing intermediate configurations as quantum states and encoding the transition energies between these configurations as rotations on a Bloch sphere. The goal is to minimize the protein’s free energy by identifying the most energetically favorable folding sequence. Using quantum superposition and interference, the circuit evaluates all possible folding pathways simultaneously. This experiment is run on IBM’s ibm_brisbane using Qiskit.      <br>    
+This experiment investigates the Traveling Salesman Problem in non-Euclidean geometry, where cities are mapped to the surface of a sphere. Utilizing the Bloch sphere representation, this circuit encodes the geodesic distances between cities as quantum rotations and aims to understand optimal pathways in curved geometries. This experiment is run on IBM
+’s ibm_brisbane using Qiskit.
 <br>
 <p>1. Problem <br>
-The protein folding pathway problem is modeled as a sequence of transitions between intermediate configurations. Each transition has an associated energy cost, and the goal is to identify the pathway that minimizes the total free energy. The transition energy between two configurations is encoded using the controlled rotation angle:<br>
-θ_i ​= π/(2i)​<br>
-where i is the index of the intermediate configuration.
-​<br>
-
-<p>2. Backend Calibration Data<br>
-To make sure optimal circuit execution, backend calibration data is loaded and analyzed. Key metrics include:<br>
+To make sure optimal circuit execution, backend calibration data is loaded and analyzed. Including:<br>
 √x (sx) error: Error rate for single qubit operations.<br>
 T_1​ (Relaxation time): Time for a qubit to return to its ground state.<br>
 T_2​ (Decoherence time): Time over which a qubit maintains coherence.<br>
@@ -117,33 +112,43 @@ The best qubits are selected based on the following sorting criteria:<br>
 Minimize √x​ error (ascending order).<br>
 Maximize T_1​ (descending order).<br>
 Maximize T_2​ (descending order).<br>
-This makes sure the most reliable qubits are used for the experiment.<br>
+Select N + 1  qubits (where N is the number of cities) based on the best T_1, T_2​, and lowest error rates.<br>
 
-<p>3. Quantum Circuit Setup<br>
-The circuit is designed with N + 1 qubits, where N represents the number of intermediate configurations.<br>
-Control qubit (Q_0​) represents the initial state of the protein.<br>
-Intermediate configuration qubits (Q_1, Q_2, ..., Q_N​) represent possible protein folding states.<br>
-Classical register (C) records measurement outcomes.<br>
+<p>2. City Representation on the Bloch Sphere<br>
+Cities are placed on the surface of a sphere using spherical coordinates (θ, ϕ)<br>
+θ: Polar angle.<br>
+ϕ: Azimuthal angle.<br>
+x = sin(θ) cos(ϕ)<br>
+y = sin(θ) sin(ϕ)<br>
+z = cos(θ)<br>
+
+3. Quantum Circuit Initialization
+Quantum register Q_R of N + 1 qubits (representing cities).
+Classical register C_R of N + 1 bits for measurement.
+Apply the Hadamard gate to each qubit to create a uniform superposition:
+- - - - - - - - - - - - - 2^(N + 1) -1
+∣ψ⟩ = 1/sqrt(2^(N + 1)) * ∑ ∣i⟩
+- - - - - - - - - - - - - i = 0
 
 
 
 
 
-
-<p>4. Initialization of Superposition States<br>
-All qubits are initialized into a superposition state to represent all possible folding pathways simultaneously:<br>
-∣Q_i​⟩ = H ∣0⟩ = 1/sqrt(2) * ​​(∣0⟩ + ∣1⟩)<br>
-where H is the Hadamard gate. This step ensures that the quantum system explores every potential folding pathway concurrently.<br>
+<p>4. Encoding Inter-City Distances<br>
+Calculate angular distances Δθ between cities based on their dot products:<br>
+cos(Δθ) = u ⋅ v<br>
+Encode distances as R_y​ rotations:<br>
+R_y​(θ) = <br>
+[ cos(θ​/2), −sin(θ​/2)<br>
+sin (θ​/2), cos(θ​/2) ]<br>
     
 
 
 
 
 
-<p>5. Entanglement Between Configurations<br>
-The control qubit (Q_0​) is entangled with each intermediate configuration qubit (Q_i​) using controlled-X (CNOT) gates:<br>
-CNOT(Q_0​, Q_i​)<br>
-This step introduces dependencies between the control qubit (initial state) and intermediate configurations, enabling the encoding of meaningful correlations.<br>
+<p>5. Entanglement for Pathway Representation<br>
+Apply CNOT gates between pairs of qubits to entangle them, representing possible transitions between cities.
 
 
 
@@ -152,101 +157,83 @@ This step introduces dependencies between the control qubit (initial state) and 
 
 
 
-<p>6. Encoding Transition Energies<br>
-Transition energies between configurations are represented as controlled R_x​ rotations:<br>
-CR_x​(θ_i​) =<br>
-[ 1,          0,                     0,              0 <br>
-  0, cos(θ_i​/2), -i sin(θ_i​/2), 0<br>
-  0, -i sin(θ_i​/2), cos(θ_i​/2), 0<br>
-  0,          0,                     0,              1 ]<br>
-The controlled rotation gate CR_x(θ_i) is applied between the control qubit and each intermediate configuration qubit. The angle θ_i = π/2i reflects the energy cost of transitioning to configuration i.
+<p>6. Noise Simulation<br>
+Introduce noise perturbations by applying small random rotations to each qubit:<br>
+R_x​(π/(16(i + 1))​)<br>
+R_y​(π/(16(i + 1)​)) <br>
+R_z(π/(16(i + 1))​)<br>
+
+
+
+
+    
+<p>7. Measurement<br>
+Measure all qubits in the computational basis to determine the most probable pathways.
 <br>
 
-
-
-
-    
-<p>7. Simulating Perturbations<br>
-To simulate realistic energy fluctuations and refine pathway selection, small perturbations are applied to the control qubit:<br>
-R_x​(π/16), R_y​(π/16), R_z​(π/16)<br>
-These gates mimic stochastic effects similar to those in protein folding environments.<br>
-
-<p>8. Measurement <br>
-The quantum circuit is measured, with each bitstring representing a specific folding pathway. The frequency of each bitstring in the measurement results corresponds to the likelihood of that pathway being energetically favorable.
+<p>8. Results and Visual <br>
+Measurement counts are retrieved. Results are saved to a json. A histogram of the run results is visualized.
 <br>
-
-
-<p>9. Transpilation<br>
-The circuit is transpiled for ibm_brisbane. <br>
-
-
-
-<p>10. Results<br>
-The transpiled circuit is executed with 16,384 shots. Measurement results are extracted, and the counts for each bitstring are analyzed.
-
-<p>11. Visual<br>
-A histogram of the bitstring counts is plotted.
-
 
     
     
 <p><center> Results:</center><br>
 
-Top String: 01110100111 with 28 counts.<br>
-Top 10 Strings (by frequency):<br>
-01110100111 -  28 counts<br>
-01110100001 -  21 counts<br>
-01000110010 -  25 counts<br>
-01110011011 -  24 counts<br>
-11000110001 -  23 counts<br>
-01110001011 -  23 counts<br>
-01110111101 - 22 counts<br>
-11110110111 - 22 counts<br>
-11110100001 - 22 counts<br>
-11100011101 - 21 counts<br>
-These results confirm that specific folding pathways are energetically preferred, as indicated by their high recurrence.
+The top result is 01111111000 with 23 occurrences. The higher occurrence means that this pathway minimizes the geodesic distances between cities in this non-Euclidean geometry. The proximity of occurrence counts among the top results shows that multiple solutions are near optimal. The significant drop in occurrence counts after the top solutions shows the capability to filter out suboptimal pathways.
+
+Top 10 Results:<br>
+01111111000 - 23 <br>
+01101111010 - 21 <br>
+01011011100 - 21 <br>
+11111110100 - 19 <br>
+01111001010 - 19 <br>
+11011111000 - 17 <br>
+01111001100 - 17 <br>
+11111101100 - 16 <br>
+11111010000 - 15 <br>
+11111010110 - 15 <br>
 <br>
 </div>
-        <img src="E47i1.png" alt="" class="experiment-image">
+        <img src="E48i1.png" alt="" class="experiment-image">
         <p></p>
         <div class="content-block">
 <br>
             
-The Histogram of Protein Folding Pathway Frequencies above (code below) displays the frequencies of each bitstring (protein folding pathway) from the experiment, highlighting the most frequently measured pathways. Pathways with the highest frequencies represent the most energetically favorable folding states based on the quantum interference of the circuit. Dominant bitstrings indicate folding pathways with minimal free energy, aligning with the physical objective of protein folding. Lesser frequent bitstrings might reflect noise or energetically less favorable pathways.
+The Histogram of Counts above (code below) displays the top 20 quantum states (bitstrings) and their corresponding measurement counts. The highest count corresponds to bitstring 01111111000. A relatively even distribution of counts among the other bitstrings suggests the quantum system also explored alternative pathways.
 <br>
-The Cumulative Frequency Distribution of Pathways above (code below) shows the frequencies of pathways in ranked order to show how many pathways contribute to the majority of measurements. A steep initial rise in the cumulative frequency curve indicates that a small subset of pathways accounts for a large portion of the measurements. This aligns with the expected behavior that a few energetically favorable configurations dominate the folding process.
+The 3D Bloch Sphere Representation of Cities above (code below) visualizes the cities (nodes) distributed on the Bloch sphere. Each point represents a city's position encoded in 3D Cartesian coordinates derived from spherical mappings. The spatial distribution shows that cities are evenly spaced on the surface.
 <br>
-The Heatmap of Transition Costs Across Pathways above (code below) maps the bit values (0 or 1) for different pathways and qubits, effectively showing the structure of transitions between intermediate protein configurations. Clustering patterns or repetitive structures in the heatmap suggest symmetries in the folding process or recurring structural motifs in the protein. Areas with high contrast might represent configurations where energy differences between transitions are pronounced. 
+The Heatmap of Geodesic Distances above (code below) shows a matrix visualizing the geodesic distances (rotation angles) between each pair of cities. Darker colors are shorter distances, while lighter colors show larger distances. The diagonal (zero distances) confirms the self loop, with off diagonal elements encoding connected distances.
 <br>
-The Cluster Analysis of Protein Folding Pathways above (code below), using PCA and K-means clustering, plots groups pathways into clusters based on similarity in their bitstring representation. Distinct clusters represent families of folding pathways with shared structural or energetic properties. Clusters with higher density likely correspond to dominant folding patterns, while sparse clusters may reflect rare or suboptimal configurations.<br>
+The Overlay of High Probability Pathways on Bloch Sphere visual above (code below) shows the top high probability pathways overlay the city positions on the Bloch sphere, connecting nodes according to the selected bitstrings. The overlay shows how the quantum system prioritizes routes between closely spaced cities (shorter geodesics). The blue connection indicates that the quantum system identified this particular connection as being part of an optimal or near optimal solution. 
 <br>
-        <img src="E47i2.png" alt="" class="experiment-image">
+        <img src="E48i2.png" alt="" class="experiment-image">
         <p></p>
         <div class="content-block">
 <br>
-The Pathway Dominance Pie Chart chart above (code below) shows the proportion of measurement results contributed by the top pathways compared to others. 'Others' represents the sum of frequencies for all pathways outside the top contributors. The top pathways each contribute a small but significant percentage, indicating a long tail distribution where a few pathways dominate the remaining minority. The chart shows the quantum system’s ability to focus probability amplitudes on specific folding pathways.
+The Probability Distribution of Top Quantum States (Pie Chart) above (code below) shows a proportional representation of the top 10 quantum states by measurement counts. Each slice corresponds to the likelihood of a specific pathway being the optimal solution. The even distribution suggests that no overwhelming bias or noise influenced the system's behavior, ensuring reliable optimization.
 <br>
-The Energy Landscape Bar Plot above (code below) maps folding pathways (bitstrings) to their estimated transition energies. Lower transition energies represent more favorable pathways. The flat top clustering of energies at higher levels may indicate degeneracies or pathways that are energetically similar but less favorable. The lowest energy pathways are more likely to represent the protein’s folded state, minimizing free energy.
+The 3D Geodesic Distance Network above (code below) shows a 3D visualization of cities (nodes) connected by edges representing geodesic distances. The network shows which cities are most directly connected by short geodesics, corresponding to favorable transitions in the TSP. Dense connections in certain regions suggest clustering, where local optimizations could significantly impact the overall solution.
 <br>
-The Entropy Distribution above (code below) calculates the Shannon entropy as more pathways are included, showing how spread out or uncertain the measurements are across pathways. The steep initial rise in entropy indicates a diverse set of pathways contributing to the initial results. The curve eventually flattens, suggesting a saturation point where additional pathways contribute minimally to the overall uncertainty. High entropy in the early pathways reflects the inherent complexity and probabilistic nature of protein folding, while the saturation implies the quantum system’s focus on key pathways.
+The Cumulative Probability of Top Pathways above (code below) shows a line plot depicting how the cumulative probability increases as more pathways are considered, ranked by their measurement counts. The rapid initial rise shows that the top pathways account for a significant portion of the total probability, affirming the quantum system's ability to focus on high quality solutions.
 <br>
-The Principal Component Trajectory of Pathways above (code below) reduces the high dimensional bitstring data into two components, grouping pathways by similarity. The size and color intensity of points correspond to their frequency. Dense clusters represent groups of pathways with similar folding properties, indicating common structural or energetic patterns. Outliers or sparsely distributed points may represent rare configurations that are less probable.<br>            
+The Histogram of City Pairs by Distance above (code below) shows a histogram grouping city pairs based on their geodesic distances, derived from the spherical encoding. Shorter distances (leftmost bars) represent closer city pairs, which likely correspond to transitions in high probability pathways.<br>
 <br>
-        <img src="E47i3.png" alt="" class="experiment-image">
+        <img src="E48i3.png" alt="" class="experiment-image">
         <p></p>
         <div class="content-block">
 <br>
 
-The 3D Energy Landscape of Protein Folding Pathways above (code below) shows the transition energy of pathways along their indices. The peaks and valleys represent different energy levels, showing how certain pathways dominate. High energy pathways are sparse, indicating a small number of configurations requiring significant computational effort. The clustering of lower energy pathways suggests that the majority of configurations are energetically favorable, reinforcing the idea that proteins naturally fold into low energy states.
+The Scatter Plot of City Probabilities above (code below) shows probabilities associated with each city, aggregated across all pathways. This means a balanced exploration of pathways without overwhelming bias, which aligns with the diverse spatial arrangements of cities on the Bloch sphere.
 <br>
-The Transition Pathway Network above (code below) graphs where nodes represent pathways and the edges show possible transitions between them. The connectivity suggests that proteins can transition between multiple configurations before settling into their final folded state. The symmetry and density of the network highlight strength in the folding process, where multiple pathways may lead to similar final states.
+The Correlation Matrix Heatmap above (code below) shows the correlation between geodesic distances of different cities. Positive correlations (red) indicate pairs of cities with similar distance relationships, while negative correlations (blue) suggest divergent patterns. The high correlations among nearby cities show clusters or regions of the spherical geometry, where certain nodes share similar transition behaviors. 
 <br>
-The 2D Heatmap of Aggregated Pathway Frequencies above (code below) shows a grid based heatmap where the color intensity corresponds to the frequency of configurations associated with the first two qubits. Pathways starting with specific qubit states (Qubit 1: 0 and Qubit 2: 1) are more likely to be energetically favorable. The asymmetry in the heatmap suggests that certain initial conditions (qubit states) strongly influence the folding pathway's likelihood.
+The Pathway Probability Bar Chart above (code below) shows probabilities of the top 10 pathways, ranked by their quantum measurement counts. The relatively flat distribution among the top pathways means that multiple solutions are viable, reflecting the quantum system's capability to explore equivalent routes efficiently.
 <br>
-The Cumulative Energy Distribution Across Pathways above (code below) shows how the total energy accumulates as pathways are sorted by their energy. Most of the energy is concentrated in a small subset of pathways, aligning with the expectation that proteins fold through energetically efficient paths. The long tail of high energy states suggests that outlier configurations exist but contribute minimally.
+The City Transition Network Graph above (code below) shows a graphical representation of cities as nodes, with edges connecting cities based on significant geodesic distances. The dense connections between certain cities reveal localized clusters, suggesting hubs that could play a critical role in the optimal pathways. The sparsity of connections across distant nodes shows the influence of curved geometry, where long transitions are less likely to contribute to high probability pathways.
 <br>
-In the end, this experiment explored protein folding optimization using IBM's 127-qubit quantum computer. The goal was to simulate folding pathways as quantum states, where each pathway represents a configuration of the protein, and the transitions between configurations correspond to the computational effort required to achieve minimal free energy. By encoding the folding landscape into quantum superpositions, entanglement, and rotations, the circuit used quantum interference to identify the most energetically favorable pathways.<br>
-<br>            
+In the end, this experiment explored the Traveling Salesman Problem in non-Euclidean geometry, using quantum computation to optimize pathways across cities mapped to the surface of a Bloch sphere. By encoding geodesic distances as quantum rotations and using entanglement, the experiment simulated transitions between cities while accounting for the complex, curved geometry. The results show the quantum system's ability to distribute probabilities across multiple pathways, finding the pathway that minimizes the geodesic distance between cities while maintaining a large exploration of alternatives. <br>            
+<br>
             <p>Code:<br>
             <p><pre><code>
 # Imports
@@ -258,6 +245,7 @@ from qiskit import QuantumCircuit, QuantumRegister, ClassicalRegister, transpile
 from qiskit_ibm_runtime import QiskitRuntimeService, Session, SamplerV2
 from qiskit.visualization import plot_histogram
 import matplotlib.pyplot as plt
+from scipy.spatial.transform import Rotation as R
 
 # Logging
 logging.basicConfig(level=logging. INFO, format='%(asctime)s - %(levelname)s - %(message)s')
@@ -279,20 +267,22 @@ def select_best_qubits(calibration_data, n_qubits):
     logger. info("Selected qubits: %s", best_qubits)
     return best_qubits
 
-# Load backend calibration data
-calibration_file = '/Users/Downloads/ibm_brisbane_calibrations_2024-12-18T17_08_04Z.csv'
+# Backend calibration data
+calibration_file = '/Users/Downloads/ibm_brisbane_calibrations_2024-12-19T17_33_02Z.csv'
 calibration_data = load_calibration_data(calibration_file)
 
-# Select best qubits based on T1, T2, and error rates
-num_intermediate_configs = 10  
-best_qubits = select_best_qubits(calibration_data, num_intermediate_configs + 1)
+# Number of cities in the TSP
+num_cities = 10  
+
+# Select the best qubits
+best_qubits = select_best_qubits(calibration_data, num_cities + 1)
 
 # IBMQ 
 logger. info("Setting up IBM Q service")
 service = QiskitRuntimeService(
     channel='ibm_quantum',
     instance='ibm-q/open/main',
-    token='YOUR_IBMQ_API_KEY_O-`'  
+    token='YOUR_IBM_API_KEY_O-`'  
 )
 
 backend_name = 'ibm_brisbane'
@@ -300,314 +290,323 @@ backend = service.backend(backend_name)
 logger. info("Backend selected: %s", backend_name)
 
 # Quantum and classical registers
-qr = QuantumRegister(num_intermediate_configs + 1, 'config')  
-cr = ClassicalRegister(num_intermediate_configs + 1, 'meas')
+qr = QuantumRegister(num_cities + 1, 'city')
+cr = ClassicalRegister(num_cities + 1, 'meas')
 qc = QuantumCircuit(qr, cr)
 
-# Initialize Control Qubit which represents the initial state of the protein and intermediate configurations represent possible folding states
-qc.h(qr[0])  
-for i in range(1, num_intermediate_configs + 1):
+# Map cities to Bloch sphere and create initial state
+def encode_cities_on_bloch(num_cities):
+    """Generates coordinates for cities on a sphere."""
+    theta = np.linspace(0, np.pi, num_cities)
+    phi = np.linspace(0, 2 * np.pi, num_cities, endpoint=False)
+    cities = []
+    for t, p in zip(theta, phi):
+        x = np.sin(t) * np.cos(p)
+        y = np.sin(t) * np.sin(p)
+        z = np.cos(t)
+        cities.append((x, y, z))
+    return cities
+
+cities_coords = encode_cities_on_bloch(num_cities)
+logger. info("Encoded cities on Bloch sphere with coordinates: %s", cities_coords)
+
+# Initialize qubits 
+for i in range(1, num_cities + 1):
     qc.h(qr[i])
 
-# Entangle Control Qubit with Intermediate Protein Configurations
-for i in range(1, num_intermediate_configs + 1):
-    qc. cx(qr[0], qr[i])
+# Entangle qubits to represent possible transitions between cities
+for i in range(1, num_cities + 1):
+    for j in range(i + 1, num_cities + 1):
+        qc. cx(qr[i], qr[j])
 
-# Encode Transition Energies Between Configurations (Transition energies represent the free energy difference between folding states)
-for i in range(1, num_intermediate_configs + 1):
-    energy_angle = np.pi / (2 * i)  
-    qc.crx(energy_angle, qr[0], qr[i])
+# Encode distances as rotation angles
+def calculate_rotation_angles(cities_coords):
+    """Calculate rotation angles based on geodesic distances."""
+    angles = []
+    for i in range(len(cities_coords)):
+        row = []
+        for j in range(len(cities_coords)):
+            if i != j:
+                dot_product = np. dot(cities_coords[i], cities_coords[j])
+                angle = np.arccos(np.clip(dot_product, -1.0, 1.0))
+                row.append(angle)
+            else:
+                row.append(0)
+        angles.append(row)
+    return angles
 
-# Apply Energy Perturbations to Simulate Noise in Folding Pathway
-qc.rx(np.pi / 16, qr[0])
-qc.ry(np.pi / 16, qr[0])
-qc.rz(np.pi / 16, qr[0])
+rotation_angles = calculate_rotation_angles(cities_coords)
+logger. info("Calculated rotation angles: %s", rotation_angles)
 
-# Measures the most likely folding pathways
+# Apply rotations to encode distances
+for i in range(1, num_cities + 1):
+    for j in range(1, num_cities + 1):
+        if i != j:
+            qc.ry(rotation_angles[i-1][j-1], qr[j])
+
+# Add noise (perturbations)
+for i in range(num_cities):
+    qc.rx(np.pi / (16 * (i + 1)), qr[i])
+    qc.ry(np.pi / (16 * (i + 1)), qr[i])
+    qc.rz(np.pi / (16 * (i + 1)), qr[i])
+
+# Measure 
 qc.measure(qr, cr)
 
-# Transpile 
+# Transpile
 logger. info("Transpiling the quantum circuit for the backend")
 qc_transpiled = transpile(qc, backend=backend, optimization_level=3)
 logger. info("Circuit transpilation complete")
 
-# Execute 
-shots = 16384
+# Execute
+shots = 8192
 with Session(service=service, backend=backend) as session:
     sampler = SamplerV2(session=session)
     logger. info("Executing the circuit on the backend")
     job = sampler. run([qc_transpiled], shots=shots)
     job_result = job.result()
 
-    # Extract BitArray counts
-    data_bin = job_result._pub_results[0]['__value__']['data']
-    bit_array = data_bin['meas']  # Extract the BitArray
-    counts = bit_array.get_counts()  # Use get_counts method
+    # Extract counts 
+    bit_array = job_result._pub_results[0]['__value__']['data']['meas']  # Access the 'meas' field
+    counts = bit_array.get_counts()  
 
     # Save json
-    results_data = {"raw_counts": counts}
-    file_path = '/Users/Documents/QProtein_Folding_Results_0.json'
+    results_data = {
+        "counts": counts,
+        "cities_coordinates": cities_coords,
+        "rotation_angles": rotation_angles
+    }
+    file_path = '/Users/Documents/Non_Euclidean_TSP_Results_0.json'
     with open(file_path, 'w') as f:
         json.dump(results_data, f, indent=4)
     logger. info("Results saved to %s", file_path)
 
-# Visualizes the likelihood of each folding pathway 
+# Visual
 plot_histogram(counts)
-plt.title("Optimized Protein Folding Pathways")
+plt.title("TSP in Non-Euclidean Space: Measurement Results")
 plt. show()
 
-Code For All Visuals From Run Data
+Code For All Visuals
 # Imports
 import matplotlib.pyplot as plt
-from collections import Counter
+from mpl_toolkits.mplot3d import Axes3D
 import numpy as np
 import json
-from scipy.stats import entropy
-from sklearn.decomposition import PCA
-from mpl_toolkits.mplot3d import Axes3D
 import networkx as nx
-from scipy.stats import gaussian_kde
+import seaborn as sns
 
 # Load results
-file_path = '/Users/Documents/QProtein_Folding_Results_0.json'
-with open(file_path, 'r') as f:
-    data = json.load(f)
+file_path = '/Users/Documents/Non_Euclidean_TSP_Results_0.json'
+with open(file_path, 'r') as file:
+    data = json.load(file)
 
-raw_counts = data['raw_counts']
+counts = data['counts']
+cities_coords = np.array(data['cities_coordinates'])
+rotation_angles = np.array(data['rotation_angles'])
 
-# Histogram of Bitstring Frequencies
-def plot_histogram(raw_counts):
-    sorted_counts = sorted(raw_counts.items(), key=lambda x: x[1], reverse=True)
-    bitstrings, frequencies = zip(*sorted_counts[:50])  
-    plt.figure(figsize=(15, 8))
-    plt. bar(bitstrings, frequencies, color='blue', alpha=0.7)
-    plt.xticks(rotation=90, fontsize=8)
-    plt.xlabel("Bitstrings (Protein Folding Pathways)")
-    plt.ylabel("Frequency")
-    plt.title("Histogram of Protein Folding Pathway Frequencies")
-    plt. show()
-
-# Cumulative Frequency Distribution
-def plot_cumulative_frequency(raw_counts):
-    sorted_frequencies = sorted(raw_counts.values(), reverse=True)
-    cumulative = np.cumsum(sorted_frequencies) / sum(sorted_frequencies)
-    plt.figure(figsize=(10, 6))
-    plt.plot(cumulative, marker='o', linestyle='-', color='green')
-    plt.xlabel("Number of Pathways (Ranked)")
-    plt.ylabel("Cumulative Frequency")
-    plt.title("Cumulative Frequency Distribution of Pathways")
-    plt.grid(True)
-    plt. show()
-
-# Heatmap of Transition Costs
-def plot_heatmap(raw_counts):
-    pathway_matrix = []
-    for bitstring, frequency in raw_counts.items():
-        pathway_matrix.append([int(bit) for bit in bitstring])
-    pathway_matrix = np.array(pathway_matrix)
-    plt.figure(figsize=(12, 10))
-    plt.imshow(pathway_matrix, aspect='auto', cmap='viridis')
-    plt.colorbar(label="Bit Value (0 or 1)")
-    plt.xlabel("Qubit Index (Configurations)")
-    plt.ylabel("Pathway Index")
-    plt.title("Heatmap of Transition Costs Across Pathways")
-    plt. show()
-
-# Cluster Analysis of Pathways
-from sklearn.decomposition import PCA
-from sklearn.cluster import KMeans
-
-def plot_cluster_analysis(raw_counts):
-    pathway_matrix = np.array([[int(bit) for bit in bitstring] for bitstring in raw_counts.keys()])
-    pca = PCA(n_components=2)
-    reduced_data = pca. fit_transform(pathway_matrix)
-    kmeans = KMeans(n_clusters=5).fit(reduced_data)  
-    labels = kmeans.labels_
-
-    plt.figure(figsize=(10, 6))
-    for i in range(5):
-        cluster_data = reduced_data[labels == i]
-        plt.scatter(cluster_data[:, 0], cluster_data[:, 1], label=f'Cluster {i+1}', alpha=0.6)
-    plt.xlabel("PCA Component 1")
-    plt.ylabel("PCA Component 2")
-    plt.title("Cluster Analysis of Protein Folding Pathways")
-    plt.legend()
-    plt.grid(True)
-    plt. show()
-
-# Call
-plot_histogram(raw_counts)
-plot_cumulative_frequency(raw_counts)
-plot_heatmap(raw_counts)
-plot_cluster_analysis(raw_counts)
-
-# Pathway Dominance Pie Chart
-def plot_pathway_dominance_pie(raw_counts):
-    top_paths = Counter(raw_counts).most_common(8)  
-    labels, values = zip(*top_paths)
-    other_sum = sum(raw_counts.values()) - sum(values)
-    labels = list(labels) + ["Others"]
-    values = list(values) + [other_sum]
-    
-    # Calculate percentages
-    total = sum(values)
-    percentages = [f"{(value / total) * 100:.1f}%" for value in values]
-    
-    plt.figure(figsize=(10, 8))
-    wedges = plt.pie(
-        values, labels=None, startangle=140, colors=plt. cm.Paired.colors
-    )[0]  
-    
-    # Add legend 
-    legend_labels = [f"{label}: {percent}" for label, percent in zip(labels, percentages)]
-    plt.legend(wedges, legend_labels, title="Top Pathways", loc="center left", bbox_to_anchor=(1, 0.5))
-    plt.title("Dominance of Top Protein Folding Pathways")
-    plt. show()
-
-# Energy Landscape Bar Plot
-def plot_energy_landscape(raw_counts):
-    bitstrings = list(raw_counts.keys())
-    frequencies = list(raw_counts.values())
-    
-    energies = [1 / freq if freq > 0 else 0 for freq in frequencies]
-    sorted_indices = np.argsort(energies)
-    sorted_energies = np.array(energies)[sorted_indices]
-    sorted_bitstrings = np.array(bitstrings)[sorted_indices]
-    
+# Histogram of Counts
+def plot_histogram_counts(counts):
+    sorted_counts = sorted(counts.items(), key=lambda x: x[1], reverse=True)[:20]
+    bitstrings, values = zip(*sorted_counts)
     plt.figure(figsize=(12, 6))
-    plt. bar(sorted_bitstrings[:30], sorted_energies[:30], color='orange', alpha=0.7)
-    plt.xticks(rotation=90, fontsize=8)
-    plt.xlabel("Bitstrings (Protein Folding Pathways)")
-    plt.ylabel("Transition Energy (Arbitrary Units)")
-    plt.title("Energy Landscape of Protein Folding Pathways")
+    plt. bar(bitstrings, values, color='blue', alpha=0.7)
+    plt.xticks(rotation=90)
+    plt.title("Top 20 Quantum States by Counts")
+    plt.xlabel("Bitstring")
+    plt.ylabel("Counts")
     plt. show()
 
-# Entropy Distribution
-def plot_entropy_distribution(raw_counts):
-    frequencies = list(raw_counts.values())
-    total = sum(frequencies)
-    probabilities = [freq / total for freq in frequencies]
-    entropy_values = [entropy(probabilities[:k]) for k in range(1, len(probabilities) + 1)]
-    
-    plt.figure(figsize=(10, 6))
-    plt.plot(range(1, len(probabilities) + 1), entropy_values, color='purple', linewidth=2)
-    plt.xlabel("Number of Pathways Considered")
-    plt.ylabel("Shannon Entropy")
-    plt.title("Entropy Distribution of Protein Folding Pathways")
-    plt.grid(True)
-    plt. show()
-
-# Principal Component Trajectory
-def plot_pca_trajectory(raw_counts):
-    pathway_matrix = np.array([[int(bit) for bit in bitstring] for bitstring in raw_counts.keys()])
-    pca = PCA(n_components=2)
-    reduced_data = pca. fit_transform(pathway_matrix)
-    frequencies = np.array(list(raw_counts.values()))
-    sizes = frequencies / frequencies.max() * 100  
-
-    plt.figure(figsize=(10, 6))
-    plt.scatter(reduced_data[:, 0], reduced_data[:, 1], s=sizes, c=sizes, cmap='coolwarm', alpha=0.8)
-    plt.colorbar(label="Frequency (Scaled)")
-    plt.xlabel("PCA Component 1")
-    plt.ylabel("PCA Component 2")
-    plt.title("Principal Component Trajectory of Protein Folding Pathways")
-    plt.grid(True)
-    plt. show()
-
-# Call
-plot_pathway_dominance_pie(raw_counts)
-plot_energy_landscape(raw_counts)
-plot_entropy_distribution(raw_counts)
-plot_pca_trajectory(raw_counts)
-
-# 3D Energy Landscape
-def plot_3d_energy_landscape(raw_counts):
-    bitstrings = list(raw_counts.keys())
-    frequencies = list(raw_counts.values())
-    
-    energies = [1 / freq if freq > 0 else 0 for freq in frequencies]
-    indices = range(len(bitstrings))
-    
+# 3D Bloch Sphere Representation
+def plot_bloch_sphere(cities_coords):
     fig = plt.figure(figsize=(10, 8))
     ax = fig.add_subplot(111, projection='3d')
-    ax. bar(indices, energies, zs=0, zdir='y', alpha=0.8, color='orange')
-    
-    ax.set_xlabel("Pathway Index")
-    ax.set_ylabel("Energy (Arbitrary Units)")
-    ax.set_zlabel("Transition Energy")
-    ax.set_title("3D Energy Landscape of Protein Folding Pathways")
+    ax.scatter(cities_coords[:, 0], cities_coords[:, 1], cities_coords[:, 2], color='red', s=50)
+    ax.set_title("Cities on the Bloch Sphere")
+    ax.set_xlabel("X")
+    ax.set_ylabel("Y")
+    ax.set_zlabel("Z")
     plt. show()
 
-# Transition Pathway Network
-def plot_transition_pathway_network(raw_counts):
-    bitstrings = list(raw_counts.keys())
-    G = nx.Graph()
-    
-    for i, bs1 in enumerate(bitstrings):
-        for j, bs2 in enumerate(bitstrings):
-            if i < j and sum(c1 != c2 for c1, c2 in zip(bs1, bs2)) == 1:
-                G.add_edge(bs1, bs2)
-    
-    plt.figure(figsize=(12, 8))
-    plt.title("Transition Pathway Network")
-    pos = nx.spring_layout(G, seed=42)  
-    nx.draw(G, pos, with_labels=False, node_size=10, edge_color="blue", alpha=0.6)
+# Heatmap of Rotation Angles
+def plot_rotation_heatmap(rotation_angles):
+    plt.figure(figsize=(10, 8))
+    plt.imshow(rotation_angles, cmap='viridis', interpolation='nearest')
+    plt.colorbar(label="Rotation Angle (rad)")
+    plt.title("Heatmap of Geodesic Distances (Rotation Angles)")
+    plt.xlabel("City Index")
+    plt.ylabel("City Index")
     plt. show()
 
-# Probability Density Heatmap
-def plot_2d_heatmap_pathways(raw_counts):
-    # Convert pathways to matrix form
-    pathway_matrix = np.array([[int(bit) for bit in bitstring] for bitstring in raw_counts.keys()])
-    frequencies = np.array(list(raw_counts.values()))
+# Overlay High-Probability Pathways
+def plot_high_probability_paths(cities_coords, counts):
+    top_paths = sorted(counts.items(), key=lambda x: x[1], reverse=True)[:5]
+    fig = plt.figure(figsize=(10, 8))
+    ax = fig.add_subplot(111, projection='3d')
 
-    grid_size = (2, 2)  
-    heatmap = np.zeros(grid_size, dtype=float)
+    # Plot cities
+    ax.scatter(cities_coords[:, 0], cities_coords[:, 1], cities_coords[:, 2], color='red', s=50)
 
-    for bits, freq in zip(pathway_matrix, frequencies):
-        if len(bits) >= 2:  
-            row, col = bits[:2]  
-            heatmap[row, col] += freq
+    # Overlay pathways
+    for path, _ in top_paths:
+        indices = [int(bit) for bit in path]
+        for i in range(len(indices) - 1):
+            ax.plot(
+                [cities_coords[indices[i], 0], cities_coords[indices[i + 1], 0]],
+                [cities_coords[indices[i], 1], cities_coords[indices[i + 1], 1]],
+                [cities_coords[indices[i], 2], cities_coords[indices[i + 1], 2]],
+                color='blue', alpha=0.7
+            )
 
-    # Normalize the heatmap
-    heatmap /= heatmap.max()
-
-    # Plot the 2D heatmap
-    plt.figure(figsize=(8, 6))
-    plt.imshow(heatmap, cmap="viridis", interpolation="nearest")
-    plt.colorbar(label="Normalized Frequency")
-    plt.xticks(ticks=[0, 1], labels=["Qubit 2: 0", "Qubit 2: 1"])
-    plt.yticks(ticks=[0, 1], labels=["Qubit 1: 0", "Qubit 1: 1"])
-    plt.xlabel("Qubit 2")
-    plt.ylabel("Qubit 1")
-    plt.title("2D Heatmap of Aggregated Pathway Frequencies")
+    ax.set_title("High-Probability Pathways on Bloch Sphere")
+    ax.set_xlabel("X")
+    ax.set_ylabel("Y")
+    ax.set_zlabel("Z")
     plt. show()
 
-# Energy Distribution Curve
-def plot_cumulative_energy_distribution(raw_counts):
-    # Extract frequencies and compute energies
-    frequencies = np.array(list(raw_counts.values()))
-    energies = np.array([1 / freq if freq > 0 else 0 for freq in frequencies])  # Energy inversely proportional to frequency
+# Call
+plot_histogram_counts(counts)
+plot_bloch_sphere(cities_coords)
+plot_rotation_heatmap(rotation_angles)
+plot_high_probability_paths(cities_coords, counts)
 
-    # Sort energies in ascending order
-    sorted_energies = np.sort(energies)
+# Probability Distribution of Quantum States (Pie Chart)
+def plot_probability_pie(counts):
+    sorted_counts = sorted(counts.items(), key=lambda x: x[1], reverse=True)[:10]  
+    labels, values = zip(*sorted_counts)
+    total = sum(counts.values())
+    values = [v / total for v in values] 
 
-    # Compute cumulative energy
-    cumulative_energy = np.cumsum(sorted_energies)
+    plt.figure(figsize=(8, 8))
+    plt.pie(values, labels=labels, autopct="%1.1f%%", startangle=140, colors=plt. cm.tab10.colors)
+    plt.title("Probability Distribution of Top Quantum States")
+    plt. show()
 
-    # Plot the cumulative energy distribution
+# 3D Geodesic Distance Network
+def plot_geodesic_network(cities_coords, rotation_angles):
+    fig = plt.figure(figsize=(10, 8))
+    ax = fig.add_subplot(111, projection='3d')
+
+    # Add cities
+    ax.scatter(cities_coords[:, 0], cities_coords[:, 1], cities_coords[:, 2], color='red', s=50, label="Cities")
+
+    # Add edges
+    num_cities = len(cities_coords)
+    for i in range(num_cities):
+        for j in range(i + 1, num_cities):
+            if rotation_angles[i][j] < np.pi / 2: 
+                ax.plot(
+                    [cities_coords[i, 0], cities_coords[j, 0]],
+                    [cities_coords[i, 1], cities_coords[j, 1]],
+                    [cities_coords[i, 2], cities_coords[j, 2]],
+                    color='blue', alpha=0.6
+                )
+
+    ax.set_title("3D Geodesic Distance Network")
+    ax.set_xlabel("X")
+    ax.set_ylabel("Y")
+    ax.set_zlabel("Z")
+    plt.legend()
+    plt. show()
+
+# Cumulative Probability of Top Pathways
+def plot_cumulative_probability(counts):
+    sorted_counts = sorted(counts.items(), key=lambda x: x[1], reverse=True)
+    labels, values = zip(*sorted_counts)
+    total = sum(values)
+    cumulative_probs = np.cumsum(values) / total
+
     plt.figure(figsize=(10, 6))
-    plt.plot(sorted_energies, cumulative_energy, color='blue', linewidth=2)
-    plt.xlabel("Sorted Pathways (By Energy)")
-    plt.ylabel("Cumulative Energy")
-    plt.title("Cumulative Energy Distribution Across Pathways")
+    plt.plot(range(1, len(cumulative_probs) + 1), cumulative_probs, marker='o', linestyle='-', color='green')
+    plt.title("Cumulative Probability of Top Pathways")
+    plt.xlabel("Number of Pathways")
+    plt.ylabel("Cumulative Probability")
+    plt.grid(True)
+    plt. show()
+
+# Histogram of City Pairs by Distance
+def plot_distance_histogram(rotation_angles):
+    distances = rotation_angles[np.triu_indices(len(rotation_angles), k=1)]  
+    plt.figure(figsize=(10, 6))
+    plt.hist(distances, bins=20, color='purple', alpha=0.7)
+    plt.title("Histogram of City Pairs by Distance")
+    plt.xlabel("Geodesic Distance (rad)")
+    plt.ylabel("Frequency")
     plt.grid(True)
     plt. show()
 
 # Call
-plot_3d_energy_landscape(raw_counts)
-plot_transition_pathway_network(raw_counts)
-plot_2d_heatmap_pathways(raw_counts)
-plot_cumulative_energy_distribution(raw_counts)
+plot_probability_pie(counts)
+plot_geodesic_network(cities_coords, rotation_angles)
+plot_cumulative_probability(counts)
+plot_distance_histogram(rotation_angles)
+
+# Scatter Plot of City Probabilities
+def plot_city_probabilities(counts, cities_coords):
+    total_counts = sum(counts.values())
+    probabilities = {key: value / total_counts for key, value in counts.items()}
+    city_probs = [sum(probabilities.get(bin(i)[2:].zfill(len(cities_coords)), 0) for i in range(len(cities_coords))) for _ in range(len(cities_coords))]
+
+    plt.figure(figsize=(8, 6))
+    plt.scatter(range(len(city_probs)), city_probs, color='blue', s=100, alpha=0.7)
+    plt.title("Scatter Plot of City Probabilities")
+    plt.xlabel("City Index")
+    plt.ylabel("Probability")
+    plt.grid(True)
+    plt. show()
+
+# Correlation Matrix Heatmap
+def plot_correlation_heatmap(rotation_angles):
+    correlation_matrix = np.corrcoef(rotation_angles)
+    plt.figure(figsize=(10, 8))
+    sns.heatmap(correlation_matrix, annot=True, cmap='coolwarm', fmt=".2f")
+    plt.title("Correlation Matrix of Geodesic Distances")
+    plt.xlabel("City Index")
+    plt.ylabel("City Index")
+    plt. show()
+
+# Pathway Probability Bar Chart
+def plot_pathway_bar_chart(counts):
+    sorted_counts = sorted(counts.items(), key=lambda x: x[1], reverse=True)[:10]  
+    pathways, values = zip(*sorted_counts)
+    total_counts = sum(counts.values())
+    probabilities = [v / total_counts for v in values]
+
+    plt.figure(figsize=(12, 6))
+    plt. bar(pathways, probabilities, color='green', alpha=0.7)
+    plt.title("Pathway Probabilities (Top 10)")
+    plt.xlabel("Pathway")
+    plt.ylabel("Probability")
+    plt.xticks(rotation=90)
+    plt. show()
+
+# City Transition Network Graph
+def plot_city_transition_network(cities_coords, rotation_angles):
+    import networkx as nx
+    G = nx.Graph()
+    num_cities = len(cities_coords)
+    
+    # Add nodes
+    for i in range(num_cities):
+        G.add_node(i, pos=cities_coords[i])
+
+    # Add edges 
+    for i in range(num_cities):
+        for j in range(i + 1, num_cities):
+            if rotation_angles[i][j] < np.pi / 2:  
+                G.add_edge(i, j, weight=rotation_angles[i][j])
+
+    # Draw graph
+    pos = {i: (cities_coords[i][0], cities_coords[i][1]) for i in range(num_cities)}
+    plt.figure(figsize=(10, 8))
+    plt.title("City Transition Network")
+    nx.draw(G, pos, with_labels=True, node_color='red', edge_color='blue', node_size=500, font_size=10, alpha=0.7)
+    plt. show()
+
+# Call
+plot_city_probabilities(counts, cities_coords)
+plot_correlation_heatmap(rotation_angles)
+plot_pathway_bar_chart(counts)
+plot_city_transition_network(cities_coords, rotation_angles)
 
 # End
 
@@ -616,7 +615,7 @@ plot_cumulative_energy_distribution(raw_counts)
 </p>
             
  </div>
-        <img src="E47i4.png" alt="" class="experiment-image4">
+        <img src="E48i4.png" alt="" class="experiment-image4">
         <p></p>
         <div class="content-block">
 
