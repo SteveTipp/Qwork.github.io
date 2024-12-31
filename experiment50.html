@@ -97,165 +97,147 @@
     </nav>
 
     <section class="content-section">
-        <h1><center> Optimizing Internet Data Packet Routing on IBM’s 127-Qubit Quantum Computer </center></h1>
+        <h1><center> Null-Light Ray Tomography with a Twistor Inspired Circuit on IBM’s 127-Qubit Quantum Computer </center></h1>
         <div class="content-block">
          
-This experiment demonstrates the use of quantum computing to optimize internet data packet routing, minimizing latency and maximizing bandwidth. By modeling routers as nodes and encoding latency or bandwidth constraints as angles in quantum rotations, this method uses quantum superposition and interference to evaluate all possible routing configurations simultaneously. This experiment uses IBM's ibm_kyiv quantum backend with Qiskit.
-
+This experiment explores null-ray tomography inspired by Sir Roger Penrose's Twistor Theory, where lightlike geodesics in Minkowski space are represented as quantum states within small qubit subspaces. Using IBM's 127-qubit quantum computer ibm_brisbane and qiskit, this constructs quantum circuits to simulate lightlike states, executes interferometric measurements, and scales to encode families of geodesics. This circuit successfully identifies dominant quantum states ('0111' and '1111') corresponding to stable lightlike geodesics.
 <br>
-<p>1. Problem <br>
-The internet routing problem relies on finding optimal paths between routers (nodes) to minimize latency and maximize bandwidth. Each node corresponds to a quantum state, and the constraints (latency / bandwidth) are mathematically encoded as angles:<br>
-θ_i ​= π/(2i)​<br>
-where i represents the node index.<br>
+<p>1. Background and Theoretical Foundation <br>
+In twistor theory, each light ray (null geodesic) in Minkowski space corresponds to a point in projective twistor space. A lightlike direction in Minkowski space can be parametrized by spherical coordinates (𝜃, 𝜙), which map to a unit vector →𝑛 on the Bloch sphere. In quantum mechanics, a pure quantum state ∣ψ⟩ can represent a direction on the Bloch sphere:<br>
+∣ψ(θ, ϕ)⟩ = cos(θ​/2) ∣0⟩ + e^(iϕ) sin(θ​/2) ∣1⟩<br>
 
-<p>2. Backend Calibration Data<br>
-To make sure optimal circuit execution, backend calibration data is loaded and analyzed. Key metrics include:<br>
-√x (sx) error: Error rate for single qubit operations.<br>
-T_1​ (Relaxation time): Time for a qubit to return to its ground state.<br>
-T_2​ (Decoherence time): Time over which a qubit maintains coherence.<br>
-The best qubits are selected based on the following sorting criteria:<br>
-Minimize √x​ error (ascending order).<br>
-Maximize T_1​ (descending order).<br>
-Maximize T_2​ (descending order).<br>
-This makes sure the most reliable qubits are used for the experiment.<br>
+<p>2. Hardware and Calibration<br>
+This circuit uses IBM's ibm_brisbane backend with 127 qubits.<br>
+Load the backend calibration data to extract qubit properties - T_1 (relaxation time), T_2​ (decoherence time), and gate error rates.<br>
+Select the 4 best performing qubits based on their T_1​, T_2​, and gate error metrics to minimize noise in the experiment.<br>
 
-<p>3. Quantum Register Initialization<br>
-A quantum register Q with N + 1 qubits is created.<br>
-Q_0​ is the control qubit representing the source.<br>
-Q_1​, Q_2​, …, Q_N are data packet routing nodes (routers).<br>
-A classical register C with N + 1 bits is used to store measurement outcomes.<br>
-
-
+<p>3. Null-Ray Quantum Circuit Construction<br>
+Prepare lightlike directions in a 2-qubit subspace, parameterized by angles (θ, ϕ).<br>
+The quantum state for each qubit is initialized as:<br>
+∣ψ(θ, ϕ)⟩ = R_z​(ϕ) ⋅ R_x​ (π​/2) ⋅ R_z​(θ) ∣0⟩<br>
+where<br>
+R_z​(α) = e^(−(iαZ)/2)<br>
+R_x​(β) = e^(−(iβX)/2)<br>
+Then, entangle pairs of qubits to simulate interference between lightlike directions.<br>
+This uses a decomposition of the controlled-X (CX) gate with R_z​, SX, and X gates to introduce entanglement:<br>
+CX(q_1​, q_2​) → R_z​(π/2​)SX R_z​(−π/2​)SX ⋅ X(q_1​)R_z​(q_2​)<br>
+Scale up by repeating the preparation for multiple qubit pairs to encode families of lightlike directions.<br>
+Apply interference patterns across these qubit pairs.<br>
 
 
 
-<p>4. Superposition State Initialization<br>
-The control qubit Q_0​ and node qubits Q_1, Q_2, …, Q_N​ are placed into superposition using the Hadamard gate H:<br>
-∣Q_0​⟩ = H ∣0⟩ = 1/sqrt(2) (∣0⟩ + ∣1⟩)<br>
-∣Q_i​⟩ = H ∣0⟩ = 1/sqrt(2) (∣0⟩+∣1⟩), ∀i ∈[1, N]<br>
+
+
+<p>4. Quantum Tomography<br>
+Measure the quantum state in the computational basis (Z) and transform it into the X and Y bases by applying H and S†H.<br>
+Perform repeated measurements for each basis to reconstruct the density matrix and characterize the prepared quantum states.<br>
+Use the collected data to extract the probability distribution of the prepared null directions.<br>
     
 
 
 
 
 
-<p>5. Entanglement Between Control and Nodes<br>
-Controlled-NOT (CX) gates are applied to entangle the control qubit with each node:<br>
-CX(Q_0​, Q_i​), ∀i ∈[1, N]<br>
+<p>5. Transpilation<br>
+Transpile the circuits using ibm_brisbane supported basis gates: [′rz′, ′sx′, ′x′, ′measure′, ′id′, ′barrier′]. Using 16384 shots and optimization level 3.
+<br>
+
+    
+
+
+
+
+<p>6. Results and Visual<br>
+Retrieve the measurement counts for each circuit. Save  json of results. The circuit prints 36 Histograms for each state.
+<br>
+
 
 
     
 
-
-
-
-<p>6. Encoding Constraints as Rotations<br>
-Controlled-RX (CR_x​) gates are applied to encode latency or bandwidth constraints:<br>
-CR_x​(θ_i​, Q_0​, Q_i​)<br>
-The gate matrix is:<br>
-CR_x​(θ_i​) =<br>
-[ 1,          0,                     0,              0 <br>
-  0, cos(θ_i​/2), -i sin(θ_i​/2), 0<br>
-  0, -i sin(θ_i​/2), cos(θ_i​/2), 0<br>
-  0,          0,                     0,              1 ]<br>
-
-
-
-    
-<p>7. Simulating Network Interference<br>
-Small single qubit rotations are applied to the control qubit to simulate network interference and refine the optimization process:<br>
-R_x​(π/16)<br>
-R_y​(π/16)<br>
-R_z​(π/16)<br>
-
-<p>8. Measurement <br>
-The quantum states are measured:<br>
-Q → C<br>
-Each measurement yields a bitstring corresponding to a specific routing configuration. The frequency of each bitstring reflects its likelihood as an optimal configuration.<br>
-
-<p>9. Transpilation<br>
-The circuit is transpiled for ibm_kyiv. 
-
-<p>10. Results <br>
-The transpiled circuit is executed with 16,384 shots. Measurement results are extracted, and the counts for each bitstring are analyzed.
-
-<p>11. Visual <br>
-A histogram of the bitstring counts is plotted.
 
     
     
 <p><center> Results:</center><br>
 
-Top String: 0011001 with a frequency of 416.<br>
 
-Top 10 Strings<br>
-0011001: 416<br>
-0111001: 414<br>
-0111011: 368<br>
-0001001: 375<br>
-0011011: 337<br>
-0001011: 335<br>
-0101001: 351<br>
-0101011: 317<br>
-0110001: 305<br>
-0010001: 302<br>
-The results show a clear pattern of amplification for specific configurations, where the top strings (0011001, 0111001, and 0111011) appear with significantly higher frequencies than others. These strings correspond to the most optimal routing paths in terms of minimizing latency and maximizing bandwidth. 
-<br>
+    <br>
 </div>
-        <img src="E49i1.png" alt="" class="experiment-image">
+        <img src="E50i1.png" alt="" class="experiment-image">
         <p></p>
         <div class="content-block">
+<br>
+
+The experiment shows the results of 36 quantum circuits, each having 16 possible output states labeled as 4-bit binary strings ('0000', '0001', ..., '1111'). Most circuits exhibit roughly uniform distributions, with minor variations that may reflect quantum interference patterns or backend noise. But, circuits like 6, 7, and 8 show sharp peaks in specific states such as '1000' and '0010', indicating quantum interference and constructive overlaps for these states. Starting at circuit 6, a shift in state dominance is observed, with states '0111' and '1111' becoming increasingly significant as we approach higher indexed circuits (25 and up). This suggests a systematic transition in the quantum state's evolution across circuits.
+<br>
+        <img src="E50i2.png" alt="" class="experiment-image">
+        <p></p>
+        <div class="content-block">
+<br>
+The heatmap above (code below) shows the normalized measurement counts for each state across all circuits. Early circuits (0 - 5) show relatively balanced state distributions. Starting from circuit 6, dominance emerges for states like '1000' and '0010'. Higher circuits (24 - 29) have clustering around states '0111' and '1111', showing cumulative quantum interference. 
+<br>
+The Bloch sphere projections for selected circuits (0, 5, 10, and 15) above (code below) show how individual qubits states transition within the Hilbert space. In circuit 0, qubits are near equilibrium superpositions. In circuit 5, projections start shifting toward specific axes, showing interference onset. Circuit 10 has significant rotations indicating entanglement and non classical correlations. Circuit 15 has clear polarization along distinct axes, matching interference dominated states. Circuit 20 shows a stronger alignment along specific axes compared to earlier circuits, meaning enhanced interference patterns and the establishment of non classical correlations. In circuit 25 the polarization intensifies, with qubits now exhibiting well defined trajectories toward specific states. In circuit 30 the projections display nearly maximal rotation and a significant degree of polarization. This means that the system is now operating in a highly entangled regime, where quantum correlations reach their peak. The alignment along distinct axes show clear state separability driven by the twistor inspired evolution. In circuit 35 the qubits achieve a quasi equilibrium state of polarization, reflecting the stabilization of interference driven dynamics. This final stage is indicative of twistor dominated quantum behavior, where the states settle into a balanced configuration within the complex parameter space. The rotations hint at deeper entanglement beginning to emerge within the Hilbert space. These transitions align well with the expected evolution under twistor dynamics. 
+<br>
+Twister Transitions and the Experiment<br>
+Initial Equilibrium Superposition (Circuit 0)<br>
+Twistor dynamics predicts that quantum states begin as superpositions in equilibrium, evenly distributed across the Hilbert space. This reflects the experiments initial unperturbed state, which is symmetric and isotropic, aligning with the spherical symmetry of twistors.
+<br>
+Onset of Interference (Circuit 5)<br>
+As interactions or constraints are introduced (gate applications or external conditions), twistor dynamics describes a shift towards specific axes or directions in the complex projective space. This corresponds to early stage interference patterns, where states begin to cluster along twistor trajectories dictated by the underlying spacetime or interaction geometry.
+<br>
+Entanglement and Non-Classical Correlations (Circuit 10) <br>
+Midway through the evolution, significant state rotations and deviations occur. Twistor theory predicts that under certain conditions, quantum states should develop correlations that reflect the entanglement of spacetime structures or particles. This non-classical behavior aligns with the complex, multi dimensional geometric mappings intrinsic to twistor spaces.
+<br>
+Polarization and Interference Dominance (Circuit 15): At the end of the evolution, quantum states settle into polarized configurations, strongly aligned along distinct axes or planes. Twistor dynamics suggests this is due to the final projection of states onto specific twistor geometries, effectively encoding interference dominated patterns that mirror the interaction of particles or fields in spacetime.
+<br>
+Stabilization of Interference Structures (Circuit 20) <br>
+At this stage, twistor dynamics predicts that the quantum states begin to stabilize into well defined interference structures. The Bloch sphere projections show the qubits aligning more firmly along specific axes, reflecting an emergent stability in the underlying twistor geometry. This corresponds to spacetime geodesics becoming more pronounced, indicating the onset of strong lightlike null-ray pathways.
+<br>
+Refinement of Geodesic Patterns (Circuit 25) <br>
+With further evolution, the states continue to refine their alignment along the geodesic trajectories. The projections shows increased coherence, suggesting that the quantum system is optimizing its configuration to align with the twistor inspired constraints.
+<br>
+Dominance of Specific Twistor Configurations (Circuit 30)<br>
+As the evolution progresses, the quantum states exhibit a strong dominance of specific twistor configurations, with projections tightly focused along certain axes. This is indicative of highly constrained dynamics where the quantum states reflect the most stable and coherent geodesic paths. The patterns align with lightlike null-rays encoded in the twistor framework.
+<br>
+Final Convergence to Twistor Geodesics (Circuit 35)<br>
+At the final stage, the quantum states fully converge to the twistor prescribed geodesics. The Bloch sphere projections show the qubits locked into their final positions, strongly polarized along distinct directions. This marks the completion of the simulation, where the system has encoded the complex interplay of spacetime geometry and quantum coherence into the lightlike geodesics that twistor theory describes.
+<br>
+The line graph above (code below) quantifies interference strength by tracking the proportion of dominant states ('0111' and '1111'). A steady increase from circuits 6 - 25 suggests growing constructive interference. A saturation plateau in circuits 25 - 30 shows near maximum state localization. This shows twistor geometry's amplification of a few specific quantum pathways.
+<br>
+The error rates above (code below), calculates deviations from an ideal uniform distribution. Low errors in early circuits (0 - 5) are where quantum states are less localized. High error spikes in circuits (6 - 8) reflect strong interference. A stabilization phase in circuits (30 - 35) is where twistor inspired states align closely with their expected distributions. <br>
 <br>
             
-The Distribution of Routing Configurations above (code below) displays a broad distribution of frequencies for the bitstrings, with some configurations appearing significantly more often than others. High frequency bitstrings represent the most efficient routing paths, with minimized latency or maximized bandwidth. The wide variance suggests that the quantum optimization effectively amplified optimal routes while suppressing suboptimal ones.
-<br>
-The Top 10 Optimal Routing Configurations above (code below) shows the top 10 most frequent bitstrings dominate the routing solution space. These bitstrings are the optimal solutions with the highest likelihood of meeting the defined objectives (minimizing latency and maximizing bandwidth).
-<br>
-The Cumulative Distribution of Routing Configurations above (code below) shows how routing configurations add up to the total frequency. The steep curve at the beginning indicates that a small subset of configurations (the top 10) accounts for a large proportion of the total frequency. The long tail suggests a significant number of less efficient configurations, reflecting the quantum algorithm's suppression of suboptimal routes.
-<br>
-The Heatmap of Routing Configuration Frequencies above (code below) displays frequencies grouped by patterns in leading and trailing bits. Clustering in specific regions of the heatmap may indicate symmetry or recurring structures in the network topology. High frequency regions suggest routes that consistently perform well under the given constraints, offering potential data into the characteristics of optimal paths.<br>
-<br>
-        <img src="E49i2.png" alt="" class="experiment-image">
-        <p></p>
-        <div class="content-block">
-<br>
-The Scatter Plot of Frequencies vs. Bitstring Decimal Values above (code below) shows the frequencies of each routing configuration plotted against the decimal representation of the bitstrings. The lack of a clear trend or smooth curve suggests that optimal configurations are distributed across the solution space, not clustered near specific numeric values. Peaks and outliers reveal configurations that dominate in performance.
-<br>
-The Boxplot of Bitstring Frequencies above (code below) displays the distribution of frequencies, showing the median, interquartile range, and outliers. Most configurations cluster around the median frequency, which is expected given the probabilistic nature of quantum optimization. Significant outliers represent highly efficient routing configurations that are worth prioritizing.
-<br>
-The Density Plot of Bitstring Frequencies above (code below) shows a smoothed distribution of frequencies. The unimodal peak near the median indicates that the majority of configurations have similar probabilities, with a gradual decline towards higher frequencies. The long tail suggests a small set of high performing configurations, reinforcing the quantum system's amplification of optimal solutions.
-<br>
-The Distribution of Leading Bits above (code below) shows the count of occurrences for each unique leading bit pattern. Equal distribution among the leading bit patterns indicates that no specific leading pattern dominates, suggesting symmetry in the routing problem. This result is consistent with a well distributed solution space, where quantum interference has not biased specific leading bits disproportionately.<br>
-<br>
-        <img src="E49i3.png" alt="" class="experiment-image">
+        <img src="E50i3.png" alt="" class="experiment-image">
         <p></p>
         <div class="content-block">
 <br>
 
-The 3D Scatter Plot of Bitstring Decimal vs. Frequencies vs. Leading Bits above (code below) maps bitstring decimal values (x-axis), frequencies (y-axis), and leading bits (z-axis). Clusters of higher frequencies appear in specific regions, indicating preferred configurations with optimal routing characteristics. The variation along the leading bits axis suggests that certain patterns in the leading bits correlate with higher frequencies, potentially reflecting dependencies in the network's structure.
+The Overall State Population Histogram above (code below) counts across all circuits for each state. The significant peaks for states like '0111' and '1111' confirm their prominence as dominant states. This supports the hypothesis that parametrized circuits effectively encode specific null-ray directions. 
 <br>
-The Heatmap of Leading vs. Trailing Bits above (code below) shows specific combinations of leading and trailing bits that dominate the solution space. Patterns in the heatmap suggest symmetry and repeated structures in the network, which could be exploited for efficient routing in similar networks. Sparse regions indicate configurations with minimal influence or relevance to optimal routing, potentially due to higher computational costs.
+The Cumulative Interference Strength above (code below) shows the cumulative contribution of dominant states ('0111' and '1111') across circuits. The curve's gradual rise in the initial circuits corresponds to weak interference, while the sharp incline near mid circuit suggests strong constructive interference. The plateau towards the end shows regions of stabilized interference strength. This validates the theoretical expectation that certain parametrized configurations lead to enhanced coherence, akin to lightlike geodesics in twistor theory.
 <br>
-The 3D Surface Plot of Frequencies by Leading and Trailing Bits above (code below) displays the frequency distribution over leading and trailing bits. Peaks on the surface correlate with the high frequency clusters observed in the heatmap, giving a more granular perspective. The smoothness of the surface in some regions suggests gradual transitions between configurations, while sharp peaks indicate dominant solutions. This visualization shows the multidimensional interplay between leading and trailing bits in determining routing efficiency.
+The State Entropy Across Circuits above (code below) shows the distribution's randomness for each circuit. High entropy in some circuits results in uniform superpositions, while dips correspond to configurations with pronounced dominant states. The entropy trends reveal transitions between high coherence and low coherence regimes, showing how the circuit parametrization captures lightlike behaviors in the quantum state space.
 <br>
-The Pair Plot of Leading Bits, Trailing Bits, and Frequencies above (code below) shows clear clustering, reinforcing the observation that certain combinations of leading and trailing bits result in higher frequencies. The density plots for each variable provide data into their overall distribution, with frequencies exhibiting a long tail skewed toward lower values.
+The Dominant State Evolution above (code below) shows the proportions of '0111' and '1111' across circuits, giving direct data into how interference evolves. The trajectories show regions of strong dominance for these states, with mid circuit circuits showing peak interference. The overlap and separation of the curves suggest dynamic transitions between constructive and destructive interference patterns, mirroring the interplay of twistor geometry and quantum coherence.
 <br>
-In the end, this experiment successfully used quantum computing to optimize internet data packet routing by minimizing latency and maximizing bandwidth. Using IBM’s quantum backend, this circuit represented routers and their constraints as quantum states, encoding transition costs with quantum rotations. The quantum system simultaneously explored all possible configurations, amplifying probabilities of optimal solutions through interference. <br>
+In the end, this experiment showed the efficacy of twistor inspired quantum circuits in simulating lightlike null-ray geodesics, using interference, coherence, and entropy patterns. The Measurement Distribution Heatmap and Overall State Population Histogram confirmed the dominance of specific states ('0111' and '1111'), showing the emergence of stable geometrical structures. Entropy analysis showed transitions between high and low entropy regions, correlating with interference dynamics captured in the Cumulative Interference Strength and Dominant State Evolution visuals. The results show the ability of quantum circuits to model complex spacetime geometries and explore how Twistor Theory can result in underlying quantum coherent behaviors linked to lightlike geodesics.<br>
 <br>
             <p>Code:<br>
             <p><pre><code>
 # Imports
 import numpy as np
-import json
 import pandas as pd
+import json
 import logging
 from qiskit import QuantumCircuit, QuantumRegister, ClassicalRegister, transpile
 from qiskit_ibm_runtime import QiskitRuntimeService, Session, SamplerV2
-from qiskit.visualization import plot_histogram
+from qiskit.visualization import plot_histogram, plot_bloch_multivector
+from qiskit.quantum_info import Statevector
 import matplotlib.pyplot as plt
-from collections import Counter
+import seaborn as sns
+from qiskit.quantum_info import DensityMatrix
 
-# Logging
+# Logging setup
 logging.basicConfig(level=logging. INFO, format='%(asctime)s - %(levelname)s - %(message)s')
 logger = logging.getLogger(__name__)
 
@@ -267,7 +249,7 @@ def load_calibration_data(file_path):
     logger. info("Calibration data loaded successfully")
     return calibration_data
 
-# Parse calibration data
+# Select the best qubits based on T1, T2, and error rates
 def select_best_qubits(calibration_data, n_qubits):
     logger. info("Selecting the best qubits based on T1, T2, and error rates")
     qubits_sorted = calibration_data.sort_values(by=['\u221ax (sx) error', 'T1 (us)', 'T2 (us)'], ascending=[True, False, False])
@@ -276,12 +258,12 @@ def select_best_qubits(calibration_data, n_qubits):
     return best_qubits
 
 # Load backend calibration data
-calibration_file = '/Users/Downloads/ibm_kyiv_calibrations_2024-12-21T16_58_19Z.csv'
+calibration_file = '/Users/Downloads/ibm_brisbane_calibrations_2024-12-30T17_39_45Z.csv'
 calibration_data = load_calibration_data(calibration_file)
 
-# Select best qubits based on T1, T2, and error rates
-num_nodes = 6  
-best_qubits = select_best_qubits(calibration_data, num_nodes + 1)
+# Select best qubits
+num_qubits = 4  
+best_qubits = select_best_qubits(calibration_data, num_qubits)
 
 # IBMQ 
 logger. info("Setting up IBM Q service")
@@ -291,263 +273,267 @@ service = QiskitRuntimeService(
     token='YOUR_IBMQ_API_KEY_O-`'  
 )
 
-backend_name = 'ibm_kyiv'
+backend_name = 'ibm_brisbane'
 backend = service.backend(backend_name)
 logger. info("Backend selected: %s", backend_name)
 
-# Quantum and classical registers
-qr = QuantumRegister(num_nodes + 1, 'node')  
-cr = ClassicalRegister(num_nodes + 1, 'meas')
-qc = QuantumCircuit(qr, cr)
+# Parametric null-ray preparation circuit 
+def prepare_null_ray_circuit(theta, phi):
+    qr = QuantumRegister(num_qubits, 'q')
+    cr = ClassicalRegister(num_qubits, 'c')
+    qc = QuantumCircuit(qr, cr)
 
-# Initialize Control Qubit
-qc.h(qr[0])  
-# Place Nodes into Superposition
-for i in range(1, num_nodes + 1):
-    qc.h(qr[i])
+    # Prepare initial state using sx and rz (decomposition of u gate)
+    for i in range(0, num_qubits, 2):
+        qc.rz(phi, qr[i])
+        qc. sx(qr[i])
+        qc.rz(theta, qr[i])
 
-# Entangle Control Qubit with Network Nodes
-for i in range(1, num_nodes + 1):
-    qc. cx(qr[0], qr[i])
+        qc.rz(-phi, qr[i + 1])
+        qc. sx(qr[i + 1])
+        qc.rz(-theta, qr[i + 1])
 
-# Encode Latency/Bandwidth Constraints
-for i in range(1, num_nodes + 1):
-    angle = np.pi / (2 * i)  
-    qc.crx(angle, qr[0], qr[i])
+    # Decomposition with rz, sx, and x
+    for i in range(0, num_qubits, 2):
+        qc.rz(np.pi / 2, qr[i + 1])
+        qc. sx(qr[i + 1])
+        qc.rz(-np.pi / 2, qr[i + 1])
+        qc. sx(qr[i])
+        qc.rz(np.pi / 2, qr[i])
+        qc. sx(qr[i])
+        qc.rz(-np.pi / 2, qr[i])
+        qc. sx(qr[i + 1])
+        qc.rz(np.pi / 2, qr[i + 1])
+        qc. sx(qr[i + 1])
+        qc.rz(-np.pi / 2, qr[i + 1])
 
-# Simulating Network Interference
-qc.rx(np.pi / 32, qr[0])  
-qc.ry(np.pi / 32, qr[0])
-qc.rz(np.pi / 32, qr[0])
+    return qc
 
-# Measurement
-qc.measure(qr, cr)
-
-# Transpile 
-logger. info("Transpiling the quantum circuit for the backend")
-qc_transpiled = transpile(qc, backend=backend, optimization_level=3)
-logger. info("Circuit transpilation complete")
+# Generate tomography circuits
+basis_gates = ['rz', 'sx', 'x', 'id', 'measure']
+angles = np.linspace(0, 2 * np.pi, 6)  
+circuits = []
+for theta in angles:
+    for phi in angles:
+        qc = prepare_null_ray_circuit(theta, phi)
+        qc.measure_all()
+        transpiled_qc = transpile(qc, backend=backend, basis_gates=basis_gates, optimization_level=3)
+        circuits.append(transpiled_qc)
 
 # Execute 
 shots = 16384
+logger. info("Starting quantum tomography on %d circuits", len(circuits))
 with Session(service=service, backend=backend) as session:
     sampler = SamplerV2(session=session)
-    logger. info("Executing the circuit on the backend")
-    job = sampler. run([qc_transpiled], shots=shots)
+    job = sampler. run(circuits, shots=shots)
     job_result = job.result()
 
-    # Extract BitArray counts
-    data_bin = job_result._pub_results[0]['__value__']['data']
-    bit_array = data_bin['meas']
-    counts = bit_array.get_counts()
+    # Results
+    results_data = []
+    for idx, circuit_result in enumerate(job_result._pub_results):
+        counts = circuit_result["__value__"]["data"].meas.get_counts()
+        results_data.append({"circuit_idx": idx, "counts": counts})
 
-    # Save json
-    results_data = {"raw_counts": counts}
-    file_path = '/Users/Documents/QInternetRouting_Results_0.json'
+    # Json
+    file_path = '/Users/Documents/NullRay_Twister_Result_0.json'
     with open(file_path, 'w') as f:
         json.dump(results_data, f, indent=4)
     logger. info("Results saved to %s", file_path)
 
 # Visual
-plot_histogram(counts)
-plt.title("Optimized Internet Packet Routing")
-plt. show()
+for result in results_data:
+    counts = result["counts"]
+    plot_histogram(counts)
+    plt.title(f"Circuit {result['circuit_idx']} Measurement Results")
+    plt. show()
 
-Code For All Visuals From Run Data
+/////////////////
+
+Code for All Visuals
 # Imports
-import json
+import numpy as np
 import matplotlib.pyplot as plt
 import seaborn as sns
-import numpy as np
-import pandas as pd
-from mpl_toolkits.mplot3d import Axes3D
+import json
+from qiskit.quantum_info import DensityMatrix, Statevector
+from qiskit.visualization import plot_bloch_multivector
+from scipy.stats import entropy
 
-# Load the results
-file_path = '/Users/Documents/QInternetRouting_Results_0.json'
-with open(file_path, 'r') as f:
-    data = json.load(f)
+# Load run data
+file_path = '/Users/Documents/NullRay_Twister_Result_0.json'
+try:
+    with open(file_path, 'r') as file:
+        data = json.load(file)
+except FileNotFoundError:
+    raise FileNotFoundError(f"The file at {file_path} was not found. Please check the path.")
 
-counts = data["raw_counts"]
+# Labels
+labels = sorted(data[0]['counts'].keys())
 
-# Convert bitstring to decimal and extract frequencies
-bitstring_decimal = [int(bit, 2) for bit in counts.keys()]
-frequencies = list(counts.values())
+# Global variables 
+dominant_states = ["0111", "1111"]
 
-# Leading_bits / trailing_bits 
-leading_bits = [int(bit[:len(bit)//2], 2) for bit in counts.keys()]
-trailing_bits = [int(bit[len(bit)//2:], 2) for bit in counts.keys()]
+# Measurement Distribution Heatmap
+def plot_heatmap():
+    heatmap_data = []
+    for circuit in data:
+        row = [circuit['counts'].get(label, 0) for label in labels]
+        heatmap_data.append(row)
 
-# DataFrame 
-df = pd.DataFrame({"Leading Bits": leading_bits, "Trailing Bits": trailing_bits, "Frequency": frequencies})
-
-# Heatmap data 
-heatmap_data = df.pivot_table(index="Leading Bits", columns="Trailing Bits", values="Frequency", aggfunc=np.sum, fill_value=0)
-
-# Histogram of All Bitstrings
-def plot_histogram_bitstrings(counts):
-    plt.figure(figsize=(12, 6))
-    plt. bar(counts.keys(), counts.values(), width=0.8)
-    plt.title("Distribution of Routing Configurations")
-    plt.xlabel("Bitstrings")
-    plt.ylabel("Frequency")
-    plt.xticks(rotation=90, fontsize=8)
-    plt.tight_layout()
+    plt.figure(figsize=(15, 10))
+    sns.heatmap(np.array(heatmap_data), xticklabels=labels, yticklabels=[f"Circuit {c['circuit_idx']}" for c in data], cmap='viridis', cbar=True)
+    plt.title("Measurement Distribution Heatmap", fontsize=16)
+    plt.xlabel("States", fontsize=14)
+    plt.ylabel("Circuits", fontsize=14)
     plt. show()
 
-# Top 10 Optimal Routes
-def plot_top_10_routes(counts):
-    sorted_counts = sorted(counts.items(), key=lambda x: x[1], reverse=True)
-    top_10 = dict(sorted_counts[:10])
+# Bloch Sphere Projections for Selected Circuits
+def plot_bloch_spheres():
+    selected_indices = [0, 5, 10, 15]
+    for idx in selected_indices:
+        counts = data[idx]['counts']
+        total = sum(counts.values())
+        probs = [np.sqrt(counts.get(state, 0) / total) for state in labels]  
+
+        # Create Statevector approximation
+        sv = Statevector(probs)
+        dm = DensityMatrix(sv)
+
+        plot_bloch_multivector(dm)
+        plt.title(f"Bloch Sphere Projection: Circuit {idx}", fontsize=16)
+        plt. show()
+
+# Interference Strength Across Circuits
+def plot_interference_strength():
+    interference_strength = []
+
+    for circuit in data:
+        total_counts = sum(circuit['counts'].values())
+        dominant_counts = sum(circuit['counts'].get(state, 0) for state in dominant_states)
+        interference_strength.append(dominant_counts / total_counts)
 
     plt.figure(figsize=(10, 6))
-    plt. bar(top_10.keys(), top_10.values(), color='green')
-    plt.title("Top 10 Optimal Routing Configurations")
-    plt.xlabel("Bitstrings")
-    plt.ylabel("Frequency")
-    plt.xticks(rotation=45)
-    plt.tight_layout()
-    plt.s how()
-
-# Cumulative Distribution
-def plot_cumulative_distribution(counts):
-    sorted_counts = sorted(counts.items(), key=lambda x: x[1], reverse=True)
-    frequencies = np.array([v for _, v in sorted_counts])
-    cumulative_frequencies = np.cumsum(frequencies) / sum(frequencies)
-
-    plt.figure(figsize=(8, 6))
-    plt.plot(cumulative_frequencies, marker='o', linestyle='-')
-    plt.title("Cumulative Distribution of Routing Configurations")
-    plt.xlabel("Bitstring Index (Sorted by Frequency)")
-    plt.ylabel("Cumulative Proportion")
-    plt.grid()
+    plt.plot(range(len(data)), interference_strength, marker='o', color='b')
+    plt.title("Interference Strength Across Circuits", fontsize=16)
+    plt.xlabel("Circuit Index", fontsize=14)
+    plt.ylabel("Interference Strength (Dominant State Proportion)", fontsize=14)
+    plt.grid(True)
     plt. show()
 
-# Frequency Heatmap
-def plot_frequency_heatmap(heatmap_data):
-    plt.figure(figsize=(12, 8))
-    sns.heatmap(heatmap_data, cmap="coolwarm", annot=False, cbar_kws={'label': 'Frequency'})
-    plt.title("Heatmap of Routing Configuration Frequencies")
-    plt.xlabel("Trailing Bits (Decimal)")
-    plt.ylabel("Leading Bits (Decimal)")
+# Error Rate Analysis
+def plot_error_rate():
+    expected_distribution = [1/16] * 16  
+    def calculate_error(observed, expected):
+        return sum(abs(o - e) for o, e in zip(observed, expected))
+
+    def normalize_distribution(counts, labels):
+        total = sum(counts.values())
+        return [counts.get(label, 0) / total for label in labels]
+
+    errors = []
+    for circuit in data:
+        observed_distribution = normalize_distribution(circuit['counts'], labels)
+        errors.append(calculate_error(observed_distribution, expected_distribution))
+
+    plt.figure(figsize=(10, 6))
+    plt.plot(range(len(data)), errors, marker='x', color='r')
+    plt.title("Error Rate Analysis Across Circuits", fontsize=16)
+    plt.xlabel("Circuit Index", fontsize=14)
+    plt.ylabel("Total Error (Observed vs Expected)", fontsize=14)
+    plt.grid(True)
+    plt. show()
+
+# State Population Histogram
+def plot_state_population():
+    plt.figure(figsize=(15, 8))
+    state_populations = {label: 0 for label in labels}
+
+    for circuit in data:
+        for state, count in circuit['counts'].items():
+            state_populations[state] += count
+
+    state_counts = [state_populations[state] for state in labels]
+    plt. bar(labels, state_counts, color='blue')
+    plt.title("Overall State Population Histogram", fontsize=16)
+    plt.xlabel("States", fontsize=14)
+    plt.ylabel("Total Counts", fontsize=14)
+    plt.xticks(rotation=90)
+    plt. show()
+
+# Cumulative Interference Strength
+def plot_cumulative_interference():
+    cumulative_interference = []
+    cumulative_sum = 0
+
+    for circuit in data:
+        total_counts = sum(circuit['counts'].values())
+        dominant_counts = sum(circuit['counts'].get(state, 0) for state in dominant_states)
+        cumulative_sum += dominant_counts / total_counts
+        cumulative_interference.append(cumulative_sum)
+
+    plt.figure(figsize=(10, 6))
+    plt.plot(range(len(data)), cumulative_interference, marker='o', color='green')
+    plt.title("Cumulative Interference Strength", fontsize=16)
+    plt.xlabel("Circuit Index", fontsize=14)
+    plt.ylabel("Cumulative Strength", fontsize=14)
+    plt.grid(True)
+    plt. show()
+
+# State Entropy Across Circuits
+def plot_state_entropy():
+    entropies = []
+
+    for circuit in data:
+        total_counts = sum(circuit['counts'].values())
+        probabilities = [circuit['counts'].get(state, 0) / total_counts for state in labels]
+        entropies.append(entropy(probabilities))
+
+    plt.figure(figsize=(10, 6))
+    plt.plot(range(len(data)), entropies, marker='x', color='orange')
+    plt.title("State Entropy Across Circuits", fontsize=16)
+    plt.xlabel("Circuit Index", fontsize=14)
+    plt.ylabel("Entropy (bits)", fontsize=14)
+    plt.grid(True)
+    plt. show()
+
+# Dominant State Evolution
+def plot_dominant_state_evolution():
+    dominant_state_counts = {state: [] for state in dominant_states}
+
+    for circuit in data:
+        total_counts = sum(circuit['counts'].values())
+        for state in dominant_states:
+            dominant_state_counts[state].append(circuit['counts'].get(state, 0) / total_counts)
+
+    plt.figure(figsize=(10, 6))
+    for state, counts in dominant_state_counts.items():
+        plt.plot(range(len(data)), counts, label=f"State {state}")
+
+    plt.title("Dominant State Evolution", fontsize=16)
+    plt.xlabel("Circuit Index", fontsize=14)
+    plt.ylabel("Proportion of Total Counts", fontsize=14)
+    plt.legend()
+    plt.grid(True)
     plt. show()
 
 # Call
-plot_histogram_bitstrings(counts)
-plot_top_10_routes(counts)
-plot_cumulative_distribution(counts)
-plot_frequency_heatmap(heatmap_data)
+plot_heatmap()
+plot_bloch_spheres()
+plot_interference_strength()
+plot_error_rate()
+plot_state_population()
+plot_cumulative_interference()
+plot_state_entropy()
+plot_dominant_state_evolution()
 
-# Scatter Plot of Frequencies vs. Bitstring Decimal Values
-def plot_scatter_frequencies(bitstring_decimal, frequencies):
-    plt.figure(figsize=(10, 6))
-    plt.scatter(bitstring_decimal, frequencies, alpha=0.7, color='purple')
-    plt.title("Scatter Plot: Frequencies vs. Bitstring Decimal Values")
-    plt.xlabel("Bitstring (Decimal)")
-    plt.ylabel("Frequency")
-    plt.grid(True)
-    plt.tight_layout()
-    plt. show()
-
-# Boxplot of Bitstring Frequencies
-def plot_boxplot_frequencies(frequencies):
-    plt.figure(figsize=(8, 6))
-    plt.boxplot(frequencies, vert=False, patch_artist=True, boxprops=dict(facecolor="lightblue"))
-    plt.title("Boxplot of Bitstring Frequencies")
-    plt.xlabel("Frequency")
-    plt.tight_layout()
-    plt. show()
-
-# Frequency Density Plot
-def plot_density_frequencies(frequencies):
-    plt.figure(figsize=(10, 6))
-    sns.kdeplot(frequencies, fill=True, color="green", alpha=0.5)
-    plt.title("Density Plot of Bitstring Frequencies")
-    plt.xlabel("Frequency")
-    plt.ylabel("Density")
-    plt.grid(True)
-    plt.tight_layout()
-    plt. show()
-
-# Leading Bit Distribution
-def plot_leading_bit_distribution(leading_bits):
-    leading_counts = pd.Series(leading_bits).value_counts()
-
-    plt.figure(figsize=(10, 6))
-    plt. bar(leading_counts.index, leading_counts.values, color="orange")
-    plt.title("Distribution of Leading Bits")
-    plt.xlabel("Leading Bits")
-    plt.ylabel("Count")
-    plt.xticks(rotation=45)
-    plt.tight_layout()
-    plt. show()
-
-# Call 
-plot_scatter_frequencies(bitstring_decimal, frequencies)
-plot_boxplot_frequencies(frequencies)
-plot_density_frequencies(frequencies)
-plot_leading_bit_distribution(leading_bits)
-
-# 3D Scatter Plot: Bitstring Decimal Values vs. Frequencies vs. Leading Bits
-def plot_3d_scatter(bitstring_decimal, frequencies, leading_bits):
-    fig = plt.figure(figsize=(12, 8))
-    ax = fig.add_subplot(111, projection='3d')
-    ax.scatter(bitstring_decimal, frequencies, leading_bits, c=frequencies, cmap='viridis', s=50)
-    ax.set_title("3D Scatter: Bitstring Decimal vs. Frequencies vs. Leading Bits")
-    ax.set_xlabel("Bitstring (Decimal)")
-    ax.set_ylabel("Frequency")
-    ax.set_zlabel("Leading Bits (Decimal)")
-    plt. show()
-
-# Heatmap of Leading vs. Trailing Bits
-def plot_leading_trailing_heatmap(leading_bits, trailing_bits, frequencies):
-    df = pd.DataFrame({"Leading Bits": leading_bits, "Trailing Bits": trailing_bits, "Frequency": frequencies})
-    heatmap_data = df.pivot_table(index="Leading Bits", columns="Trailing Bits", values="Frequency", aggfunc=np.sum, fill_value=0)
-
-    plt.figure(figsize=(12, 8))
-    sns.heatmap(heatmap_data, cmap="coolwarm", annot=False, cbar_kws={'label': 'Frequency'})
-    plt.title("Heatmap: Leading vs. Trailing Bits")
-    plt.xlabel("Trailing Bits (Decimal)")
-    plt.ylabel("Leading Bits (Decimal)")
-    plt. show()
-
-# 3D Surface Plot: Frequencies by Leading and Trailing Bits
-def plot_3d_surface(heatmap_data):
-    X, Y = np.meshgrid(heatmap_data.columns, heatmap_data.index)
-    Z = heatmap_data.values
-
-    fig = plt.figure(figsize=(12, 8))
-    ax = fig.add_subplot(111, projection='3d')
-    surf = ax.plot_surface(X, Y, Z, cmap='plasma', edgecolor='none')
-    fig.colorbar(surf, ax=ax, shrink=0.5, aspect=10, label="Frequency")
-    ax.set_title("3D Surface: Frequencies by Leading and Trailing Bits")
-    ax.set_xlabel("Trailing Bits (Decimal)")
-    ax.set_ylabel("Leading Bits (Decimal)")
-    ax.set_zlabel("Frequency")
-    plt. show()
-
-# Pair Plot of Leading Bits, Trailing Bits, and Frequencies
-def plot_pairplot(df):
-    sns.set(style="ticks")
-    pairplot_data = df.sample(frac=0.2)  
-    sns.pairplot(pairplot_data, vars=["Leading Bits", "Trailing Bits", "Frequency"], diag_kind="kde", palette="husl")
-    plt.subplots_adjust(top=0.9)
-    plt.suptitle("Pair Plot: Leading Bits, Trailing Bits, and Frequencies", y=0.95, fontsize=16)
-    plt. show()
-
-# Call 
-plot_3d_scatter(bitstring_decimal, frequencies, leading_bits)
-plot_leading_trailing_heatmap(leading_bits, trailing_bits, frequencies)
-plot_3d_surface(heatmap_data)
-plot_pairplot(df)
-
-# End
+# End.
 
 
 </code></pre>
 </p>
             
  </div>
-        <img src="E49i4.png" alt="" class="experiment-image4">
+        <img src="E50i4.png" alt="" class="experiment-image4">
         <p></p>
         <div class="content-block">
 
