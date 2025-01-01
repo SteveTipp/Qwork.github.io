@@ -97,49 +97,51 @@
     </nav>
 
     <section class="content-section">
-        <h1><center> Null-Light Ray Tomography with a Twistor Inspired Circuit on IBM’s 127-Qubit Quantum Computer </center></h1>
+        <h1><center> Embedding Clifford Parallels in Multi-qubit Stabilizers on IBM’s 127-Qubit Quantum Computer </center></h1>
         <div class="content-block">
          
-This experiment explores null-ray tomography inspired by Sir Roger Penrose's Twistor Theory, where lightlike geodesics in Minkowski space are represented as quantum states within small qubit subspaces. Using IBM's 127-qubit quantum computer ibm_brisbane and qiskit, this constructs quantum circuits to simulate lightlike states, executes interferometric measurements, and scales to encode families of geodesics. This circuit successfully identifies dominant quantum states ('0111' and '1111') corresponding to stable lightlike geodesics.
+This experiment explores Clifford parallels in quantum stabilizer states, inspired by parallels in geometry. This uses Clifford gates (Hadamard, S, and CNOT) to construct and manipulate stabilizer states on a 10-qubit circuit. The circuit aims to simulate parallelism by varying entanglement patterns and measuring state fidelities among the generated stabilizers. The circuit is run on IBM’s 127-qubit ibm_sherbrooke with qiskit. The fidelity analysis revealed patterns - stabilizer states at the edges of the index range (simpler states with fewer entanglement patterns) exhibited significantly higher fidelities, while those in the middle of the range showed strong degradation.<br>
 <br>
-<p>1. Background and Theoretical Foundation <br>
-In twistor theory, each light ray (null geodesic) in Minkowski space corresponds to a point in projective twistor space. A lightlike direction in Minkowski space can be parametrized by spherical coordinates (𝜃, 𝜙), which map to a unit vector →𝑛 on the Bloch sphere. In quantum mechanics, a pure quantum state ∣ψ⟩ can represent a direction on the Bloch sphere:<br>
-∣ψ(θ, ϕ)⟩ = cos(θ​/2) ∣0⟩ + e^(iϕ) sin(θ​/2) ∣1⟩<br>
+<p>1. Calibration  <br>
+This begins by loading ibm_sherbrooke calibration data. This data contains T_1​ (Relaxation time), the average time before a qubit loses energy, T_2​ (Dephasing time), the average time before a qubit loses phase coherence, and gate error rates. <br>
+This ranks the qubits based on:<br>
+Error Metric = x √(sx error)​<br>
+Select the top 10 qubits with the lowest error rates, and longest T_1​, and T_2​. <br>
 
-<p>2. Hardware and Calibration<br>
-This circuit uses IBM's ibm_brisbane backend with 127 qubits.<br>
-Load the backend calibration data to extract qubit properties - T_1 (relaxation time), T_2​ (decoherence time), and gate error rates.<br>
-Select the 4 best performing qubits based on their T_1​, T_2​, and gate error metrics to minimize noise in the experiment.<br>
+<p>2. Initialization<br>
+A 10-qubit quantum register (Q) and a 10-bit classical register (C) are initialized. The quantum circuit starts in the ground state:<br>
+∣0⟩^(⊗10)
+<br>
 
-<p>3. Null-Ray Quantum Circuit Construction<br>
-Prepare lightlike directions in a 2-qubit subspace, parameterized by angles (θ, ϕ).<br>
-The quantum state for each qubit is initialized as:<br>
-∣ψ(θ, ϕ)⟩ = R_z​(ϕ) ⋅ R_x​ (π​/2) ⋅ R_z​(θ) ∣0⟩<br>
-where<br>
-R_z​(α) = e^(−(iαZ)/2)<br>
-R_x​(β) = e^(−(iβX)/2)<br>
-Then, entangle pairs of qubits to simulate interference between lightlike directions.<br>
-This uses a decomposition of the controlled-X (CX) gate with R_z​, SX, and X gates to introduce entanglement:<br>
-CX(q_1​, q_2​) → R_z​(π/2​)SX R_z​(−π/2​)SX ⋅ X(q_1​)R_z​(q_2​)<br>
-Scale up by repeating the preparation for multiple qubit pairs to encode families of lightlike directions.<br>
-Apply interference patterns across these qubit pairs.<br>
-
-
-
+<p>3. Clifford Stabilizer Preparation<br>
+Clifford gates are used to prepare the stabilizer states:<br>
+Hadamard Gate (H):<br>
+H ∣0⟩ = (∣0⟩ + ∣1⟩​)/2 ​= ∣+⟩<br>
+The Hadamard gate is applied to the first qubit (Q_0​) to create a superposition state.<br>
+Phase Gate (S):<br>
+S ∣+⟩ = ∣+⟩<br>
+Applied to subsequent qubits (Q_1, Q_2, …, Q_9) to introduce phase shifts.<br>
+Controlled-NOT Gate (CNOT):<br>
+CNOT(Q_i​, Q_j​) : ∣c, t⟩ → ∣c, c ⊕ t⟩<br>
+This gate entangles Q_0​ (control) with all other qubits (targets), creating an entangled stabilizer state.<br>
 
 
-<p>4. Quantum Tomography<br>
-Measure the quantum state in the computational basis (Z) and transform it into the X and Y bases by applying H and S†H.<br>
-Perform repeated measurements for each basis to reconstruct the density matrix and characterize the prepared quantum states.<br>
-Use the collected data to extract the probability distribution of the prepared null directions.<br>
+
+
+
+
+<p>4. Clifford Parallel Manipulation<br>
+To simulate the geometric notion of parallelism, additional S gates are applied to all qubits to introduce phase rotations.<br>
+H gates are re-applied to all qubits to create symmetry, making sure each qubit’s state resembles a parallel to others in the stabilizer framework.<br>
+The result is a family of stabilizer states differing by entanglement patterns and phase shifts, akin to parallel structures in geometry.<br>
     
 
 
 
 
 
-<p>5. Transpilation<br>
-Transpile the circuits using ibm_brisbane supported basis gates: [′rz′, ′sx′, ′x′, ′measure′, ′id′, ′barrier′]. Using 16384 shots and optimization level 3.
+<p>5. Measurement<br>
+The quantum circuit measures all qubits into the classical register. The measurement collapses the quantum state into one of 2^10 = 1024 possible bitstrings. 
 <br>
 
     
@@ -147,14 +149,23 @@ Transpile the circuits using ibm_brisbane supported basis gates: [′rz′, ′s
 
 
 
-<p>6. Results and Visual<br>
-Retrieve the measurement counts for each circuit. Save  json of results. The circuit prints 36 Histograms for each state.
+<p>6. Transpilation and Execution<br>
+The circuit is transpiled for ibm_sherbrooke. The transpiled circuit is executed on ibm_sherbrooke with 16384 shots.
 <br>
 
 
 
+<p>7. Results<br>
+The backend returns raw data containing bitstring counts: Counts:{bitstring_i​ : frequency_i​} and is saved to a json.
+<br>
     
-
+<p>8. Analysis<br>
+The results are analyzed for fidelity and stability.<br>
+State Fidelity (F): <br>
+F(ρ, σ) = (Tr√(√(ρ​σ)√ρ​​))^2<br>
+where ρ and σ are density matrices of the generated states.<br>
+Patterns in the counts show correlations and symmetry among stabilizer states. Differences in entanglement fidelities are interpreted as 'distances' between stabilizer states. A histogram of the State Fidelity is generated.
+<br>
 
     
     
@@ -163,81 +174,65 @@ Retrieve the measurement counts for each circuit. Save  json of results. The cir
 
     <br>
 </div>
-        <img src="E50i1.png" alt="" class="experiment-image">
+        <img src="E51i1.png" alt="" class="experiment-image">
         <p></p>
         <div class="content-block">
 <br>
 
-The experiment shows the results of 36 quantum circuits, each having 16 possible output states labeled as 4-bit binary strings ('0000', '0001', ..., '1111'). Most circuits exhibit roughly uniform distributions, with minor variations that may reflect quantum interference patterns or backend noise. But, circuits like 6, 7, and 8 show sharp peaks in specific states such as '1000' and '0010', indicating quantum interference and constructive overlaps for these states. Starting at circuit 6, a shift in state dominance is observed, with states '0111' and '1111' becoming increasingly significant as we approach higher indexed circuits (25 and up). This suggests a systematic transition in the quantum state's evolution across circuits.
+The Bar Chart of Stabilizer State Fidelities above (code below) shows fidelities of experimentally measured states relative to ideal stabilizer states. The higher fidelities at the boundaries suggest that certain stabilizer states (possibly with specific entanglement patterns or correlations) are better preserved during the experimental run. The drop in fidelities in the central region may reflect noise or decoherence. This result supports the hypothesis that specific stabilizer states might maintain higher fidelity due to their inherent symmetries or correlations.
 <br>
-        <img src="E50i2.png" alt="" class="experiment-image">
+The Fidelity Correlation Heatmap above (code below) shows a matrix of correlations (fidelity overlaps) between all pairs of stabilizer states. Brighter regions indicate higher correlations, while darker areas show weaker or no correlations. Correlations are more prominent near the edges of the state index range. The heatmap confirms that stabilizer states near the edges of the index range exhibit stronger mutual correlations, showing a pattern of similarity among these states.
+<br>
+In the Top 20 Dominant Bitstrings above (code below), the most frequent bitstrings (100110, 100101) are likely stabilizer states strongly influenced by the entanglement and symmetry introduced by the Clifford gates. The dominance of specific bitstrings suggests certain stabilizer configurations are more stable under the noise and decoherence of the backend. 
+<br>
+The Heatmap of Bitstring Patterns (Top 50 Frequencies) above (code below) shows the bit values for the top 50 bitstrings and their contributions by qubit index. Qubits exhibit consistent patterns across high frequency bitstrings, showing a global entanglement pattern imposed by the Clifford operations. 
+<br>
+The Probability Distribution of Bitstrings above (code below) shows the probabilities of all measured bitstrings. A sharp drop off in probabilities after the most frequent bitstrings shows that only a small subset of states is highly probable. Most bitstrings have negligible probabilities, indicating they are either not part of the stabilizer states or are noise artifacts.<br>
+<br>
+        <img src="E51i2.png" alt="" class="experiment-image">
         <p></p>
         <div class="content-block">
 <br>
-The heatmap above (code below) shows the normalized measurement counts for each state across all circuits. Early circuits (0 - 5) show relatively balanced state distributions. Starting from circuit 6, dominance emerges for states like '1000' and '0010'. Higher circuits (24 - 29) have clustering around states '0111' and '1111', showing cumulative quantum interference. 
+The Cumulative Frequency Plot above (code below) shows the cumulative frequency of bitstrings, showing the dominance of a few highly probable states. The curve flattens quickly, indicating that a small number of bitstrings account for most of the measurement outcomes. Beyond the top 100 bitstrings, the contribution to the overall frequency is minimal.
 <br>
-The Bloch sphere projections for selected circuits (0, 5, 10, and 15) above (code below) show how individual qubits states transition within the Hilbert space. In circuit 0, qubits are near equilibrium superpositions. In circuit 5, projections start shifting toward specific axes, showing interference onset. Circuit 10 has significant rotations indicating entanglement and non classical correlations. Circuit 15 has clear polarization along distinct axes, matching interference dominated states. Circuit 20 shows a stronger alignment along specific axes compared to earlier circuits, meaning enhanced interference patterns and the establishment of non classical correlations. In circuit 25 the polarization intensifies, with qubits now exhibiting well defined trajectories toward specific states. In circuit 30 the projections display nearly maximal rotation and a significant degree of polarization. This means that the system is now operating in a highly entangled regime, where quantum correlations reach their peak. The alignment along distinct axes show clear state separability driven by the twistor inspired evolution. In circuit 35 the qubits achieve a quasi equilibrium state of polarization, reflecting the stabilization of interference driven dynamics. This final stage is indicative of twistor dominated quantum behavior, where the states settle into a balanced configuration within the complex parameter space. The rotations hint at deeper entanglement beginning to emerge within the Hilbert space. These transitions align well with the expected evolution under twistor dynamics. 
+The Distribution by Hamming Weight above (code below) groups bitstrings by their Hamming weight (number of 1s). The distribution is roughly symmetric, with mid range Hamming weights (3, 7) being more frequent. Lower and higher Hamming weights (0, 1, 9, 10) occur less frequently. The symmetry in the Hamming weight distribution reflects the intended global entanglement and phase adjustments in the circuit. Noise likely introduced slight imbalances but did not disrupt the overall symmetry.
 <br>
-Twister Transitions and the Experiment<br>
-Initial Equilibrium Superposition (Circuit 0)<br>
-Twistor dynamics predicts that quantum states begin as superpositions in equilibrium, evenly distributed across the Hilbert space. This reflects the experiments initial unperturbed state, which is symmetric and isotropic, aligning with the spherical symmetry of twistors.
+The Top 10 vs Bottom 10 Bitstrings above (code below) shows the 10 most frequent and 10 least frequent bitstrings. The top 10 bitstrings dominate the distribution, with a sharp drop off to the bottom 10, which have negligible frequencies. This contrast shows the stability of certain configurations and the irrelevance of others. 
 <br>
-Onset of Interference (Circuit 5)<br>
-As interactions or constraints are introduced (gate applications or external conditions), twistor dynamics describes a shift towards specific axes or directions in the complex projective space. This corresponds to early stage interference patterns, where states begin to cluster along twistor trajectories dictated by the underlying spacetime or interaction geometry.
+The Heatmap of Bitstring Frequencies by Qubit Position above (code below) shows how individual qubit positions contribute to the observed bitstring frequencies. Certain qubits consistently appear in high value configurations, meaning their stabilizer roles are critical. Variability in some positions may mean susceptibility to noise.
 <br>
-Entanglement and Non-Classical Correlations (Circuit 10) <br>
-Midway through the evolution, significant state rotations and deviations occur. Twistor theory predicts that under certain conditions, quantum states should develop correlations that reflect the entanglement of spacetime structures or particles. This non-classical behavior aligns with the complex, multi dimensional geometric mappings intrinsic to twistor spaces.
-<br>
-Polarization and Interference Dominance (Circuit 15): At the end of the evolution, quantum states settle into polarized configurations, strongly aligned along distinct axes or planes. Twistor dynamics suggests this is due to the final projection of states onto specific twistor geometries, effectively encoding interference dominated patterns that mirror the interaction of particles or fields in spacetime.
-<br>
-Stabilization of Interference Structures (Circuit 20) <br>
-At this stage, twistor dynamics predicts that the quantum states begin to stabilize into well defined interference structures. The Bloch sphere projections show the qubits aligning more firmly along specific axes, reflecting an emergent stability in the underlying twistor geometry. This corresponds to spacetime geodesics becoming more pronounced, indicating the onset of strong lightlike null-ray pathways.
-<br>
-Refinement of Geodesic Patterns (Circuit 25) <br>
-With further evolution, the states continue to refine their alignment along the geodesic trajectories. The projections shows increased coherence, suggesting that the quantum system is optimizing its configuration to align with the twistor inspired constraints.
-<br>
-Dominance of Specific Twistor Configurations (Circuit 30)<br>
-As the evolution progresses, the quantum states exhibit a strong dominance of specific twistor configurations, with projections tightly focused along certain axes. This is indicative of highly constrained dynamics where the quantum states reflect the most stable and coherent geodesic paths. The patterns align with lightlike null-rays encoded in the twistor framework.
-<br>
-Final Convergence to Twistor Geodesics (Circuit 35)<br>
-At the final stage, the quantum states fully converge to the twistor prescribed geodesics. The Bloch sphere projections show the qubits locked into their final positions, strongly polarized along distinct directions. This marks the completion of the simulation, where the system has encoded the complex interplay of spacetime geometry and quantum coherence into the lightlike geodesics that twistor theory describes.
-<br>
-The line graph above (code below) quantifies interference strength by tracking the proportion of dominant states ('0111' and '1111'). A steady increase from circuits 6 - 25 suggests growing constructive interference. A saturation plateau in circuits 25 - 30 shows near maximum state localization. This shows twistor geometry's amplification of a few specific quantum pathways.
-<br>
-The error rates above (code below), calculates deviations from an ideal uniform distribution. Low errors in early circuits (0 - 5) are where quantum states are less localized. High error spikes in circuits (6 - 8) reflect strong interference. A stabilization phase in circuits (30 - 35) is where twistor inspired states align closely with their expected distributions. <br>
+The Entropy by Hamming Weight above (code below) measures entropy (randomness) within groups of bitstrings with the same Hamming weight. Mid range Hamming weights have higher entropy, reflecting greater randomness in their stabilizer states. Extremes (low and high weights) have lower entropy, meaning more structured and deterministic patterns.
 <br>
             
-        <img src="E50i3.png" alt="" class="experiment-image">
+        <img src="E51i3.png" alt="" class="experiment-image">
         <p></p>
         <div class="content-block">
 <br>
 
-The Overall State Population Histogram above (code below) counts across all circuits for each state. The significant peaks for states like '0111' and '1111' confirm their prominence as dominant states. This supports the hypothesis that parametrized circuits effectively encode specific null-ray directions. 
+The 3D Surface Plot of Bitstring Frequencies by Qubit Index above (code below) shows a macro level view of how bitstring frequencies are distributed across qubit positions and bitstring indices. Peaks in frequency correspond to highly stable bitstring states that emerged from the Clifford gate operations. The valleys show regions where the qubit configurations are less stable or more susceptible to noise. 
 <br>
-The Cumulative Interference Strength above (code below) shows the cumulative contribution of dominant states ('0111' and '1111') across circuits. The curve's gradual rise in the initial circuits corresponds to weak interference, while the sharp incline near mid circuit suggests strong constructive interference. The plateau towards the end shows regions of stabilized interference strength. This validates the theoretical expectation that certain parametrized configurations lead to enhanced coherence, akin to lightlike geodesics in twistor theory.
+The Macro Level Bar Chart for All Bitstring Counts above (code below) shows the frequency of all bitstrings, giving an overview of the entire dataset. A sharp distribution skew is evident, where only a few bitstrings have significantly high frequencies, while most have negligible counts. The dominance of specific stabilizer states aligns with the expected outcomes of Clifford operations.
 <br>
-The State Entropy Across Circuits above (code below) shows the distribution's randomness for each circuit. High entropy in some circuits results in uniform superpositions, while dips correspond to configurations with pronounced dominant states. The entropy trends reveal transitions between high coherence and low coherence regimes, showing how the circuit parametrization captures lightlike behaviors in the quantum state space.
+The 3D Scatter Plot of Frequencies by Hamming Weight and Bitstring Index above (code below) shows the relationship between bitstring indices, their Hamming weight (number of 1s), and frequencies. High frequency states cluster around specific Hamming weights, showing a structured entanglement pattern. The scatter shows a balanced distribution of frequencies across low and mid range Hamming weights, with extreme Hamming weights (0 or maximum) having less frequent configurations.
 <br>
-The Dominant State Evolution above (code below) shows the proportions of '0111' and '1111' across circuits, giving direct data into how interference evolves. The trajectories show regions of strong dominance for these states, with mid circuit circuits showing peak interference. The overlap and separation of the curves suggest dynamic transitions between constructive and destructive interference patterns, mirroring the interplay of twistor geometry and quantum coherence.
+The Global Heatmap of Bitstring Frequencies Across All Data above (code below) shows normalized frequencies of all bitstrings across qubit indices. High frequency regions shows qubits that are critical in forming stabilizer states. The vertical patterns show how certain qubits consistently contribute to stabilizer states, while others are more random.
 <br>
-In the end, this experiment showed the efficacy of twistor inspired quantum circuits in simulating lightlike null-ray geodesics, using interference, coherence, and entropy patterns. The Measurement Distribution Heatmap and Overall State Population Histogram confirmed the dominance of specific states ('0111' and '1111'), showing the emergence of stable geometrical structures. Entropy analysis showed transitions between high and low entropy regions, correlating with interference dynamics captured in the Cumulative Interference Strength and Dominant State Evolution visuals. The results show the ability of quantum circuits to model complex spacetime geometries and explore how Twistor Theory can result in underlying quantum coherent behaviors linked to lightlike geodesics.<br>
+In the end, this circuit aimed to explore Clifford parallels in multi-qubit stabilizers by generating stabilizer states using Clifford gates (Hadamard, S, and CNOT). This circuit analyzed the fidelities of the experimentally generated states against ideal stabilizer states. The fidelity analysis revealed patterns - stabilizer states at the edges of the index range (simpler states with fewer entanglement patterns) exhibited significantly higher fidelities, while those in the middle of the range showed strong degradation. This means that noise and decoherence disproportionately affect more complex stabilizer states, which are likely more sensitive to the backend's noise. These patterns show that the experimental setup and backend calibration data favor specific stabilizer states.<br>
 <br>
             <p>Code:<br>
             <p><pre><code>
 # Imports
 import numpy as np
-import pandas as pd
 import json
+import pandas as pd
 import logging
 from qiskit import QuantumCircuit, QuantumRegister, ClassicalRegister, transpile
 from qiskit_ibm_runtime import QiskitRuntimeService, Session, SamplerV2
-from qiskit.visualization import plot_histogram, plot_bloch_multivector
-from qiskit.quantum_info import Statevector
+from qiskit.quantum_info import Clifford, state_fidelity, Pauli
+from qiskit.visualization import plot_histogram
 import matplotlib.pyplot as plt
-import seaborn as sns
-from qiskit.quantum_info import DensityMatrix
 
-# Logging setup
+# Logging 
 logging.basicConfig(level=logging. INFO, format='%(asctime)s - %(levelname)s - %(message)s')
 logger = logging.getLogger(__name__)
 
@@ -249,7 +244,7 @@ def load_calibration_data(file_path):
     logger. info("Calibration data loaded successfully")
     return calibration_data
 
-# Select the best qubits based on T1, T2, and error rates
+# Select best qubits T1, T2, and error rates
 def select_best_qubits(calibration_data, n_qubits):
     logger. info("Selecting the best qubits based on T1, T2, and error rates")
     qubits_sorted = calibration_data.sort_values(by=['\u221ax (sx) error', 'T1 (us)', 'T2 (us)'], ascending=[True, False, False])
@@ -258,11 +253,11 @@ def select_best_qubits(calibration_data, n_qubits):
     return best_qubits
 
 # Load backend calibration data
-calibration_file = '/Users/Downloads/ibm_brisbane_calibrations_2024-12-30T17_39_45Z.csv'
+calibration_file = '/Users/Downloads/ibm_sherbrooke_calibrations_2025-01-01T04_09_39Z.csv'
 calibration_data = load_calibration_data(calibration_file)
 
-# Select best qubits
-num_qubits = 4  
+# Qubits
+num_qubits = 10  
 best_qubits = select_best_qubits(calibration_data, num_qubits)
 
 # IBMQ 
@@ -270,261 +265,381 @@ logger. info("Setting up IBM Q service")
 service = QiskitRuntimeService(
     channel='ibm_quantum',
     instance='ibm-q/open/main',
-    token='YOUR_IBMQ_API_KEY_O-`'  
+    token='YOUR_IBMQ_API_KEY_O-`'
 )
 
-backend_name = 'ibm_brisbane'
+backend_name = 'ibm_sherbrooke'
 backend = service.backend(backend_name)
-logger. info("Backend selected: %s", backend_name)
+logger.i nfo("Backend selected: %s", backend_name)
 
-# Parametric null-ray preparation circuit 
-def prepare_null_ray_circuit(theta, phi):
-    qr = QuantumRegister(num_qubits, 'q')
-    cr = ClassicalRegister(num_qubits, 'c')
-    qc = QuantumCircuit(qr, cr)
+# Initialize quantum and classical registers
+qr = QuantumRegister(num_qubits, 'q')
+cr = ClassicalRegister(num_qubits, 'meas')
+qc = QuantumCircuit(qr, cr)
 
-    # Prepare initial state using sx and rz (decomposition of u gate)
-    for i in range(0, num_qubits, 2):
-        qc.rz(phi, qr[i])
-        qc. sx(qr[i])
-        qc.rz(theta, qr[i])
+# Prepare stabilizer states using Clifford gates
+logger. info("Constructing Clifford stabilizer states")
+qc.h(qr[0])  
+for i in range(1, num_qubits):
+    qc.h(qr[i]) 
+    qc.s(qr[i])  
+    qc. cx(qr[0], qr[i]) 
 
-        qc.rz(-phi, qr[i + 1])
-        qc. sx(qr[i + 1])
-        qc.rz(-theta, qr[i + 1])
+# Apply Clifford operations to simulate parallels
+for i in range(num_qubits):
+    qc.s(qr[i])  
+    qc.h(qr[i])  
 
-    # Decomposition with rz, sx, and x
-    for i in range(0, num_qubits, 2):
-        qc.rz(np.pi / 2, qr[i + 1])
-        qc. sx(qr[i + 1])
-        qc.rz(-np.pi / 2, qr[i + 1])
-        qc. sx(qr[i])
-        qc.rz(np.pi / 2, qr[i])
-        qc. sx(qr[i])
-        qc.rz(-np.pi / 2, qr[i])
-        qc. sx(qr[i + 1])
-        qc.rz(np.pi / 2, qr[i + 1])
-        qc. sx(qr[i + 1])
-        qc.rz(-np.pi / 2, qr[i + 1])
+# Measure entanglement fidelity
+logger. info("Adding fidelity measurement and stabilizer analysis")
+for i in range(num_qubits):
+    qc.measure(qr[i], cr[i])
 
-    return qc
+# Transpile 
+logger. info("Transpiling quantum circuit for backend optimization")
+qc_transpiled = transpile(qc, backend=backend, optimization_level=3)
+logger. info("Transpilation complete")
 
-# Generate tomography circuits
-basis_gates = ['rz', 'sx', 'x', 'id', 'measure']
-angles = np.linspace(0, 2 * np.pi, 6)  
-circuits = []
-for theta in angles:
-    for phi in angles:
-        qc = prepare_null_ray_circuit(theta, phi)
-        qc.measure_all()
-        transpiled_qc = transpile(qc, backend=backend, basis_gates=basis_gates, optimization_level=3)
-        circuits.append(transpiled_qc)
-
-# Execute 
+# Execute
 shots = 16384
-logger. info("Starting quantum tomography on %d circuits", len(circuits))
 with Session(service=service, backend=backend) as session:
     sampler = SamplerV2(session=session)
-    job = sampler. run(circuits, shots=shots)
+    logger. info("Executing circuit on backend")
+    job = sampler. run([qc_transpiled], shots=shots)
     job_result = job.result()
 
-    # Results
-    results_data = []
-    for idx, circuit_result in enumerate(job_result._pub_results):
-        counts = circuit_result["__value__"]["data"].meas.get_counts()
-        results_data.append({"circuit_idx": idx, "counts": counts})
+    # Extract results
+    logger. info("Extracting and analyzing results")
+    pub_result = job_result._pub_results[0]['__value__']['data']
+    bit_array = pub_result['meas']  
+    counts = bit_array.get_counts()  
+
+    # Histogram 
+    total_shots = sum(counts.values())
+    normalized_counts = {key: value / total_shots for key, value in counts.items()}
+
+    logger. info(f"Counts data before saving: {normalized_counts}")
 
     # Json
-    file_path = '/Users/Documents/NullRay_Twister_Result_0.json'
+    results_data = {"counts": normalized_counts}  # Save normalized counts
+    file_path = '/Users/Documents/Clifford_Parallel_Stabilizers_0.json'
     with open(file_path, 'w') as f:
         json.dump(results_data, f, indent=4)
     logger. info("Results saved to %s", file_path)
 
 # Visual
-for result in results_data:
-    counts = result["counts"]
-    plot_histogram(counts)
-    plt.title(f"Circuit {result['circuit_idx']} Measurement Results")
+logger. info("Visualizing results")
+plot_histogram(normalized_counts)
+plt.title("Clifford Parallels in Multiqubit Stabilizers")
+plt. show()
+
+///////////////////////////
+
+Code to Compute Fidelities of Stabilizer States 
+import numpy as np
+import json
+from qiskit.quantum_info import Statevector, state_fidelity
+import matplotlib.pyplot as plt
+
+# Load Json
+def load_results(file_path):
+    with open(file_path, 'r') as f:
+        results = json.load(f)
+    return results['counts']
+
+# Generate ideal stabilizer states
+def generate_ideal_stabilizer_states(num_qubits):
+    stabilizer_states = []
+    for i in range(2**num_qubits):
+        binary_string = f"{i:0{num_qubits}b}"
+        state = Statevector.from_label(binary_string)
+        stabilizer_states.append(state)
+    return stabilizer_states
+
+# Compute fidelities between experimental and ideal stabilizer states
+def compute_fidelities(counts, num_qubits):
+    total_shots = sum(counts.values())
+    probabilities = {bitstring: freq / total_shots for bitstring, freq in counts.items()}
+
+    # Build the density matrix from the probabilities
+    density_matrix = sum(
+        prob * np.outer(Statevector.from_label(bitstring).data, 
+                        Statevector.from_label(bitstring).data.conj())
+        for bitstring, prob in probabilities.items()
+    )
+
+    # Generate ideal stabilizer states
+    ideal_states = generate_ideal_stabilizer_states(num_qubits)
+
+    # Compute fidelity for each ideal state
+    fidelities = []
+    for state in ideal_states:
+        ideal_density_matrix = np.outer(state. data, state. data.conj())
+        fidelity = state_fidelity(density_matrix, ideal_density_matrix)
+        fidelities.append(fidelity)
+
+    return fidelities
+
+# Visualize fidelities
+def plot_fidelities(fidelities, num_qubits):
+    plt.figure(figsize=(12, 6))
+    plt. bar(range(len(fidelities)), fidelities, color='blue')
+    plt.xlabel('Stabilizer State Index')
+    plt.ylabel('Fidelity')
+    plt.title(f'Fidelities of Stabilizer States ({num_qubits} Qubits)')
     plt. show()
 
-/////////////////
+# Heatmap of fidelities
+def plot_fidelity_heatmap(fidelities, num_qubits):
+    fidelity_matrix = np.outer(fidelities, fidelities)
+    plt.figure(figsize=(10, 8))
+    plt.imshow(fidelity_matrix, cmap='coolwarm', aspect='auto')
+    plt.colorbar(label='Fidelity')
+    plt.xlabel('Stabilizer State Index')
+    plt.ylabel('Stabilizer State Index')
+    plt.title(f'Fidelity Correlation Heatmap ({num_qubits} Qubits)')
+    plt. show()
+
+# Main Execution
+if __name__ == "__main__":
+    file_path = '/Users/Documents/Clifford_Parallel_Stabilizers_0.json'
+    counts = load_results(file_path)
+    num_qubits = len(next(iter(counts.keys())))  
+
+    # Compute fidelities
+    fidelities = compute_fidelities(counts, num_qubits)
+
+    # Call
+    plot_fidelities(fidelities, num_qubits)
+    plot_fidelity_heatmap(fidelities, num_qubits)
+
+///////////////////////////
 
 Code for All Visuals
 # Imports
 import numpy as np
-import matplotlib.pyplot as plt
-import seaborn as sns
 import json
-from qiskit.quantum_info import DensityMatrix, Statevector
-from qiskit.visualization import plot_bloch_multivector
-from scipy.stats import entropy
+import pandas as pd
+import logging
+from qiskit import QuantumCircuit, QuantumRegister, ClassicalRegister, transpile
+from qiskit_ibm_runtime import QiskitRuntimeService, Session, SamplerV2
+from qiskit.quantum_info import Clifford, state_fidelity, Pauli
+from qiskit.visualization import plot_histogram
+import matplotlib.pyplot as plt
+from mpl_toolkits.mplot3d import Axes3D
 
-# Load run data
-file_path = '/Users/Documents/NullRay_Twister_Result_0.json'
+# File path
+file_path = '/Users/Documents/Clifford_Parallel_Stabilizers_0.json'
 try:
-    with open(file_path, 'r') as file:
-        data = json.load(file)
+    with open(file_path, 'r') as f:
+        results = json.load(f)
 except FileNotFoundError:
     raise FileNotFoundError(f"The file at {file_path} was not found. Please check the path.")
 
-# Labels
-labels = sorted(data[0]['counts'].keys())
+counts = results['counts']
 
-# Global variables 
-dominant_states = ["0111", "1111"]
-
-# Measurement Distribution Heatmap
-def plot_heatmap():
-    heatmap_data = []
-    for circuit in data:
-        row = [circuit['counts'].get(label, 0) for label in labels]
-        heatmap_data.append(row)
-
-    plt.figure(figsize=(15, 10))
-    sns.heatmap(np.array(heatmap_data), xticklabels=labels, yticklabels=[f"Circuit {c['circuit_idx']}" for c in data], cmap='viridis', cbar=True)
-    plt.title("Measurement Distribution Heatmap", fontsize=16)
-    plt.xlabel("States", fontsize=14)
-    plt.ylabel("Circuits", fontsize=14)
-    plt. show()
-
-# Bloch Sphere Projections for Selected Circuits
-def plot_bloch_spheres():
-    selected_indices = [0, 5, 10, 15]
-    for idx in selected_indices:
-        counts = data[idx]['counts']
-        total = sum(counts.values())
-        probs = [np.sqrt(counts.get(state, 0) / total) for state in labels]  
-
-        # Create Statevector approximation
-        sv = Statevector(probs)
-        dm = DensityMatrix(sv)
-
-        plot_bloch_multivector(dm)
-        plt.title(f"Bloch Sphere Projection: Circuit {idx}", fontsize=16)
-        plt. show()
-
-# Interference Strength Across Circuits
-def plot_interference_strength():
-    interference_strength = []
-
-    for circuit in data:
-        total_counts = sum(circuit['counts'].values())
-        dominant_counts = sum(circuit['counts'].get(state, 0) for state in dominant_states)
-        interference_strength.append(dominant_counts / total_counts)
-
-    plt.figure(figsize=(10, 6))
-    plt.plot(range(len(data)), interference_strength, marker='o', color='b')
-    plt.title("Interference Strength Across Circuits", fontsize=16)
-    plt.xlabel("Circuit Index", fontsize=14)
-    plt.ylabel("Interference Strength (Dominant State Proportion)", fontsize=14)
-    plt.grid(True)
-    plt. show()
-
-# Error Rate Analysis
-def plot_error_rate():
-    expected_distribution = [1/16] * 16  
-    def calculate_error(observed, expected):
-        return sum(abs(o - e) for o, e in zip(observed, expected))
-
-    def normalize_distribution(counts, labels):
-        total = sum(counts.values())
-        return [counts.get(label, 0) / total for label in labels]
-
-    errors = []
-    for circuit in data:
-        observed_distribution = normalize_distribution(circuit['counts'], labels)
-        errors.append(calculate_error(observed_distribution, expected_distribution))
-
-    plt.figure(figsize=(10, 6))
-    plt.plot(range(len(data)), errors, marker='x', color='r')
-    plt.title("Error Rate Analysis Across Circuits", fontsize=16)
-    plt.xlabel("Circuit Index", fontsize=14)
-    plt.ylabel("Total Error (Observed vs Expected)", fontsize=14)
-    plt.grid(True)
-    plt. show()
-
-# State Population Histogram
-def plot_state_population():
-    plt.figure(figsize=(15, 8))
-    state_populations = {label: 0 for label in labels}
-
-    for circuit in data:
-        for state, count in circuit['counts'].items():
-            state_populations[state] += count
-
-    state_counts = [state_populations[state] for state in labels]
-    plt. bar(labels, state_counts, color='blue')
-    plt.title("Overall State Population Histogram", fontsize=16)
-    plt.xlabel("States", fontsize=14)
-    plt.ylabel("Total Counts", fontsize=14)
+# Dominant Bitstrings
+def plot_dominant_bitstrings(counts, top_n=20):
+    logging. info("Plotting dominant bitstrings")
+    sorted_counts = sorted(counts.items(), key=lambda x: x[1], reverse=True)[:top_n]
+    bitstrings, frequencies = zip(*sorted_counts)
+    plt.figure(figsize=(12, 6))
+    plt. bar(bitstrings, frequencies, color='blue')
+    plt.xlabel("Bitstring")
+    plt.ylabel("Frequency")
+    plt.title("Top {} Dominant Bitstrings".format(top_n))
     plt.xticks(rotation=90)
     plt. show()
 
-# Cumulative Interference Strength
-def plot_cumulative_interference():
-    cumulative_interference = []
-    cumulative_sum = 0
-
-    for circuit in data:
-        total_counts = sum(circuit['counts'].values())
-        dominant_counts = sum(circuit['counts'].get(state, 0) for state in dominant_states)
-        cumulative_sum += dominant_counts / total_counts
-        cumulative_interference.append(cumulative_sum)
-
-    plt.figure(figsize=(10, 6))
-    plt.plot(range(len(data)), cumulative_interference, marker='o', color='green')
-    plt.title("Cumulative Interference Strength", fontsize=16)
-    plt.xlabel("Circuit Index", fontsize=14)
-    plt.ylabel("Cumulative Strength", fontsize=14)
-    plt.grid(True)
+# Bitstring Heatmap
+def plot_bitstring_heatmap(counts):
+    logging. info("Plotting bitstring heatmap")
+    bitstrings = list(counts.keys())
+    frequencies = list(counts.values())
+    binary_array = np.array([list(map(int, bs)) for bs in bitstrings])
+    plt.figure(figsize=(12, 6))
+    plt.imshow(binary_array[:50], aspect='auto', cmap='coolwarm', interpolation='nearest')
+    plt.colorbar(label="Bit Value")
+    plt.title("Heatmap of Bitstring Patterns (Top 50)")
+    plt.xlabel("Qubit Index")
+    plt.ylabel("Bitstring Index")
     plt. show()
 
-# State Entropy Across Circuits
-def plot_state_entropy():
-    entropies = []
-
-    for circuit in data:
-        total_counts = sum(circuit['counts'].values())
-        probabilities = [circuit['counts'].get(state, 0) / total_counts for state in labels]
-        entropies.append(entropy(probabilities))
-
-    plt.figure(figsize=(10, 6))
-    plt.plot(range(len(data)), entropies, marker='x', color='orange')
-    plt.title("State Entropy Across Circuits", fontsize=16)
-    plt.xlabel("Circuit Index", fontsize=14)
-    plt.ylabel("Entropy (bits)", fontsize=14)
-    plt.grid(True)
+# Probability Distribution
+def plot_probability_distribution(counts):
+    logging. info("Plotting probability distribution")
+    total_counts = sum(counts.values())
+    probabilities = [count / total_counts for count in counts.values()]
+    plt.figure(figsize=(12, 6))
+    plt.hist(probabilities, bins=50, color='green', alpha=0.7)
+    plt.xlabel("Probability")
+    plt.ylabel("Frequency")
+    plt.title("Probability Distribution of Bitstrings")
     plt. show()
 
-# Dominant State Evolution
-def plot_dominant_state_evolution():
-    dominant_state_counts = {state: [] for state in dominant_states}
-
-    for circuit in data:
-        total_counts = sum(circuit['counts'].values())
-        for state in dominant_states:
-            dominant_state_counts[state].append(circuit['counts'].get(state, 0) / total_counts)
-
-    plt.figure(figsize=(10, 6))
-    for state, counts in dominant_state_counts.items():
-        plt.plot(range(len(data)), counts, label=f"State {state}")
-
-    plt.title("Dominant State Evolution", fontsize=16)
-    plt.xlabel("Circuit Index", fontsize=14)
-    plt.ylabel("Proportion of Total Counts", fontsize=14)
-    plt.legend()
-    plt.grid(True)
+# Cumulative Frequency
+def plot_cumulative_frequency(counts):
+    logging. info("Plotting cumulative frequency")
+    sorted_counts = sorted(counts.values(), reverse=True)
+    cumulative = np.cumsum(sorted_counts)
+    plt.figure(figsize=(12, 6))
+    plt.plot(cumulative, marker='o', color='red')
+    plt.xlabel("Number of Bitstrings")
+    plt.ylabel("Cumulative Frequency")
+    plt.title("Cumulative Frequency Plot")
+    plt.grid()
     plt. show()
 
-# Call
-plot_heatmap()
-plot_bloch_spheres()
-plot_interference_strength()
-plot_error_rate()
-plot_state_population()
-plot_cumulative_interference()
-plot_state_entropy()
-plot_dominant_state_evolution()
+# Distribution Comparison by Hamming Weight
+def plot_hamming_weight_distribution(counts):
+    hamming_weights = [sum(int(bit) for bit in key) for key in counts.keys()]
+    unique_weights = sorted(set(hamming_weights))
+    weight_frequencies = {w: 0 for w in unique_weights}
+    for key, count in counts.items():
+        hw = sum(int(bit) for bit in key)
+        weight_frequencies[hw] += count
+    plt.figure(figsize=(10, 6))
+    plt. bar(weight_frequencies.keys(), weight_frequencies.values(), color='purple')
+    plt.xlabel('Hamming Weight')
+    plt.ylabel('Frequency')
+    plt.title('Distribution of Bitstring Frequencies by Hamming Weight')
+    plt. show()
+
+# Top vs Bottom Bitstrings
+def plot_top_bottom_bitstrings(counts, top_n=10):
+    sorted_counts = sorted(counts.items(), key=lambda x: x[1], reverse=True)
+    top_bitstrings = sorted_counts[:top_n]
+    bottom_bitstrings = sorted_counts[-top_n:]
+    combined = top_bitstrings + bottom_bitstrings
+    labels, frequencies = zip(*combined)
+    plt.figure(figsize=(12, 6))
+    plt. bar(range(len(labels)), frequencies, color='blue')
+    plt.xticks(range(len(labels)), labels, rotation=90)
+    plt.xlabel('Bitstrings')
+    plt.ylabel('Frequency')
+    plt.title(f'Top {top_n} vs Bottom {top_n} Bitstrings')
+    plt. show()
+
+# Heatmap of Frequencies by Position
+def plot_bitstring_position_heatmap(counts):
+    bitstrings = list(counts.keys())
+    frequencies = list(counts.values())
+    binary_array = np.array([list(map(int, bit)) for bit in bitstrings])
+    plt.figure(figsize=(12, 6))
+    plt.imshow(binary_array.T[:50], cmap='coolwarm', aspect='auto')
+    plt.colorbar(label='Bit Value (0/1)')
+    plt.title('Heatmap of Bitstring Values by Position (Top 50 Frequencies)')
+    plt.xlabel('Bitstring Index')
+    plt.ylabel('Qubit Position')
+    plt. show()
+
+# Entropy Analysis by Hamming Weight
+def plot_entropy_by_hamming_weight(counts):
+    hamming_weights = [sum(int(bit) for bit in key) for key in counts.keys()]
+    unique_weights = sorted(set(hamming_weights))
+    entropy_by_weight = []
+    for weight in unique_weights:
+        weight_counts = [
+            count for key, count in counts.items()
+            if sum(int(bit) for bit in key) == weight
+        ]
+        total = sum(weight_counts)
+        probabilities = [c / total for c in weight_counts]
+        entropy = -sum(p * np.log2(p) for p in probabilities if p > 0)
+        entropy_by_weight.append(entropy)
+    plt.figure(figsize=(10, 6))
+    plt.plot(unique_weights, entropy_by_weight, marker='o', color='red')
+    plt.xlabel('Hamming Weight')
+    plt.ylabel('Entropy (bits)')
+    plt.title('Entropy of Bitstring Frequencies by Hamming Weight')
+    plt.grid()
+    plt. show()
+
+# 3D Surface Plot of Bitstring Frequencies by Qubit Index
+def plot_3d_surface_frequencies(counts):
+    bitstrings = list(counts.keys())
+    frequencies = np.array(list(counts.values()))
+    qubit_positions = np.arange(len(bitstrings[0]))  
+    
+    # Create a binary matrix for bitstrings
+    binary_matrix = np.array([list(map(int, bit)) for bit in bitstrings])
+    
+    # 3D Plot
+    fig = plt.figure(figsize=(12, 8))
+    ax = fig.add_subplot(111, projection='3d')
+    X, Y = np.meshgrid(qubit_positions, np.arange(len(bitstrings)))
+    Z = binary_matrix * frequencies[:, None]
+    ax.plot_surface(X, Y, Z, cmap='viridis', edgecolor='none')
+    ax.set_title('3D Surface Plot of Bitstring Frequencies by Qubit Index')
+    ax.set_xlabel('Qubit Index')
+    ax.set_ylabel('Bitstring Index')
+    ax.set_zlabel('Frequency')
+    plt. show()
+
+# Macro-Level Bar Chart for All Counts
+def plot_all_counts(counts):
+    bitstrings = list(counts.keys())
+    frequencies = list(counts.values())
+    plt.figure(figsize=(14, 8))
+    plt. bar(bitstrings, frequencies, color='teal')
+    plt.xticks(rotation=90, fontsize=6)
+    plt.xlabel('Bitstrings')
+    plt.ylabel('Frequency')
+    plt.title('Macro-Level Bar Chart of All Bitstring Counts')
+    plt.tight_layout()
+    plt. show()
+
+# 3D Scatter Plot of Frequencies by Hamming Weight and Bitstring Index
+def plot_3d_scatter_hamming_weight(counts):
+    bitstrings = list(counts.keys())
+    frequencies = list(counts.values())
+    hamming_weights = [sum(int(bit) for bit in bitstring) for bitstring in bitstrings]
+    bitstring_indices = np.arange(len(bitstrings))
+    
+    fig = plt.figure(figsize=(12, 8))
+    ax = fig.add_subplot(111, projection='3d')
+    ax.scatter(bitstring_indices, hamming_weights, frequencies, c=frequencies, cmap='plasma', depthshade=True)
+    ax.set_title('3D Scatter Plot of Frequencies by Hamming Weight and Bitstring Index')
+    ax.set_xlabel('Bitstring Index')
+    ax.set_ylabel('Hamming Weight')
+    ax.set_zlabel('Frequency')
+    plt. show()
+
+# Global Heatmap of Bitstring Frequencies
+def plot_global_heatmap(counts):
+    bitstrings = list(counts.keys())
+    frequencies = np.array(list(counts.values()))
+    
+    # Convert bitstrings to binary matrix
+    binary_matrix = np.array([list(map(int, bit)) for bit in bitstrings])
+    
+    # Normalize frequencies for visualization
+    normalized_frequencies = frequencies / frequencies.max()
+    
+    # Reshape frequencies to match binary matrix dimensions for broadcasting
+    scaled_matrix = binary_matrix * normalized_frequencies[:, None]
+
+    plt.figure(figsize=(14, 8))
+    plt.imshow(scaled_matrix.T, aspect='auto', cmap='coolwarm')
+    plt.colorbar(label='Normalized Frequency')
+    plt.title('Global Heatmap of Bitstring Frequencies Across All Data')
+    plt.xlabel('Bitstring Index')
+    plt.ylabel('Qubit Index')
+    plt. show()
+
+# Call 
+plot_dominant_bitstrings(counts)
+plot_bitstring_heatmap(counts)
+plot_probability_distribution(counts)
+plot_cumulative_frequency(counts)
+plot_hamming_weight_distribution(counts)
+plot_top_bottom_bitstrings(counts)
+plot_bitstring_position_heatmap(counts)
+plot_entropy_by_hamming_weight(counts)
+plot_3d_surface_frequencies(counts)
+plot_all_counts(counts)
+plot_3d_scatter_hamming_weight(counts)
+plot_global_heatmap(counts)
 
 # End.
 
@@ -533,7 +648,7 @@ plot_dominant_state_evolution()
 </p>
             
  </div>
-        <img src="E50i4.png" alt="" class="experiment-image4">
+        <img src="E51i4.png" alt="" class="experiment-image4">
         <p></p>
         <div class="content-block">
 
