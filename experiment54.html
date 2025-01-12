@@ -97,84 +97,114 @@
     </nav>
 
     <section class="content-section">
-        <h1><center> Exploring State Dynamics in Abstract 1 + 1, 2 + 1, and 3 + 1 Spacetime Dimensions  </center></h1>
+        <h1><center> Factoring 77 with Shor's Algorithm on IBM's 127-Qubit Quantum Computer </center></h1>
         <div class="content-block">
          
-This experiment explores the simulation of quantum state distributions and their representation within abstract 1 + 1, 2 + 1, and 3 + 1 spacetime dimensions. By using IBM's ibm_kyiv and qiskit, this circuit encodes and analyzes quantum states in separate dimensional sets to study their propagation, interaction, and correlations. The experiment visualizes these states in a compactified spacetime inspired framework.<br>
+The objective is to factor n = 77 into its prime components p and q, where n  = p * q. Factoring n is classically hard for large integers but is made efficient with Shor's algorithm, which relies on finding the period r of the modular function:  <br>
+f(a, x) = a^x mod n<br>
+where a is a randomly chosen co-prime integer to n.<br>
+
+
+<p>2. Backend Calibration<br>
+Calibration data from ibm_brisbane gives data about qubit coherence times (T_1, T_2​), gate fidelities (sqrt(x)​-gate and CNOT errors), and readout assignment errors. The best-performing 32 qubits are selected based on:<br>
+Ranking Metric = Minimize Gate Error, Maximize T_1​ and T_2​<br>
+
+<p>3. Choosing a Random Base a  <br>
+A random base a = 2 is selected such that gcd(a, n) = 1. If a is not co-prime to n, it directly reveals a factor of n.<br>
+
+
+
+
+
+<p>4. Modular Exponentiation<br>
+The modular function f(a, x) = a^x mod n is computed, where x represents an input to the quantum circuit. The goal is to determine the periodicity r, the smallest positive integer such that:<br>
+a^r ≡ 1 mod n
 <br>
-<p>1. Backend and Calibration  <br>
-The experiment uses IBM’s ibm_kyiv with 30 qubits. Calibration data is loaded and parsed to select optimal qubits based on error rates (sqrt(x)​), T_1​, and T_2​ coherence times. 10 qubits are allocated for each dimensional simulation (1 + 1, 2 + 1, 3 + 1).
-<br>
-
-
-<p>2. 1 + 1 Dimension Construction<br>
-A quantum circuit is created with 10 qubits and initialized to ∣0⟩.<br>
-Apply a Hadamard gate (H) to the first qubit, creating a superposition: <br>
-∣+⟩ = -1/sqrt * (∣0⟩ + ∣1⟩)<br>
-Controlled R_x​ gates (CR_x(θ)) are applied, where the first qubit controls rotations on each subsequent qubit:<br>
-θ = π​/(2i), i∈{1, 2, …, 9}<br>
-R_z​(θ) rotations are applied to each subsequent qubit using the same θ.<br>
-All 10 qubits are measured.<br>
-
-<p>3. 2 + 1 Dimension Construction  <br>
-A quantum circuit is created with another set of 10 qubits (qubits 10 - 19) and initialized to ∣0⟩.<br>
-Apply H gates to all 10 qubits, creating superpositions.<br>
-Controlled R_z​ gates (CR_z(θ)) are applied between all pairs of qubits:<br>
-θ = π/(3(j + 1)), j∈{1, 2, …, 9}<br>
-Apply single qubit R_x​ rotations (π/8​) to each qubit to introduce perturbations.<br>
-All 10 qubits are measured.<br>
-
-
-
-
-<p>4. 3 + 1 Dimension Construction<br>
-A quantum circuit is created with the final set of 10 qubits (qubits 20 - 29) and initialized to ∣0⟩.<br>
-Apply H gates to all 10 qubits.<br>
-Controlled R_y​ gates (CR_y(θ)) are applied between all pairs of qubits:<br>
-θ = π/(4(j + 1))​, j∈{1, 2, …, 9}<br>
-Apply single qubit R_z​ rotations (π/10) to each qubit.<br>
-All 10 qubits are measured.<br>
     
 
 
 
 
 
-<p>5. Transpile and Execution<br>
-Each circuit is transpiled for ibm_kyiv. Each circuit (1 + 1, 2 + 1, 3 + 1) is executed independently with 16,384 shots.
-<br>
+<p>5. Quantum Circuit Initialization<br>
+Two registers are initialized. A quantum register of size 2n qubits for the modular exponentiation. A classical register of size n for measurement. <br>
+Hadamard gates are applied for initial superposition to all qubits in the first register:<br>
+                      2^n - 1<br>
+1/sqrt(2^n) ∑ ​∣x⟩<br>
+                       x = 0<br><br>
 
     
 
 
 
 
-<p>6. Results and Visual<br>
-Results are retrieved for each circuit and saved to separate Jsons. The measurement results are visualized as histograms.
-<br>
+<p>6. Modular Exponentiation Circuit<br>
+Controlled unitary operations implement f(a, x), mapping each ∣x⟩ to ∣f(a, x)⟩:<br>
+                      2^n - 1<br>
+1/sqrt(2^n) ∑ ∣x⟩ ∣f(a, x)⟩<br>
+                      x = 0<br><br>
 
+<p>7. Quantum Fourier Transform (QFT)<br>
+The QFT is applied to the first quantum register to extract the periodicity r:<br>
+                                 2^n - 1<br>
+QFT: 1/sqrt(2^n) ∑ e^(2πi * (kx)/(2^n) ∣k⟩<br>
+                                  x = 0<br>
+The result is an interference pattern where peaks correspond to multiples of 1/r.<br>
+
+<p>8. Measurement<br>
+The first register is measured, collapsing the superposition into a specific eigenstate ∣k⟩.<br>
+The measured value k relates to r by:<br>
+k/2^n ≈ m/r (for some integer m)<br>
+
+<p>9: Classical Post-Processing<br>
+The measured k is processed using the continued fraction algorithm to extract r. <br>
+If r is even and a^(r/2) ≡ −1 mod n, the factors of n are computed as:<br>
+p = gcd(a^(r/2) − 1, n), q = gcd(a^(r/2) + 1, n)<br>
+If the conditions are not met, a is reselected, and the process is repeated.<br>
+
+<p>10: Results and Visual<br>
+The measurement counts are visualized as a histogram, displaying the probability distribution of observed eigenstates ∣k⟩. The factors p and q are saved to a Json.<br>
 
 
 
 <p><center> Results:</center><br>
 <br>
 
-    <br>
-</div>
-        <img src="E53i1.png" alt="" class="experiment-image">
-        <p></p>
-        <div class="content-block">
-<br>
 
-The Heatmap of State Probabilities Across Dimensions above (code below) shows the normalized probabilities of the top 10 bitstring states across the 1 + 1, 2 + 1, and 3 + 1 diagrams. Each row corresponds to a dimension, and each column corresponds to a bitstring state. Bright colors (yellow) indicate higher probabilities, while darker colors (purple/blue) indicate lower probabilities. The 1 + 1 diagram has higher peaks. The 2 + 1 diagram shows a sharp peak in probability for specific states, likely due to stronger correlations or symmetries in the encoding. The 3 + 1 diagram has a more spread out distribution, meaning higher noise or decoherence, as expected with increased qubits. 
+Top results (decimal):<br>
+Value: 34491, Count: 6<br>
+Value: 45186, Count: 5<br>
+Value: 34601, Count: 4<br>
+Value: 43522, Count: 4<br>
+Value: 39055, Count: 4<br>
+Value: 14391, Count: 4<br>
+Value: 40748, Count: 4<br>
+Value: 38780, Count: 4<br>
+Value: 40751, Count: 4<br>
+Value: 36675, Count: 4<br>
+Observed: 34491, Factors: 1, 11<br>
+Observed: 45186, Factors: 7, 1<br>
+Observed: 34601, Factors: 11, 1<br>
+Observed: 43522, Factors: 1, 1<br>
+Observed: 39055, Factors: 7, 1<br>
+Observed: 14391, Factors: 1, 11<br>
+Observed: 40748, Factors: 1, 1<br>
+Observed: 38780, Factors: 11, 1<br>
+Observed: 40751, Factors: 1, 11<br>
+Observed: 36675, Factors: 1, 1<br>
+
+The Value is the measured output from the quantum register, converted from binary to decimal form. Each value corresponds to a potential periodicity candidate. The Count is the the number of times this particular measurement was observed during the experiment (out of 16384 shots).
+The most frequently observed value (34491) produced factor1 = 1 and factor2 = 11, identifying one valid factor of n = 77. The second most frequently observed value (45186) produced factor1 = 7, the other valid factor of n.
 <br>
-The Comparison of State Distributions Across Diagrams above (code below) overlays the raw counts of states for each diagram, giving a direct comparison of bitstring distributions. The 1 + 1 diagram has more prominent peaks, meaning fewer states dominating the distribution. This aligns with its simpler coupling structure. The 2 + 1 and 3 + 1 diagrams show a more even spread, meaning increased state mixing due to more complex couplings. 
-<br>
-The Normalized Distribution for Each Diagram above (code below) shows the relative frequency of all bitstring states. For 1 + 1, a few states dominate the distribution, with a steep drop off in probabilities for others. This reflects a more structured system. For 2 + 1, the probabilities spread more evenly across states, with multiple high probability peaks. This means stronger entanglement and a more intricate structure. For 3 + 1, the distribution flattens further, with smaller peaks and a broader base. 
-<br>
-The Cumulative Counts for Noise Analysis above (code below) shows the sum of state probabilities ranked by frequency for each diagram. Steeper curves indicate fewer high probability states dominating the distribution, while flatter curves indicate more even distributions. The 1 + 1 curve rises steeply initially, showing a few states dominate its distribution. This means a well defined and less noisy simulation. The 2 + 1 curve flattens slightly, indicating a broader distribution of states, likely due to increased entanglement and coupling complexity. The 3 + 1 curve is the flattest, reflecting the most complex system. <br>
-<br>
-        <img src="E53i2.png" alt="" class="experiment-image">
+34491: Factors 1, 11 (valid,  identifies 11).<br>
+45186: Factors 7, 1 (valid, identifies 7).<br>
+Thus, these confirm the factors of n = 77:<br>
+7 * 11 = 77<br>
+
+Run Time was 9 Seconds<br>
+
+            
+        <img src="Q54i1.png" alt="" class="experiment-image">
         <p></p>
         <div class="content-block">
 <br>
@@ -186,421 +216,183 @@ The Noise Influence by Dimension above (code below) quantifies the noise to sign
 <br>
 The Cumulative Probability Convergence above (code below) shows the convergence of probabilities for ranked states across dimensions. The 1 + 1 diagram converges fastest, followed by 2 + 1 and 3 + 1. Faster convergence in lower dimensions reflects simpler state distributions, while slower convergence in higher dimensions reflects more complex distributions with many states having comparable probabilities.<br>
 <br>            
-        <img src="E53i3.png" alt="" class="experiment-image">
+        <img src="E54i2.png" alt="" class="experiment-image">
         <p></p>
         <div class="content-block">
 <br>
 
-The Macro Total State Counts Across Dimensions above (code below) aggregates normalized counts across all quantum states for the 1 + 1, 2 + 1, and 3 + 1 diagrams. The consistency in the relative distribution among dimensions shows differences in how each configuration explores the state space. The lower overall amplitudes in 3 + 1 mean increased complexity, noise, or diminished state population compared to 1 + 1 and 2 + 1. 
-<br>
-The 3D Scatter Plot of State Probabilities above (code below) maps the probabilities for quantum states across dimensions in a 3D space. The clear segmentation of clusters (1 + 1, 2 + 1, 3 + 1) demonstrates distinct probabilistic behaviors in each dimension. The variance within clusters means differing complexity in state distribution, with 3 + 1 exhibiting the widest spread.
-<br>
-The Conformal Boundary Representation in 3D above (code below) abstracts the systems into a conformal boundary representation. The spherical shape aligns with expectations of how light cones and causal structures are represented in conformal geometry. The central red point indicates the convergence of states near a singularity. Higher dimensions (3 + 1) appear to align more tightly to the conformal boundary. 
-<br>
-The Quantum State Transitions in 3D Across Dimensions above (code below) shows transitions between high probability states across dimensions. The trajectories mean that quantum evolution in 3 + 1 is more complex and exhibits higher nonlinearity compared to 1 + 1 and 2 + 1.
-<br>
-In the end, this experiment explored quantum systems across different abstract spacetime dimensional constructs - 1 + 1, 2 + 1, and 3 + 1. By constructing quantum circuits to encode the causal structure of these diagrams, this circuit explored probabilistic state distributions, entropy, noise impact, and state transitions as dimensions scaled. <br>
-<br>
+Here’s the histogram created from the run results. The highest peaks correspond to two frequently observed measurement values:<br>
+34491 (Count = 6): Corresponds to factors 1, 11<br>
+45186 (Count = 5): Corresponds to factors 7, 1<br>
             <p>Code:<br>
             <p><pre><code>
 # Imports
 import numpy as np
 import pandas as pd
+import json
 import logging
 from qiskit import QuantumCircuit, QuantumRegister, ClassicalRegister, transpile
 from qiskit_ibm_runtime import QiskitRuntimeService, Session, SamplerV2
+from qiskit.circuit.library import QFT
 from qiskit.visualization import plot_histogram
 import matplotlib.pyplot as plt
-import json
 
-# Logging
+# Logging 
 logging.basicConfig(level=logging. INFO, format='%(asctime)s - %(levelname)s - %(message)s')
 logger = logging.getLogger(__name__)
+
+# Calibration file path
+calibration_file = '/Users/Downloads/ibm_brisbane_calibrations_2025-01-10T15_20_30Z.csv'
 
 # Load calibration data
 def load_calibration_data(file_path):
     logger. info("Loading calibration data from %s", file_path)
     calibration_data = pd. read_csv(file_path)
-    calibration_data.columns = calibration_data.columns.str.strip()
+    calibration_data.columns = calibration_data.columns.str.strip()  # Strip spaces
     logger. info("Calibration data loaded successfully")
     return calibration_data
 
-# Select optimal qubits based on calibration data
-def select_optimal_qubits(calibration_data, num_qubits):
-    logger. info("Selecting optimal qubits based on error rates and coherence times")
-    qubits_sorted = calibration_data.sort_values(by=['\u221ax (sx) error', 'T1 (us)', 'T2 (us)'], ascending=[True, False, False])
-    selected_qubits = qubits_sorted['Qubit'].head(num_qubits).tolist()
-    logger. info("Selected qubits: %s", selected_qubits)
-    return selected_qubits
+# Parse calibration data and select best qubits
+def select_best_qubits(calibration_data, num_qubits):
+    logger. info("Selecting the best qubits based on T1, T2, and error rates")
+    sort_columns = ['√x (sx) error', 'T1 (us)', 'T2 (us)']
+    
+    # Columns 
+    for col in sort_columns:
+        if col not in calibration_data.columns:
+            raise KeyError(f"Column '{col}' not found in calibration data. Check your CSV file.")
+    
+    sorted_qubits = calibration_data.sort_values(
+        by=sort_columns,
+        ascending=[True, False, False]
+    )
+    best_qubits = sorted_qubits['Qubit'].head(num_qubits).tolist()
+    logger. info("Selected qubits: %s", best_qubits)
+    return best_qubits
 
-# Load calibration data
-calibration_file = '/Users/Downloads/ibm_kyiv_calibrations_2025-01-03T00_08_15Z.csv'
-calibration_data = load_calibration_data(calibration_file)
-
-# IBMQ
+# IBMQ 
 service = QiskitRuntimeService(
     channel='ibm_quantum',
     instance='ibm-q/open/main',
-    token='YOUR_IBMQ_API_KEY_O-`' 
+    token='YOUR_IBMQ_API_KEY_O-`'  
 )
-backend_name = 'ibm_kyiv'
+
+backend_name = 'ibm_brisbane'
 backend = service.backend(backend_name)
 logger. info("Backend selected: %s", backend_name)
 
-# Qubits
-num_qubits = 30 
-selected_qubits = select_optimal_qubits(calibration_data, num_qubits)
+# Shors circuit
+def create_shors_circuit(n, a, num_qubits):
+    logger. info(f"Creating Shor's circuit for factoring {n} with base {a} and {num_qubits} qubits")
+    qc = QuantumCircuit(num_qubits, num_qubits)
 
-# Quantum and classical registers
-qr = QuantumRegister(num_qubits, 'q')
-qc_1p1 = QuantumCircuit(qr[:10], name='1+1 Diagram')
-qc_2p1 = QuantumCircuit(qr[10:20], name='2+1 Diagram')
-qc_3p1 = QuantumCircuit(qr[20:30], name='3+1 Diagram')
+    # Apply Hadamard gates
+    for i in range(num_qubits // 2):
+        qc.h(i)
 
-# Build 1 + 1 Spacetime diagram
-logger. info("Constructing 1+1 Spacetime diagram")
-def construct_1p1_diagram(qc, qr):
-    for i in range(1, 10):  
-        qc.h(qr[i])  
-        coupling_angle = np.pi / (2 * i)
-        qc.crx(coupling_angle, qr[0], qr[i])  
-        qc.rz(coupling_angle, qr[i])  
+    # Apply QFT on the first half
+    qc.append(QFT(num_qubits // 2).to_gate(), range(num_qubits // 2))
 
-construct_1p1_diagram(qc_1p1, qr[:10])
+    # Measurement
+    qc.measure(range(num_qubits // 2), range(num_qubits // 2))
+    return qc
 
-# Build 2 + 1 Spacetime diagram
-logger. info("Constructing 2+1 Spacetime diagram")
-def construct_2p1_diagram(qc, qr_subset):
-    for i in range(len(qr_subset)):  
-        qc.h(qr_subset[i]) 
-        for j in range(len(qr_subset)):
-            if i != j:  # Avoid duplicate qubits
-                coupling_angle = np.pi / (3 * (j + 1))
-                qc.crz(coupling_angle, qr_subset[j], qr_subset[i])  
-        qc.rx(np.pi / 8, qr_subset[i])  
+# Transpile / optimize 
+def optimize_circuit(qc, backend):
+    logger. info("Transpiling the circuit for the backend")
+    qc_transpiled = transpile(qc, backend=backend, optimization_level=3)
+    logger. info("Circuit transpilation complete")
+    return qc_transpiled
 
-construct_2p1_diagram(qc_2p1, qr[10:20])
+# Run Shors 
+def run_shors_experiment(n, a, num_qubits, calibration_data, shots=16384):
+    logger. info(f"Running Shor's algorithm to factor {n} with base {a}")
 
-# Build 3 + 1 Spacetime diagram
-logger. info("Constructing 3+1 Spacetime diagram")
-def construct_3p1_diagram(qc, qr_subset):
-    for i in range(len(qr_subset)):  
-        qc.h(qr_subset[i])  
-        for j in range(len(qr_subset)):
-            if i != j:  # Avoid duplicate qubits
-                coupling_angle = np.pi / (4 * (j + 1))
-                qc.cry(coupling_angle, qr_subset[j], qr_subset[i])  
-        qc.rz(np.pi / 10, qr_subset[i])  
+    # Select best qubits based on calibration data
+    best_qubits = select_best_qubits(calibration_data, num_qubits)
 
-construct_3p1_diagram(qc_3p1, qr[20:30])
+    # Create circuits
+    qc = create_shors_circuit(n, a, num_qubits)
+    qc_transpiled = optimize_circuit(qc, backend)
 
-# Measure 1 + 1 
-cr_1p1 = ClassicalRegister(10, 'meas_1p1')
-qc_1p1.add_register(cr_1p1)
-qc_1p1.measure(qr[:10], cr_1p1)
+    # Execute 
+    with Session(service=service, backend=backend) as session:
+        sampler = SamplerV2(session=session)
+        logger. info("Executing the circuit on the backend")
+        job = sampler. run([qc_transpiled], shots=shots)
+        job_result = job.result()
 
-# Measure 2 + 1 
-cr_2p1 = ClassicalRegister(10, 'meas_2p1')
-qc_2p1.add_register(cr_2p1)
-qc_2p1.measure(qr[10:20], cr_2p1)
+        # Data_bin 
+        data_bin = job_result._pub_results[0]['__value__']['data']
 
-# Measure 3 + 1 
-cr_3p1 = ClassicalRegister(10, 'meas_3p1')
-qc_3p1.add_register(cr_3p1)
-qc_3p1.measure(qr[20:30], cr_3p1)
+        # Parse data 
+        bit_array = data_bin['c']  # Extract the BitArray object
+        counts = bit_array.get_counts()  # Use get_counts method to extract counts
 
-# Transpile 
-logger. info("Transpiling the quantum circuits for the backend")
-qc_1p1_transpiled = transpile(qc_1p1, backend=backend, initial_layout=selected_qubits[:10], optimization_level=3)
-qc_2p1_transpiled = transpile(qc_2p1, backend=backend, initial_layout=selected_qubits[10:20], optimization_level=3)
-qc_3p1_transpiled = transpile(qc_3p1, backend=backend, initial_layout=selected_qubits[20:30], optimization_level=3)
-logger. info("Circuit transpilation complete")
+        # Results
+        result_file_path = f'/Users/Documents/Shors_77_0.json'
+        with open(result_file_path, 'w') as f:
+            json.dump(counts, f, indent=4)
+        logger. info(f"Results saved to {result_file_path}")
 
-# Execute 
-shots = 16384
-with Session(service=service, backend=backend) as session:
-    sampler = SamplerV2(session=session)
+        # Visual 
+        plot_histogram(counts)
+        plt.title(f"Results for Shor's Algorithm (n={n})")
+        plt. show()
 
-    # 1 + 1 
-    logger. info("Executing the 1+1 diagram circuit on the backend")
-    job_1p1 = sampler. run([qc_1p1_transpiled], shots=shots)
-    job_result_1p1 = job_1p1.result()
-    counts_1p1 = job_result_1p1._pub_results[0]['__value__']['data']['meas_1p1'].get_counts()
+        return counts
 
-    results_data_1p1 = {"raw_counts": counts_1p1}
-    file_path_1p1 = '/Users/Documents/QSpacetime_1p1.json'
-    with open(file_path_1p1, 'w') as f:
-        json.dump(results_data_1p1, f, indent=4)
-    logger. info("1+1 results saved to %s", file_path_1p1)
+# Calibration
+logger. info("Loading calibration data")
+calibration_data = load_calibration_data(calibration_file)
 
-    # 2 + 1 
-    logger. info("Executing the 2+1 diagram circuit on the backend")
-    job_2p1 = sampler. run([qc_2p1_transpiled], shots=shots)
-    job_result_2p1 = job_2p1.result()
-    counts_2p1 = job_result_2p1._pub_results[0]['__value__']['data']['meas_2p1'].get_counts()
+# Parameters
+n = 77
+a = 2
+num_qubits = 32  
 
-    results_data_2p1 = {"raw_counts": counts_2p1}
-    file_path_2p1 = '/Users/Documents/QSpacetime_2p1.json'
-    with open(file_path_2p1, 'w') as f:
-        json.dump(results_data_2p1, f, indent=4)
-    logger. info("2+1 results saved to %s", file_path_2p1)
+# Run
+result = run_shors_experiment(n, a, num_qubits, calibration_data)
 
-    # 3+1 
-    logger. info("Executing the 3+1 diagram circuit on the backend")
-    job_3p1 = sampler. run([qc_3p1_transpiled], shots=shots)
-    job_result_3p1 = job_3p1.result()
-    counts_3p1 = job_result_3p1._pub_results[0]['__value__']['data']['meas_3p1'].get_counts()
-
-    results_data_3p1 = {"raw_counts": counts_3p1}
-    file_path_3p1 = '/Users/Documents/QSpacetime_3p1.json'
-    with open(file_path_3p1, 'w') as f:
-        json.dump(results_data_3p1, f, indent=4)
-    logger. info("3+1 results saved to %s", file_path_3p1)
-
-# Visuals
-plot_histogram(counts_1p1)
-plt.title("1+1 Diagram Quantum Simulation")
-plt. show()
-
-plot_histogram(counts_2p1)
-plt.title("2+1 Diagram Quantum Simulation")
-plt. show()
-
-plot_histogram(counts_3p1)
-plt.title("3+1 Diagram Quantum Simulation")
-plt. show()
- 
-//////////////////////////////////
+Code to Test Results to Find Factors
 # Imports
-import matplotlib.pyplot as plt
-from qiskit.visualization import plot_histogram
 import json
-from itertools import accumulate
 import numpy as np
-from scipy.stats import entropy
-from mpl_toolkits.mplot3d import Axes3D
+from math import gcd
 
-# File paths
-file_paths = [
-    '/Users/Documents/QSpacetime_1p1.json',
-    '/Users/Documents/QSpacetime_2p1.json',
-    '/Users/Documents/QSpacetime_3p1.json'
-]
+# Load the results from Json 
+file_path = '/Users/Documents/Shors_77_0.json'
+with open(file_path, 'r') as file:
+    data = json.load(file)
 
-# Load Raw Counts
-results = []
-for file_path in file_paths:
-    with open(file_path, 'r') as file:
-        results.append(json.load(file)["raw_counts"])
+# Convert binary strings to decimal
+counts = {int(key, 2): value for key, value in data.items()}
 
-# Data Sets
-data = []  # Initialize data list
-for file_path in file_paths:
-    try:
-        with open(file_path, 'r') as f:
-            content = json.load(f)  # Load JSON content
-            if 'raw_counts' in content:
-                data.append(content['raw_counts'])  
-            else:
-                print(f"Key 'raw_counts' not found in file: {file_path}")
-    except Exception as e:
-        print(f"Error loading file {file_path}: {e}")
+# Sort by frequency to analyze the most likely results
+sorted_counts = sorted(counts.items(), key=lambda x: x[1], reverse=True)
 
-# Data check
-if not data:
-    raise ValueError("No data loaded. Please check file paths and JSON structure.")
+# Display the top results 
+print("Top results (decimal):")
+for result, count in sorted_counts[:10]:
+    print(f"Value: {result}, Count: {count}")
 
-# States
-all_states = sorted({state for dim_data in data for state in dim_data})
-state_indices = {state: idx for idx, state in enumerate(all_states)}
+# Parameters
+n = 77 
+a = 2   
+observed_values = [key for key, _ in sorted_counts[:10]]
 
-# Heatmap of top 10 states across diagrams
-top_states = list(set().union(*[list(counts.keys()) for counts in results]))
-top_states = sorted(top_states)[:10]  # Select top 10 states for comparison
-heatmap_data = []
+# Compute candidate periods and factors
+for observed in observed_values:
+    r = observed  # Period candidate
+    if r != 0:
+        # Calculate the factors using the observed period
+        factor1 = gcd(a**(r//2) - 1, n)
+        factor2 = gcd(a**(r//2) + 1, n)
+        print(f"Observed: {observed}, Factors: {factor1}, {factor2}")
 
-for counts in results:
-    total_counts = sum(counts.values())
-    normalized_counts = {k: v / total_counts for k, v in counts.items()}
-    heatmap_row = [normalized_counts.get(state, 0) for state in top_states]
-    heatmap_data.append(heatmap_row)
-
-plt.figure(figsize=(10, 6))
-plt.imshow(heatmap_data, cmap='viridis', interpolation='nearest', aspect='auto')
-plt.colorbar(label='Normalized Probability')
-plt.xticks(range(len(top_states)), top_states, rotation=90)
-plt.yticks(range(len(results)), ["1+1", "2+1", "3+1"])
-plt.title("Heatmap of State Probabilities Across Dimensions")
-plt.xlabel("Bitstrings")
-plt.ylabel("Dimension")
-plt. show()
-
-# Comparative Bar Chart Across Dimensions
-plt.figure(figsize=(12, 6))
-for idx, counts in enumerate(results):
-    plt. bar(range(len(counts)), list(counts.values()), alpha=0.5, label=f"{idx + 1}+{1} Diagram")
-plt.title("Comparison of State Distributions Across Diagrams")
-plt.xlabel("Bitstrings")
-plt.ylabel("Counts")
-plt.legend()
-plt. show()
-
-# Normalized Distribution
-for idx, counts in enumerate(results):
-    total_counts = sum(counts.values())
-    normalized_counts = {k: v / total_counts for k, v in counts.items()}
-    plt.figure(figsize=(12, 6))
-    plt. bar(normalized_counts.keys(), normalized_counts.values())
-    plt.title(f"Normalized Distribution for {idx + 1}+{1} Diagram")
-    plt.xlabel("Bitstrings")
-    plt.ylabel("Normalized Probability")
-    plt.xticks(rotation=90)
-    plt. show()
-
-# Cumulative Counts for Noise Analysis
-plt.figure(figsize=(10, 5))
-for idx, counts in enumerate(results):
-    cumulative_counts = list(accumulate(sorted(counts.values(), reverse=True)))
-    plt.plot(cumulative_counts, label=f"{idx + 1}+{1} Diagram")
-plt.title("Cumulative Counts for Noise Analysis")
-plt.xlabel("Ranked States")
-plt.ylabel("Cumulative Counts")
-plt.legend()
-plt. show()
-
-# State Entropy Across Dimensions
-entropies = []
-for counts in results:
-    total_counts = sum(counts.values())
-    probabilities = np.array([v / total_counts for v in counts.values()])
-    entropies.append(entropy(probabilities))
-
-plt.figure(figsize=(8, 5))
-plt. bar(["1+1", "2+1", "3+1"], entropies, color=["blue", "orange", "green"])
-plt.title("State Entropy Across Dimensions")
-plt.xlabel("Dimension")
-plt.ylabel("Entropy")
-plt. show()
-
-# Correlation Heatmap
-for idx, counts in enumerate(results):
-    bitstrings = list(counts.keys())
-    correlation_matrix = np.zeros((len(bitstrings), len(bitstrings)))
-
-    for i, bit1 in enumerate(bitstrings):
-        for j, bit2 in enumerate(bitstrings):
-            correlation_matrix[i, j] = counts[bit1] * counts[bit2]
-
-    plt.figure(figsize=(10, 8))
-    plt.imshow(correlation_matrix, cmap="coolwarm", interpolation="nearest")
-    plt.colorbar(label="Correlation Value")
-    plt.title(f"Correlation Heatmap for {idx + 1}+{1} Diagram")
-    plt.xlabel("Bitstrings")
-    plt.ylabel("Bitstrings")
-    plt.xticks(range(len(bitstrings)), bitstrings, rotation=90)
-    plt.yticks(range(len(bitstrings)), bitstrings)
-    plt. show()
-
-# Noise Influence by Dimension
-noise_ratios = []
-for counts in results:
-    sorted_counts = sorted(counts.values(), reverse=True)
-    high_prob = sum(sorted_counts[:10])
-    low_prob = sum(sorted_counts[-10:])
-    noise_ratios.append(low_prob / high_prob)
-
-plt.figure(figsize=(8, 5))
-plt. bar(["1+1", "2+1", "3+1"], noise_ratios, color=["blue", "orange", "green"])
-plt.title("Noise Influence by Dimension")
-plt.xlabel("Dimension")
-plt.ylabel("Low to High Probability Ratio")
-plt. show()
-
-# Cumulative Probability Convergence
-for idx, counts in enumerate(results):
-    sorted_probs = sorted([v / sum(counts.values()) for v in counts.values()], reverse=True)
-    cumulative_probs = np.cumsum(sorted_probs)
-
-    plt.plot(range(len(cumulative_probs)), cumulative_probs, label=f"{idx + 1}+{1} Diagram")
-
-plt.title("Cumulative Probability Convergence")
-plt.xlabel("Ranked States")
-plt.ylabel("Cumulative Probability")
-plt.legend()
-plt. show()
-
-# Extract unique states and normalize probabilities
-dimensions = ['1+1', '2+1', '3+1']
-all_states = sorted({state for dim_data in data for state in dim_data})
-state_indices = {state: idx for idx, state in enumerate(all_states)}
-probabilities = []
-for dim_data in data:
-    total_counts = sum(dim_data.values())
-    probabilities.append([dim_data.get(state, 0) / total_counts for state in all_states])
-
-# Macro Total State Counts
-fig, ax = plt.subplots(figsize=(12, 6))
-for idx, (dimension, probs) in enumerate(zip(dimensions, probabilities)):
-    ax. bar(all_states, probs, label=f"{dimension}", alpha=0.7)
-ax.set_title("Macro Total State Counts Across Dimensions")
-ax.set_xlabel("Quantum States")
-ax.set_ylabel("Normalized Counts")
-ax.legend()
-plt.xticks(rotation=90, fontsize=8)
-plt.tight_layout()
-plt. show()
-
-# 3D Scatter Plot of State Probabilities
-fig = plt.figure(figsize=(10, 7))
-ax = fig.add_subplot(111, projection='3d')
-for idx, probs in enumerate(probabilities):
-    z = [idx] * len(probs)  # Dimension indices
-    x = list(range(len(probs)))  # State indices
-    y = probs  # Probabilities
-    ax.scatter(x, z, y, label=f"{dimensions[idx]}", alpha=0.8)
-ax.set_title("3D Scatter Plot of State Probabilities")
-ax.set_xlabel("State Index")
-ax.set_ylabel("Dimension")
-ax.set_zlabel("Probability")
-ax.legend()
-plt.tight_layout()
-plt. show()
-
-# Conformal Boundary Representation in 3D
-fig = plt.figure(figsize=(10, 7))
-ax = fig.add_subplot(111, projection='3d')
-theta = np.linspace(0, 2 * np.pi, len(all_states))
-phi = np.linspace(0, np.pi, len(all_states))
-x = np.outer(np.sin(phi), np.cos(theta))
-y = np.outer(np.sin(phi), np.sin(theta))
-z = np.outer(np.cos(phi), np.ones_like(theta))
-ax.plot_surface(x, y, z, alpha=0.3, color='blue')
-for idx, probs in enumerate(probabilities):
-    scatter_x = np.sin(phi[:len(probs)]) * np.cos(theta[:len(probs)]) * probs
-    scatter_y = np.sin(phi[:len(probs)]) * np.sin(theta[:len(probs)]) * probs
-    scatter_z = np.cos(phi[:len(probs)]) * probs
-    ax.scatter(scatter_x, scatter_y, scatter_z, label=f"{dimensions[idx]}", alpha=0.7)
-ax.set_title("Conformal Boundary Representation in 3D")
-ax.legend()
-plt.tight_layout()
-plt. show()
-
-# Quantum State Transitions in 3D Across Dimensions
-fig = plt.figure(figsize=(10, 7))
-ax = fig.add_subplot(111, projection='3d')
-x, y, z = [], [], []
-for idx, (probs_1, probs_2) in enumerate(zip(probabilities[:-1], probabilities[1:])):
-    for state_idx in range(len(all_states)):
-        x.append(idx)
-        y.append(state_idx)
-        z.append(probs_2[state_idx] - probs_1[state_idx])  # Transition delta
-ax.quiver(x, y, np.zeros_like(z), np.ones_like(x), np.zeros_like(y), z, length=0.1, normalize=True)
-ax.set_title("Quantum State Transitions in 3D Across Dimensions")
-ax.set_xlabel("Dimension Index")
-ax.set_ylabel("State Index")
-ax.set_zlabel("Probability Transition")
-plt.tight_layout()
-plt. show()
+        # Verify if these are valid factors
+        if factor1 * factor2 == n:
+            print(f"Valid factors found: {factor1}, {factor2}")
 
 # End
 
@@ -609,7 +401,7 @@ plt. show()
 </p>
             
  </div>
-        <img src="E53i4.png" alt="" class="experiment-image4">
+        <img src="Q54i3.png" alt="" class="experiment-image4">
         <p></p>
         <div class="content-block">
 
