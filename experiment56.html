@@ -97,50 +97,56 @@
     </nav>
 
     <section class="content-section">
-        <h1><center> Factoring 95 with Shors Algorithm on IBM's 127-Qubit Quantum Computer  </center></h1>
+        <h1><center> Exploring Entanglement Dynamics in Curved Spacetime Under the Influence of the Superforce '(c^4)/G' as proposed by Salvatore Pais on IBM's 127-Qubit Quantum Computer  </center></h1>
         <div class="content-block">
          
-This experiment uses Shor's algorithm to factor n = 95 on IBM's ibm_brisbane with qiskit. Shors algorithm uses quantum parallelism and the Quantum Fourier Transform to determine the period of a modular function, which is then used to derive the factors of n. The experiment selects 32 qubits with the lowest error rates, uses modular exponentiation, and then uses a Quantum Fourier Transform to process and measure the result. The run data is post processed classically to extract the factors. The previous circuit (n = 77) simplified the modular exponentiation step, this circuit is a complete implementation that defines the unitary gates for modular arithmetic. This circuit finds both factors for 95 - 95 * 1, and 19 * 5.<br>
+This experiment investigates how quantum entanglement evolves when subjected to simulated spacetime curvature modeled by the Superforce (c^4)/G, as proposed by Salvatore Pais. A maximally entangled Bell state is created, and spacetime distortions of varying strengths are applied to one of the qubits. The distortions are modeled as controlled rotations with parameters scaled to fractions of the Superforce. Each distortion strength is executed independently on IBM’s 127-qubit ibm_sherbrooke with qiskit, and the results are saved as separate Json files. This analyzes the entanglement evolution, quantify asymmetries in probabilities, and measures entanglement entropy as a function of spacetime curvature. The experiment shows that spacetime curvature, or analogous forces on the scale of (c^4)/G, can significantly disrupt entanglement and coherence.<br>
 <br>
 <p>1. Problem  <br>
-The goal is to factorize n = 95 into its components, p and q, where n = p * q. This experiment chooses a = 2, a co-prime base to n, to construct the periodic modular function:<br>
-f(x) = a^x mod n<br>
+Einstein’s field equations describe the curvature of spacetime due to mass-energy:<br>
+R_μν - 1/2g_μν R + Λg_μν = (8πG)/(c^4) T_μν<br>
+Here, G is the gravitational constant, and c is the speed of light. The Superforce is the reciprocal of (8πG)/(c^4):<br>
+F_Planck ​= (c^4)/G​<br>
+It represents the maximum theoretical force in nature and provides the scale for spacetime distortions.<br>
+A Bell state is used as the starting point for this experiment because it maximally entangles two qubits. The Bell state is given by:<br>
+∣ψ⟩ = 1/sqrt(2) * (∣10⟩ + ∣01⟩)<br>
 
 
-<p>2. Backend Calibration<br>
-Calibration data from ibm_brisbane gives data about qubit coherence times (T_1, T_2​), gate fidelities (sqrt(x)​-gate and CNOT errors), and readout assignment errors. The best-performing 32 qubits are selected based on:<br>
-Ranking Metric = Minimize Gate Error, Maximize T_1​ and T_2​<br>
+<p>2. Setup the Quantum Circuit<br>
+A quantum register qr of 2 qubits and a classical register cr of 2 bits are initialized.<br>
+The Bell state is created:<br>
+Apply a Hadamard gate H to the first qubit:<br>
+H ∣0⟩ = 1/sqrt(2) * ​(∣0⟩+∣1⟩)<br>
+Apply a controlled-X (CNOT) gate between the first and second qubits:<br>
+CNOT(∣ψ⟩ ⊗ ∣0⟩) = 1/sqrt(2) * (∣10⟩ + ∣01⟩)<br>
 
-<p>3. Quantum Circuit   <br>
-A quantum register with num_qubits is used for the quantum operations. A classical register of the same size records the measurement outcomes. This applies Hadamard Gates to create a superposition state over the first half of the qubits:<br>
-                              (2^(n/2)) - 1<br>
-1/sqrt(2^(n/2)) ∑ ​∣x⟩<br>
-                                x = 0<br>
-
-For controlled modular exponentiation, this computes f(x) = a^x mod n using controlled operations. For each qubit in the control register, modular multiplication is applied to the target qubits. Modular reduction makes sure the result is bounded by n.<br>
-
-Then perform the Quantum Fourier Transform on the superposition state to determine the period r:<br>
-                                               (2^(n/2)) - 1<br>
- ∣x⟩ → (1/sqrt(2^(n/2))) ∑ e^(2πi * (kx)/(2^(n/2)) ∣k⟩<br>
-                                                 x = 0<br>
-
-Then, measure the quantum state and record the outcomes in the classical register. <br>
+<p>3. Spacetime Distortions  <br>
+A distortion function is defined to model the effect of spacetime curvature:<br>
+F_distortion ​= f * F_Planck​<br>
+where f is the fraction of the Superforce. The distortion is applied using rotation gates:<br>
+RX(θ) = [ cos(θ/2), -i sin(θ/2)<br>
+                  -i sin(θ/2), cos(θ/2) ]<br>
+with θ = ((F_distortion)/(1 * 10^30)) * π/4<br>
+Similar rotations are applied using RY and RZ gates with scaled angles:<br>
+RY: θ = ((F_distortion)/(1 * 10^30)) * π​/5<br>
+RZ: θ = ((F_distortion)/(1 * 10^30)) * π​/3<br>
+Three distortion strengths are tested: f = 0.1, 0.5, 1.0.<br>
 
 
 
 
-<p>4. Modular Arithmetic<br>
-For each control qubit i:<br>
-∣y⟩ → ∣(y * a^(2^i) mod n)⟩<br>
-Ancillary qubits are used to handle modular reduction, making sure the result is within bounds. Subtract n conditionally if the value exceeds n, and reset the ancillary qubits for reuse.<br>
+<p>4. Noise Model<br>
+Noise proportional to the distortion strength is added:<br>
+F_noise ​= f * F_Planck​<br>
+RX and RY gates are applied with scaled noise angles to simulate environmental noise.<br>
     
 
 
 
 
 
-<p>5. Optimize the Circuit<br>
-The circuit is transpiled and optimized for ibm_brisbane.
+<p>5. Measurement<br>
+The circuit measures both qubits, and the results are stored in the classical register. Counts for each computational basis state (∣00⟩, ∣01⟩, ∣10⟩, ∣11⟩) are extracted.
 <br>
 
     
@@ -148,439 +154,433 @@ The circuit is transpiled and optimized for ibm_brisbane.
 
 
 
-<p>6. Execution<br>
-The circuit is executed on IBM's ibm_brisbane with 16,384 shots. 
+<p>6. Execution and Results<br>
+The circuit is transpiled for ibm_sherbrooke with optimization level 3. For each distortion strength f, the circuit is executed independently with 16,384 shots. Results are saved to three Json files.
 <br>
 
     
-<p>7. Post-Processing<br>
-The measurement outcomes are stored as bitstrings corresponding to potential periods of f(x) = a^x mod n. The period r of the modular function is determined from the measurement results. Using the period r, the factors of n are computed as: <br>
-p = gcd(a^(r/2) − 1, n)<br>
-q = gcd(a^(r/2) + 1, n)<br>
+<p>7. Analysis<br>
+The normalized counts for each state (∣00⟩, ∣01⟩, ∣10⟩, ∣11⟩) are analyzed. The absolute difference between ∣10⟩ and ∣01⟩ probabilities is calculated to quantify directional bias:<br>
+Asymmetry = ∣ P(∣10⟩) − P(∣01⟩) ∣<br>
+Entanglement entropy is computed using the formula:<br>
+S = −∑​(p_i)​log_2(​p_i)​,<br>
+            i <br>
+where p_i​ is the probability of state i.<br>
 
 
 
 <p><center> Results:</center><br>
 <br>
 
-Top Counts:<br>
-Value: 6310, Count: 4<br>
-Value: 14476, Count: 4<br>
-Value: 792, Count: 4<br>
-Value: 5617, Count: 4<br>
-Value: 5432, Count: 4<br>
-Value: 3037, Count: 4<br>
-Value: 12803, Count: 4<br>
-Value: 1354, Count: 4<br>
-Value: 8532, Count: 4<br>
-Value: 2750, Count: 4<br>
-Observed: 6310, Factors: 1, 1<br>
-Observed: 14476, Factors: 1, 5<br>
-Observed: 792, Factors: 95, 1 ✔<br>
-Valid factors found: 95, 1  <br>
-Observed: 5617, Factors: 95, 1 ✔<br>
-Valid factors found: 95, 1<br>
-Observed: 5432, Factors: 5, 1<br>
-Observed: 3037, Factors: 1, 5<br>
-Observed: 12803, Factors: 1, 1<br>
-Observed: 1354, Factors: 1, 1<br>
-Observed: 8532, Factors: 19, 5 ✔<br>
-Valid factors found: 19, 5<br>
-Observed: 2750, Factors: 1, 1<br>
+  "distortion_strength": 0.1,<br>
+    "raw_counts": {<br>
+        "10": 7820,<br>
+        "00": 712,<br>
+        "01": 7246,<br>
+        "11": 606<br>
+    }<br>
 
-729 and 5617 produced the valid factor pair 95 and 1.<br>
-8532 produced the valid factor pair 19 and 5, which indicates successful factorization. <br>
+    "distortion_strength": 0.5,<br>
+    "raw_counts": {<br>
+        "00": 7918,<br>
+        "11": 7882,<br>
+        "01": 265,<br>
+        "10": 319<br>
+    }<br>
 
-Thus, the number n = 95 was successfully factorized into 1 * 95 and 19 * 5. <br>
+    "distortion_strength": 1.0,<br>
+    "raw_counts": {<br>
+        "00": 6133,<br>
+        "11": 5784,<br>
+        "10": 2262,<br>
+        "01": 2205<br>
+    }<br>
 
-Gate counts in the circuit:<br>
-sx: 1138<br>
-rz: 1503<br>
-x: 130<br>
-ecr: 553<br>
-rzx: 3<br>
-
+Weak distortions (f = 0.1) introduce minimal asymmetry and preserve entanglement entropy. Stronger distortions (f = 0.5 and f = 1.0) cause noticeable shifts in probabilities and reduced entropy, showing partial decay of entanglement. 
+<br>
+Distortions amplify asymmetry, with one entangled state ( ∣01⟩ or ∣10⟩) becoming more likely than the other. This confirms spacetime inspired distortions break the symmetry of the Bell state. Entropy decreases as distortion strength increases, meaning a gradual loss of entanglement.
+<br>
     <br>
 </div>
-        <img src="E55i1.png" alt="" class="experiment-image">
+        <img src="E56i1.png" alt="" class="experiment-image">
         <p></p>
         <div class="content-block">
 <br>
 
-The Decoded Bitstring Distribution above (code below) shows the frequency of each decoded bitstring as a function of its decimal representation. The majority of the bitstring outcomes have low frequencies (1, 2), while a few show slightly higher frequencies (3, 4). Peaks in the distribution correspond to quantum states that the algorithm's modular arithmetic and interference showed as likely outcomes. 
+The State Probability Distribution Across Distortions above (code below) shows at f = 0.1, the probabilities for ∣10⟩ and ∣01⟩ are nearly equal (~50%), with negligible contributions from ∣00⟩ and ∣11⟩. At f = 0.5, the probabilities for ∣10⟩ and ∣01⟩ begin to diverge, with a slight increase in ∣00⟩ and ∣11⟩. At f = 1.0, there is a significant redistribution of probabilities, with ∣00⟩ and ∣11⟩ gaining more weight while ∣10⟩ and ∣01⟩ lose their dominance. Thus, weak distortions (f = 0.1) minimally affect the entanglement structure, preserving the balance of ∣10⟩ and ∣01⟩. Stronger distortions (f = 0.5 and f = 1) introduce significant state mixing, reducing the dominance of the entangled states (∣10⟩, ∣01⟩) and increasing the contributions of non-entangled states (∣00⟩, ∣11⟩). Spacetime inspired distortions disrupt the entangled Bell state, leading to state mixing and reduced coherence in the system.
 <br>
-The Periodicity Detection in Measurement Outcomes above (code below) uses normalized counts and peaks where periodicity is detected. The red markers indicate the strongest peaks in the measurement results. These peaks directly relate to the period r used in a^r mod n = 1, the critical property for determining factors of n. Strong periodic signals show that the controlled modular exponentiation step worked as expected, and the QFT amplified the periodic components.
+The Asymmetry Across Distortion Strengths above (code below) shows the asymmetry between ∣10⟩ and ∣01⟩ probabilities increases sharply at f = 0, peaking at ~0.4, and decreases at f = 1.0. At moderate distortions (f = 0.5), the directional bias introduced by spacetime curvature is most pronounced, favoring one state over the other. At strong distortions (f = 1.0), the increased state mixing reduces asymmetry as the probabilities of ∣10⟩ and ∣01⟩ converge toward a more balanced distribution. Thus, spacetime distortions exhibit non-linear effects on asymmetry, with moderate distortions causing the greatest directional bias. This suggests a transition point where distortions overcome the coherence of the Bell state.
 <br>
-The Histogram of Measured Bitstrings above (code below) shows the counts of the top 50 most frequent bitstrings, with their binary representations along the x-axis. The distribution is sparse, with no single outcome dominating. But, specific bitstrings have higher frequencies, suggesting they are closer to the periodic states amplified by the QFT. Analyzing the top bitstrings and their corresponding decimal values helps identify candidates for extracting r, the period.
+The Entanglement Entropy Across Distortion Strengths above (code below) shows at f = 0.1, the entropy is ~1.4 bits, indicating significant entanglement. At f = 0.5, entropy drops to ~1.2 bits, reflecting reduced entanglement. At f = 1.0, entropy increases to ~1.8 bits, suggesting a shift toward a more mixed, less coherent state. Spacetime distortions have a complex effect on entanglement entropy, with moderate distortions causing the most degradation, while strong distortions lead to a highly mixed quantum state.
 <br>
-The Periodicity Peaks (Fourier Transform of Counts) above (code below) shows the magnitude spectrum of the Fourier transform applied to the measured counts, showing dominant frequencies in the data. The highest peaks correlate with the periodicities that the QFT amplified, which are key to solving the modular arithmetic problem.
+The State Evolution Across Distortion Strengths above (code below) shows at f = 0.1, ∣10⟩ and ∣01⟩ dominate, with negligible contributions from ∣00⟩ and ∣11⟩. At f = 0.5, ∣10⟩ and ∣01⟩ probabilities decrease as ∣00⟩ and ∣11⟩ gain weight. At f = 1.0, all states have comparable probabilities, reflecting significant state mixing. Weak distortions maintain the entangled state structure. Moderate distortions lead to noticeable state mixing and reduced coherence. Strong distortions fully disrupt the entangled state, producing a highly mixed quantum state. <br>
 <br>
-The Cumulative Distribution of Counts above (code below) shows the cumulative counts of sorted bitstrings, showing how much of the measurement data is captured by the top results. <br>
-<br>
-        <img src="E55i2.png" alt="" class="experiment-image">
+            
+        <img src="E56i2.png" alt="" class="experiment-image">
         <p></p>
         <div class="content-block">
 <br>
-The Heatmap of Decimal Values vs. Counts above (code below) shows the frequency of decimal values across the measurement outcomes. The heatmap shows the uniformity or irregularity in observed counts, helping validate the success of the modular exponentiation circuit.
+The Cumulative Probability of Entangled States above (code below) shows at f = 0.1, the cumulative probability of entangled states (∣10⟩ + ∣01⟩) is approximately 0.9, indicating strong entanglement. At f = 0.5, the cumulative probability drops significantly to 0.5, reflecting a disruption in entanglement. At f = 1.0, the cumulative probability stabilizes at 0.5, showing no further decrease despite strong distortions. Cumulative entangled state probability provides a direct metric for tracking the robustness of the entanglement under distortions. The sharp decline at moderate distortions shows the fragility of the entangled state during transitional phases.
 <br>
-The Heatmap of Count Frequency Distribution above (code below) shows the distribution of unique count values across the data. It shows high frequency regions, viewing how often specific bitstrings appear. The predominance of certain counts (1 or 2) shows that most bitstrings were measured only a few times, which is typical in noisy environments. The higher counts correspond to the repeated measurement of bitstrings that show meaningful periodicity.
+The Probability Ratios (∣10⟩/∣01⟩) above (code below) shows at f = 0.1, the ratio is close to 1, indicating near symmetry between ∣10⟩ and ∣01⟩. At f = 0.5, the ratio peaks dramatically (~30), suggesting that one state (∣10⟩) becomes overwhelmingly dominant. At f = 1.0, the ratio decreases again, approaching a balanced distribution. Probability ratios reveal the directional effects of spacetime distortions on entangled states. The sharp peak at f = 0.5 shows the strongest directional bias, aligning with the asymmetry findings from earlier.
 <br>
-The 3D Surface Plot of Counts vs. Decimal Values above (code below) shows peaks correspond to higher counts, while valleys indicate sparse outcomes. There are clear patterns in the structure. These peaks are the areas where we expect to find the relevant frequencies that reveal the period, ultimately leading to the factors of n.
+The Rate of Entropy Change above (code below) shows at f = 0.1, the entropy change rate is negative, indicating a slight decrease in randomness as distortions begin to affect the system. At f = 0.5, the change rate becomes positive and accelerates rapidly. At f = 1.0, the rate of entropy change peaks, showing the system rapidly transitions to a mixed, high entropy state. Entropy change rate captures the dynamic effects of spacetime distortions on quantum randomness. The positive acceleration shows how quickly entanglement breaks down as distortions increase.
 <br>
-The Logarithmic Plot of Bitstring Counts above (code below) shows bitstring counts on a logarithmic scale, showing outliers or extreme values in the data. These high frequency bitstrings are candidates for identifying the period r of the modular exponentiation function.
+The State Coherence Analysis above (code below) shows at f = 0.1, the coherence loss is minimal, with the entangled states (∣10⟩ + ∣01⟩) dominating over non-entangled states (∣00⟩ + ∣11⟩). At f = 0.5, coherence loss increases significantly as non-entangled states begin to mix into the system. At f = 1.0, coherence loss stabilizes, indicating a fully mixed state with equal contributions from all states. 
 <br>
-The Polar Plot of Periodicity in Measurement Outcomes above (code below) shows periodicity and symmetry in the data. Periodicity shows recurring patterns in the data. Darker colors indicate lower probabilities. Brighter colors represent higher probabilities. Peaks in the distribution (brighter colors) correlate to highly probable bitstrings, which encode the critical frequency that allows extraction of the periodicity r.
-<br>
-In the end, this circuit used Shor’s algorithm to factor n = 95 by using modular arithmetic and periodicity detection. The circuit used 32 qubits, performing controlled modular exponentiation and a Quantum Fourier Transform to encode and extract the periodicity of the function f(x) = a^x mod n, with a = 2 chosen as a co-prime of n. The results revealed periodic patterns, allowing the analysis circuit to extract the factors of 95 -  95 * 1, and 19 * 5. 
-<br>
-And thanks to @adam3us for the input and comments on the last Shors circuit (n = 77), that helped build this one. <br>            
 
+     <img src="E56i3.png" alt="" class="experiment-image">
+        <p></p>
+        <div class="content-block">
+<br>
+
+The Heatmap of State Probabilities Across Distortions above (code below) shows the gradual loss of entanglement as distortions increase. The brighter colors for ∣10⟩ and ∣01⟩ at low distortions show the robustness of entanglement, while the dimming at higher distortions reveals coherence loss. At f = 0.1, ∣10⟩ and ∣01⟩ dominate at lower distortion strengths. At f = 0.5, probabilities become more evenly distributed, with noticeable contributions from ∣00⟩ and ∣11⟩. At f = 1.0, probabilities drop significantly, showing a transition to a mixed state.
+<br>
+The 3D Surface Plot of State Probabilities above (code below) adds depth to the heatmap analysis, showing how distortions create valleys and plateaus in the state probabilities. The flattening surface at higher distortions shows the system’s transition to a mixed state. Peaks are visible for ∣10⟩ and ∣01⟩ at lower distortions, signifying their dominance. As distortions increase, the surface flattens, indicating a more uniform distribution of probabilities across all states.
+<br>
+The Heatmap of Asymmetry Across Distortions above (code below) shows the asymmetry dynamics, with brighter colors indicating higher asymmetry. The peak at moderate distortions suggests that this is the critical point where directional effects are strongest. Asymmetry between ∣10⟩ and ∣01⟩ probabilities is low at f = 0.1. The asymmetry peaks at f = 0.5, indicating a strong directional bias introduced by the distortions. At f = 1.0, asymmetry decreases again, signaling a transition to a mixed state. 
+<br>
+The 3D Surface Plot of Entanglement Entropy above (code below) shows the dynamic evolution of entropy, and the critical points of entanglement breakdown. Peaks in the plot correspond to the maximum randomness introduced by distortions. Entropy is low at f = 0.1, consistent with strong entanglement and low randomness. Entropy increases sharply at f = 0.5, showing significant coherence loss and state mixing. At f = 1.0, entropy stabilizes at a high value, marking the transition to a fully mixed state.
+<br>
+In the end, this experiment investigated the dynamics of quantum entanglement under spacetime inspired distortions modeled by fractions of the theoretical Superforce (c^4)/G, as proposed by Salvatore Pais. By creating Bell states and introducing distortions through controlled quantum gate manipulations, this circuit analyzed the effects of weak, moderate, and strong distortions (f = 0.1, 0.5, 1.0) on entanglement entropy, state probabilities, and asymmetry. Results showed that weak distortions preserved entanglement, as shown by high entangled state probabilities and low entropy. Moderate distortions (f = 0.5) marked a critical transition, with significant coherence loss and asymmetry, while strong distortions (f = 1.0) led to a mixed state characterized by uniform probabilities and high entropy. For (c^4)/G, this means that it can act as a natural scaling framework to explore the fragility of quantum systems in extreme conditions. The experiment shows that spacetime curvature, or analogous forces on the scale of (c^4)/G, can significantly disrupt entanglement and coherence.
+<br>
+
+            
+            
             <p>Code:<br>
             <p><pre><code>
 # Imports
 import numpy as np
-import pandas as pd
 import json
+import pandas as pd
 import logging
 from qiskit import QuantumCircuit, QuantumRegister, ClassicalRegister, transpile
 from qiskit_ibm_runtime import QiskitRuntimeService, Session, SamplerV2
-from qiskit.circuit.library import QFT
 from qiskit.visualization import plot_histogram
+from scipy.linalg import expm
 import matplotlib.pyplot as plt
 
 # Logging
 logging.basicConfig(level=logging. INFO, format='%(asctime)s - %(levelname)s - %(message)s')
 logger = logging.getLogger(__name__)
 
-# Calibration file path
-calibration_file = '/Users/Downloads/ibm_brisbane_calibrations_2025-01-11T01_36_45Z.csv'
-
 # Load calibration data
 def load_calibration_data(file_path):
     logger. info("Loading calibration data from %s", file_path)
     calibration_data = pd. read_csv(file_path)
-    calibration_data.columns = calibration_data.columns.str.strip()  # Strip spaces
+    calibration_data.columns = calibration_data.columns.str.strip()
     logger. info("Calibration data loaded successfully")
     return calibration_data
 
-# Parse calibration data and select best qubits
-def select_best_qubits(calibration_data, num_qubits):
+# Select best qubits
+def select_best_qubits(calibration_data, n_qubits):
     logger. info("Selecting the best qubits based on T1, T2, and error rates")
-    sort_columns = ['√x (sx) error', 'T1 (us)', 'T2 (us)']
-    
-    # Columns check
-    for col in sort_columns:
-        if col not in calibration_data.columns:
-            raise KeyError(f"Column '{col}' not found in calibration data. Check your CSV file.")
-    
-    sorted_qubits = calibration_data.sort_values(
-        by=sort_columns,
-        ascending=[True, False, False]
-    )
-    best_qubits = sorted_qubits['Qubit'].head(num_qubits).tolist()
+    qubits_sorted = calibration_data.sort_values(by=['\u221ax (sx) error', 'T1 (us)', 'T2 (us)'], ascending=[True, False, False])
+    best_qubits = qubits_sorted['Qubit'].head(n_qubits).tolist()
     logger. info("Selected qubits: %s", best_qubits)
     return best_qubits
 
-# Modular Multiplication 
-def modular_multiplication(qc, a, n, control_qubit, target_qubits, ancillary_qubits):
-    """
-    Implements modular multiplication |y⟩  ->  |(y  *  a mod n)⟩ using explicit controlled gates.
-    """
-    num_target_qubits = len(target_qubits)
+# Load most recent calibration data
+calibration_file = '/Users/Downloads/ibm_sherbrooke_calibrations_2025-01-06T17_46_19Z.csv'
+calibration_data = load_calibration_data(calibration_file)
 
-    # Apply controlled NOT gates to set up for modular multiplication by 'a'
-    for i in range(num_target_qubits):
-        qc. cx(control_qubit, target_qubits[i])
+# Select best qubits for the experiment
+n_qubits = 2
+best_qubits = select_best_qubits(calibration_data, n_qubits)
 
-    # Modular reduction
-    for i in range(num_target_qubits):
-        qc.ccx(control_qubit, target_qubits[i], ancillary_qubits[i])
-
-    # Reset ancillary qubits
-    for i in range(len(ancillary_qubits)):
-        qc. cx(control_qubit, ancillary_qubits[i])
-
-# IBMQ
+# IBMQ 
+logger. info("Setting up IBM Q service")
 service = QiskitRuntimeService(
     channel='ibm_quantum',
     instance='ibm-q/open/main',
     token='YOUR_IBMQ_API_KEY_O-`'  
 )
 
-backend_name = 'ibm_brisbane'
+backend_name = 'ibm_sherbrooke'
 backend = service.backend(backend_name)
 logger. info("Backend selected: %s", backend_name)
 
-# Shors circuit
-def create_shors_circuit(n, a, num_qubits):
-    logger. info(f"Creating Shor's circuit for factoring {n} with base {a} and {num_qubits} qubits")
-    qc = QuantumCircuit(num_qubits, num_qubits)
+# Quantum and classical registers
+qr = QuantumRegister(n_qubits, 'q')
+cr = ClassicalRegister(n_qubits, 'c')
 
-    # Apply Hadamard gates to create superposition
-    for i in range(num_qubits // 2):
-        qc.h(i)
+# Superforce constant
+c = 3e8  # Speed of light (m/s)
+G = 6.67430e-11  # Gravitational constant (m^3 kg^-1 s^-2)
+superforce = c**4 / G  # Maximum theoretical force (N)
+logger. info("Superforce value: %e N", superforce)
 
-    # Controlled Modular Exponentiation: f(a, x) = a^x mod n
-    def modular_exponentiation(qc, a, n, control_qubits, target_qubits, ancillary_qubits):
-        """
-        Implements modular exponentiation: U|x⟩ = |a^x mod n⟩.
-        """
-        for i, control_qubit in enumerate(control_qubits):
-            # Modular multiplication controlled by the i-th qubit in control register
-            modular_multiplication(qc, a**(2**i) % n, n, control_qubit, target_qubits, ancillary_qubits)
+# A distortion function based on the Superforce
+def spacetime_distortion_with_superforce(qc, qubit, force_fraction):
+    """Apply spacetime distortion proportional to a fraction of the superforce."""
+    distortion_strength = force_fraction * superforce
+    # Scale the distortion strength for the quantum circuit gates
+    scaled_angle = distortion_strength / (1e30) 
+    qc.rx(scaled_angle * np.pi / 4, qubit)
+    qc.rz(scaled_angle * np.pi / 3, qubit)
+    qc.ry(scaled_angle * np.pi / 5, qubit)
+    logger. info("Applied spacetime distortion with scaled angle: %f", scaled_angle)
 
-    # Control, target, and ancillary qubits
-    control_qubits = range(num_qubits // 2)
-    target_qubits = range(num_qubits // 2, num_qubits - (num_qubits // 2))  
-    ancillary_qubits = range(num_qubits - len(target_qubits), num_qubits)   
+# Noise model 
+def apply_force_scaled_noise(qc, qubit, force_fraction):
+    """Apply noise scaled to the fraction of the superforce."""
+    noise_strength = force_fraction * superforce
+    scaled_noise = noise_strength / (1e30)  
+    qc.rx(scaled_noise * np.pi / 2, qubit)
+    qc.ry(scaled_noise * np.pi / 4, qubit)
+    logger. info("Applied noise to qubit %s with scaled noise: %f", qubit, scaled_noise)
 
-    # Modular exponentiation
-    modular_exponentiation(qc, a, n, control_qubits, target_qubits, ancillary_qubits)
-
-    # QFT on the first half
-    qc.append(QFT(num_qubits // 2).to_gate(), range(num_qubits // 2))
-
-    # Measurement
-    qc.measure(range(num_qubits // 2), range(num_qubits // 2))
-    return qc
-
-# Transpile / optimize 
-def optimize_circuit(qc, backend):
-    logger. info("Transpiling the circuit for the backend")
+# Apply distortions and save results 
+distortion_strengths = [0.1, 0.5, 1.0]
+for fraction in distortion_strengths:
+    # Create a fresh quantum circuit for each distortion strength
+    qc = QuantumCircuit(qr, cr)
+    
+    # Create Bell state
+    qc.h(qr[0])
+    qc. cx(qr[0], qr[1])
+    
+    # Apply spacetime distortion
+    spacetime_distortion_with_superforce(qc, qr[1], fraction)
+    
+    # Apply noise 
+    apply_force_scaled_noise(qc, qr[1], fraction)
+    
+    # Measure 
+    qc.measure(qr, cr)
+    
+    # Transpile 
     qc_transpiled = transpile(qc, backend=backend, optimization_level=3)
-    logger. info("Circuit transpilation complete")
-    return qc_transpiled
-
-# Run Shors / shots
-def run_shors_experiment(n, a, num_qubits, calibration_data, shots=16384):
-    logger. info(f"Running Shor's algorithm to factor {n} with base {a}")
-
-    # Select best qubits based on calibration data
-    best_qubits = select_best_qubits(calibration_data, num_qubits)
-
-    # Create / optimize 
-    qc = create_shors_circuit(n, a, num_qubits)
-    qc_transpiled = optimize_circuit(qc, backend)
-
+    
     # Execute 
     with Session(service=service, backend=backend) as session:
         sampler = SamplerV2(session=session)
-        logger. info("Executing the circuit on the backend")
-        job = sampler. run([qc_transpiled], shots=shots)
+        logger. info("Executing the circuit on the backend for distortion strength: %f", fraction)
+        job = sampler. run([qc_transpiled], shots=16384)
         job_result = job.result()
-
-        # Data_bin 
+    
+        # Extract counts
         data_bin = job_result._pub_results[0]['__value__']['data']
+        if 'c' in data_bin:
+            counts = data_bin['c'].get_counts()
+        else:
+            raise KeyError("No valid key found in data_bin to extract counts.")
+        
+        # Save results to separate Jsons 
+        results_data = {
+            "distortion_strength": fraction,
+            "raw_counts": counts
+        }
+        output_file = f'/Users/Documents/Entanglement_Dynamics_Curved_Spacetime_SF_{fraction}.json'
+        with open(output_file, 'w') as f:
+            json.dump(results_data, f, indent=4)
+        logger. info(f"Results for distortion {fraction} saved to {output_file}")
 
-        # Parse data from 'c'
-        bit_array = data_bin['c']  # Extract the BitArray object
-        counts = bit_array.get_counts()  # Use get_counts method to extract counts
-
-        # Results
-        result_file_path = f'/Users/Documents/Shors_95_0.json'
-        with open(result_file_path, 'w') as f:
-            json.dump(counts, f, indent=4)
-        logger. info(f"Results saved to {result_file_path}")
-
-        # Plot 
-        plot_histogram(counts)
-        plt.title(f"Results for Shor's Algorithm (n={n})")
-        plt. show()
-
-        return counts
-
-# Calibration
-logger. info("Loading calibration data")
-calibration_data = load_calibration_data(calibration_file)
-
-# Parameters 
-n = 95
-a = 2
-num_qubits = 32  
-
-# Result
-result = run_shors_experiment(n, a, num_qubits, calibration_data)
-
-/////////////////////////
-
-Code to Test Results to Find Factors
+////////////////////
+Code For all Visuals from Run Data
 # Imports
 import json
-import numpy as np
-from math import gcd
-
-# Load the Json 
-file_path = '/Users/Documents/Shors_95_0.json'
-with open(file_path, 'r') as file:
-    data = json.load(file)
-
-# Convert binary strings to decimal
-counts = {int(key, 2): value for key, value in data.items()}
-
-# Sort by frequency to analyze the most likely results
-sorted_counts = sorted(counts.items(), key=lambda x: x[1], reverse=True)
-
-# Display the top results 
-print("Top results (decimal):")
-for result, count in sorted_counts[:10]:
-    print(f"Value: {result}, Count: {count}")
-
-# Parameters
-n = 95
-a = 2   
-observed_values = [key for key, _ in sorted_counts[:10]]
-
-# Compute candidate periods and factors
-for observed in observed_values:
-    r = observed  # Period candidate
-    if r != 0:
-        # Calculate the factors using the observed period
-        factor1 = gcd(a**(r//2) - 1, n)
-        factor2 = gcd(a**(r//2) + 1, n)
-        print(f"Observed: {observed}, Factors: {factor1}, {factor2}")
-
-        # Verify if these are valid factors
-        if factor1 * factor2 == n:
-            print(f"Valid factors found: {factor1}, {factor2}")
-
-//////////////////
-
-Code for All Visuals from Run Data
-# Imports
 import numpy as np
 import matplotlib.pyplot as plt
-import json
 from mpl_toolkits.mplot3d import Axes3D
 
 # Load run results
-file_path = '/Users/Documents/Shors_95_0.json'
-with open(file_path, 'r') as f:
-    results = json.load(f)
+file_paths = [
+    '/Users/Documents/Entanglement_Dynamics_Curved_Spacetime_SF_0.1.json',
+    '/Users/Documents/Entanglement_Dynamics_Curved_Spacetime_SF_0.5.json',
+    '/Users/Documents/Entanglement_Dynamics_Curved_Spacetime_SF_1.0.json'
+]
 
-# Parse results
-bitstrings = list(results.keys())
-counts = np.array(list(results.values()), dtype=int)
-decimal_values = [int(b, 2) for b in bitstrings]
+# Distortion strengths corresponding to the file paths
+distortion_strengths = [0.1, 0.5, 1.0]
 
-# Bitstring Decoding Plot
+# Load run data
+results = []
+for path in file_paths:
+    with open(path, 'r') as f:
+        results.append(json.load(f))
+
+# Extract raw counts and normalize probabilities for each distortion strength
+state_labels = list(results[0]["raw_counts"].keys())
+probabilities = []
+entropies = []
+asymmetries = []
+cumulative_entangled_probs = []
+probability_ratios = []
+coherence_losses = []
+
+for result in results:
+    counts = np.array(list(result["raw_counts"].values()))
+    total_counts = counts.sum()
+    probs = counts / total_counts
+    probabilities.append(probs)
+    
+    # Entropy
+    entropy = -np.sum(probs * np.log2(probs + 1e-10))  # Avoid log(0)
+    entropies.append(entropy)
+
+    # Cumulative probabilities of entangled states
+    entangled_prob = probs[state_labels.index("10")] + probs[state_labels.index("01")]
+    cumulative_entangled_probs.append(entangled_prob)
+    
+    # Probability ratio between |10> and |01>
+    prob_ratio = probs[state_labels.index("10")] / (probs[state_labels.index("01")] + 1e-10)  # Avoid division by 0
+    probability_ratios.append(prob_ratio)
+    
+    # Coherence loss (difference between entangled and non-entangled probabilities)
+    coherence_loss = abs(entangled_prob - (probs[state_labels.index("00")] + probs[state_labels.index("11")]))
+    coherence_losses.append(coherence_loss)
+    
+    # Asymmetry
+    asymmetry = abs(probs[state_labels.index("10")] - probs[state_labels.index("01")])
+    asymmetries.append(asymmetry)
+
+# Convert probabilities to a numpy array for easier manipulation
+probabilities = np.array(probabilities)
+asymmetries = np.array(asymmetries)
+entropies = np.array(entropies)
+
+# State Probability Distribution for Each Distortion
 plt.figure(figsize=(10, 6))
-plt.scatter(decimal_values, counts, color='green', alpha=0.7)
-plt.xlabel("Decimal Value of Bitstring")
-plt.ylabel("Frequency")
-plt.title("Decoded Bitstring Distribution")
-plt.grid(True, linestyle='--', alpha=0.6)
-plt.tight_layout()
-plt. show()
-
-# Periodicity Detection
-from scipy.signal import find_peaks
-
-# Normalize counts for periodicity detection
-normalized_counts = counts / np.max(counts)
-peaks, _ = find_peaks(normalized_counts, height=0.5)
-
-plt.figure(figsize=(10, 6))
-plt.plot(decimal_values, normalized_counts, color='purple', alpha=0.7, label="Normalized Counts")
-plt.scatter(np.array(decimal_values)[peaks], normalized_counts[peaks], color='red', label="Peaks")
-plt.xlabel("Decimal Value of Bitstring")
-plt.ylabel("Normalized Frequency")
-plt.title("Periodicity Detection in Measurement Outcomes")
+for i, (f, probs) in enumerate(zip(distortion_strengths, probabilities)):
+    plt. bar(np.arange(len(state_labels)) + i * 0.25, probs, width=0.25, label=f"f = {f}")
+plt.xticks(np.arange(len(state_labels)) + 0.25, state_labels)
+plt.xlabel('States')
+plt.ylabel('Probability')
+plt.title('State Probability Distribution Across Distortions')
 plt.legend()
-plt.grid(True, linestyle='--', alpha=0.6)
-plt.tight_layout()
+plt.grid(axis='y', linestyle='--', alpha=0.6)
 plt. show()
 
-# Histogram of Bitstring Counts
-plt.figure(figsize=(12, 6))
-plt. bar(bitstrings[:50], counts[:50], color='blue')
-plt.xlabel("Bitstrings (Top 50)")
-plt.ylabel("Counts")
-plt.title("Histogram of Measured Bitstrings")
-plt.xticks(rotation=90, fontsize=8)
-plt.tight_layout()
-plt. show()
-
-# Periodicity Peaks (Fourier Transform)
-frequencies = np.fft.fft(counts)
-magnitude = np.abs(frequencies)
-plt.figure(figsize=(12, 6))
-plt.plot(magnitude[:len(magnitude)//2], marker='o')
-plt.xlabel("Frequency")
-plt.ylabel("Magnitude")
-plt.title("Periodicity Peaks (FFT of Counts)")
-plt.grid()
-plt. show()
-
-# Cumulative Counts
-sorted_counts = np.sort(counts)[::-1]
-cumulative_counts = np.cumsum(sorted_counts)
-plt.figure(figsize=(12, 6))
-plt.plot(cumulative_counts, label="Cumulative Counts", color='green')
-plt.xlabel("Rank of Bitstrings (Sorted by Counts)")
-plt.ylabel("Cumulative Count")
-plt.title("Cumulative Distribution of Counts")
+# Asymmetry Across Distortions
+plt.figure(figsize=(8, 5))
+plt.plot(distortion_strengths, asymmetries, marker='o', color='orange', label="Asymmetry")
+plt.xlabel('Distortion Strength (f)')
+plt.ylabel('Asymmetry (|P(|10⟩) - P(|01⟩)|)')
+plt.title('Asymmetry Across Distortion Strengths')
+plt.grid(linestyle='--', alpha=0.6)
 plt.legend()
-plt.grid()
 plt. show()
 
-# Heatmap of Decimal Values vs. Counts
-plt.figure(figsize=(12, 6))
-plt.hist2d(decimal_values, counts, bins=(50, 50), cmap='plasma', cmin=1)
-plt.colorbar(label="Frequency")
-plt.xlabel("Decimal Values")
-plt.ylabel("Counts")
-plt.title("Heatmap of Decimal Values vs. Counts")
-plt.tight_layout()
+# Entanglement Entropy Across Distortions
+plt.figure(figsize=(8, 5))
+plt.plot(distortion_strengths, entropies, marker='o', color='green', label="Entropy")
+plt.xlabel('Distortion Strength (f)')
+plt.ylabel('Entropy (bits)')
+plt.title('Entanglement Entropy Across Distortion Strengths')
+plt.grid(linestyle='--', alpha=0.6)
+plt.legend()
 plt. show()
 
-# Heatmap of Count Frequency Distribution (Retained)
-unique_counts, freq = np.unique(counts, return_counts=True)
+# State Evolution Across Distortions
 plt.figure(figsize=(10, 6))
-plt.imshow(np.array([freq]), cmap="viridis", aspect="auto", interpolation="nearest")
-plt.colorbar(label="Frequency")
-plt.xticks(ticks=np.arange(len(unique_counts)), labels=unique_counts, rotation=45)
-plt.yticks([])
-plt.title("Heatmap of Count Frequency Distribution")
-plt.xlabel("Unique Count Values")
-plt.tight_layout()
+width = 0.25
+for i, state in enumerate(state_labels):
+    plt. bar(np.arange(len(distortion_strengths)) + i * width, probabilities[:, i], width=width, label=state)
+plt.xticks(np.arange(len(distortion_strengths)) + 0.5 * width, [f"f = {f}" for f in distortion_strengths])
+plt.xlabel('Distortion Strength (f)')
+plt.ylabel('Probability')
+plt.title('State Evolution Across Distortion Strengths')
+plt.legend()
+plt.grid(axis='y', linestyle='--', alpha=0.6)
 plt. show()
 
-# 3D Surface Plot of Counts vs. Decimal Values
+# Cumulative Probability of Entangled States
+plt.figure(figsize=(8, 5))
+plt.plot(distortion_strengths, cumulative_entangled_probs, marker='o', color='blue', label="Cumulative Entangled Prob.")
+plt.xlabel('Distortion Strength (f)')
+plt.ylabel('Cumulative Probability')
+plt.title('Cumulative Probability of Entangled States')
+plt.grid(linestyle='--', alpha=0.6)
+plt.legend()
+plt. show()
+
+# Probability Ratios (|10⟩ / |01⟩)
+plt.figure(figsize=(8, 5))
+plt.plot(distortion_strengths, probability_ratios, marker='o', color='purple', label="Probability Ratio |10⟩ / |01⟩")
+plt.xlabel('Distortion Strength (f)')
+plt.ylabel('Ratio')
+plt.title('Probability Ratios (|10⟩ / |01⟩) Across Distortions')
+plt.grid(linestyle='--', alpha=0.6)
+plt.legend()
+plt. show()
+
+# Entropy Change Rate
+entropy_change_rate = np.gradient(entropies, distortion_strengths)  # Derivative of entropy
+plt.figure(figsize=(8, 5))
+plt.plot(distortion_strengths, entropy_change_rate, marker='o', color='green', label="Entropy Change Rate")
+plt.xlabel('Distortion Strength (f)')
+plt.ylabel('Change Rate')
+plt.title('Rate of Entropy Change Across Distortions')
+plt.grid(linestyle='--', alpha=0.6)
+plt.legend()
+plt. show()
+
+# State Coherence Analysis
+plt.figure(figsize=(8, 5))
+plt.plot(distortion_strengths, coherence_losses, marker='o', color='orange', label="State Coherence Loss")
+plt.xlabel('Distortion Strength (f)')
+plt.ylabel('Coherence Loss')
+plt.title('State Coherence Analysis Across Distortions')
+plt.grid(linestyle='--', alpha=0.6)
+plt.legend()
+plt. show()
+
+# Heatmap of State Probabilities
+plt.figure(figsize=(10, 6))
+plt.imshow(probabilities.T, cmap='viridis', aspect='auto', interpolation='nearest', 
+           extent=[distortion_strengths[0], distortion_strengths[-1], 0, len(state_labels)])
+plt.colorbar(label='Probability')
+plt.yticks(np.arange(len(state_labels)), state_labels)
+plt.xlabel('Distortion Strength (f)')
+plt.ylabel('States')
+plt.title('Heatmap of State Probabilities Across Distortions')
+plt. show()
+
+# 3D Surface Plot of State Probabilities
 fig = plt.figure(figsize=(12, 8))
 ax = fig.add_subplot(111, projection='3d')
-x, y = np.meshgrid(np.arange(len(decimal_values)), np.arange(len(decimal_values)))
-z = np.outer(counts, counts)
-ax.plot_surface(x, y, z, cmap='viridis', edgecolor='none', alpha=0.8)
-ax.set_xlabel("Decimal Value Index")
-ax.set_ylabel("Decimal Value Index")
-ax.set_zlabel("Counts Interaction")
-plt.title("3D Surface Plot of Counts vs. Decimal Values")
+X, Y = np.meshgrid(distortion_strengths, np.arange(len(state_labels)))
+Z = probabilities.T
+ax.plot_surface(X, Y, Z, cmap='plasma', edgecolor='k', linewidth=0.3)
+ax.set_xticks(distortion_strengths)
+ax.set_xticklabels([f"f = {f}" for f in distortion_strengths])
+ax.set_yticks(np.arange(len(state_labels)))
+ax.set_yticklabels(state_labels)
+ax.set_xlabel('Distortion Strength (f)')
+ax.set_ylabel('States')
+ax.set_zlabel('Probability')
+ax.set_title('3D Surface Plot of State Probabilities')
 plt. show()
 
-# Logarithmic Plot of Bitstring Counts (Retained)
+# Heatmap of Asymmetry
 plt.figure(figsize=(10, 6))
-plt.plot(np.sort(counts)[::-1], 'o-', color='purple', alpha=0.7, label="Bitstring Counts (Log Scale)")
-plt.yscale("log")
-plt.xlabel("Rank (Sorted by Count)")
-plt.ylabel("Count (Log Scale)")
-plt.title("Logarithmic Plot of Bitstring Counts")
-plt.grid(True, linestyle="--", alpha=0.5)
-plt.legend()
-plt.tight_layout()
+asymmetry_matrix = np.tile(asymmetries, (len(state_labels), 1)).T
+plt.imshow(asymmetry_matrix, cmap='coolwarm', aspect='auto', interpolation='nearest', 
+           extent=[distortion_strengths[0], distortion_strengths[-1], 0, len(state_labels)])
+plt.colorbar(label='Asymmetry')
+plt.yticks([])
+plt.xlabel('Distortion Strength (f)')
+plt.title('Heatmap of Asymmetry Across Distortions')
 plt. show()
 
-# Polar Plot of Periodicity in Measured Outcomes (Retained)
-angles = (2 * np.pi * np.array(decimal_values)) / (2**len(bitstrings[0]))
-plt.figure(figsize=(8, 8))
-ax = plt.subplot(111, polar=True)
-ax.scatter(angles, counts, c=counts, cmap="plasma", alpha=0.75)
-ax.set_theta_zero_location("N")
-ax.set_theta_direction(-1)
-plt.title("Polar Plot of Periodicity in Measurement Outcomes")
-plt.tight_layout()
+# 3D Surface Plot of Entanglement Entropy
+fig = plt.figure(figsize=(12, 8))
+ax = fig.add_subplot(111, projection='3d')
+X, Y = np.meshgrid(distortion_strengths, [0])  # Single layer for entropy
+Z = np.tile(entropies, (1, len(state_labels))).T
+ax.plot_surface(X, Y, Z, cmap='cividis', edgecolor='k', linewidth=0.3)
+ax.set_xticks(distortion_strengths)
+ax.set_xticklabels([f"f = {f}" for f in distortion_strengths])
+ax.set_yticks([])
+ax.set_zticks(np.linspace(min(entropies), max(entropies), 5))
+ax.set_xlabel('Distortion Strength (f)')
+ax.set_ylabel('Entropy Layer')
+ax.set_zlabel('Entropy (bits)')
+ax.set_title('3D Surface Plot of Entanglement Entropy')
 plt. show()
 
-# End 
+# End
 
 
 
@@ -588,7 +588,7 @@ plt. show()
 </p>
             
  </div>
-        <img src="E55i4.png" alt="" class="experiment-image4">
+        <img src="E56i4.png" alt="" class="experiment-image4">
         <p></p>
         <div class="content-block">
 
@@ -596,13 +596,7 @@ plt. show()
             <br>
 
 
-             </div>
-        <img src="E55i3.png" alt="" class="experiment-image4">
-        <p></p>
-        <div class="content-block">
-
-           
-            <br>
+        
     
 
   
