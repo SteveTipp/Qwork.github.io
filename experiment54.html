@@ -102,15 +102,15 @@
          
 The objective is to factor n = 77 into its prime components p and q, where n  = p * q. Factoring n is classically hard for large integers but is made efficient with Shor's algorithm, which relies on finding the period r of the modular function:  <br>
 f(a, x) = a^x mod n<br>
-where a is a randomly chosen co-prime integer to n.<br>
+where a is a chosen co-prime integer to n.<br>
 
 
 <p>2. Backend Calibration<br>
 Calibration data from ibm_brisbane gives data about qubit coherence times (T_1, T_2​), gate fidelities (sqrt(x)​-gate and CNOT errors), and readout assignment errors. The best-performing 32 qubits are selected based on:<br>
 Ranking Metric = Minimize Gate Error, Maximize T_1​ and T_2​<br>
 
-<p>3. Choosing a Random Base a  <br>
-A random base a = 2 is selected such that gcd(a, n) = 1. If a is not co-prime to n, it directly reveals a factor of n.<br>
+<p>3. Choosing a Base a  <br>
+A base a = 2 is selected such that gcd(a, n) = 1. If a is not co-prime to n, it directly reveals a factor of n.<br>
 
 
 
