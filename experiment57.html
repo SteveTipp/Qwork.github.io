@@ -97,56 +97,61 @@
     </nav>
 
     <section class="content-section">
-        <h1><center> Exploring Entanglement Dynamics in Curved Spacetime Under the Influence of the Superforce '(c^4)/G' as proposed by Salvatore Pais on IBM's 127-Qubit Quantum Computer  </center></h1>
+        <h1><center> Delayed-Choice Entanglement Swapping on IBM's 127-Qubit Quantum Computer  </center></h1>
         <div class="content-block">
          
-This experiment investigates how quantum entanglement evolves when subjected to simulated spacetime curvature modeled by the Superforce (c^4)/G, as proposed by Salvatore Pais. A maximally entangled Bell state is created, and spacetime distortions of varying strengths are applied to one of the qubits. The distortions are modeled as controlled rotations with parameters scaled to fractions of the Superforce. Each distortion strength is executed independently on IBM’s 127-qubit ibm_sherbrooke with qiskit, and the results are saved as separate Json files. This analyzes the entanglement evolution, quantify asymmetries in probabilities, and measures entanglement entropy as a function of spacetime curvature. The experiment shows that spacetime curvature, or analogous forces on the scale of (c^4)/G, can significantly disrupt entanglement and coherence.<br>
+This experiment shows how future decisions can influence past quantum states through delayed-choice entanglement swapping. The circuit begins by creating two entangled qubit pairs (q_0, q_1​ and q_2, q_3​) and a control qubit q_4​ (with auxiliary qubit q_5​). A Bell-state measurement on q_1​ and q_2 links the two pairs, with the entanglement of q_0 and q_3​ determined retroactively by a delayed-choice measurement on q_4​. This delayed-choice mechanism defies classical causality, where past events should not depend on future actions, and instead shows the non-local nature of quantum mechanics. The result confirms that the entanglement between q_0​ and q_3​ is established only after the measurement of q_4​, showing the influence of future decisions on past quantum correlations. This experiment was run on IBM’s 127-qubit ibm_kyiv using qiskit.<br>
 <br>
-<p>1. Problem  <br>
-Einstein’s field equations describe the curvature of spacetime due to mass-energy:<br>
-R_μν - 1/2g_μν R + Λg_μν = (8πG)/(c^4) T_μν<br>
-Here, G is the gravitational constant, and c is the speed of light. The Superforce is the reciprocal of (8πG)/(c^4):<br>
-F_Planck ​= (c^4)/G​<br>
-It represents the maximum theoretical force in nature and provides the scale for spacetime distortions.<br>
-A Bell state is used as the starting point for this experiment because it maximally entangles two qubits. The Bell state is given by:<br>
-∣ψ⟩ = 1/sqrt(2) * (∣10⟩ + ∣01⟩)<br>
+            
+<p>1. Create Two EPR Pairs  <br>
+Before running, the circuit uses current backend calibration data to select the best performing qubits based on their T_1 and T_2​ coherence times and gate error rates. This makes sure that the qubits chosen for the experiment minimize noise and maximize fidelity.<br>
+Start by generating two entangled qubit pairs, represented as qubit pairs (q_0, q_1) and (q_2, q_3). Each pair is prepared in a maximally entangled state known as a Bell state:<br>
+∣Φ+⟩ = 1/sqrt(2) * (∣00⟩ + ∣11⟩) <br>
+Apply a Hadamard gate to q_0:<br>
+H∣0⟩ = 1/sqrt(2) * (∣0⟩ + ∣1⟩)<br>
+Apply a controlled-X (CNOT) gate to entangle q_0 and q_1: <br>
+CNOT(∣q_0​⟩ ∣q_1​⟩) = 1/sqrt(2) * (∣00⟩ + ∣11⟩)<br>
+Repeat the above for q_2​ and q_3​ to create the second Bell pair.<br>
+ At this stage, the state of the system is:<br>
+∣Φ+⟩_(01) ​⊗ ∣Φ+⟩_(23) ​= (1/2) * (∣00⟩ + ∣11⟩)_(01) ​⊗ (∣00⟩ + ∣11⟩)_(23)​<br>
 
 
-<p>2. Setup the Quantum Circuit<br>
-A quantum register qr of 2 qubits and a classical register cr of 2 bits are initialized.<br>
-The Bell state is created:<br>
-Apply a Hadamard gate H to the first qubit:<br>
-H ∣0⟩ = 1/sqrt(2) * ​(∣0⟩+∣1⟩)<br>
-Apply a controlled-X (CNOT) gate between the first and second qubits:<br>
-CNOT(∣ψ⟩ ⊗ ∣0⟩) = 1/sqrt(2) * (∣10⟩ + ∣01⟩)<br>
+<p>2. Prepare for Delayed-Choice Bell-State Measurement <br>
+The central feature of the experiment is the delayed-choice mechanism, where the decision to perform a Bell-state measurement is controlled by an additional qubit (q_4). This qubit will determine whether or not the entanglement swapping occurs.  <br>
+Introduce a control qubit (q_4​) initialized to ∣0⟩.<br>
+Add an auxiliary qubit (q_5​) to assist in implementing the Bell-state measurement.<br>
+Apply a Hadamard gate to q_4 to create a superposition of decision paths, representing both the scenario where the Bell-state measurement is performed and where it is not:<br>
+H ∣0⟩ = 1/sqrt(2) * (∣0⟩ + ∣1⟩)<br>
 
-<p>3. Spacetime Distortions  <br>
-A distortion function is defined to model the effect of spacetime curvature:<br>
-F_distortion ​= f * F_Planck​<br>
-where f is the fraction of the Superforce. The distortion is applied using rotation gates:<br>
-RX(θ) = [ cos(θ/2), -i sin(θ/2)<br>
-                  -i sin(θ/2), cos(θ/2) ]<br>
-with θ = ((F_distortion)/(1 * 10^30)) * π/4<br>
-Similar rotations are applied using RY and RZ gates with scaled angles:<br>
-RY: θ = ((F_distortion)/(1 * 10^30)) * π​/5<br>
-RZ: θ = ((F_distortion)/(1 * 10^30)) * π​/3<br>
-Three distortion strengths are tested: f = 0.1, 0.5, 1.0.<br>
-
+<p>3. Perform Bell-State Measurement on Qubits 2 and 3 <br>
+To perform the entanglement swapping, measure qubits q_2​ and q_3​ in the Bell basis, which consists of the following four states:<br>
+∣Φ+⟩ = 1/sqrt(2) * (∣00⟩ + ∣11⟩)<br>
+∣Φ−⟩ = 1/sqrt(2) * (∣00⟩ − ∣11⟩)<br>
+∣Ψ+⟩ = 1/sqrt(2) * (∣01⟩ + ∣10⟩)<br>
+∣Ψ−⟩​ = 1/sqrt(2) * (∣01⟩ - ∣10⟩)<br>
+Apply a CNOT gate with q_2​ as the control and q_3​ as the target.<br>
+Apply a Hadamard gate to q_2​ to transform the computational basis into the Bell basis.<br>
+Perform a conditional CCX (Toffoli) gate, where q_4​ (delayed-choice qubit) controls whether the BSM is finalized by entangling q_2​ and q_3​, with q_5​ serving as the auxiliary qubit in this operation.<br>
+At this point, depending on the state of q_4​, the measurement entangles or does not entangle the remaining qubits q_0​ and q_3​.
+<br>
 
 
 
-<p>4. Noise Model<br>
-Noise proportional to the distortion strength is added:<br>
-F_noise ​= f * F_Planck​<br>
-RX and RY gates are applied with scaled noise angles to simulate environmental noise.<br>
+
+<p>4. Delayed-Choice Mechanism<br>
+The decision to entangle qubits q_0​ and q_3​ is retroactively determined by the measurement on q_4​ and q_5. If q_4 is in state ∣1⟩, the Bell-state measurement is finalized, and qubits q_0​ and q_3​ become entangled. If q_4​ is in ∣0⟩, no entanglement swapping occurs.<br>
+Mathematically, this process updates the state of the system as:<br>
+Final State = {<br>
+Entangled: 1/sqrt(2) * (∣00⟩ + ∣11⟩)_(03)​, ​if q_4 ​= ∣1⟩.<br>
+Not Entangled: ∣Φ+⟩_(01) ​⊗ ∣Φ+⟩_(23)​, ​if q_4 ​= ∣0⟩.<br>
     
 
 
 
 
 
-<p>5. Measurement<br>
-The circuit measures both qubits, and the results are stored in the classical register. Counts for each computational basis state (∣00⟩, ∣01⟩, ∣10⟩, ∣11⟩) are extracted.
+<p>5. Measurement and Verification<br>
+Apply measurement gates to all qubits (q_0, q_1, q_2, q_3, q_4, q_5), storing results in the classical register. The results reveal the state of qubits q_0​ and q_3​, verifying whether or not they are entangled. 
 <br>
 
     
@@ -154,97 +159,77 @@ The circuit measures both qubits, and the results are stored in the classical re
 
 
 
-<p>6. Execution and Results<br>
-The circuit is transpiled for ibm_sherbrooke with optimization level 3. For each distortion strength f, the circuit is executed independently with 16,384 shots. Results are saved to three Json files.
+<p>6. Results and Analysis<br>
+The results are extracted from the backend in the form of bitstrings and saved to a Json. If qubits q_0​ and q_3​ are found in the same state (∣00⟩ or ∣11⟩) with high probability, this means entanglement swapping was successful. A histogram of the measurement results is created.
 <br>
 
     
-<p>7. Analysis<br>
-The normalized counts for each state (∣00⟩, ∣01⟩, ∣10⟩, ∣11⟩) are analyzed. The absolute difference between ∣10⟩ and ∣01⟩ probabilities is calculated to quantify directional bias:<br>
-Asymmetry = ∣ P(∣10⟩) − P(∣01⟩) ∣<br>
-Entanglement entropy is computed using the formula:<br>
-S = −∑​(p_i)​log_2(​p_i)​,<br>
-            i <br>
-where p_i​ is the probability of state i.<br>
-
 
 
 <p><center> Results:</center><br>
 <br>
 
-  "distortion_strength": 0.1,<br>
+{
+    "experiment_name": "Delayed-Choice Entanglement Swapping",<br>
     "raw_counts": {<br>
-        "10": 7820,<br>
-        "00": 712,<br>
-        "01": 7246,<br>
-        "11": 606<br>
+        "000011": 1851,<br>
+        "000100": 1096,<br>
+        "100000": 2305,<br>
+        "100111": 2123,<br>
+        "100100": 2154,<br>
+        "100011": 2424,<br>
+        "000111": 1184,<br>
+        "000000": 1781,<br>
+        "110100": 135,<br>
+        "110000": 231,<br>
+        ...<br>
     }<br>
+}<br>
 
-    "distortion_strength": 0.5,<br>
-    "raw_counts": {<br>
-        "00": 7918,<br>
-        "11": 7882,<br>
-        "01": 265,<br>
-        "10": 319<br>
-    }<br>
-
-    "distortion_strength": 1.0,<br>
-    "raw_counts": {<br>
-        "00": 6133,<br>
-        "11": 5784,<br>
-        "10": 2262,<br>
-        "01": 2205<br>
-    }<br>
-
-Weak distortions (f = 0.1) introduce minimal asymmetry and preserve entanglement entropy. Stronger distortions (f = 0.5 and f = 1.0) cause noticeable shifts in probabilities and reduced entropy, showing partial decay of entanglement. 
-<br>
-Distortions amplify asymmetry, with one entangled state ( ∣01⟩ or ∣10⟩) becoming more likely than the other. This confirms spacetime inspired distortions break the symmetry of the Bell state. Entropy decreases as distortion strength increases, meaning a gradual loss of entanglement.
-<br>
+In the 'Correlations for q_4 = 0 ,1' visual below, the dominant states for q_4 = 0 are 10 and 00, while for q_4 = 1, the states 11 and 01 show the highest probabilities. High frequency states such as 100011, 100100, and 100111 confirm that q_0 and q_3​ show entanglement influenced by the delayed Bell-state measurement. These results align with the expected outcomes for successful entanglement swapping, showing that the entanglement between q_0​ and q_3​ is retroactively determined by the measurement of q_4​.<br>
     <br>
 </div>
-        <img src="E56i1.png" alt="" class="experiment-image">
+        <img src="E57i1.png" alt="" class="experiment-image">
         <p></p>
         <div class="content-block">
 <br>
 
-The State Probability Distribution Across Distortions above (code below) shows at f = 0.1, the probabilities for ∣10⟩ and ∣01⟩ are nearly equal (~50%), with negligible contributions from ∣00⟩ and ∣11⟩. At f = 0.5, the probabilities for ∣10⟩ and ∣01⟩ begin to diverge, with a slight increase in ∣00⟩ and ∣11⟩. At f = 1.0, there is a significant redistribution of probabilities, with ∣00⟩ and ∣11⟩ gaining more weight while ∣10⟩ and ∣01⟩ lose their dominance. Thus, weak distortions (f = 0.1) minimally affect the entanglement structure, preserving the balance of ∣10⟩ and ∣01⟩. Stronger distortions (f = 0.5 and f = 1) introduce significant state mixing, reducing the dominance of the entangled states (∣10⟩, ∣01⟩) and increasing the contributions of non-entangled states (∣00⟩, ∣11⟩). Spacetime inspired distortions disrupt the entangled Bell state, leading to state mixing and reduced coherence in the system.
+The State Distribution Histogram above (code below) shows the raw counts of all the measured states from the experiment. A few states dominate the distribution, like 100011, 100111, and 100100. These are consistent with the expected outcomes of delayed-choice entanglement swapping. The high-count states point to the successful execution of the Bell-state measurements and subsequent entanglement swapping. The distribution aligns with the hypothesis, showing that delayed-choice measurements influenced the outcomes.
 <br>
-The Asymmetry Across Distortion Strengths above (code below) shows the asymmetry between ∣10⟩ and ∣01⟩ probabilities increases sharply at f = 0, peaking at ~0.4, and decreases at f = 1.0. At moderate distortions (f = 0.5), the directional bias introduced by spacetime curvature is most pronounced, favoring one state over the other. At strong distortions (f = 1.0), the increased state mixing reduces asymmetry as the probabilities of ∣10⟩ and ∣01⟩ converge toward a more balanced distribution. Thus, spacetime distortions exhibit non-linear effects on asymmetry, with moderate distortions causing the greatest directional bias. This suggests a transition point where distortions overcome the coherence of the Bell state.
+The Correlations Between Qubits q_0​ and q_3​ above (code below) shows the marginal probabilities of the correlations between the states of qubits q_0​ and q_3​, which are the primary focus of the entanglement swapping. The states 11 and 10 have higher probabilities than 00 and 01. This means strong correlations consistent with the creation of entanglement between q_0​ and q_3​ as a result of the Bell-state measurements. The correlations provide evidence of successful entanglement swapping.
 <br>
-The Entanglement Entropy Across Distortion Strengths above (code below) shows at f = 0.1, the entropy is ~1.4 bits, indicating significant entanglement. At f = 0.5, entropy drops to ~1.2 bits, reflecting reduced entanglement. At f = 1.0, entropy increases to ~1.8 bits, suggesting a shift toward a more mixed, less coherent state. Spacetime distortions have a complex effect on entanglement entropy, with moderate distortions causing the most degradation, while strong distortions lead to a highly mixed quantum state.
+The Impact of Delayed-Choice Qubit (q_4​) above (code below) shows the probabilities of the states of the delayed-choice qubit (q_4​). The probabilities of q_4 = 0 and q_4 = 1 are approximately equal, indicating that the delayed-choice mechanism was executed without bias. This symmetry means that the experiment correctly implemented a superposition of the delayed-choice decision. 
 <br>
-The State Evolution Across Distortion Strengths above (code below) shows at f = 0.1, ∣10⟩ and ∣01⟩ dominate, with negligible contributions from ∣00⟩ and ∣11⟩. At f = 0.5, ∣10⟩ and ∣01⟩ probabilities decrease as ∣00⟩ and ∣11⟩ gain weight. At f = 1.0, all states have comparable probabilities, reflecting significant state mixing. Weak distortions maintain the entangled state structure. Moderate distortions lead to noticeable state mixing and reduced coherence. Strong distortions fully disrupt the entangled state, producing a highly mixed quantum state. <br>
-<br>
-            
-        <img src="E56i2.png" alt="" class="experiment-image">
+The Noise Analysis High vs Low Frequency State above (code below) separates high frequency states (likely valid outcomes) from low frequency states (likely noise). High frequency states dominate the overall distribution, aligning with expected outcomes.<br>
+<br>            
+        <img src="E57i2.png" alt="" class="experiment-image">
         <p></p>
         <div class="content-block">
 <br>
-The Cumulative Probability of Entangled States above (code below) shows at f = 0.1, the cumulative probability of entangled states (∣10⟩ + ∣01⟩) is approximately 0.9, indicating strong entanglement. At f = 0.5, the cumulative probability drops significantly to 0.5, reflecting a disruption in entanglement. At f = 1.0, the cumulative probability stabilizes at 0.5, showing no further decrease despite strong distortions. Cumulative entangled state probability provides a direct metric for tracking the robustness of the entanglement under distortions. The sharp decline at moderate distortions shows the fragility of the entangled state during transitional phases.
+The Cumulative Probability Distribution above (code below) shows how the cumulative probabilities build up as we add states in descending order of their probabilities. A small number of states contribute to over 80% of the cumulative probability, confirming that a few dominant states are driving the results. The curve flattens significantly after the first 10 states, indicating that the remaining states have negligible contributions.
 <br>
-The Probability Ratios (∣10⟩/∣01⟩) above (code below) shows at f = 0.1, the ratio is close to 1, indicating near symmetry between ∣10⟩ and ∣01⟩. At f = 0.5, the ratio peaks dramatically (~30), suggesting that one state (∣10⟩) becomes overwhelmingly dominant. At f = 1.0, the ratio decreases again, approaching a balanced distribution. Probability ratios reveal the directional effects of spacetime distortions on entangled states. The sharp peak at f = 0.5 shows the strongest directional bias, aligning with the asymmetry findings from earlier.
+The Heatmap of State Probabilities above (code below) shows the probability distribution for all measured states, with brighter regions indicating higher probabilities. A handful of states (100011, 100100, 000011) have significantly higher probabilities, visible as bright horizontal bands. Most states are dark, signifying negligible or zero probabilities. The bright bands correspond to states that represent successful entanglement swapping and align with theoretical predictions.
 <br>
-The Rate of Entropy Change above (code below) shows at f = 0.1, the entropy change rate is negative, indicating a slight decrease in randomness as distortions begin to affect the system. At f = 0.5, the change rate becomes positive and accelerates rapidly. At f = 1.0, the rate of entropy change peaks, showing the system rapidly transitions to a mixed, high entropy state. Entropy change rate captures the dynamic effects of spacetime distortions on quantum randomness. The positive acceleration shows how quickly entanglement breaks down as distortions increase.
+The Histogram of High-Count States above (code below) shows the high probability states, filtering out noise and rare events. The states 100011, 100100, and 100111 exhibit the highest counts, with other states like 000011 and 000100 contributing significantly as well. The distribution is relatively uniform among the dominant states, meaning well balanced contributions from successful outcomes. 
 <br>
-The State Coherence Analysis above (code below) shows at f = 0.1, the coherence loss is minimal, with the entangled states (∣10⟩ + ∣01⟩) dominating over non-entangled states (∣00⟩ + ∣11⟩). At f = 0.5, coherence loss increases significantly as non-entangled states begin to mix into the system. At f = 1.0, coherence loss stabilizes, indicating a fully mixed state with equal contributions from all states. 
+The Correlations for Delayed-Choice Qubit (q_4) show the correlations between the delayed-choice qubit (q_4) and the entangled qubits (q_0, q_3​). For q_4 = 0, the state 10 is dominant, followed by 00. For q_4 = 1, the state 11 is dominant, with 01 also showing significant probability. These correlations confirm the role of the delayed-choice mechanism in determining the final state of the entangled qubits. The transition in dominance between states 10 and 11 shows the retroactive influence of the Bell-state measurement.
 <br>
 
-     <img src="E56i3.png" alt="" class="experiment-image">
+     <img src="E57i3.png" alt="" class="experiment-image">
         <p></p>
         <div class="content-block">
 <br>
 
-The Heatmap of State Probabilities Across Distortions above (code below) shows the gradual loss of entanglement as distortions increase. The brighter colors for ∣10⟩ and ∣01⟩ at low distortions show the robustness of entanglement, while the dimming at higher distortions reveals coherence loss. At f = 0.1, ∣10⟩ and ∣01⟩ dominate at lower distortion strengths. At f = 0.5, probabilities become more evenly distributed, with noticeable contributions from ∣00⟩ and ∣11⟩. At f = 1.0, probabilities drop significantly, showing a transition to a mixed state.
+The 3D Bar Plot of State Probabilities above (code below) shows the probabilities of all states measured in the experiment. A small set of states dominates the distribution, with significantly higher probabilities. 
 <br>
-The 3D Surface Plot of State Probabilities above (code below) adds depth to the heatmap analysis, showing how distortions create valleys and plateaus in the state probabilities. The flattening surface at higher distortions shows the system’s transition to a mixed state. Peaks are visible for ∣10⟩ and ∣01⟩ at lower distortions, signifying their dominance. As distortions increase, the surface flattens, indicating a more uniform distribution of probabilities across all states.
+The 3D Delayed-Choice Qubit Correlations above (code below) shows the relationship between the delayed-choice qubit (q_4​) and the entangled states (q_0​ and q_3​). Clusters in the 3D space show strong correlations between the delayed-choice qubit and the entangled states. These clusters validate the role of q_4​ in retroactively influencing the outcomes of q_0​ and q_3​. The delayed-choice mechanism successfully demonstrates its influence, as evidenced by clear separations in the state probabilities conditioned on q_4.
 <br>
-The Heatmap of Asymmetry Across Distortions above (code below) shows the asymmetry dynamics, with brighter colors indicating higher asymmetry. The peak at moderate distortions suggests that this is the critical point where directional effects are strongest. Asymmetry between ∣10⟩ and ∣01⟩ probabilities is low at f = 0.1. The asymmetry peaks at f = 0.5, indicating a strong directional bias introduced by the distortions. At f = 1.0, asymmetry decreases again, signaling a transition to a mixed state. 
+The 3D Cumulative Probability Surface above (code below) shows the cumulative probabilities of the measured states. The surface rises steeply initially, with the first 10 - 15 states contributing the bulk of the cumulative probability. The surface flattens quickly, indicating that the majority of states contribute negligibly. The steep rise in cumulative probabilities shows the dominance of a small set of states, confirming that the system behaves as expected under ideal delayed-choice entanglement swapping conditions. The flattening means effective suppression of noise or unexpected transitions.
 <br>
-The 3D Surface Plot of Entanglement Entropy above (code below) shows the dynamic evolution of entropy, and the critical points of entanglement breakdown. Peaks in the plot correspond to the maximum randomness introduced by distortions. Entropy is low at f = 0.1, consistent with strong entanglement and low randomness. Entropy increases sharply at f = 0.5, showing significant coherence loss and state mixing. At f = 1.0, entropy stabilizes at a high value, marking the transition to a fully mixed state.
+The 3D State Transition Path above (code below) shows transitions between dominant states and their nearest neighbors, with transition weights proportional to the probabilities of the connected states. Strong connections are observed between dominant states and their closest neighbors, showing coherence and connectivity. Sparse and weak connections to other states show limited noise interference.  The transitions show that the dominant states form a coherent and strong subspace in the larger Hilbert space. This reinforces the conclusion that the delayed-choice mechanism effectively projects the system into expected quantum states with minimal leakage to unintended states.
 <br>
-In the end, this experiment investigated the dynamics of quantum entanglement under spacetime inspired distortions modeled by fractions of the theoretical Superforce (c^4)/G, as proposed by Salvatore Pais. By creating Bell states and introducing distortions through controlled quantum gate manipulations, this circuit analyzed the effects of weak, moderate, and strong distortions (f = 0.1, 0.5, 1.0) on entanglement entropy, state probabilities, and asymmetry. Results showed that weak distortions preserved entanglement, as shown by high entangled state probabilities and low entropy. Moderate distortions (f = 0.5) marked a critical transition, with significant coherence loss and asymmetry, while strong distortions (f = 1.0) led to a mixed state characterized by uniform probabilities and high entropy. For (c^4)/G, this means that it can act as a natural scaling framework to explore the fragility of quantum systems in extreme conditions. The experiment shows that spacetime curvature, or analogous forces on the scale of (c^4)/G, can significantly disrupt entanglement and coherence.
+In the end, this experiment successfully showed delayed-choice entanglement swapping on IBM's ibm_kyiv. By entangling qubits through intermediary measurements and conditioning outcomes on the delayed-choice qubit, this circuit observed strong correlations, validating the influence of later measurements on prior entanglement outcomes. The result confirms that the entanglement between q_0​ and q_3​ is established only after the measurement of q_4​, showing how future decisions can influence past quantum correlations.<br>
 <br>
-
             
             
             <p>Code:<br>
@@ -257,14 +242,13 @@ import logging
 from qiskit import QuantumCircuit, QuantumRegister, ClassicalRegister, transpile
 from qiskit_ibm_runtime import QiskitRuntimeService, Session, SamplerV2
 from qiskit.visualization import plot_histogram
-from scipy.linalg import expm
 import matplotlib.pyplot as plt
 
-# Logging
-logging.basicConfig(level=logging. INFO, format='%(asctime)s - %(levelname)s - %(message)s')
+# Logging Setup
+logging.basicConfig(level=logging. INFO, format="%(asctime)s - %(levelname)s - %(message)s")
 logger = logging.getLogger(__name__)
 
-# Load calibration data
+# Load Backend Calibration Data
 def load_calibration_data(file_path):
     logger. info("Loading calibration data from %s", file_path)
     calibration_data = pd. read_csv(file_path)
@@ -272,312 +256,330 @@ def load_calibration_data(file_path):
     logger. info("Calibration data loaded successfully")
     return calibration_data
 
-# Select best qubits
+# Parse Calibration Data
 def select_best_qubits(calibration_data, n_qubits):
     logger. info("Selecting the best qubits based on T1, T2, and error rates")
-    qubits_sorted = calibration_data.sort_values(by=['\u221ax (sx) error', 'T1 (us)', 'T2 (us)'], ascending=[True, False, False])
-    best_qubits = qubits_sorted['Qubit'].head(n_qubits).tolist()
+    qubits_sorted = calibration_data.sort_values(by=["√x (sx) error", "T1 (us)", "T2 (us)"], ascending=[True, False, False])
+    best_qubits = qubits_sorted["Qubit"].head(n_qubits).tolist()
     logger. info("Selected qubits: %s", best_qubits)
     return best_qubits
 
-# Load most recent calibration data
-calibration_file = '/Users/Downloads/ibm_sherbrooke_calibrations_2025-01-06T17_46_19Z.csv'
+# Load Calibration Data
+calibration_file = '/Users/Downloads/ibm_kyiv_calibrations_2025-01-15T19_06_40Z.csv'
 calibration_data = load_calibration_data(calibration_file)
 
-# Select best qubits for the experiment
-n_qubits = 2
-best_qubits = select_best_qubits(calibration_data, n_qubits)
+# Select Best Qubits for Experiment
+num_qubits = 6  # 4 qubits + 2 control qubits for delayed choice
+best_qubits = select_best_qubits(calibration_data, num_qubits)
 
 # IBMQ 
 logger. info("Setting up IBM Q service")
 service = QiskitRuntimeService(
-    channel='ibm_quantum',
-    instance='ibm-q/open/main',
-    token='YOUR_IBMQ_API_KEY_O-`'  
+    channel="ibm_quantum",
+    instance="ibm-q/open/main",
+    token='YOUR_IBMQ_API_KEY_O-`'
 )
 
-backend_name = 'ibm_sherbrooke'
+backend_name = "ibm_kyiv"
 backend = service.backend(backend_name)
 logger. info("Backend selected: %s", backend_name)
 
-# Quantum and classical registers
-qr = QuantumRegister(n_qubits, 'q')
-cr = ClassicalRegister(n_qubits, 'c')
+# Quantum and Classical Registers
+qr = QuantumRegister(num_qubits, "q")
+cr = ClassicalRegister(num_qubits, "c")
+qc = QuantumCircuit(qr, cr)
 
-# Superforce constant
-c = 3e8  # Speed of light (m/s)
-G = 6.67430e-11  # Gravitational constant (m^3 kg^-1 s^-2)
-superforce = c**4 / G  # Maximum theoretical force (N)
-logger. info("Superforce value: %e N", superforce)
+# Create Two EPR Pairs (Qubit Pairs: (1,2) and (3,4))
+qc.h(qr[0])
+qc. cx(qr[0], qr[1])
+qc.h(qr[2])
+qc. cx(qr[2], qr[3])
 
-# A distortion function based on the Superforce
-def spacetime_distortion_with_superforce(qc, qubit, force_fraction):
-    """Apply spacetime distortion proportional to a fraction of the superforce."""
-    distortion_strength = force_fraction * superforce
-    # Scale the distortion strength for the quantum circuit gates
-    scaled_angle = distortion_strength / (1e30) 
-    qc.rx(scaled_angle * np.pi / 4, qubit)
-    qc.rz(scaled_angle * np.pi / 3, qubit)
-    qc.ry(scaled_angle * np.pi / 5, qubit)
-    logger. info("Applied spacetime distortion with scaled angle: %f", scaled_angle)
+# Prepare a Delayed-Choice Bell-State Measurement (Victor's Measurement)
+qc.h(qr[4])  # Delayed-choice control qubit
+qc.h(qr[5])  # Auxiliary qubit for measurement
+qc. cx(qr[2], qr[3])  # Entangle qubits 2 and 3
+qc.ccx(qr[4], qr[2], qr[5])  # Conditional entanglement based on delayed-choice qubit
 
-# Noise model 
-def apply_force_scaled_noise(qc, qubit, force_fraction):
-    """Apply noise scaled to the fraction of the superforce."""
-    noise_strength = force_fraction * superforce
-    scaled_noise = noise_strength / (1e30)  
-    qc.rx(scaled_noise * np.pi / 2, qubit)
-    qc.ry(scaled_noise * np.pi / 4, qubit)
-    logger. info("Applied noise to qubit %s with scaled noise: %f", qubit, scaled_noise)
+# Perform Entanglement Swapping
+qc.h(qr[4])  # Finalize delayed-choice decision
+qc. cx(qr[4], qr[2])  # Entangle qubit 1 with Qubit 4 via intermediate qubits
 
-# Apply distortions and save results 
-distortion_strengths = [0.1, 0.5, 1.0]
-for fraction in distortion_strengths:
-    # Create a fresh quantum circuit for each distortion strength
-    qc = QuantumCircuit(qr, cr)
-    
-    # Create Bell state
-    qc.h(qr[0])
-    qc. cx(qr[0], qr[1])
-    
-    # Apply spacetime distortion
-    spacetime_distortion_with_superforce(qc, qr[1], fraction)
-    
-    # Apply noise 
-    apply_force_scaled_noise(qc, qr[1], fraction)
-    
-    # Measure 
-    qc.measure(qr, cr)
-    
-    # Transpile 
-    qc_transpiled = transpile(qc, backend=backend, optimization_level=3)
-    
-    # Execute 
-    with Session(service=service, backend=backend) as session:
-        sampler = SamplerV2(session=session)
-        logger. info("Executing the circuit on the backend for distortion strength: %f", fraction)
-        job = sampler. run([qc_transpiled], shots=16384)
-        job_result = job.result()
-    
-        # Extract counts
-        data_bin = job_result._pub_results[0]['__value__']['data']
-        if 'c' in data_bin:
-            counts = data_bin['c'].get_counts()
-        else:
-            raise KeyError("No valid key found in data_bin to extract counts.")
-        
-        # Save results to separate Jsons 
-        results_data = {
-            "distortion_strength": fraction,
-            "raw_counts": counts
-        }
-        output_file = f'/Users/Documents/Entanglement_Dynamics_Curved_Spacetime_SF_{fraction}.json'
-        with open(output_file, 'w') as f:
-            json.dump(results_data, f, indent=4)
-        logger. info(f"Results for distortion {fraction} saved to {output_file}")
+# Measurement for Verification
+qc.measure(qr, cr)
 
-////////////////////
-Code For all Visuals from Run Data
+# Transpile 
+logger. info("Transpiling the quantum circuit for the backend")
+qc_transpiled = transpile(qc, backend=backend, optimization_level=3)
+logger. info("Circuit transpilation complete")
+
+# Execute 
+shots = 16384
+with Session(service=service, backend=backend) as session:
+    sampler = SamplerV2(session=session)
+    logger. info("Executing the circuit on the backend")
+    job = sampler. run([qc_transpiled], shots=shots)
+    job_result = job.result()
+
+    # Extract counts
+    data_bin = job_result._pub_results[0]['__value__']['data']
+    if 'c' in data_bin:
+        counts = data_bin['c'].get_counts()
+    else:
+        raise KeyError("No valid key found in data_bin to extract counts.")
+
+    # Save Json
+    results_data = {
+        "experiment_name": "Delayed-Choice Entanglement Swapping",
+        "raw_counts": counts
+    }
+    output_file = '/Users/Documents/Delayed_Choice_Entanglement_Swapping_0.json'
+    with open(output_file, "w") as f:
+        json.dump(results_data, f, indent=4)
+    logger. info(f"Results saved to {output_file}")
+
+# Visual
+plot_histogram(counts)
+plt.title("Delayed-Choice Entanglement Swapping")
+plt. show()
+
+////////////////////////
+Code for All Visuals from Run Data
 # Imports
+import matplotlib.pyplot as plt
 import json
 import numpy as np
-import matplotlib.pyplot as plt
+import seaborn as sns
 from mpl_toolkits.mplot3d import Axes3D
 
-# Load run results
-file_paths = [
-    '/Users/Documents/Entanglement_Dynamics_Curved_Spacetime_SF_0.1.json',
-    '/Users/Documents/Entanglement_Dynamics_Curved_Spacetime_SF_0.5.json',
-    '/Users/Documents/Entanglement_Dynamics_Curved_Spacetime_SF_1.0.json'
-]
+# Load Run Results
+file_path = '/Users/Documents/Delayed_Choice_Entanglement_Swapping_0.json'
+with open(file_path, 'r') as f:
+    data = json.load(f)
 
-# Distortion strengths corresponding to the file paths
-distortion_strengths = [0.1, 0.5, 1.0]
+raw_counts = data["raw_counts"]
+total_counts_v = sum(raw_counts.values())
 
-# Load run data
-results = []
-for path in file_paths:
-    with open(path, 'r') as f:
-        results.append(json.load(f))
+# Convert counts to arrays
+states = list(raw_counts.keys())
+counts = np.array(list(raw_counts.values()))
+total_counts = np.sum(counts)
+probabilities = counts / total_counts_v
 
-# Extract raw counts and normalize probabilities for each distortion strength
-state_labels = list(results[0]["raw_counts"].keys())
-probabilities = []
-entropies = []
-asymmetries = []
-cumulative_entangled_probs = []
-probability_ratios = []
-coherence_losses = []
+# Parse qubit states for analysis
+q0_q3_states = [state[0] + state[5] for state in states]
+q4_states = [state[4] for state in states]
 
-for result in results:
-    counts = np.array(list(result["raw_counts"].values()))
-    total_counts = counts.sum()
-    probs = counts / total_counts
-    probabilities.append(probs)
-    
-    # Entropy
-    entropy = -np.sum(probs * np.log2(probs + 1e-10))  # Avoid log(0)
-    entropies.append(entropy)
+# Parse qubit states for analysis
+q0_states = [int(state[0]) for state in states]
+q3_states = [int(state[5]) for state in states]
+q4_states = [int(state[4]) for state in states]
 
-    # Cumulative probabilities of entangled states
-    entangled_prob = probs[state_labels.index("10")] + probs[state_labels.index("01")]
-    cumulative_entangled_probs.append(entangled_prob)
-    
-    # Probability ratio between |10> and |01>
-    prob_ratio = probs[state_labels.index("10")] / (probs[state_labels.index("01")] + 1e-10)  # Avoid division by 0
-    probability_ratios.append(prob_ratio)
-    
-    # Coherence loss (difference between entangled and non-entangled probabilities)
-    coherence_loss = abs(entangled_prob - (probs[state_labels.index("00")] + probs[state_labels.index("11")]))
-    coherence_losses.append(coherence_loss)
-    
-    # Asymmetry
-    asymmetry = abs(probs[state_labels.index("10")] - probs[state_labels.index("01")])
-    asymmetries.append(asymmetry)
+# Define high-count states threshold
+high_count_threshold = 1000
+high_count_indices = np.where(counts > high_count_threshold)[0]
 
-# Convert probabilities to a numpy array for easier manipulation
-probabilities = np.array(probabilities)
-asymmetries = np.array(asymmetries)
-entropies = np.array(entropies)
+# State Distribution Histogram
+plt.figure(figsize=(12, 6))
+plt. bar(states, counts, color='blue')
+plt.title("State Distribution Histogram")
+plt.xlabel("States")
+plt.ylabel("Counts")
+plt.xticks(rotation=90, fontsize=8)
+plt.tight_layout()
+plt. show()
 
-# State Probability Distribution for Each Distortion
+# Correlations Between Qubits q0 and q3
+q0_q3_counts = {}
+for state, count in zip(states, counts):
+    pair = state[0] + state[5]
+    q0_q3_counts[pair] = q0_q3_counts.get(pair, 0) + count
+
+pairs = list(q0_q3_counts.keys())
+pair_counts = np.array(list(q0_q3_counts.values()))
+plt.figure(figsize=(6, 6))
+plt. bar(pairs, pair_counts / total_counts, color='green')
+plt.title("Correlations Between Qubits q0 and q3")
+plt.xlabel("q0-q3 States")
+plt.ylabel("Probability")
+plt. show()
+
+# Impact of Delayed-Choice Qubit q4
+q4_counts = {"0": 0, "1": 0}
+for state, count in zip(states, counts):
+    q4 = state[4]
+    q4_counts[q4] += count
+
+plt.figure(figsize=(6, 6))
+plt. bar(q4_counts.keys(), np.array(list(q4_counts.values())) / total_counts, color='purple')
+plt.title("Impact of Delayed-Choice Qubit q4")
+plt.xlabel("q4 State")
+plt.ylabel("Probability")
+plt. show()
+
+# Noise Analysis: High vs. Low Frequency States
+high_count_threshold = 100
+high_states = [(state, count) for state, count in zip(states, counts) if count > high_count_threshold]
+low_states = [(state, count) for state, count in zip(states, counts) if count <= high_count_threshold]
+
+high_states_labels = [state[0] for state in high_states]
+high_states_values = np.array([count for _, count in high_states])
+low_states_labels = [state[0] for state in low_states]
+low_states_values = np.array([count for _, count in low_states])
+
+plt.figure(figsize=(12, 6))
+plt. bar(high_states_labels, high_states_values, color='red', label='High Frequency States')
+plt. bar(low_states_labels, low_states_values, color='blue', label='Low Frequency States', alpha=0.7)
+plt.title("Noise Analysis: High vs. Low Frequency States")
+plt.xlabel("States")
+plt.ylabel("Counts")
+plt.legend()
+plt.xticks(rotation=90, fontsize=8)
+plt.tight_layout()
+plt. show()
+
+# Cumulative Probability Distribution
+sorted_probs = np.sort(probabilities)[::-1]
+cumulative_probs = np.cumsum(sorted_probs)
 plt.figure(figsize=(10, 6))
-for i, (f, probs) in enumerate(zip(distortion_strengths, probabilities)):
-    plt. bar(np.arange(len(state_labels)) + i * 0.25, probs, width=0.25, label=f"f = {f}")
-plt.xticks(np.arange(len(state_labels)) + 0.25, state_labels)
-plt.xlabel('States')
-plt.ylabel('Probability')
-plt.title('State Probability Distribution Across Distortions')
-plt.legend()
-plt.grid(axis='y', linestyle='--', alpha=0.6)
-plt. show()
-
-# Asymmetry Across Distortions
-plt.figure(figsize=(8, 5))
-plt.plot(distortion_strengths, asymmetries, marker='o', color='orange', label="Asymmetry")
-plt.xlabel('Distortion Strength (f)')
-plt.ylabel('Asymmetry (|P(|10⟩) - P(|01⟩)|)')
-plt.title('Asymmetry Across Distortion Strengths')
-plt.grid(linestyle='--', alpha=0.6)
-plt.legend()
-plt. show()
-
-# Entanglement Entropy Across Distortions
-plt.figure(figsize=(8, 5))
-plt.plot(distortion_strengths, entropies, marker='o', color='green', label="Entropy")
-plt.xlabel('Distortion Strength (f)')
-plt.ylabel('Entropy (bits)')
-plt.title('Entanglement Entropy Across Distortion Strengths')
-plt.grid(linestyle='--', alpha=0.6)
-plt.legend()
-plt. show()
-
-# State Evolution Across Distortions
-plt.figure(figsize=(10, 6))
-width = 0.25
-for i, state in enumerate(state_labels):
-    plt. bar(np.arange(len(distortion_strengths)) + i * width, probabilities[:, i], width=width, label=state)
-plt.xticks(np.arange(len(distortion_strengths)) + 0.5 * width, [f"f = {f}" for f in distortion_strengths])
-plt.xlabel('Distortion Strength (f)')
-plt.ylabel('Probability')
-plt.title('State Evolution Across Distortion Strengths')
-plt.legend()
-plt.grid(axis='y', linestyle='--', alpha=0.6)
-plt. show()
-
-# Cumulative Probability of Entangled States
-plt.figure(figsize=(8, 5))
-plt.plot(distortion_strengths, cumulative_entangled_probs, marker='o', color='blue', label="Cumulative Entangled Prob.")
-plt.xlabel('Distortion Strength (f)')
-plt.ylabel('Cumulative Probability')
-plt.title('Cumulative Probability of Entangled States')
-plt.grid(linestyle='--', alpha=0.6)
-plt.legend()
-plt. show()
-
-# Probability Ratios (|10⟩ / |01⟩)
-plt.figure(figsize=(8, 5))
-plt.plot(distortion_strengths, probability_ratios, marker='o', color='purple', label="Probability Ratio |10⟩ / |01⟩")
-plt.xlabel('Distortion Strength (f)')
-plt.ylabel('Ratio')
-plt.title('Probability Ratios (|10⟩ / |01⟩) Across Distortions')
-plt.grid(linestyle='--', alpha=0.6)
-plt.legend()
-plt. show()
-
-# Entropy Change Rate
-entropy_change_rate = np.gradient(entropies, distortion_strengths)  # Derivative of entropy
-plt.figure(figsize=(8, 5))
-plt.plot(distortion_strengths, entropy_change_rate, marker='o', color='green', label="Entropy Change Rate")
-plt.xlabel('Distortion Strength (f)')
-plt.ylabel('Change Rate')
-plt.title('Rate of Entropy Change Across Distortions')
-plt.grid(linestyle='--', alpha=0.6)
-plt.legend()
-plt. show()
-
-# State Coherence Analysis
-plt.figure(figsize=(8, 5))
-plt.plot(distortion_strengths, coherence_losses, marker='o', color='orange', label="State Coherence Loss")
-plt.xlabel('Distortion Strength (f)')
-plt.ylabel('Coherence Loss')
-plt.title('State Coherence Analysis Across Distortions')
-plt.grid(linestyle='--', alpha=0.6)
-plt.legend()
+plt.plot(range(len(cumulative_probs)), cumulative_probs, marker='o', linestyle='-')
+plt.title("Cumulative Probability Distribution")
+plt.xlabel("State Index (Sorted by Probability)")
+plt.ylabel("Cumulative Probability")
+plt.grid()
 plt. show()
 
 # Heatmap of State Probabilities
-plt.figure(figsize=(10, 6))
-plt.imshow(probabilities.T, cmap='viridis', aspect='auto', interpolation='nearest', 
-           extent=[distortion_strengths[0], distortion_strengths[-1], 0, len(state_labels)])
-plt.colorbar(label='Probability')
-plt.yticks(np.arange(len(state_labels)), state_labels)
-plt.xlabel('Distortion Strength (f)')
-plt.ylabel('States')
-plt.title('Heatmap of State Probabilities Across Distortions')
+plt.figure(figsize=(12, 8))
+heatmap_data = np.array(probabilities).reshape(-1, 1)  # Convert to 2D for heatmap
+sns.heatmap(heatmap_data, annot=False, cmap="viridis", cbar=True, xticklabels=["Probability"], yticklabels=states)
+plt.title("Heatmap of State Probabilities")
+plt.ylabel("States")
+plt.xlabel("Probability")
 plt. show()
 
-# 3D Surface Plot of State Probabilities
+# Histogram of High-Count States
+high_count_threshold = 1000
+high_count_states = [(state, count) for state, count in zip(states, counts) if count > high_count_threshold]
+high_labels = [state for state, count in high_count_states]
+high_values = [count for state, count in high_count_states]
+
+plt.figure(figsize=(12, 6))
+plt. bar(high_labels, high_values, color='orange')
+plt.title("Histogram of High-Count States")
+plt.xlabel("States")
+plt.ylabel("Counts")
+plt.xticks(rotation=90, fontsize=8)
+plt.tight_layout()
+plt. show()
+
+# Probability of Delayed-Choice Correlations
+q4_correlations = {"0": {"00": 0, "01": 0, "10": 0, "11": 0}, "1": {"00": 0, "01": 0, "10": 0, "11": 0}}
+for state, count in zip(states, counts):
+    q4 = state[4]
+    q0_q3 = state[0] + state[5]
+    q4_correlations[q4][q0_q3] += count
+
+# Normalize correlations
+for q4 in q4_correlations:
+    total = sum(q4_correlations[q4].values())
+    for q0_q3 in q4_correlations[q4]:
+        q4_correlations[q4][q0_q3] /= total
+
+fig, axes = plt.subplots(1, 2, figsize=(12, 6), sharey=True)
+for idx, (q4, correlations) in enumerate(q4_correlations.items()):
+    axes[idx].bar(correlations.keys(), correlations.values(), color=['blue', 'green', 'red', 'purple'])
+    axes[idx].set_title(f"Correlations for q4 = {q4}")
+    axes[idx].set_xlabel("q0-q3 States")
+    axes[idx].set_ylabel("Probability")
+
+plt.tight_layout()
+plt. show()
+
+# 3D Bar Plot of State Probabilities
+fig = plt.figure(figsize=(10, 7))
+ax = fig.add_subplot(111, projection='3d')
+x = np.arange(len(states))
+y = np.zeros_like(x)
+z = np.zeros_like(x)
+dx = np.ones_like(x)
+dy = np.ones_like(x)
+dz = probabilities
+ax.bar3d(x, y, z, dx, dy, dz, shade=True)
+ax.set_title("3D Bar Plot of State Probabilities")
+ax.set_xlabel("State Index")
+ax.set_ylabel("Y Index")
+ax.set_zlabel("Probability")
+plt. show()
+
+# 3D Cumulative Probability Surface
 fig = plt.figure(figsize=(12, 8))
 ax = fig.add_subplot(111, projection='3d')
-X, Y = np.meshgrid(distortion_strengths, np.arange(len(state_labels)))
-Z = probabilities.T
-ax.plot_surface(X, Y, Z, cmap='plasma', edgecolor='k', linewidth=0.3)
-ax.set_xticks(distortion_strengths)
-ax.set_xticklabels([f"f = {f}" for f in distortion_strengths])
-ax.set_yticks(np.arange(len(state_labels)))
-ax.set_yticklabels(state_labels)
-ax.set_xlabel('Distortion Strength (f)')
-ax.set_ylabel('States')
-ax.set_zlabel('Probability')
-ax.set_title('3D Surface Plot of State Probabilities')
+
+# Prepare data for the surface
+sorted_probs = np.sort(probabilities)[::-1]
+cumulative_probs = np.cumsum(sorted_probs)
+x = np.arange(len(sorted_probs))
+y = np.arange(2)  
+X, Y = np.meshgrid(x, y)  # Create a 2D grid
+Z = np.tile(cumulative_probs, (2, 1))  # Make Z 2D by repeating the cumulative_probs
+
+ax.plot_surface(X, Y, Z, cmap='viridis', edgecolor='none')
+ax.set_title("3D Cumulative Probability Surface")
+ax.set_xlabel("State Index (Sorted by Probability)")
+ax.set_ylabel("Y Index")
+ax.set_zlabel("Cumulative Probability")
 plt. show()
 
-# Heatmap of Asymmetry
-plt.figure(figsize=(10, 6))
-asymmetry_matrix = np.tile(asymmetries, (len(state_labels), 1)).T
-plt.imshow(asymmetry_matrix, cmap='coolwarm', aspect='auto', interpolation='nearest', 
-           extent=[distortion_strengths[0], distortion_strengths[-1], 0, len(state_labels)])
-plt.colorbar(label='Asymmetry')
-plt.yticks([])
-plt.xlabel('Distortion Strength (f)')
-plt.title('Heatmap of Asymmetry Across Distortions')
+# 3D Delayed-Choice Qubit Correlations
+fig = plt.figure(figsize=(10, 7))
+ax = fig.add_subplot(111, projection='3d')
+ax.scatter(q0_states, q3_states, q4_states, c=probabilities, cmap='plasma', s=100)
+ax.set_title("3D Delayed-Choice Qubit Correlations")
+ax.set_xlabel("q0 State")
+ax.set_ylabel("q3 State")
+ax.set_zlabel("q4 State")
 plt. show()
 
-# 3D Surface Plot of Entanglement Entropy
+# 3D State Transition Path
 fig = plt.figure(figsize=(12, 8))
 ax = fig.add_subplot(111, projection='3d')
-X, Y = np.meshgrid(distortion_strengths, [0])  # Single layer for entropy
-Z = np.tile(entropies, (1, len(state_labels))).T
-ax.plot_surface(X, Y, Z, cmap='cividis', edgecolor='k', linewidth=0.3)
-ax.set_xticks(distortion_strengths)
-ax.set_xticklabels([f"f = {f}" for f in distortion_strengths])
-ax.set_yticks([])
-ax.set_zticks(np.linspace(min(entropies), max(entropies), 5))
-ax.set_xlabel('Distortion Strength (f)')
-ax.set_ylabel('Entropy Layer')
-ax.set_zlabel('Entropy (bits)')
-ax.set_title('3D Surface Plot of Entanglement Entropy')
+
+# Extract high-count states and their neighbors
+dominant_indices = np.where(probabilities > 0.05)[0]  # Threshold for significant probabilities
+x_transitions = []
+y_transitions = []
+z_transitions = []
+weights = []
+
+for idx in dominant_indices:
+    state = states[idx]
+    prob = probabilities[idx]
+    # Generate neighboring transition states by flipping bits
+    for flip in range(len(state)):
+        neighbor = list(state)
+        neighbor[flip] = '1' if neighbor[flip] == '0' else '0'  # Flip the bit
+        neighbor_str = ''.join(neighbor)
+        if neighbor_str in states:
+            neighbor_idx = states.index(neighbor_str)
+            x_transitions.append(idx)
+            y_transitions.append(neighbor_idx)
+            z_transitions.append(0)  
+            weights.append(prob * probabilities[neighbor_idx])  # Weighted influence
+
+# Normalize weights for better visualization
+weights = np.array(weights)
+weights = weights / max(weights)
+
+# Plot state transitions
+ax.scatter(x_transitions, y_transitions, z_transitions, c=weights, cmap='coolwarm', s=100 * weights)
+for i, (x, y, z, w) in enumerate(zip(x_transitions, y_transitions, z_transitions, weights)):
+    ax.plot([x, x], [y, y], [z, w], 'k-', alpha=0.3)  
+
+ax.set_title("3D State Transition Path")
+ax.set_xlabel("Dominant State Index")
+ax.set_ylabel("Neighbor State Index")
+ax.set_zlabel("Transition Weight")
 plt. show()
 
 # End
@@ -588,7 +590,7 @@ plt. show()
 </p>
             
  </div>
-        <img src="E56i4.png" alt="" class="experiment-image4">
+        <img src="E57i4.png" alt="" class="experiment-image4">
         <p></p>
         <div class="content-block">
 
