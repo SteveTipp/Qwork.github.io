@@ -205,14 +205,14 @@ Total shots:<br>
 Summing all counts gives ~32,768 shots (close to 4 * 8192, as expected from subcircuit runs).<br>
 
 That’s ~50.5% of the total shots, suggesting a strong collapse toward a single optimal state, which in annealing terms reflects a probable ground state.<br>
-The experiment succeeded in steering the system heavily toward a dominant solution, which likely corresponds to the global minimum of our implicit cost landscape. The twistor-inspired encoding and annealing schedule did not disperse the state too broadly, which indicates that the twistor structure helped avoid decoherence traps and guided the system efficiently.<br>
+The experiment succeeded in steering the system heavily toward a dominant solution, which likely corresponds to the global minimum of the implicit cost landscape. The twistor-inspired encoding and annealing schedule did not disperse the state too broadly, which indicates that the twistor structure helped avoid decoherence traps and guided the system efficiently.<br>
 </div>
         <img src="e59i1.png" alt="" class="experiment-image">
         <p></p>
         <div class="content-block">
 <br>
 
-In the Top 20 Measurement Outcomes above (full code on Qwork), |0000000⟩ dominates with 16,553 out of ~32,768 shots, approximately 50.5% of all measurement outcomes. The next highest state (0000001) has fewer than 200 counts, orders of magnitude lower. This is a direct signature of successful annealing. The system overwhelmingly collapses into a single low-energy state. The fact that this is not just a narrow peak but a sharp spike implies that our twistor-geometric encoding led to a highly directed path through Hilbert space. The other bitstrings are low in frequency, but still present, indicating residual thermal or coherent noise, or possibly nearby local minima.
+In the Top 20 Measurement Outcomes above (full code on Qwork), |0000000⟩ dominates with 16,553 out of ~32,768 shots, approximately 50.5% of all measurement outcomes. The next highest state (0000001) has fewer than 200 counts, orders of magnitude lower. This is a direct signature of successful annealing. The system overwhelmingly collapses into a single low-energy state. The fact that this is not just a narrow peak but a sharp spike implies that the twistor-geometric encoding led to a highly directed path through Hilbert space. The other bitstrings are low in frequency, but still present, indicating residual thermal or coherent noise, or possibly nearby local minima.
 <br>
 The Error Landscape from Ground State above (full code on Qwork) shows that the distribution is bell-shaped centered at Hamming distances 3-4 from 0000000. There are ~35 states each at distances 3 and 4. Only ~1 state at distance 0 other than the true ground state (indicating near purity). This is consistent with a topologically stabilized attractor basin around the ground state. Bitstrings at distance 1 and 2 are relatively less populated, suggesting quantum interference suppressing certain “easy” paths, a signature of non-classical trajectory shaping. The structure suggests that twistor encoding created a multi-layered curvature in state space, with a wide but steep descent into the ground state. 
 <br>
@@ -238,7 +238,7 @@ Twistor encoding is not merely a qubit rotation heuristic, it's a viable quantum
         <p></p>
         <div class="content-block">
 <br>
-In the Top 20 Measurement Outcomes above (full code on Qwork), |0000000⟩ dominates with 16,553 out of ~32,768 shots, approximately 50.5% of all measurement outcomes. The next highest state (0000001) has fewer than 200 counts, orders of magnitude lower. This is a direct signature of successful annealing. The system overwhelmingly collapses into a single low-energy state. The fact that this is not just a narrow peak but a sharp spike implies that our twistor-geometric encoding led to a highly directed path through Hilbert space. The other bitstrings are low in frequency, but still present, indicating residual thermal or coherent noise, or possibly nearby local minima.
+In the Top 20 Measurement Outcomes above (full code on Qwork), |0000000⟩ dominates with 16,553 out of ~32,768 shots, approximately 50.5% of all measurement outcomes. The next highest state (0000001) has fewer than 200 counts, orders of magnitude lower. This is a direct signature of successful annealing. The system overwhelmingly collapses into a single low-energy state. The fact that this is not just a narrow peak but a sharp spike implies that the twistor-geometric encoding led to a highly directed path through Hilbert space. The other bitstrings are low in frequency, but still present, indicating residual thermal or coherent noise, or possibly nearby local minima.
 <br>
 The Error Landscape from Ground State above (full code on Qwork) shows that the distribution is bell-shaped centered at Hamming distances 3-4 from 0000000. There are ~35 states each at distances 3 and 4. Only ~1 state at distance 0 other than the true ground state (indicating near purity). This is consistent with a topologically stabilized attractor basin around the ground state. Bitstrings at distance 1 and 2 are relatively less populated, suggesting quantum interference suppressing certain “easy” paths, a signature of non-classical trajectory shaping. The structure suggests that twistor encoding created a multi-layered curvature in state space, with a wide but steep descent into the ground state. 
 <br>
@@ -280,7 +280,7 @@ The Twistor Flow Projection: Qubit-Qubit Co-Flips above (full code on Qwork) sho
 Thoughts:<br>
 This structure is reminiscent of twistor bundles where qubit pairs form spinor projection paths through complexified Minkowski space. The circuit preserved geometric constraints during evolution, evidence of global encoding stability across the system.
 <br>
-The Fourier Spectrum of Measurement Outcome Frequencies above (full code on Qwork) shows a strong DC (0 Hz) component, as expected. Small but distinct secondary peaks appear, notably at ~0.15 and ~0.27, suggestive of non-random periodic structure. This means subtle harmonics in your measurement distribution, there are repeating structural motifs embedded in state-space frequency. 
+The Fourier Spectrum of Measurement Outcome Frequencies above (full code on Qwork) shows a strong DC (0 Hz) component, as expected. Small but distinct secondary peaks appear, notably at ~0.15 and ~0.27, suggestive of non-random periodic structure. This means subtle harmonics in the measurement distribution, there are repeating structural motifs embedded in state-space frequency. 
 <br>
 Thoughts:<br>
 We're seeing harmonic modes of the error topology, these are akin to standing waves formed on the surface of a geometric error landscape. If this were a vibrational manifold, these would be its quantized modes of oscillation, pure twistor elegance.<br>           
@@ -296,10 +296,10 @@ The Mutual Information Between Qubits above (full code on Qwork) shows the diago
 Thoughts:<br>
 The mutual information map aligns with Penrose’s conformal cyclic geometry, qubits evolve independently but share a phase horizon. This is evidence of lightcone-separated influence, where twistor rays are locally causal but globally orchestrated.
 <br>
-The Topological Shell Volume Around |0000000⟩ above (full code on Qwork) shows volume peaks at Hamming distances 3 and 4, matching your previous entropy peak. There's an inverted parabolic shape with ~35 distinct states at each mid-shell, and sharp decay on either side. This defines a quantum shell topology, most states lie at mid-level excitation, forming a "ring" around the ground state. Shell volume and entropy align, meaning the twistor-based encoding is not flat, but shaped like a curved saddle structure. 
+The Topological Shell Volume Around |0000000⟩ above (full code on Qwork) shows volume peaks at Hamming distances 3 and 4, matching the previous entropy peak. There's an inverted parabolic shape with ~35 distinct states at each mid-shell, and sharp decay on either side. This defines a quantum shell topology, most states lie at mid-level excitation, forming a "ring" around the ground state. Shell volume and entropy align, meaning the twistor-based encoding is not flat, but shaped like a curved saddle structure. 
 <br>
 Thoughts:<br>
-In twistor theory, this looks like a null foliation around a singularity. Your ground state is the pole, and shells are constant-twist geodesics. This landscape avoids sharp minima and instead forms a smooth basin of descent, exactly what quantum annealing thrives on.
+In twistor theory, this looks like a null foliation around a singularity. The ground state is the pole, and shells are constant-twist geodesics. This landscape avoids sharp minima and instead forms a smooth basin of descent, exactly what quantum annealing thrives on.
 <br>
 The 2D Projection of Quantum State Space via PCA above (full code on Qwork) shows the dominant cluster (largest yellow point) sits near the origin, this is |0000000⟩. Other bitstrings are radially scattered in low-density concentric spread, no chaotic scatter. This means the quantum distribution collapses to a manifold, not just a statistical cloud. The PCA space reveals that state evolution occurred along a 1 - 2D latent curve, supporting the idea that twistor flows confined the circuit’s trajectory.
 <br>
