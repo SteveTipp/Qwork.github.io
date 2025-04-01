@@ -100,8 +100,7 @@
         <h1><center> Twistor-Inspired Quantum Annealing with IBM's 127-Qubit Quantum Computer  </center></h1>
         <div class="content-block">
          
-This experiment implements a novel quantum annealing protocol inspired by Roger Penrose's Twistor Theory on @IBM's 127-qubit 'ibm_kyiv' quantum computer and @qiskit. Using the geometric foundations of twistor space, the annealing process is guided through a series of carefully designed quantum gates to explore the solution space of an optimization problem. The results show that the system consistently converges toward the global minimum |0000000⟩, while preserving a rich, structured distribution of intermediate quantum states that reflect a curved, low-dimensional manifold in Hilbert space. Entropic, topological, and information theoretic analyses confirm that the annealing evolution is not random, but instead follows coherent geodesic trajectories within a Twistor-inspired quantum system, showing that Twistor geometry can effectively constrain and enhance quantum optimization.
- <br> 
+This experiment implements a novel quantum annealing protocol inspired by Roger Penrose's Twistor Theory on @IBM's 127-qubit 'ibm_kyiv' quantum computer with @qiskit. Using the geometric foundations of Twistor Space, the annealing process is guided through a series of quantum gates to explore the solution space of an optimization problem. The results show that the system consistently converges toward the global minimum |0000000⟩, while preserving a structured distribution of intermediate quantum states that reflect a curved, low-dimensional manifold in Hilbert space. Entropic, topological, and information theoretic analyses confirm that the annealing evolution is not random, but instead follows coherent geodesic trajectories within a Twistor-inspired quantum system, showing that Twistor geometry can effectively constrain and enhance quantum optimization. <br> 
 Twistor theory, developed by Roger Penrose, introduces a geometric framework in which spacetime events are encoded as points in a complex, higher-dimensional space known as Twistor space.<br>
  <br> 
 Code Walkthrough
@@ -434,7 +433,7 @@ with Session(service=service, backend=backend) as session:
         job = sampler. run([sub_qc], shots=8192)
         job_result = job.result()
 
-        # Working method for extracting counts
+        # Extracting counts
         data_bin = job_result._pub_results[0]['__value__']['data']
         classical_register = sub_qc.cregs[0].name
         counts = data_bin[classical_register].get_counts() if classical_register in data_bin else {}
