@@ -100,7 +100,7 @@
         <h1><center> Twistor-Entangled Quantum Repetition using IBM’s 127-Qubit Quantum Computer  </center></h1>
         <div class="content-block">
          
-This experiment implements a quantum repetition code enhanced by a Twistor-inspired geometric entanglement layer, executed on @IBM's 127-qubit 'ibm_brisbane' with @qiskit. The goal is to test whether imposing geometric constraints inspired by Penrose’s Twistor Theory can improve the error resilience of a basic 3-qubit repetition code. This circuit encodes a logical |1_L​⟩ across three physical qubits, applies a bit-flip error, then decodes using majority vote. The experiment compares observed output distributions to expected error-corrected outcomes and calculates the logical fidelity of recovery. The Twistor experiment achieved a logical fidelity of 0.78271, compared to just 0.30969 in the non-geometric baseline, an absolute increase of 0.47302 and a 60.4% relative gain, confirming that Twistor encoding enhances fault tolerance by structuring evolution within Hilbert space.
+This experiment implements a quantum repetition code enhanced by a Twistor-inspired geometric entanglement layer, executed on @IBM's 127-qubit 'ibm_brisbane' with @qiskit. The goal is to test whether imposing geometric constraints inspired by Penrose’s Twistor Theory can improve the error resilience of a basic 3-qubit repetition code. This circuit encodes a logical |1_L​⟩ across three physical qubits, applies a bit-flip error, then decodes using majority vote. The Twistor experiment achieved a logical fidelity of 0.78271, compared to just 0.30969 in the non-Twistor baseline, an absolute increase of 0.47302 and a 152.7% relative gain, confirming that Twistor encoding enhances fault tolerance by structuring evolution within Hilbert space.
  <br> 
 Twistor theory, developed by Roger Penrose, introduces a geometric framework in which spacetime events are encoded as points in a complex, higher-dimensional space known as Twistor space.
  <br> 
@@ -204,19 +204,36 @@ Sum of their counts:<br>
 Fidelity = 6412/8192​ ≈ 0.78271<br>
 This confirms successful recovery in ~78.3% of the shots.<br>
 
-I ran the same repetition code with the same error injection and gate overhead but without the Twistor encoding in the thread below. <br>
+Gate counts in the quantum circuit:<br>
+sx: 19<br>
+rz: 29<br>
+x: 3<br>
+ecr: 8<br>
+rzx: 3<br>
 
-Flat Circuit Results<br>
-Absolute drop:<br>
+This experiment took 3 seconds to complete on 'ibm_brisbane'.<br>
+
+I ran the same repetition code, with the same error injection, and the same gate count, but without the Twistor encoding (code on Qwork). <br>
+
+Flat (non-Twistor) Circuit Results<br>
+Correct outcomes (majority-1 bitstrings):<br>
+011: 2205<br>
+101: 99<br>
+111: 110<br>
+110: 123<br>
+Total correct:<br>
+2205 + 99 + 110 + 123 = 2537<br>
+Flat Circuit Fidelity = (2537/8192) ≈ 0.30969<br>
+
+Absolute drop from Twistor Circuit:<br>
 ΔF = 0.78271 − 0.30969 = 0.47302<br>
-Relative % Drop: <br>
-Collapse (%) = (0.47302​/0.78271) (100) ≈ 60.4%​<br>
+Relative % non-Twistor Drop: <br>
+Collapse (%) = (0.47302​/0.78271)(100) ≈ 60.4%​<br>
+Relative % Twistor Increase:<br>
+Increase (%) = (0.47302​​/0.30969)(100) ≈ 152.7%<br>
 
-The logical fidelity dropped from 0.78271 to 0.30969, a 60% collapse in recoverability. This confirms that Twistor geometry isn’t just compatible with fault tolerance, it actively restructures the error landscape in Hilbert space, guiding noisy evolution toward recoverable attractor states.
-<br>
-Twistor encoding did not just preserve information, it reshaped the error landscape. The system favored recoverable majority-1 states, compressing noise into specific attractor channels. Bitstrings like 000, 001, 010 (complete failure or distant errors) were exponentially suppressed. Twistor geometry appears to warp Hilbert space evolution into basin-like regions, reducing error dispersion. The dominance of 011 and 101 means Twistor flows preferentially channel decoherence into edge-aligned single-qubit flips. This is consistent with the idea that Twistor geometry encodes constraints on allowable state evolution, effectively acting like a low-dimensional manifold or attractor basin in a high-dimensional space.<br>        
-<br>
-        
+With the Twistor geometry, the logical fidelity rose to 0.78271 from 0.30969, representing a 152.7% increase in recoverability compared to the non-geometric baseline. This confirms that Twistor encoding did not just preserve information, it reshaped the error landscape. The system favored recoverable majority-1 states, compressing noise into specific attractor channels. Bitstrings like 000, 001, 010 (complete failure or distant errors) were exponentially suppressed. Twistor geometry appears to warp Hilbert space evolution into basin-like regions, reducing error dispersion. The dominance of 011 and 101 means Twistor flows preferentially channel decoherence into edge-aligned single-qubit flips. This is consistent with the idea that Twistor geometry encodes constraints on allowable state evolution, effectively acting like a low-dimensional manifold or attractor basin in a high-dimensional space.<br>
+<br>        
         </div>
         <img src="e63i1.png" alt="" class="experiment-image">
         <p></p>
@@ -259,9 +276,46 @@ The Recovery vs Collapse Sectors (Polar) above (code on Qwork) shows green secto
 <br>
 The Twistor-Weighted Eigenstring Projection above (code on Qwork) shows 011 and 101 dominate eigen-projection strength. 111 shows meaningful but reduced projection. Other bitstrings contribute near-zero. This custom visualization simulated nonlinear eigenstate response by assigning projection strength proportional to the square of Hamming weight (a synthetic 'Twistor field intensity'). The system prefers bitstrings aligned with geometric axes (2 or 3 ones). These project deeply into the 'Twistor eigenbasis', they match the structure imposed by the circuit’s RY + CX topology. Low-weight states (000, 100, 001) barely project, suggesting they are orthogonal or nearly invisible to the Twistor mode structure. This is evidence that Twistor entanglement generates a virtual eigenbasis, and the circuit naturally evolves toward eigen-aligned bitstrings. It means this encoding isn’t just preventing errors, it’s selecting for certain spinor subspaces.
 <br>
-In the end, this experiment implemented a Twistor-Enhanced Quantum Repetition Code on IBM’s 127-qubit quantum computer to explore whether geometric entanglement, specifically inspired by Penrose’s Twistor theory, could sculpt quantum error dynamics and improve logical fidelity. By encoding a logical ∣1⟩ across three qubits, injecting a bit-flip error, and applying structured RY–CX Twistor entanglement, the experiment achieved a fidelity of 0.78271, compared to 0.30969 without Twistor geometry, an absolute improvement of 0.47302 and a 60.4% relative gain in logical state recovery. The results show that Twistor geometry compressed entropy into low Hamming shells, created phase-locked angular attractors, isolated logical successes from collapse sectors, and induced nonlinear eigenmode alignment of the measured outcomes. This shows that Twistor encoding redirects noise through structured geometry, reframing error correction as engineered curvature within Hilbert space.
+In the end, this experiment implemented a Twistor-Enhanced Quantum Repetition Code on IBM’s 127-qubit quantum computer to explore whether geometric entanglement, inspired by Penrose’s Twistor theory, could sculpt quantum error dynamics and improve logical fidelity. By encoding a logical ∣1⟩ across three qubits, injecting a bit-flip error, and applying structured RY–CX Twistor entanglement, the experiment achieved a fidelity of 0.78271, compared to 0.30969 without Twistor geometry, an absolute improvement of 0.47302 and a 152.7% relative gain in logical state recovery. The results show that Twistor geometry compressed entropy into low Hamming shells, created phase-locked angular attractors, isolated logical successes from collapse sectors, and induced nonlinear eigenmode alignment of the measured outcomes. This shows that Twistor encoding redirects noise through structured geometry, reframing error correction as engineered curvature within Hilbert space.
 <br>
+Non-Twistor Circuit Results:
+<br>
+I ran the same repetition code as above, with the same error injection, and same gate load, but without the Twistor encoding.
+<br>
+Flat (non-Twistor) Circuit Results<br>
+{<br>
+    "experiment_name": "Flat Repetition Code with Twistor Gate Load",<br>
+    "raw_counts": {<br>
+        "000": 558,<br>
+        "011": 2205,<br>
+        "010": 3586,<br>
+        "111": 110,<br>
+        "001": 1442,<br>
+        "110": 123,<br>
+        "101": 99,<br>
+        "100": 69<br>
+    }<br>
+}<br>
+<br>
+Total shots: 8192<br>
+Correct outcomes (majority-1 bitstrings):<br>
+011: 2205<br>
+101: 99<br>
+111: 110<br>
+110: 123<br>
+Total correct:<br>
+2205 + 99 + 110 + 123 = 2537<br>
+Fidelity = (2537/8192) ≈ 0.30969<br>
 
+Absolute drop from Twistor Circuit:<br>
+ΔF = 0.78271 − 0.30969 = 0.47302<br>
+Relative % non-Twistor Drop:<br>
+Collapse (%) = (0.47302​/0.78271)(100) ≈ 60.4%​<br>
+Relative % Twistor Increase:<br>
+Increase (%) = (0.47302​​/0.30969)(100) ≈ 152.7%<br>
+<br>
+Thus, the Twistor experiment achieved a logical fidelity of 0.78271, compared to just 0.30969 in the non-Twistor geometric baseline, an absolute increase of 0.47302 and a 152.7% relative gain.
+<br>
             
             <p>Code:<br>
             <p><pre><code>
