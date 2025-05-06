@@ -100,7 +100,7 @@
         <h1><center> Breaking a 3-Bit Elliptic Curve Key with a 133-Qubit Quantum Computer </center></h1>
         <div class="content-block">
          
-This experiment executes a fully quantum proof‑of‑concept for cracking the elliptic‑curve discrete‑logarithm problem (ECDLP) using Shor’s algorithm. Using @IBM’s 133‑qubit ibm_torino processor with @qiskit, this circuit treats the toy curve’s eight‑element subgroup as the additive group ℤ₈. A 6 logical + 3 ancilla qubits or simply 9‑qubit circuit, with three qubits for each exponent a and b, creates quantum interference that reveals the secret scalar 𝑘 in the public point 𝑄 = 𝑘𝑃. No oracle knows 𝑘; the circuit uses only the publicly known generator P (index 1) and point Q (index 7). From 8192 shots the interference ridge pinpoints 𝑘 = 7 with high confidence.
+This experiment breaks a 3-bit elliptic curve cryptographic key using a fully quantum implementation of Shor’s algorithm. Executed on @IBM’s 133-qubit ibm_torino processor with @qiskit, a 9-qubit circuit, 6 logical and 3 ancilla, interferes over ℤ₈​ to extract the secret scalar 𝑘 from 𝑄 = 𝑘𝑃, without encoding 𝑘 in the oracle. From 8,192 shots, the interference ridge isolates 𝑘 = 7 with high confidence.
  <br> 
 Code Walkthrough
  <br>           
