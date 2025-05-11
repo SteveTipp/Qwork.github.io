@@ -100,7 +100,7 @@
         <h1><center> Dynamic Casimir Photon Emission on a 133-Qubit Quantum Processor </center></h1>
         <div class="content-block">
          
-This experiment emulates the dynamic Casimir effect, the conversion of vacuum fluctuations into real photons by a relativistically moving mirror, using a 60‑qubit line on @IBM’s 133‑qubit 'ibm_torino' processor with @qiskit. Qubit pairs play the role of adjacent cavity slices, time‑dependent mirror motion is encoded as four sudden 'quenches' of the nearest‑neighbour ZZ‑coupling strength. After the quench ladder the whole chain is measured, in qiskit’s bit ordering the i-th character of the readout string corresponds to qubit q_(L - 1 - i), so correlated |11> detections at bit positions i and L - 1 - i flag photon pairs on the mirrored qubits (q_(L - 1 - i), q_i). The experiment yielded a 72% pair‑creation rate dominated by single symmetric |11〉pairs. Covariance pinpointed multi‑pair squeezing at the fundamental antinode, and energy‑vs‑pair scaling showed ≈ 11 qubit flips per correlated pair, an 18% pump‑to‑photon efficiency. These results verify dynamic Casimir radiation on hardware and show control‑line balance and harmonic targeting as key routes to higher entangled‑photon yield.
+This experiment emulates the dynamic Casimir effect, the conversion of vacuum fluctuations by a relativistically moving mirror, using a 60‑qubit line on @IBM’s 133‑qubit 'ibm_torino' processor with @qiskit. Qubit pairs play the role of adjacent cavity slices, time‑dependent mirror motion is encoded as four sudden 'quenches' of the nearest neighbor ZZ‑coupling strength. After the quench ladder the whole chain is measured, in qiskit’s bit ordering the i-th character of the readout string corresponds to qubit q_(L - 1 - i), so correlated |11> detections at bit positions i and L - 1 - i flag photon pairs on the mirrored qubits (q_(L - 1 - i), q_i). The experiment yielded a 72% pair‑creation rate dominated by single symmetric |11〉pairs. Covariance pinpointed multi‑pair squeezing at the fundamental antinode, and energy‑vs‑pair scaling showed ≈ 11 qubit flips per correlated pair, an 18% pump‑to‑photon efficiency. These results verify dynamic Casimir radiation on hardware and show control‑line balance and harmonic targeting as key routes to higher entangled‑photon yield.
  <br> 
 Code Walkthrough
  <br>           
@@ -111,7 +111,7 @@ Load IBM Cloud credentials and select the backend 'ibm_torino'. <br>
 Lead in the latest calibration CSV.<br>
 Rank physical qubits by ascending single‑qubit √X​ error, then descending T_1​ and T_2.<br>
 Fix the best 60 qubits:<br>
-Q_60 ​= argmin_(∣S∣=60) ∑_(q∈S) [(αϵ_X)^(q)​ - (βT_1)^​(q)​ - (γT_2)^(q)​],  α, β, γ > 0.<br>
+Q_60 ​= argmax_(∣S∣=60) ∑_(q∈S) [-(αϵ_X)^(q)​ + (βT_1)^​(q)​ + (γT_2)^(q)​],  α, β, γ > 0.<br>
     
 <p>3. Registers<br>
 Quantum register:<br>
@@ -135,7 +135,7 @@ Model the cavity Hamiltonian:<br>
                   59                            58<br>
 H(t) = 1/2 ∑​ (Δ_i)(​Z_i) ​+ 1/2 ∑ (J_i)​(t)(Z_i)(​Z_(i + 1))​,<br>
                   i=0                          i=0<br>
-where a moving mirror modulates the effective couplings (J_i)(t).<br>
+where a moving mirror modulates the effective couplings (J_i)(t). Here, Δ_i = 0 for all qubits to isolate the effect of the time-dependent couplings J_i(t). <br>
 Encode the time profile with four step values:<br>
 Θ = {θ_0​, θ_1​, θ_2​, θ_3​} = {0, 0.3π, 0.6π, 0.9π}<br>
 For each step k apply a ZZ‑layer of two‑qubit unitaries:<br>
@@ -188,25 +188,25 @@ Result: INFO:__main__:Vacuum‑pair creation rate: 0.71985<br>
 <br>  
 theta_schedule_rad: the four quench angles<br>  
 Θ={0, 0.3π, 0.6π, 0.9π}<br>  
-raw_counts: an 8192‑entry dictionary.<br>  
+raw_counts: dictionary containing 8192 shots.<br>  
 pair_creation_rate: 0.71985 (≈ 72% of shots contain at least one |11〉on a symmetric pair).<br>  
 <br>  
 In the results we see a high Casimir yield, 0.72 ≫ 0.50 (the random baseline). The quench ladder θ_k​ pumped enough energy to convert vacuum fluctuations into detectable excitations, three of every four shots produced at least one correlated |11〉pair. There is maximal classical entropy but directional order, yet symmetric‑pair statistics are strongly biased.
 <br>  
-A single‑round quench already suffices, no multiple cycles, no Trotterisation, a four‑step sudden schedule is enough to imprint an observable dynamical Casimir signal on real superconducting qubits.<br>
+A single‑round quench with four sudden steps produced a strong dynamical Casimir signal, showing that a simple schedule can be effective on real superconducting qubits without requiring multiple cycles or Trotterisation.<br>  
 <br>  
 	<img src="e67i1.png" alt="" class="experiment-image">
         <p></p>
         <div class="content-block">
 <br>
 
-The Pair multiplicity distribution above (code on Qwork) shows the bar heights drop almost geometrically from 1 pair -> 2 pairs -> 3 pairs and so on.  Shot counts reproduce a sub‑Poissonian pattern you expect when each of the 30 mirror‑symmetric modes is weakly and independently driven.  Let p = Pr(a given pair fires) ≈ 0.025. Then the multiplicity obeys Pr(n) = C(30, n​)p^n(1 - p)^(30 - n) whose mode sits at n ⁣= ⁣1 and whose mean is ⟨n⟩ = 30p ≈ 0.75, matching the observed vacuum‑pair creation rate R = 0.72. The four‑step quench injects just enough energy for single photon‑pair emission to dominate; higher multiplicities are genuine but exponentially suppressed. 
+The Pair multiplicity distribution above (code on Qwork) shows the bar heights drop almost geometrically from 1 pair -> 2 pairs -> 3 pairs and so on.  Shot counts reproduce a sub‑Poissonian pattern you expect when each of the 30 mirror‑symmetric modes is weakly and independently driven.  Let p = Pr(a given pair fires) ≈ 0.041. Then the multiplicity obeys Pr(n) = C(30, n​)p^n(1 - p)^(30 - n) whose mode sits at n ⁣= ⁣1 and whose mean is ⟨n⟩ = 30p ≈ 1.2, matching the observed vacuum‑pair creation rate R = 0.72. The four‑step quench injects just enough energy for single photon‑pair emission to dominate; higher multiplicities are genuine but exponentially suppressed. 
 <br>
 The Spatial distribution of created pairs above (code on Qwork) shows that event counts rise from the edges, peak sharply around pair indices 15 - 17 (the exact chain centre), dip again, then show a secondary hump near the far end. That profile agrees with a cavity‑mode picture. The moving mirror’s Doppler phase accumulates most strongly where the standing‑wave antinode of the fundamental λ = 2L mode sits, the chain centre. Suppressed edges confirm the boundary acts like an ideal conductor (fixed‑phase node). The slight asymmetry between left and right halves betrays calibration inhomogeneity, qubits 15- 17 were among the top‑quality picks. Virtual photons are not born uniformly, they localise where the instantaneous effective cavity length changes fastest in phase units.
 <br>
 The Pair‑to‑pair correlation matrix above (code on Qwork) shows the bright main diagonal (auto‑probabilities) is expected, but the faint cross‑ridges every ≈ 5 indices and a distinctly brighter 3x3 block around pairs 15 - 17 are interesting. Nearest off‑diagonal structure means two distinct mirror‑symmetric pairs sometimes fire together more often than a product model predicts. Writing pair operators P_i ⁣= ∣11⟩_(i, L-1-i) ⁣⟨11∣, the covariance C_(ij) ​= ⟨P_i​P_j​⟩ - ⟨P_i​⟩⟨P_j​⟩ is positive for ∣i - j∣ ⁣≲ ⁣5, hinting at multi‑mode squeezing rather than independent emissions. The central 3x3 hotspot shows modes tied to the dominant antinode become mutually entangled, they share the energy pumped in the last, largest quench θ_3 ​= 0.9π. The dynamical Casimir field is not a collection of independent photon pairs, it exhibits coherent multi‑pair correlations exactly where the cavity drive is strongest.
 <br>
-The Excitation energy distribution above (code on Qwork) shows that Hamming weights follow a near‑Gaussian centred at 12 - 13 excitations with σ ≈ 4. Random‑bit baseline (thermal or readout noise) would peak at 30 with σ√15​ due to p = 1/2.  Our mean sits at ≈ 0.20L, confirming excitations are rare and correlated, not random flips. Tail population beyond 20 excitations is tiny, meaning the quench stayed below the run‑away heating threshold, important for maintaining qubit coherence in future multi‑cycle experiments. <br> 
+The Excitation energy distribution above (code on Qwork) shows that Hamming weights follow a near‑Gaussian centred at 12 - 13 excitations with σ ≈ 4. Random‑bit baseline (thermal or readout noise) would peak at 30 with σ√15​ due to p = 1/2.  Our mean sits at ≈ 0.20L, confirming excitations are rare and correlated, not random flips. Tail population beyond 20 excitations is tiny, meaning the quench stayed below the run‑away heating threshold, important for maintaining qubit coherence in future multi‑cycle experiments.
 <br>
 	<img src="e67i2.png" alt="" class="experiment-image">
         <p></p>
@@ -218,7 +218,7 @@ The Cluster size distribution above (code on Qwork) shows single‑site and two�
 <br>
 The Conditional activation probability matrix above (code on Qwork) shows that along the diagonal i = j we have 1 by definition. Off‑diagonal elements stay < 0.08 except for faint vertical/horizontal ridges through pairs 6, 14 - 17, 23 where P(j∣i) rises to 0.12 - 0.15. Most pairs fire quasi‑independently, the weak ridges correspond to shared mode families. Pairs 14 - 17 span the central antinode, whenever one such pair fires the other three are ≈ 50% more likely to appear, indicating squeezed four‑mode entanglement. The dynamical Casimir field is not only a product of independent two‑photon emissions, modest but measurable multi‑pair quantum correlations cluster around the cavity’s dominant momentum sector. 
 <br>
-The Spatial asymmetry of excitations above (code on Qwork) shows a histogram of left‑minus‑right excitations is centered slightly left of zero (mode at ‑1) with σ ≈ 3.  Tails extend sym­metrically to ±12, but the left tail is 10 - 15% heavier. On average the right half of the chain hosts ~1 more excited qubit per shot than the left, consistent with the per‑qubit profile. But, the nearly Gaussian spread confirms that noise and pair emission fluctuate shot‑to‑shot in a manner close to independent Bernoulli draws, no global parity constraint emerges. <br>
+The Spatial asymmetry of excitations above (code on Qwork) shows a histogram of left‑minus‑right excitations is centered slightly left of zero (mode at ‑1) with σ ≈ 3.  Tails extend sym­metrically to ±12, but the left tail is 10 - 15% heavier. On average the right half of the chain hosts ~1 more excited qubit per shot than the left, consistent with the per‑qubit profile. But, the nearly Gaussian spread confirms that noise and pair emission fluctuate shot‑to‑shot in a manner close to independent Bernoulli draws, no global parity constraint emerges. 
 <br>
 	<img src="e67i3.png" alt="" class="experiment-image">
         <p></p>
@@ -231,9 +231,9 @@ The Correlation decay with pair‑pair separation above (code on Qwork) sits abo
 <br>
 The Pair‑pair covariance above (code on Qwork) shows that positive covariance clusters around pairs 14 - 18 (central antinode) and around 5 - 7 and 23 - 25 (first‑overtone antinodes). Negative covariance appears one step off those hotspots, indicating mode competition, when one pair in a band fires, its neighbors are slightly suppressed, preserving a global energy ceiling shot‑to‑shot. This mirrors photon statistics in a pumped cavity with a fixed total drive energy. 
 <br>
-The Energy vs pair multiplicity above (code on Qwork) shows that the 2-D histogram forms a diagonal streak of slope ≈ 7 - 11 excited qubits per extra symmetric pair. A single |11〉pair costs ~11 excitations, two pairs ~19 - 20, and so on. Pair creation is accompanied by a nearly constant halo of isolated qubit flips (≈ 5 - 7) that do not participate in symmetric correlations. These could be single‑photon or thermal events generated by the same quench. Efficiency of converting pump energy into correlated photons is about η = 2/11 ≈ 18% (2 qubits out of ~11 carry the Bell‑pair signature). 
+The Energy vs pair multiplicity above (code on Qwork) shows that the 2-D histogram forms a diagonal streak of slope ≈ 11 excited qubits per extra symmetric pair. A single |11〉pair costs ~11 excitations, two pairs ~19 - 20, and so on. Pair creation is accompanied by a nearly constant halo of isolated qubit flips (≈ 5 - 7) that do not participate in symmetric correlations. These could be single‑photon or thermal events generated by the same quench. Efficiency of converting pump energy into correlated photons is about η = 2/11 ≈ 18% (2 qubits out of ~11 carry the Bell‑pair signature). 
 <br>
-In the end, using a 60‑qubit chain, this experiment emulated a relativistically moving mirror by applying four sudden ZZ‑quench layers (θ = 0, 0.3π, 0.6π, 0.9π), converted vacuum fluctuations into real excitations, and measured 8 192 hardware shots. The run produced a 72% vacuum‑pair creation rate dominated by single symmetric |11〉pairs, with excitations sharply concentrated near qubits 30‑35, evidence that the effective mirror settled slightly off‑centre due to asymmetric drive latency. Per‑pair statistics revealed mode‑specific multi‑pair squeezing around the central antinode while distance‑averaged correlations remained flat, confirming that entanglement is harmonic, not separation, driven. Energy‑versus‑pair analysis showed ~11 qubit flips per Bell pair, indicating an 18% pump‑to‑correlated‑photon efficiency, and covariance maps exposed competition between neighboring cavity modes under a fixed energy budget. The experiment validates real superconducting qubits as a platform for dynamic Casimir radiation.<br>            
+In the end, using a 60‑qubit chain, this experiment emulated a relativistically moving mirror by applying four sudden ZZ‑quench layers (θ = 0, 0.3π, 0.6π, 0.9π), converted vacuum fluctuations into real excitations, and measured 8 192 hardware shots. The run produced a 72% vacuum‑pair creation rate dominated by single symmetric |11〉pairs, with excitations sharply concentrated near qubits 30‑35, evidence that the effective mirror settled slightly off‑centre due to asymmetric drive latency. Per‑pair statistics revealed mode‑specific multi‑pair squeezing around the central antinode while distance‑averaged correlations remained flat, confirming that entanglement is harmonic, not separation, driven. Energy‑versus‑pair analysis showed ~11 qubit flips per Bell pair, indicating an 18% pump‑to‑correlated‑photon efficiency, and covariance maps exposed competition between neighboring cavity modes under a fixed energy budget. The experiment validates real superconducting qubits as a platform for dynamic Casimir radiation.
 <br>
 		
 	<p>Code:<br>
