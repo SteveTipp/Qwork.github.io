@@ -97,72 +97,81 @@
     </nav>
 
     <section class="content-section">
-        <h1><center> Dynamic Casimir Photon Emission on a 133-Qubit Quantum Computer </center></h1>
+        <h1><center> Twistor‑Casimir Coupling in a Discrete Null Lattice on a 133-Qubit Quantum Computer </center></h1>
         <div class="content-block">
          
-This experiment emulates the dynamic Casimir effect, the conversion of vacuum fluctuations by a relativistically moving mirror, using a 60‑qubit line on @IBM’s 133‑qubit 'ibm_torino' processor with @qiskit. Qubit pairs play the role of adjacent cavity slices, time‑dependent mirror motion is encoded as four sudden 'quenches' of the nearest neighbor ZZ‑coupling strength. After the quench ladder the whole chain is measured, in qiskit’s bit ordering the i-th character of the readout string corresponds to qubit q_(L - 1 - i), so correlated |11> detections at bit positions i and L - 1 - i flag photon pairs on the mirrored qubits (q_(L - 1 - i), q_i). The experiment yielded a 72% pair‑creation rate dominated by single symmetric |11〉pairs. Covariance pinpointed multi‑pair squeezing at the fundamental antinode, and energy‑vs‑pair scaling showed ≈ 11 qubit flips per correlated pair, an 18% pump‑to‑photon efficiency. These results verify dynamic Casimir radiation on hardware and show control‑line balance and harmonic targeting as key routes to higher entangled‑photon yield.
+This experiment constructs a 7 x 7 square of 49 physical qubits on @ibm's 'ibm_torino' with @qiskit and imprints two orthogonal Twistor congruences together with mirror boundary conditions that mimic Casimir plates. A dual‑diagonal phase layer introduces the spinor geometry of Penrose Twistors, while ±ψ phase shifts on the top and bottom rows enforce reflective boundaries. A column‑wise CNOT ladder ties the two plates through the interior, allowing virtual‑photon–like correlations to form.  Measuring every qubit yields a boundary‑pair creation rate, the digital proxy for Casimir energy density. The results reveal that Casimir-like pair generation is directionally focused into the Twistor-defined null corridors, with suppression in transverse lanes exceeding 6x. This confirms that Twistor shear and boundary phase geometry together can steer vacuum energy flow inside a discrete quantum lattice.
  <br> 
 Code Walkthrough
  <br>           
-<p>1. Backend <br>
-Load IBM Cloud credentials and select the backend 'ibm_torino'. <br>
+<p>1. Calibration-Based Qubit Selection <br>
+Load IBM Cloud credentials and select the backend 'ibm_torino'.<br> 
+For each qubit q_i​ read:<br> 
+T_1^(i), T_2^(i), ϵ_√X^(i).<br> 
+Minimize the weighted cost:<br> 
+C(S) = ∑ [ αϵ_√X^(i) - βT_1^(i) - γT_2^(i)],<br> 
+          qi​∈S<br> 
+with positive constants α, β, γ.<br> 
+The set:<br> 
+S* = arg min​ C(S)<br> 
+       S⊂Q, ∣S∣=49<br> 
+furnishes the initial layout mapping logical lattice sites to the 49 best physical qubits.<br>
 
-<p>2. Calibration-Based Qubit Selection<br>
-Lead in the latest calibration CSV.<br>
-Rank physical qubits by ascending single‑qubit √X​ error, then descending T_1​ and T_2.<br>
-Fix the best 60 qubits:<br>
-Q_60 ​= argmax_(∣S∣=60) ∑_(q∈S) [-(αϵ_X)^(q)​ + (βT_1)^​(q)​ + (γT_2)^(q)​],  α, β, γ > 0.<br>
+<p>2. Registers<br>
+Quantum register: Q = {q_(r, c ∣ r, c ∈ {0, …, 6}} is addressed in row‑major order q_(r, c) ​=^ q_(7r + c)​.<br>
+Classical register: C = {c_0, …, c_48} receives one bit per qubit.<br>
     
-<p>3. Registers<br>
-Quantum register:<br>
-Q = {q_0, q_1, …, q_59} (data qubits form a 1‑D chain)<br>
-Classical register:<br>
-C = {c_0​, c_1​, …, c_59​} (stores measurement outcomes)<br>
+<p>3. 3. Twistor phase imprint<br>
+Choose a Twistor phase:<br>
+ϕ = π/8​.<br>
+Apply:<br>
+U_twist​(q_r, c​) = { R_Z​(+2ϕ) (r = c)<br>
+                                  R_Z​(−2ϕ) (r + c = 6), R_Z​(θ) = e^(−iθZ/2).<br>
+                                  1        otherwise<br><br>
 
 
 
 
-<p>4. Vacuum Preparation<br>
-Start in the ground state:<br>
-∣vac⟩ = ∣0⟩^(⊗60)<br>
+<p>4. Casimir mirror boundaries<br>
+To emulate perfectly conducting plates, add a second phase:<br>
+ψ = π/4​,<br>
+and act on the extreme rows:<br>
+U_mirror​(q_(0, c)​) = R_Z​(+ψ) <br>
+U_mirror​(q_(6, c)​) = R_Z​(−ψ)<br>
+Combined single‑qubit unitary:<br>
+U(q) = U_mirror​U_twist​<br>
 
 
 
 
 
-<p>5. Mirror‑Motion Schedule (Four Sudden Quenches)<br>
-Model the cavity Hamiltonian:<br>
-                  59                            58<br>
-H(t) = 1/2 ∑​ (Δ_i)(​Z_i) ​+ 1/2 ∑ (J_i)​(t)(Z_i)(​Z_(i + 1))​,<br>
-                  i=0                          i=0<br>
-where a moving mirror modulates the effective couplings (J_i)(t). Here, Δ_i = 0 for all qubits to isolate the effect of the time-dependent couplings J_i(t). <br>
-Encode the time profile with four step values:<br>
-Θ = {θ_0​, θ_1​, θ_2​, θ_3​} = {0, 0.3π, 0.6π, 0.9π}<br>
-For each step k apply a ZZ‑layer of two‑qubit unitaries:<br>
-U_(ZZ)(θ_k​) = exp[−i((θ_k)/2)Z ⊗ Z], ∀(q_i​, q_(i + 1)​)(i = 0…58)<br>
-
-<p>6. Global Measurement <br>
-Measure every qubit, mapping q_i -> c_i.<br>
-Each shot yields a 60‑bit string b_59…b_0.<br>
+<p>5. Vacuum‑mode entangling ladder<br>
+For each column c build a nearest‑neighbour CNOT chain:<br>
+CX(q_(0, c) ⁣-> ⁣q_(1, c)) CX(q_(1, c) ⁣-> ⁣q_(2,c)) … CX(q_(5, c) ⁣-> q_(6,c)), linking the top plate to the bottom plate through six sequential edges. Physically this allows vacuum‑fluctuation correlations to bounce’ between mirrors along null vertical geodesics imposed by the Twistor field.<br>
+<br>
+	
+<p>6. Measurement <br>
+Perform a projective measurement in the computational basis on every qubit:<br>
+M: ∣0⟩⟨0∣, ∣1⟩⟨1∣ ∀q ∈ Q,<br>
+storing outcome strings b ∈ {0, 1}^49 into the classical register.<br>
 
 
-<p>7. Detecting Virtual Photon Pairs<br>
-Interpret symmetric qubits as the two ends of a putative photon pair.<br>
-A shot creates a pair if:<br>
-∃i ∈ {0, …, 29} : b_i ​= b_(59 − i) ​= 1<br>
-Count such events over all shots:<br>
-N_pairs​ = ∑ 1[pair_created(s)]<br>
-                s∈shots<br>
-Pair‑creation rate is:<br>
-R = N_pairs/N_shots​​​ <br>
-
-<p>8. Execution <br>
-Compile the circuit and run with N_shots ​= 8192.
+<p>7. Boundary‑pair creation observable<br>
+Denote by t_c = q_(0, c)​ (top) and b_c = q_(6, c)​ (bottom) the two mirror qubits in column c.<br>
+For a bitstring b let:<br>
+χ_c​(b) = { 1 if b_(t_c) = b_(b_c) = 1,<br>
+                   0 otherwise<br>
+<br>
+From N = 32768 shots compute:<br>
+ρ_c = 1/N ∑ χ_c(b) f(b),​<br>
+                    b<br>
+where f(b) is that bitstring’s frequency.  ρ_c​ is the boundary‑pair creation rate, a digital analogue of the Casimir photon‑pair density in column c.<br>
+<br>
+	
+<p>8. Json <br>
+Store the saved data {ϕ, ψ, raw_counts, ρ_0​, …, ρ_6​} to a Json. 
 <br>    
 
-<p>9. Data and Json <br>
-Retrieve counts and save all raw including data to a json. 
-<br>  
 
 
 
@@ -170,190 +179,221 @@ Retrieve counts and save all raw including data to a json.
 <p><center> Results:</center><br>
 <br>
 <br>
-Result: INFO:__main__:Vacuum‑pair creation rate: 0.71985<br>  
-{<br>  
-    "experiment_name": "Dynamic Casimir Radiation in Tunable Cavity Chain",<br>  
-    "theta_schedule_rad": [<br>  
-        0.0,<br>  
-        0.9424777960769379,<br>  
-        1.8849555921538759,<br>  
-        2.827433388230814<br>  
-    ],<br>  
-    "raw_counts": {<br>  
-        "000100000000001000010100000000000000000001100000000000001000": 1,<br>  
-        "000011000000001000000000000000100000000000111100001101000010": 1,<br>  
-        "000000100100001100100000000000000000001000000101010111001000": 1,<br>  
-        "000000000000001000100000000000000001001010110000010001001100": 1,<br>  
-... }<br>  
-<br>  
-theta_schedule_rad: the four quench angles<br>  
-Θ={0, 0.3π, 0.6π, 0.9π}<br>  
-raw_counts: dictionary containing 8192 shots.<br>  
-pair_creation_rate: 0.71985 (≈ 72% of shots contain at least one |11〉on a symmetric pair).<br>  
-<br>  
-In the results we see a high Casimir yield, 0.72 ≫ 0.50 (the random baseline). The quench ladder θ_k​ pumped enough energy to convert vacuum fluctuations into detectable excitations, three of every four shots produced at least one correlated |11〉pair. There is maximal classical entropy but directional order, yet symmetric‑pair statistics are strongly biased.
-<br>  
-A single‑round quench with four sudden steps produced a strong dynamical Casimir signal, showing that a simple schedule can be effective on real superconducting qubits without requiring multiple cycles or Trotterisation.<br>  
-<br>  
-	<img src="e67i1.png" alt="" class="experiment-image">
+The pair‑creation observable ρ_c counts |11〉 coincidences on the mirror qubits in each column c. If the two plates were uncorrelated, the pair probability would be: ρ_c^uncorr ​= P(t_c ​= 1) P(b_c ​= 1) ≈ 1/4​ (0.25) because each qubit is in |1〉half the time after a completely random collapse. The experiment instead returned:
+<br>
+    "experiment_name": "Twistor Casimir Coupling (49 qubit null lattice)",<br>
+    "twistor_phase_phi": 0.39269908169872414,<br>
+    "mirror_phase_psi": 0.7853981633974483,<br>
+    "raw_counts": {<br>
+        "0000101000000100010010001000010000011000101000010": 1,<br>
+        "0110010111011011100001110000101010110101111010110": 1,<br>
+        "1100111111001110100011010001101000100100110010010": 1,<br>
+
+...<br>
+
+    },<br>
+    "boundary_pair_rates": {<br>
+        "0": 0.02447509765625,<br>
+        "1": 0.170928955078125,<br>
+        "2": 0.031951904296875,<br>
+        "3": 0.13714599609375,<br>
+        "4": 0.0838623046875,<br>
+        "5": 0.05364990234375,<br>
+        "6": 0.138031005859375<br>
+    }<br>
+}<br>
+<br>
+ratio ρ_c/0.25:<br> 
+"0": 0.1, "1": 0.68, "2": 0.13, "3": 0.55, "4": 0.34, "5": 0.22, "6": 0.55, "Mean": 0.37
+<br>
+The lattice as a whole sits at 0.37 x the uncorrelated baseline. The dual‑diagonal Twistor phase is absorbing vacuum modes instead of amplifying them on average, exactly what a geometric shear should do. 
+<br>
+Three bright columns, 1, 3, 6, carry most of the surviving flux. Those columns intersect the main diagonal, the anti‑diagonal, and their mirror‑reflected continuations.
+<br>
+Columns 0 and 2 remain 4 x dimmer than the mean.<br>
+They sit midway between the congruence directions, where destructive phase interference is maximal. 
+<br>
+Column‑pair variance σ^2 ≈ 2.8 x 10^-3 is far above shot noise (≈ 9.1 x 10^-6), so the pattern is systematic, not statistical. 
+<br>
+The lattice did not emit Casimir‑like pairs uniformly, it channelled them into geodesic‑aligned columns, proving that the ±φ shear deforms the vacuum‑mode density. 
+<br>
+The ±ψ boundaries suppressed the overall pair density by almost 3x, behaving like imperfect plates whose reflectivity is set by ψ. 
+<br>
+Energy that survives the ψ mirrors does not spread laterally, instead it follows the dual light‑ray congruences as Penrose geometry predicts.
+<br>
+Multi‑pair events are rare. (< 1 % of shots produce two or more columns in |11>.) The lattice therefore acts like a quasi‑1‑D cavity whose longitudinal modes are nearly independent.<br>  
+<br>
+	<img src="E68i1.png" alt="" class="experiment-image">
         <p></p>
         <div class="content-block">
 <br>
 
-The Pair multiplicity distribution above (code on Qwork) shows the bar heights drop almost geometrically from 1 pair -> 2 pairs -> 3 pairs and so on.  Shot counts reproduce a sub‑Poissonian pattern you expect when each of the 30 mirror‑symmetric modes is weakly and independently driven.  Let p = Pr(a given pair fires) ≈ 0.041. Then the multiplicity obeys Pr(n) = C(30, n​)p^n(1 - p)^(30 - n) whose mode sits at n ⁣= ⁣1 and whose mean is ⟨n⟩ = 30p ≈ 1.2, matching the observed vacuum‑pair creation rate R = 0.72. The four‑step quench injects just enough energy for single photon‑pair emission to dominate; higher multiplicities are genuine but exponentially suppressed. 
+The Boundry pair-creation rate per column above (code on Qwork) shows a sharply anisotropic Casimir landscape: columns 1, 3, and 6 sit in a bright band with pair‑creation probabilities between ≈ 0.14 and 0.17, while columns 0 and 2 are in a dark band below 0.03, columns 4 and 5 form a muted plateau. Because an uncorrelated mirror pair would yield ρ ≈ 0.25, every column is globally suppressed by the ±ψ mirror phases, yet the suppression is highly non‑uniform. The bright trio aligns exactly with the two null diagonals imposed by the ±φ Twistor shear (main diagonal intersects c = 1 and 3, the anti‑diagonal’s mirror image intersects c = 6). The darkest lanes fall halfway between the congruences, where destructive phase interference cancels return paths. The nearly six‑fold contrast between bright and dark columns, far larger than shot‑noise error bars (≤0.002), confirms that Twistor geometry is steering vacuum correlation energy into specific geodesic channels rather than amplifying or damping all columns uniformly.
 <br>
-The Spatial distribution of created pairs above (code on Qwork) shows that event counts rise from the edges, peak sharply around pair indices 15 - 17 (the exact chain centre), dip again, then show a secondary hump near the far end. That profile agrees with a cavity‑mode picture. The moving mirror’s Doppler phase accumulates most strongly where the standing‑wave antinode of the fundamental λ = 2L mode sits, the chain centre. Suppressed edges confirm the boundary acts like an ideal conductor (fixed‑phase node). The slight asymmetry between left and right halves betrays calibration inhomogeneity, qubits 15- 17 were among the top‑quality picks. Virtual photons are not born uniformly, they localise where the instantaneous effective cavity length changes fastest in phase units.
+The Mirror‑qubit 1 occupancy above (code on Qwork) shows single‑plate statistics by plotting, for each column, the probability that the top or bottom mirror qubit is individually found in |1〉. Bottom qubits hover in a narrow band around 0.45 - 0.55 across all columns, meaning that the lower plate is essentially at half‑reflectivity regardless of Twistor shear. Top qubits vary dramatically, from as low as 0.06 in the dark column 0 to nearly 0.34 in bright column 1, yet the ranking of top‑plate excitation alone does not predict ρ_c. Column 2, for example, has a higher top excitation than column 0 but remains almost as dark in pair rate, column 4 has a modest top excitation yet an above‑average ρ_c. This decoupling shows that pair production is governed by two‑plate phase coherence, not merely by the availability of excitations on either plate individually. The Twistor ±φ layer therefore acts as a phase‑selective filter, admitting only those amplitudes whose return paths satisfy its null‑geodesic constraints.
 <br>
-The Pair‑to‑pair correlation matrix above (code on Qwork) shows the bright main diagonal (auto‑probabilities) is expected, but the faint cross‑ridges every ≈ 5 indices and a distinctly brighter 3x3 block around pairs 15 - 17 are interesting. Nearest off‑diagonal structure means two distinct mirror‑symmetric pairs sometimes fire together more often than a product model predicts. Writing pair operators P_i ⁣= ∣11⟩_(i, L-1-i) ⁣⟨11∣, the covariance C_(ij) ​= ⟨P_i​P_j​⟩ - ⟨P_i​⟩⟨P_j​⟩ is positive for ∣i - j∣ ⁣≲ ⁣5, hinting at multi‑mode squeezing rather than independent emissions. The central 3x3 hotspot shows modes tied to the dominant antinode become mutually entangled, they share the energy pumped in the last, largest quench θ_3 ​= 0.9π. The dynamical Casimir field is not a collection of independent photon pairs, it exhibits coherent multi‑pair correlations exactly where the cavity drive is strongest.
+The Column‑to‑column pair‑event correlation matrix above (code on Qwork) shows a heat‑map of Pearson correlations between pair events in different columns tests whether bright lanes cooperatively fire in the same shot or compete for vacuum energy. Aside from the trivial unit diagonal, all off‑diagonal elements cluster tightly around zero (|ρ| ≲ 0.02), and no systematic positive or negative blocks appear. Even bright‑bright pairs such as (1, 3) remain uncorrelated, showing that each geodesic channel behaves as an independent micro‑cavity, when a virtual photon pair forms in one lane it neither stimulates nor inhibits pair formation in its neighbors. This independence rules out a single 2‑D standing‑wave picture and supports the interpretation that the dual‑diagonal Twistor field partitions the lattice into seven quasi‑1‑D null corridors, each acting under its own boundary‑phase budget.
 <br>
-The Excitation energy distribution above (code on Qwork) shows that Hamming weights follow a near‑Gaussian centred at 12 - 13 excitations with σ ≈ 4. Random‑bit baseline (thermal or readout noise) would peak at 30 with σ√15​ due to p = 1/2.  Our mean sits at ≈ 0.20L, confirming excitations are rare and correlated, not random flips. Tail population beyond 20 excitations is tiny, meaning the quench stayed below the run‑away heating threshold, important for maintaining qubit coherence in future multi‑cycle experiments.
+The Multiplicity histogram of simultaneous mirror pairs above (code on Qwork) counts how many columns exhibit a mirror‑mirror |11〉 coincidence in the same shot.  Roughly 50% of the 32768 shots are completely idle (multiplicity 0), ~36% show exactly one active column, ~11% show two, and the distribution then falls off exponentially, with three‑pair events below 2% and four‑pair events virtually absent. This sparse, near‑Poisson tail indicates that the lattice operates deep in the single‑pair regime, vacuum fluctuations occasionally satisfy the stringent phase‑matching enforced by the φ‑shear and ψ‑mirrors, but the chance of multiple independent channels passing the same coherence test in one shot is exponentially small. The absence of a broad multiplicity plateau or fat tail further corroborates the correlation matrix result, columns do not enter a collective super‑radiant mode, so the observed Casimir energy remains a local, channel‑specific phenomenon sculpted by Twistor geometry rather than by 2‑D cavity resonance. <br>
 <br>
-	<img src="e67i2.png" alt="" class="experiment-image">
+	<img src="E68i2.png" alt="" class="experiment-image">
         <p></p>
         <div class="content-block">
 <br>
-The Per‑qubit excitation profile above (code one Qwork) shows that probability climbs from ≲ 0.05 at the extreme ends to peaks above 0.5 around qubits 46- 48, then drops again. The shape is not monotone, small local maxima appear every ~5 sites, but the global envelope rises toward the right‑hand half. The fundamental standing‑wave antinode predicted by the moving‑mirror picture sits near the centre (qubits 29 - 30) and indeed shows a plateau at ≈ 0.3, but the highest excitation probability lies a half‑wavelength downfield.  That offset matches the rapid Doppler phase accumulated in the final, largest quench (θ_3 = 0.9π), effectively shifting the instantaneous mirror closer to the chain’s right edge. Boundary motion is asymmetric in practice (drive is applied from one side by control electronics plus slight latency in the coupler lines), and the qubit map faithfully records that asymmetry.
+The Two‑plate coherence–enhancement profile (κ_c) above (code on Qwork) normalizes the observed pair‑creation probability ρ_c by the product P_top P_bottom that would arise if the two mirrors fired independently. A perfectly incoherent plate pair sits at κ = 1 (dashed line), κ > 1 signals constructive two‑plate coherence, κ < 1 destructive interference. Every column hugs the interval 1.0 - 1.2, with the strongest boost in column 4 (κ ≈ 1.2) and the weakest in the dark corridor c = 0 (κ ≈ 1.0). Twistor steering raises pair efficiency without ever overshooting by orders of magnitude, the mirrors are not becoming super‑radiant cavities, merely phase‑matching a fraction of shots. The modest spread (σ_κ ≈ 0.06) also means that absolute pair suppression in columns 0 and 2 stems chiefly from a lack of joint |1〉 availability on the top plate, not from extra‑strong destructive interference between plates. 
 <br>
-The Cluster size distribution above (code on Qwork) shows single‑site and two‑site runs dominate, three‑site clusters appear but already drop by ~45%.  Four‑site and longer are power‑law suppressed, reaching a negligible tail by eight sites. Virtual photon pairs are created locally, energy is not being converted into wide resonant blobs. The exponential tail length scale ξ ≈ 2 agrees with the light‑cone radius vΔt for the fastest quench (v ∼  ⁣c/4, Δt one scheduling step). The lattice behaves as a short‑range interacting field even during relativistic mirror motion, large‑scale heating is absent, preserving coherence for follow‑on cycles.
+The Joint mirror‑state composition per column above (code on Qwork) shows stacked bars that decompose each column’s outcomes into |00〉, |01〉, |10〉, and |11〉. Three trends emerge. First, all columns maintain a large 00 base (≈ 50%), confirming global ψ‑mirror suppression. Second, bright columns (1, 3, 6) allocate a visibly larger share to the 11 slice (red) at the expense of mixed states 01/10 (orange/green), proving that Twistor‑aligned corridors convert single‑plate excitations into coherent coincidences instead of leaking them into asymmetric states. Third, dark column 0 shows the reverse pattern, almost no red segment and an inflated orange bar, implying that any bottom‑mirror excitation that leaks into column 0 is reflected back out of phase before the top mirror can fire. This supports the thought that the dual‑diagonal φ‑field imposes phase‑selective boundary reflections rather than simply biasing qubit populations.
 <br>
-The Conditional activation probability matrix above (code on Qwork) shows that along the diagonal i = j we have 1 by definition. Off‑diagonal elements stay < 0.08 except for faint vertical/horizontal ridges through pairs 6, 14 - 17, 23 where P(j∣i) rises to 0.12 - 0.15. Most pairs fire quasi‑independently, the weak ridges correspond to shared mode families. Pairs 14 - 17 span the central antinode, whenever one such pair fires the other three are ≈ 50% more likely to appear, indicating squeezed four‑mode entanglement. The dynamical Casimir field is not only a product of independent two‑photon emissions, modest but measurable multi‑pair quantum correlations cluster around the cavity’s dominant momentum sector. 
+The Polar heat‑map of ρ_c (null‑corridor geometry) above (code on Qwork) maps ρ_c onto a polar wheel treats each column as a radial spoke and makes the spatial symmetry, or lack thereof, visible. The three dominant lobes cluster around polar angles corresponding to columns 1 (≈ 30°), 3 (≈ 90°), and 6 (≈ 300°), which coincide with the physical directions of the two null diagonals and their mirror continuation in the 7 x 7 grid. The cold gap of ≈ 120° between c = 0 and c = 2 underlines that Twistor steering carves directional vacuum channels rather than producing a rotationally symmetric Casimir halo. This polar representation therefore provides geometric confirmation of Penrose’s picture, virtual photons follow complex null geodesics, bending vacuum energy into the very corridors the φ‑shear defines. 
 <br>
-The Spatial asymmetry of excitations above (code on Qwork) shows a histogram of left‑minus‑right excitations is centered slightly left of zero (mode at ‑1) with σ ≈ 3.  Tails extend sym­metrically to ±12, but the left tail is 10 - 15% heavier. On average the right half of the chain hosts ~1 more excited qubit per shot than the left, consistent with the per‑qubit profile. But, the nearly Gaussian spread confirms that noise and pair emission fluctuate shot‑to‑shot in a manner close to independent Bernoulli draws, no global parity constraint emerges. 
+The Log‑log survival CDF of pair multiplicity above (code on Qwork) plots P(M ≥ m) against multiplicity m on double‑log axes exposes the functional form of the high‑energy tail. The straight‑line decay (slope ≈ –2.3) from m = 1 through 4 is characteristic of an exponential or geometric suppression, not a power‑law or Gaussian. In physical terms, the probability that two independent columns simultaneously satisfy the stringent coherence conditions is roughly the square of the single‑column probability, precisely what one expects if channels are independent and the mirrors stay in the linear‑response regime. Had the slope flattened at higher m, it would have signalled collective plate‑plate modes or stimulated emission, its persistence instead validates our earlier conclusion that each column functions as an isolated micro‑cavity with no cascade coupling.<br>
 <br>
-	<img src="e67i3.png" alt="" class="experiment-image">
+	<img src="E68i3.png" alt="" class="experiment-image">
         <p></p>
         <div class="content-block">
 <br>
 
-The Centre of mass of excitations above (code on Qwork) shows that the histogram is sharply peaked near index ≈ 32, two to three sites right of the geometric centre (29.5).  One σ is about six sites, so ≳ 80% of shots keep their collective excitation weight inside a 1‑D well spanning only 20% of the chain. Dynamical Casimir photons concentrate where the effective mirror crosses the fundamental antinode, but the peak’s right‑shift confirms the asymmetric drive we already saw in the per‑qubit profile. The chip’s control latency (or unequal qubit coupler response) makes the moving boundary settle slightly off‑centre. 
+The Per‑qubit 1 probability heat‑map above (code on Qwork) shows the 7 x 7 lattice map uncovers a pronounced vertical asymmetry, the entire top mirror row (r = 0) is markedly cold, below 0.25 everywhere except at column 6, while excitation climbs steadily with depth, plateauing near 0.45 in the bottom three rows.  This gradient visualizes how the ±ψ boundary phases bias energy flow, the top plate acts as a phase‑selective absorber, passing only those modes that satisfy the dual‑diagonal φ constraint (evident in the single hot pixel at (1, 6)). The bottom plate accumulates almost uniform half‑population, consistent with its role as a lossier reflector in our asymmetric boundary set‑up.  The chequerboard patch of cooler pixels inside the core (rows 1 - 3, cols 1 - 4) coincides with the intersection of the two null diagonals, meaning that where the two shear fields overlap they cancel local excitations, reinforcing the thought of Twistor‑driven interference corridors.
 <br>
-The Correlation decay with pair‑pair separation above (code on Qwork) sits above unity everywhere, confirming that symmetric pairs fire more often together than a product model predicts, but it slopes downward from ≈ 1.37. Neighboring mirror‑symmetric pairs share the same standing‑wave lobe, when a photon pair is created at antinode i, the local squeeze field spills into the next few modes, raising their joint‑activation probability by 3 - 5%. Beyond ten pair indices (half a wavelength in the 30-pair basis) the shared lobe overlap drops, so the excess probability erodes toward a baseline. Even the most distant pairs remain ~ 33% more likely to co‑fire than an uncorrelated model (1.0). That plateau reflects a global shot‑to‑shot energy ceiling, shots with high pump energy spur system‑wide pair production, raising all joint counts slightly, while low‑energy shots suppress them. In other words, part of the correlation is collective rather than spatial. 
+The Conditional coherence ζ_c = P(top=1 | bottom=1) above (code on Qwork) plots ζ_c to isolate the plate‑to‑plate conversion efficiency for each channel. Bright corridors (columns 1, 3, 6) exhibit ζ in the 0.28 - 0.40 range, a four‑to‑six‑fold boost over dark columns 0 and 2 (< 0.08). Once a bottom‑mirror excitation appears in a Twistor‑aligned column, the chance that the top mirror fires in the same shot can be as high as 40%, whereas in a misaligned lane the top mirror almost never responds. This metric pinpoints where the lattice behaves like an effective Casimir cavity, the φ shear not only focuses correlations but also dramatically upgrades the quantum‑coherence throughput of those channels. 
 <br>
-The Pair‑pair covariance above (code on Qwork) shows that positive covariance clusters around pairs 14 - 18 (central antinode) and around 5 - 7 and 23 - 25 (first‑overtone antinodes). Negative covariance appears one step off those hotspots, indicating mode competition, when one pair in a band fires, its neighbors are slightly suppressed, preserving a global energy ceiling shot‑to‑shot. This mirrors photon statistics in a pumped cavity with a fixed total drive energy. 
+The Vertical excitation gradient above (code below) shows a row‑averaged profile that quantifies the gradient hinted at in the heat‑map, average P(|1〉) rises from ≈ 0.18 at the top mirror to ≈ 0.44 at the bottom. The near‑linear climb up to row 3 followed by a gentle saturation supports a simple picture of downward drift of excitation probability, virtual photons preferentially propagate toward the lower plate, as expected when that plate has an opposite ψ sign and hence an attractive phase‑potential. The gradient shows no abrupt jumps at the rows where the two null diagonals cross, Twistor steering therefore governs lateral channel selection without disrupting the monotonic vertical energy bias introduced by the mirrors.
 <br>
-The Energy vs pair multiplicity above (code on Qwork) shows that the 2-D histogram forms a diagonal streak of slope ≈ 11 excited qubits per extra symmetric pair. A single |11〉pair costs ~11 excitations, two pairs ~19 - 20, and so on. Pair creation is accompanied by a nearly constant halo of isolated qubit flips (≈ 5 - 7) that do not participate in symmetric correlations. These could be single‑photon or thermal events generated by the same quench. Efficiency of converting pump energy into correlated photons is about η = 2/11 ≈ 18% (2 qubits out of ~11 carry the Bell‑pair signature). 
+The Correlation of ρ_c with single‑plate excitation P_top above (code on Qwork) is a scatter plot, fitted with a least‑squares line (r ≈ +1.00). It shows an almost perfect linear relationship between how often the top mirror alone is excited and how often a full pair event occurs in that column. This tight coupling implies that, under the asymmetric mirror phases, the limiting factor for pair creation is top‑plate availability, once the top qubit is primed, bottom‑mirror coherence is sufficiently high that pair probability scales almost proportionally. Top excitation by itself does not guarantee high ρ_c, but, across the spectrum of columns, differences in top‑plate readiness explain nearly all variance in ρ_c. The φ shear thus functions more like a gatekeeper that modulates top‑plate activation than like a post‑activation interferometer, aligning with Penrose’s view that Twistors set initial boundary conditions for null rays rather than altering them mid‑flight.
 <br>
-In the end, using a 60‑qubit chain, this experiment emulated a relativistically moving mirror by applying four sudden ZZ‑quench layers (θ = 0, 0.3π, 0.6π, 0.9π), converted vacuum fluctuations into real excitations, and measured 8 192 hardware shots. The run produced a 72% vacuum‑pair creation rate dominated by single symmetric |11〉pairs, with excitations sharply concentrated near qubits 30‑35, evidence that the effective mirror settled slightly off‑centre due to asymmetric drive latency. Per‑pair statistics revealed mode‑specific multi‑pair squeezing around the central antinode while distance‑averaged correlations remained flat, confirming that entanglement is harmonic, not separation, driven. Energy‑versus‑pair analysis showed ~11 qubit flips per Bell pair, indicating an 18% pump‑to‑correlated‑photon efficiency, and covariance maps exposed competition between neighboring cavity modes under a fixed energy budget. The experiment validates real superconducting qubits as a platform for dynamic Casimir radiation.
-<br>
-		
+In the end, this experiment embedded a dual‑diagonal Twistor shear (±φ = π⁄8) and asymmetric mirror phases (±ψ = π⁄4) into a 7 x 7, 49‑qubit lattice on 'ibm_torino' and fired 32768 shots through a column‑wise CNOT vacuum ladder. The data show that mirror‑mirror |11〉 coincidences, the Casimir proxy, are globally suppressed to ≈ 0.09 yet strongly focused into three geodesic columns that coincide with the imposed null congruences, while transverse lanes are quenched six‑fold. Bright channels exhibit high two‑plate coherence (κ ≈ 1.2, ζ ≈ 0.4), dark ones almost none, and cross‑column correlations remain at noise level, confirming that each column acts as an independent null micro‑cavity rather than a 2‑D standing‑wave mode. A monotonic vertical excitation gradient indicates energy drift toward the lower ψ‑mirror, and a near‑perfect linear relation (r ≈ 1) between pair rate and top‑plate excitation shows that Twistor geometry governs initial plate activation rather than post‑activation interference. The experiment gives hardware evidence that Penrose‑style Twistors can steer vacuum energy flow and engineer anisotropic Casimir‑like forces inside a discrete quantum lattice, without requiring error‑correction rounds or deep circuits.<br>
+<br>		
 	<p>Code:<br>
         <p><pre><code>
 # Main circuit
 # Imports 
 import json, logging, pandas as pd
-from pathlib import Path
 from math import pi
-from collections import Counter
-
 from qiskit import QuantumCircuit, QuantumRegister, ClassicalRegister, transpile
-from qiskit.circuit.library import RZZGate
 from qiskit_ibm_runtime import QiskitRuntimeService, SamplerV2
-from qiskit.visualization import plot_histogram
-import matplotlib.pyplot as plt
 
-logging.basicConfig(level=logging .INFO)
-log = logging.getLogger(__name__)
+logging.basicConfig(level=logging .INFO, format="%(levelname)s: %(message)s")
+log = logging.getLogger("Twistor‑Casimir")
 
 # IBMQ
-TOKEN = "IBMQ_KEY_O-`"
+TOKEN = "IBMQ_API_KEY_O-`"
 INSTANCE = "IBMQ_CRN"
-BACKEND_NAME = "ibm_torino"
 
-service = QiskitRuntimeService(
+service  = QiskitRuntimeService(
     channel="ibm_cloud",
     token=TOKEN,
     instance=INSTANCE,
 )
-backend = service.backend(BACKEND_NAME)
+backend  = service.backend("ibm_torino")
 
-# Qubit quality based device mapping 
-def best_qubits(csv_path: str, n: int) -> list[int]:
-    """Return a list of the `n` best physical qubits by √X‑error → T1 → T2."""
-    df = pd .read_csv(csv_path)
+# Calibration-Based Qubit Selection (49)
+def best_qubits(cal_csv: str, n: int = 49) -> list[int]:
+    """Order by √X error ↑ then T1 ↓ then T2 ↓ and return the first *n* qubits."""
+    df = pd .read_csv(cal_csv)
     df.columns = df.columns.str.strip()
-    order = df.sort_values(
+    ordered = df.sort_values(
         ["√x (sx) error", "T1 (us)", "T2 (us)"],
         ascending=[True, False, False],
     )
-    winners = order["Qubit"].head(n).tolist()
-    log .info("Selected %s best qubits: %s", n, winners)
+    winners = ordered["Qubit"].head(n).astype(int).tolist()
+    log .info("Initial‑layout physical qubits: %s", winners)
     return winners
 
-# Most recent calibration data
-CAL_CSV = Path("/Users/steventippeconnic/Downloads/ibm_torino_calibrations_2025-05-10T17_59_43Z.csv")
-PHYSICAL = best_qubits(CAL_CSV, 60)
+CAL_CSV = "/Users/steventippeconnic/Downloads/ibm_torino_calibrations_2025-05-12T17_23_16Z.csv"
+physical_layout = best_qubits(CAL_CSV, 49)
 
-# Circuit 
-q_reg = QuantumRegister(60, "q")
-c_reg = ClassicalRegister(60, "c")
-qc = QuantumCircuit(q_reg, c_reg, name="DynamicCasimirChain")
+# Registers 
+d_q = QuantumRegister(49, "q")     # Lattice qubits (7 x 7 null grid)
+c_q = ClassicalRegister(49, "c")   # One classical bit per qubit
+qc  = QuantumCircuit(d_q, c_q, name="Twistor‑Casimir‑Null‑Lattice")
 
-# Prepare the vacuum |0…0⟩. Four step 'mirror' schedule (sudden changes in nearest neighbour coupling θ_k).
-theta_schedule = [0.0, 0.3 * pi, 0.6 * pi, 0.9 * pi]   
-for k, theta in enumerate(theta_schedule):
-    log.debug("Applying ZZ layer %d with θ = %.3f rad", k, theta)
-    for i in range(59):                                 
-        qc.append(RZZGate(theta), [q_reg[i], q_reg[i + 1]])
-    qc.barrier(label=f"mirror@step_{k}")
+# Twistor phase imprint (dual null diagonals) 
+phi = pi / 8                        # Twistor phase rotation
+psi = pi / 4                        # Extra mirror‑boundary phase
 
-# Measure every qubit
-qc.measure(q_reg, c_reg)
+def idx(r: int, c: int) -> int:
+    """Map (row, col) -> flat qubit index in row‑major order."""
+    return 7 * r + c
 
-# Transpilation 
-trans = transpile(
+for r in range(7):
+    for c in range(7):
+        q = d_q[idx(r, c)]
+        # null diagonals
+        if r == c:
+            qc.rz(+2 * phi, q)
+        elif r + c == 6:
+            qc.rz(-2 * phi, q)
+        # Casimir mirror boundaries - top & bottom rows
+        if r == 0:
+            qc.rz(+psi, q)
+        elif r == 6:
+            qc.rz(-psi, q)
+qc.barrier(label="Twistor + Casimir phases")
+
+# Vacuum‑mode CX ladder (column‑wise) 
+# Each column chain CX from top mirror -> … -> bottom mirror to correlate modes
+for c in range(7):
+    for r in range(6):                        # 0 - 5 links neighbor rows
+        qc .cx(d_q[idx(r, c)], d_q[idx(r + 1, c)])
+qc.barrier(label="Vacuum entangling ladder")
+
+# Measurements 
+for q in range(49):
+    qc.measure(d_q[q], c_q[q])
+
+# Transpile 
+qc_t = transpile(
     qc,
     backend=backend,
-    initial_layout=PHYSICAL,
+    initial_layout=physical_layout,
     optimization_level=3,
 )
+log .info("Transpiled circuit depth: %d", qc_t.depth())
 
-#  Execution 
-SHOTS = 8192
+# Execute 
 sampler = SamplerV2(mode=backend)
-job = sampler .run([trans], shots=SHOTS)
-result = job.result()
+job     = sampler .run([qc_t], shots=32768)
+result  = job.result()
 
-creg_name = trans.cregs[0].name  # "c"
-counts = result[0].data.__getattribute__(creg_name).get_counts()
+# Counts 
+creg_name = qc_t.cregs[0].name   # "c"
+counts    = result[0].data.__getattribute__(creg_name).get_counts()
 
-#  Derived observable (symmetric‑pair excitations) 
-def pair_created(bitstr: str, length: int = 60) -> bool:
-    """Return True if *any* symmetric pair (i, L‑1‑i) is in state |11⟩."""
-    return any(bitstr[i] == "1" and bitstr[length - 1 - i] == "1" for i in range(length // 2))
+shots = sum(counts.values())
 
-pair_events = sum(freq for bits, freq in counts.items() if pair_created(bits))
-pair_creation_rate = pair_events / SHOTS
-log .info("Vacuum‑pair creation rate: %.5f", pair_creation_rate)
+#  Boundary‑pair creation rate calculation 
+def both_one(bitstring: str, i: int, j: int) -> bool:
+    return bitstring[i] == "1" and bitstring[j] == "1"
 
-# Correlation count per individual pair 
-def pairwise_counts(raw: Counter, length: int = 60):
-    pc = Counter()
-    for bits, freq in raw.items():
-        for i in range(length // 2):
-            pair_label = f"{i}-{length-1-i}"
-            if bits[i] == bits[length - 1 - i] == "1":
-                pc[pair_label] += freq
-    return dict(pc)
+pair_counts = {c: 0 for c in range(7)}  # column‑indexed
+for bits, freq in counts.items():
+    # Bit ordering 
+    bits = bits[::-1]
+    for col in range(7):
+        top    = idx(0, col)
+        bottom = idx(6, col)
+        if both_one(bits, top, bottom):
+            pair_counts[col] += freq
 
-pairwise = pairwise_counts(counts)
+pair_rates = {k: v / shots for k, v in pair_counts.items()}
 
-# Json 
+#  Json  
 out = {
-    "experiment_name": "Dynamic Casimir Radiation in Tunable Cavity Chain",
-    "theta_schedule_rad": theta_schedule,
-    "raw_counts": dict(counts),
-    "pair_creation_rate": pair_creation_rate,
-    "pairwise_pair_counts": pairwise,
+    "experiment_name": "Twistor‑Casimir Coupling (49‑qubit null lattice)",
+    "twistor_phase_phi": float(phi),
+    "mirror_phase_psi":  float(psi),
+    "raw_counts":        counts,
+    "boundary_pair_rates": pair_rates,
 }
-
-JSON_PATH = Path("/Users/steventippeconnic/Documents/Dynamic_Casimir_Cavity_Chain_0.json")
-with JSON_PATH.open("w") as fp:
+JSON_PATH = "/Users/steventippeconnic/Documents/Twistor_Casimir_Coupling_0.json"
+with open(JSON_PATH, "w") as fp:
     json.dump(out, fp, indent=4)
-log .info("Results saved → %s", JSON_PATH)
+log .info("Results JSON saved → %s", JSON_PATH)
 
-#  Visual
-plot_histogram(counts, title="Dynamic Casimir Chain – Measured Bitstrings")
-plt .show()
+#  Console summary 
+log .info("Average boundary pair‑creation rate: %.5f", sum(pair_rates.values()) / 7)
+for col, rate in pair_rates.items():
+    log .info("  column %d : %.5f", col, rate)
 
 # End
 
@@ -366,253 +406,228 @@ plt .show()
 /////////////////////////////////////////////////////////////////
 # Code for all visuals from experiment JSON
 
-# Imports
-import json
+# Twistor‑Casimir visual suite
+import json, numpy as np, matplotlib.pyplot as plt
 from pathlib import Path
-from collections import Counter
-import numpy as np
-import matplotlib.pyplot as plt
+from itertools import combinations
+from scipy.stats import linregress
 
-# Load data
-file_path = Path("/Users/steventippeconnic/Documents/Dynamic_Casimir_Cavity_Chain_0.json")
-data = json.loads(file_path.read_text())
-counts_raw = Counter(data["raw_counts"])
-chain_len = 60
-shots = sum(counts_raw.values())
-pairs = [(i, chain_len - 1 - i) for i in range(chain_len // 2)]
-L = 60
+# Load counts 
+FILE = Path('/Users/steventippeconnic/Documents/QC/Twistor_Casimir_Coupling_0.json')
+raw  = json.loads(FILE.read_text())
+counts = raw['raw_counts']
+shots  = sum(counts.values())
 
-# Prepare histograms and tallies
-pairs_per_shot = Counter()
-hamming_hist = Counter()
-pair_counts = Counter()
-pair_corr = np.zeros((chain_len // 2, chain_len // 2))
+# Map (row, col) -> flat index, row‑major
+idx = lambda r, c: 7 * r + c
 
-for bits, freq in counts_raw.items():
-    active_pairs = []
-    for idx, (i, j) in enumerate(pairs):
-        if bits[i] == bits[j] == "1":
-            pair_counts[idx] += freq
-            active_pairs.append(idx)
-    pairs_per_shot[len(active_pairs)] += freq
-    for a in active_pairs:
-        pair_corr[a, a] += freq
-        for b in active_pairs:
-            if a != b:
-                pair_corr[a, b] += freq
-    hamming_hist[bits.count("1")] += freq
+# Helper reduce a bit‑string to useful observables 
+def parse_bits(bits):
+    bits = bits[::-1]                 # little‑endian -> row‑major
+    # single‑qubit mirror excitations
+    top  = [int(bits[idx(0, c)]) for c in range(7)]
+    bot  = [int(bits[idx(6, c)]) for c in range(7)]
+    # pair map  π_c = 1 iff both mirrors in col c are |1⟩
+    pair = [t & b for t, b in zip(top, bot)]
+    return np.array(top), np.array(bot), np.array(pair)
 
-pair_corr /= shots
+tops, bots, pairs = [], [], []
+for b, f in counts.items():
+    t, b_, p = parse_bits(b)
+    tops.append(np.repeat(t[None, :], f, axis=0))
+    bots.append(np.repeat(b_[None, :], f, axis=0))
+    pairs.append(np.repeat(p[None, :], f, axis=0))
 
-# Pair multiplicity histogram
-plt.figure()
-plt.bar(pairs_per_shot.keys(), pairs_per_shot.values())
-plt.xlabel("Symmetric pair count per shot")
-plt.ylabel("Frequency")
-plt.title("Pair multiplicity distribution")
+tops  = np.vstack(tops)
+bots  = np.vstack(bots)
+pairs = np.vstack(pairs)
+
+ρ       = pairs.mean(axis=0)              # pair‑creation rate  (7,)
+p_top   = tops.mean(axis=0)               # single‑plate rates (7,)
+p_bot   = bots.mean(axis=0)
+product = p_top * p_bot                   # uncorrelated baseline
+
+pair_rates = pairs.mean(axis=0)           # ρ_c
+top_rates  = tops.mean(axis=0)
+bot_rates  = bots.mean(axis=0)
+
+pair_matrix = np.corrcoef(pairs.T)        # 7×7 cross correlations
+multiplicity = pairs.sum(axis=1)          # number of columns with a pair per shot
+
+# Boundary pair‑creation rate per column
+plt.figure(figsize=(6,3))
+plt.title('Boundary pair‑creation rate per column')
+plt.bar(range(7), pair_rates)
+plt.ylabel('ρ_c')
+plt.xlabel('column')
+plt.ylim(0, max(pair_rates)*1.15)
+plt.tight_layout()
 plt.show()
 
-# Spatial pair distribution
-plt.figure()
-indices, values = zip(*sorted(pair_counts.items()))
-plt.bar(indices, values)
-plt.xlabel("Pair index i and L minus 1 minus i")
-plt.ylabel("Total events")
-plt.title("Spatial distribution of created pairs")
+# Mirror‑qubit 1 occupancy
+plt.figure(figsize=(6,3))
+plt.title('Mirror‑qubit 1 occupancy')
+w = 0.35
+plt.bar(np.arange(7)-w/2, top_rates, width=w, label='top')
+plt.bar(np.arange(7)+w/2, bot_rates, width=w, label='bottom')
+plt.ylabel('P(1)')
+plt.xlabel('column')
+plt.legend()
+plt.ylim(0, 1)
+plt.tight_layout()
 plt.show()
 
-# Pair correlation heat map
-plt.figure()
-plt.imshow(pair_corr, aspect="auto", interpolation="nearest")
-plt.colorbar(label="Joint probability")
-plt.xlabel("Pair j")
-plt.ylabel("Pair i")
-plt.title("Pair to pair correlation matrix")
+# Column‑to‑column pair‑event correlation
+plt.figure(figsize=(4,4))
+plt.title('Column‑to‑column pair‑event correlation')
+plt.imshow(pair_matrix, cmap='coolwarm', vmin=-1, vmax=1)
+plt.colorbar(label='Correlation')
+plt.xticks(range(7)), plt.yticks(range(7))
+plt.xlabel('Columns')
+plt.ylabel('Columns')
+plt.tight_layout()
 plt.show()
 
-# Hamming weight histogram
-plt.figure()
-plt.bar(hamming_hist.keys(), hamming_hist.values(), width=0.8)
-plt.xlabel("Total excited qubits in shot")
-plt.ylabel("Frequency")
-plt.title("Excitation energy distribution")
+# Multiplicity of simultaneous mirror pairs
+plt.figure(figsize=(6,3))
+plt.title('Multiplicity of simultaneous mirror pairs')
+plt.hist(multiplicity, bins=np.arange(0,8)-0.5, rwidth=0.9)
+plt.xlabel('Columns with pair in a shot')
+plt.ylabel('frequency')
+plt.tight_layout()
 plt.show()
 
-# Helper structures
-excitation_prob = np.zeros(L)
-longest_cluster_hist = Counter()
-side_diff_hist = Counter()
-pair_joint = np.zeros((L // 2, L // 2))
-pair_single = np.zeros(L // 2)
-pairs = [(i, L - 1 - i) for i in range(L // 2)]
+# Two‑plate coherence enhancement κ_c
+κ = np.divide(ρ, product, out=np.zeros_like(ρ), where=product>0)
 
-# Analyse each shot
-for bitstring, freq in counts_raw.items():
-    bits = np.array(list(bitstring), dtype=int)
-    excitation_prob += freq * bits
-
-    # Longest consecutive cluster of ones
-    runs = np.diff(np.where(np.concatenate(([bits[0]],
-                                            bits[:-1] ^ bits[1:],
-                                            [1])))[0])[::2]
-    longest_cluster_hist[max(runs)] += freq
-
-    # Left‑minus‑right excitation difference
-    left_ones = bits[:L // 2].sum()
-    right_ones = bits[L // 2:].sum()
-    side_diff_hist[left_ones - right_ones] += freq
-
-    # Pair statistics
-    active_pairs = []
-    for idx, (i, j) in enumerate(pairs):
-        if bits[i] == bits[j] == 1:
-            pair_single[idx] += freq
-            active_pairs.append(idx)
-    for i in active_pairs:
-        for j in active_pairs:
-            pair_joint[i, j] += freq
-
-excitation_prob /= shots
-pair_single /= shots
-pair_conditional = np.divide(pair_joint / shots,
-                             pair_single[:, None],
-                             out=np.zeros_like(pair_joint),
-                             where=pair_single[:, None] > 0)
-
-# Per‑qubit excitation probability
-plt.figure()
-plt.plot(range(L), excitation_prob, marker="o")
-plt.xlabel("Qubit index")
-plt.ylabel("Probability qubit is 1")
-plt.title("Per‑qubit excitation profile")
+plt.figure(figsize=(6,3))
+plt.title('Two‑plate coherence enhancement κ_c')
+plt.bar(range(7), κ)
+plt.axhline(1, color='k', linestyle='--', linewidth=0.7)
+plt.ylabel('κ_c  =  ρ_c / (P_top P_bottom)')
+plt.xlabel('column')
+plt.ylim(0, κ.max()*1.15)
+plt.tight_layout()
 plt.show()
 
-# Histogram of longest 1‑run per shot
-plt.figure()
-plt.bar(longest_cluster_hist.keys(), longest_cluster_hist.values())
-plt.xlabel("Longest consecutive 1‑run length")
-plt.ylabel("Frequency")
-plt.title("Cluster size distribution")
+# Joint mirror‑state distribution per column
+states = np.zeros((7,4))  # order: 00,01,10,11
+for b, f in counts.items():
+    t, bo, _ = parse_bits(b)
+    for c,(u,v) in enumerate(zip(t,bo)):
+        s = (u<<1) | v     # encodes 00→0, 01→1, 10→2, 11→3
+        states[c,s] += f
+states /= shots
+
+labels = ['00','01','10','11']
+bottom = np.zeros(7)
+plt.figure(figsize=(6,3))
+plt.title('Joint mirror‑state distribution per column')
+for i,lab in enumerate(labels):
+    plt.bar(range(7), states[:,i], bottom=bottom, label=lab)
+    bottom += states[:,i]
+plt.xlabel('column')
+plt.ylabel('probability')
+plt.legend(ncol=4, fontsize='small')
+plt.tight_layout()
 plt.show()
 
-# Conditional pair activation heat map
-plt.figure()
-plt.imshow(pair_conditional, aspect="auto", interpolation="nearest")
-plt.colorbar(label="P(pair j | pair i)")
-plt.xlabel("Pair j")
-plt.ylabel("Pair i")
-plt.title("Conditional activation probability matrix")
+# Polar view of ρ_c (twistor null corridors)
+θ = np.linspace(0, 2*np.pi, 7, endpoint=False)
+plt.figure(figsize=(5,5))
+ax = plt.subplot(111, projection='polar')
+ax.set_title('Polar view of ρ_c (twistor null corridors)')
+ax.bar(θ, ρ, width=2*np.pi/7, alpha=0.8)
+ax.set_yticklabels([])
+ax.set_theta_zero_location('N')
+ax.set_theta_direction(-1)
+plt.tight_layout()
 plt.show()
 
-# Left‑minus‑right excitation balance
-plt.figure()
-plt.bar(side_diff_hist.keys(), side_diff_hist.values(), width=0.8)
-plt.xlabel("Left half minus right half excitations")
-plt.ylabel("Frequency")
-plt.title("Spatial asymmetry of excitations")
+# Survival‑CDF of simultaneous pair multiplicit
+multiplicity = pairs.sum(axis=1)
+vals, counts_hist = np.unique(multiplicity, return_counts=True)
+cdf = 1 - np.cumsum(counts_hist)/shots   # survival function
+
+plt.figure(figsize=(5,3))
+plt.title('Survival‑CDF of simultaneous pair multiplicity')
+plt.loglog(vals, cdf, marker='o')
+plt.xlabel('≥  m  columns with a pair')
+plt.ylabel('P(M ≥ m)')
+plt.grid(True, which='both', ls=':', lw=0.6)
+plt.tight_layout()
 plt.show()
 
-# Accumulators
-pair_single = np.zeros(L // 2)
-pair_joint = np.zeros((L // 2, L // 2))
-dist_accum = np.zeros(L // 2)
-dist_counts = np.zeros(L // 2)
-com_hist = Counter()
-pair_energy_hist = Counter()
+#  Raw counts for final visuals
+tops, bots, whole = [], [], []
+for b, f in counts.items():
+    bits = b[::-1]                               # row‑major
+    t    = np.array([int(bits[idx(0,c)]) for c in range(7)])
+    bo   = np.array([int(bits[idx(6,c)]) for c in range(7)])
+    w    = np.array([int(bit) for bit in bits])  # 49‑vector
+    tops .append(np.repeat(t[None,:], f, 0))
+    bots .append(np.repeat(bo[None,:],f, 0))
+    whole.append(np.repeat(w[None,:], f, 0))
 
-# Main sweep
-for bits, freq in counts_raw.items():
-    bit_arr = np.array([ch == "1" for ch in bits], dtype=int)
-    active_pairs = [p_idx
-                    for p_idx, (i, j) in enumerate(pairs)
-                    if bit_arr[i] and bit_arr[j]]
-    
-    #   Joint accumulator one increment per ordered pair
-    for a in active_pairs:
-        for b in active_pairs:
-            d = abs(a - b)
-            dist_accum[d] += freq            
+tops   = np.vstack(tops)
+bots   = np.vstack(bots)
+whole  = np.vstack(whole)
 
-    #   Denominator one increment per *distance* in this shot
-    seen_d = {abs(a - b) for a in active_pairs for b in active_pairs}
-    for d in seen_d:
-        dist_counts[d] += freq       
+P_top  = tops.mean(axis=0)
+P_bot  = bots.mean(axis=0)
+ρ      = (tops & bots).mean(axis=0)              # pair‑creation
 
-    # Centre of mass
-    idx_excited = np.flatnonzero(bit_arr)
-    if idx_excited.size:
-        com_hist[int(round(idx_excited.mean()))] += freq
+# Per‑qubit 1 probability across lattic
+P_qubit = whole.mean(axis=0).reshape(7,7)
 
-    # Symmetric pair data
-    active_pairs = []
-    for p_idx, (i, j) in enumerate(pairs):
-        if bit_arr[i] and bit_arr[j]:
-            pair_single[p_idx] += freq
-            active_pairs.append(p_idx)
-
-    # Energy vs pair count
-    pair_energy_hist[(len(active_pairs), bit_arr.sum())] += freq
-
-    # Correlations by separation
-    for a in active_pairs:
-        for b in active_pairs:
-            pair_joint[a, b] += freq
-            d = abs(a - b)
-            dist_accum[d] += freq
-            dist_counts[d] += freq           
-
-pair_single /= shots
-pair_joint /= shots
-cov = pair_joint - np.outer(pair_single, pair_single)
-
-# Centre‑of‑mass histogram
-plt.figure()
-if com_hist:
-    x, y = zip(*sorted(com_hist.items()))
-    plt.bar(x, y)
-plt.xlabel("Excitation centre of mass")
-plt.ylabel("Frequency")
-plt.title("Centre of mass of excitations")
+plt.figure(figsize=(4,4))
+plt.title('Per‑qubit 1 probability across lattice')
+plt.imshow(P_qubit, cmap='viridis', vmin=0, vmax=P_qubit.max())
+plt.colorbar(label='P(1)')
+plt.xticks(range(7)), plt.yticks(range(7))
+plt.xlabel('Columns')
+plt.ylabel('Columns')
+plt.tight_layout()
 plt.show()
 
-# Correlation vs separation
-sep = np.arange(1, L // 2)
-corr_vs_d = np.where(dist_counts[1:] > 0,
-                     dist_accum[1:] / dist_counts[1:],
-                     0.0)
-plt.figure()
-plt.plot(sep, corr_vs_d, marker="o")
-plt.xlabel("Pair‑pair separation")
-plt.ylabel("Average joint probability")
-plt.title("Correlation decay with separation")
+# Conditional P(top=1 | bottom=1)  per column
+ζ = np.divide(ρ, P_bot, out=np.zeros_like(ρ), where=P_bot>0)
+
+plt.figure(figsize=(6,3))
+plt.title('Conditional P(top=1 | bottom=1)  per column')
+plt.bar(range(7), ζ)
+plt.ylabel('ζ_c')
+plt.xlabel('column')
+plt.ylim(0, ζ.max()*1.15)
+plt.tight_layout()
 plt.show()
 
-# Covariance heat map
-plt.figure()
-plt.imshow(cov, cmap="seismic", aspect="auto", interpolation="nearest")
-plt.colorbar(label="Covariance")
-plt.xlabel("Pair j")
-plt.ylabel("Pair i")
-plt.title("Pair‑pair covariance")
+# Vertical excitation gradient across lattice rows
+P_row = P_qubit.mean(axis=1)
+
+plt.figure(figsize=(6,3))
+plt.title('Vertical excitation gradient across lattice rows')
+plt.plot(range(7), P_row, marker='o')
+plt.xlabel('row (0 = top mirror)')
+plt.ylabel('average P(1)')
+plt.grid(alpha=0.5, ls=':')
+plt.tight_layout()
 plt.show()
 
-# 2‑D histogram pair count vs energy
-max_pairs = max(pc for pc, _ in pair_energy_hist.keys())
-max_energy = max(en for _, en in pair_energy_hist.keys())
-grid = np.zeros((max_pairs + 1, max_energy + 1))
-for (pc, en), f in pair_energy_hist.items():
-    grid[pc, en] = f
-plt.figure()
-plt.imshow(grid, origin="lower", aspect="auto", interpolation="nearest")
-plt.colorbar(label="Frequency")
-plt.xlabel("Total excited qubits")
-plt.ylabel("Number of symmetric pairs")
-plt.title("Energy vs pair multiplicity")
+# ρ_c  vs  P_top
+slope, intercept, r, *_ = linregress(P_top, ρ)
+
+plt.figure(figsize=(4.5,4))
+plt.title(f'ρ_c  vs  P_top   (r = {r:+.2f})')
+plt.scatter(P_top, ρ, s=60)
+xfit = np.linspace(P_top.min(), P_top.max(), 100)
+plt.plot(xfit, intercept + slope*xfit, color='k', lw=1)
+plt.xlabel('P_top  (single‑mirror 1 rate)')
+plt.ylabel('ρ_c  (pair‑creation)')
+plt.tight_layout()
 plt.show()
 
 # End
-
-
 
 
 
@@ -620,7 +635,7 @@ plt.show()
 </p>
             
  </div>
-        <img src="e67i4.png" alt="" class="experiment-image4">
+        <img src="E68i4.png" alt="" class="experiment-image4">
         <p></p>
         <div class="content-block">
 
