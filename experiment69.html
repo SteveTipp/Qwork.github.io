@@ -296,7 +296,7 @@ psi   = pi / 6           # Mirror phase
 
 phase_layers = [phi0, phi0 + dphi, phi0 - dphi]  # three‑slice sinusoid
 
-#  Twistor + mirror phases  (three layers) 
+# Twistor + mirror phases  (three layers) 
 for layer, φ in enumerate(phase_layers, 1):
     for r in range(ROWS):
         for c in range(COLS):
@@ -313,17 +313,17 @@ for layer, φ in enumerate(phase_layers, 1):
                 qc.rz(-psi, q)
     qc.barrier(label=f"phase‑layer {layer}")
 
-#  Column‑wise CX ladder (9 links) 
+# Column‑wise CX ladder (9 links) 
 for c in range(COLS):
-    for r in range(ROWS - 1):          # 0..8 -> link neighbour rows
+    for r in range(ROWS - 1):          # 0..8 -> link neighbor rows
         qc .cx(q_reg[idx(r, c)], q_reg[idx(r + 1, c)])
 qc.barrier(label="vacuum‑ladder")
 
-#  Measurement 
+# Measurement 
 for q in range(ROWS * COLS):
     qc.measure(q_reg[q], c_reg[q])
 
-#  Transpile 
+# Transpile 
 qc_t = transpile(
     qc,
     backend=backend,
@@ -333,7 +333,7 @@ qc_t = transpile(
 log .info("Transpiled depth : %d", qc_t.depth())
 log .info("Transpiled CXs   : %d", qc_t.count_ops().get("cx", 0))
 
-#  Execute  
+# Execute  
 SHOTS = 32768
 sampler = SamplerV2(mode=backend)
 job     = sampler .run([qc_t], shots=SHOTS)
@@ -342,7 +342,7 @@ result  = job.result()
 creg_name = qc_t.cregs[0].name   
 counts    = result[0].data.__getattribute__(creg_name).get_counts()
 
-#  Boundary pair‑creation rates ρ_c  (10 columns) 
+# Boundary pair‑creation rates ρ_c  (10 columns) 
 pair_counts = {c: 0 for c in range(COLS)}
 def both_one(bits, i, j):
     return bits[i] == "1" and bits[j] == "1"
@@ -356,7 +356,7 @@ for bitstring, freq in counts.items():
 
 pair_rates = {k: v / SHOTS for k, v in pair_counts.items()}
 
-#  Json 
+# Json 
 out = {
     "experiment_name"     : "Dynamic‑Twistor Casimir (100‑qubit 10x10)",
     "phi_base"            : float(phi0),
@@ -370,7 +370,7 @@ with open(JSON_PATH, "w") as fp:
     json.dump(out, fp, indent=4)
 log .info("Results saved → %s", JSON_PATH)
 
-#  Console summary 
+# Console summary 
 avg_rate = sum(pair_rates.values()) / COLS
 log .info("Average ρ_c : %.5f", avg_rate)
 for col, ρ in pair_rates.items():
