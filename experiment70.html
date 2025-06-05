@@ -293,7 +293,7 @@ def best_qubits(csv_path: str, n: int) -> list[int]:
     log. info("Best qubits: %s", winners)
     return winners
 
-cal_csv = "/Users/Downloads/ibm_torino_calibrations_2025-06-04T13_57_30Z.csv"
+cal_csv = "/Users/steventippeconnic/Downloads/ibm_torino_calibrations_2025-06-04T13_57_30Z.csv"
 physical = best_qubits(cal_csv, 80)
 
 # Quantum and classical registers
@@ -380,7 +380,7 @@ output = {
     "raw_counts": counts,
     "loop_parity_failure_rates": parity_rates
 }
-json_path = "/Users/Documents/Topological_Casimir_Tunneling_0.json"
+json_path = "/Users/steventippeconnic/Documents/QC/Topological_Casimir_Tunneling_0.json"
 with open(json_path, "w") as fp:
     json.dump(output, fp, indent=4)
 
@@ -405,7 +405,7 @@ import numpy as np
 from math import log2
 
 # Load results
-path = '/Users/Documents/Topological_Casimir_Tunneling_0.json'
+path = '/Users/steventippeconnic/Documents/QC/Topological_Casimir_Tunneling_0.json'
 with open(path, 'r') as f:
     data = json.load(f)
 
