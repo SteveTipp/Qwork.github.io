@@ -101,7 +101,7 @@
         <h1><center> Breaking a 4-Bit Elliptic Curve Key with a 133-Qubit Quantum Computer </center></h1>
         <div class="content-block">
          
-This experiment breaks a 4-bit elliptic curve cryptographic key using Shor’s algorithm. Executed on @IBM’s 133-qubit ibm_torino processor with @qiskit, a 12-qubit circuit, 8 logical and 4 ancilla, interferes over ℤ₁₆ to extract the secret scalar k from the public key relation Q = kP, without ever encoding k directly into the oracle. From 16,384 shots, the quantum interference reveals a diagonal ridge in the 16x16 QFT outcome space. Post-processing reveals that k = 7 emerges among the top invertible candidates, tied for the highest aggregate shot count across the recovered k values. Thus, the 4-bit elliptic curve key is broken with high confidence from measurement statistics.
+This experiment breaks a 4-bit elliptic curve cryptographic key using Shor’s algorithm. Executed on @IBM’s 133-qubit ibm_torino processor with @qiskit, a 12-qubit circuit, 8 logical and 4 ancilla, interferes over ℤ₁₆ to extract the secret scalar k from the public key relation Q = kP, without ever encoding k directly into the oracle. From 16,384 shots, the quantum interference reveals a diagonal ridge in the 16x16 QFT outcome space. Post-processing reveals that k = 7 emerges among the top invertible candidates as the second-highest single count count across the recovered k values. Thus, the 4-bit elliptic curve key is broken with high confidence from measurement statistics.
  <br>  
 Code Walkthrough
  <br>           
@@ -111,12 +111,13 @@ Map points to integers: <br>
 0𝑃 -> 0,  1𝑃 -> 1, …, 15𝑃 -> 15.<br>
 Group law becomes modular addition: <br>
 (𝑥𝑃) + (𝑦𝑃) = ((𝑥 + 𝑦) mod 16))𝑃.<br>
+The elliptic curve over 𝐹₁₁​ and generator P are chosen to ensure the existence of an order-16 subgroup.  <br>
 
 <p>2. Quantum Registers<br>
 Register a: four qubits for the exponent 𝑎 ∈ {0, …, 15}.<br>
 Register b: four qubits for 𝑏 ∈ {0, …, 15}.<br>
 Register p: four qubits initialized to ∣0⟩ to hold the point index.<br>
-Classicals 𝑐_0 - 𝑐_7: record the measured values of a and b.<br>
+Classical register c: an 8-bit register to record the measured values of a and b.<br>
     
 <p>3. Superposition Preparation<br>
 Apply Hadamards to every qubit in a and b:<br>
@@ -132,6 +133,7 @@ Goal is a reversible map: <br>
 The modular index arithmetic is performed with 4-qubit controlled permutation gates:<br>
 Add aP: for each bit a_i (weight 2^𝑖), add (2^𝑖 P) mod 16<br>
 Add bQ: compute (2^𝑖 𝑄) mod 16, then add controlled on 𝑏_𝑖.<br>
+The permutation gates use constants 2^i P mod 16 and 2^i Q mod 16, derived from the elliptic curve’s generator P and public point Q.<br>
 No gate ever references the secret k.<br>
 
 
@@ -141,7 +143,7 @@ No gate ever references the secret k.<br>
 1/16 ∑_(a, b) ∣a⟩ ∣b⟩ ∣f(a, b)⟩, where f(a, b) = a + kb (mod 16).
   <br>
 	
-<p>6. Discard Point Register <br>
+<p>6. Isolate Point Register <br>
 The algorithm needs only the phase relation in 𝑎, 𝑏. A barrier isolates p.<br>
 
 
@@ -154,8 +156,7 @@ The algorithm needs only the phase relation in 𝑎, 𝑏. A barrier isolates p.
   
 <p>8. Interference Pattern <br>
 The joint amplitude for observing (u,v) is:<br>
-1/(16√16) ∑_(a, b) e^((2πi/16) (au + bv)) δ_(a + kb ≡ 0) = 1/√16 δ_(u + kv ≡ 0 (mod 16)),<br>
-which forms a diagonal ridge in the 16x16 outcome grid.<br>
+1/(16√16) ∑_(a, b) e^((2πi/16) (au + bv)) δ_(a + kb ≡ 0) = 1/√16 δ_(u + kv ≡ 0 (mod 16)), which forms a diagonal ridge in the 16x16 outcome grid.
 <br>    
 
 
@@ -202,9 +203,9 @@ Top 10 invertible (a, b) pairs and recovered k:<br>
   (a=11, b=11)  →  k = 15   (count = 88)<br>
 2025-06-24 11:12:14,035 | INFO | Results saved<br> 
 <br>
-From 16,384 shots, the post-processing analyzed the top 10 most frequent invertible (a, b) output pairs, applying the classical formula k = (−a) b^(−1) mod 16. The standout result came from the pair (a = 7, b = 15), which recovered k = 7, the correct key, with 100 counts. Notably, this outcome was tied for second-highest frequency in the entire dataset, only 8 counts behind the top-ranked pair (7, 7). Statistically, this indicates that the correct key participated in the dominant interference ridge, sharing amplitude with the most prominent alias.
+From 16,384 shots, the post-processing analyzed the top 10 most frequent invertible (a, b) output pairs, applying the classical formula k = (−a) b^(−1) mod 16. The standout result came from the pair (a = 7, b = 15), which recovered k = 7, the correct key, with 100 counts. Notably, this outcome was second-highest single count in the entire dataset, only 8 counts behind the top-ranked pair (7, 7). Statistically, this indicates that the correct key participated in the dominant interference ridge, sharing amplitude with the most prominent alias.
 <br>
-This tie near the peak of the result distribution reflects a strong constructive phase signature for the true key, confirming the success of the algorithm in a higher-dimensional keyspace. This confirms that the 4-bit elliptic curve key has been broken cleanly with quantum advantage, extending this method’s validity beyond my previous 3-bit experiment, 5-bit is next.	<br>
+This tie near the peak of the result distribution reflects a strong constructive phase signature for the true key, confirming the success of the algorithm in a higher-dimensional keyspace. This confirms that the 4-bit elliptic curve key has been broken cleanly with quantum advantage, extending this method’s validity beyond my previous 3-bit experiment, 5-bit is next.
 <br>
   <img src="E72i1.png" alt="" class="experiment-image">
         <p></p>
@@ -217,7 +218,7 @@ The Modular Key Recovery Landscape above (full code on Qwork) remaps each (a, b)
 <br>
 The Histogram of Recovered K Candidates (Top 50) shows that k = 7 was recovered at nearly the same rate as every other plausible k, suggesting that it's not a statistical fluke or tail event. This reinforces its consistency across a wide range of (a, b) pairs. The overall histogram shape suggests that Shor's-style recovery on ECC curves may produce a flatter k-distribution in the presence of moderate quantum noise or when modular group structure leads to aliasing.
 <br>
-The Signal Density from Invertible b Pairs Only above (full code on Qwork) isolates and displays only those (a, b) outcomes where b is invertible mod 16, a necessary condition for recovering k. All vertical bands where b is not invertible (even values) are zeroed out. This reveals a much sharper interference pattern, removing noise from unhelpful or unresolvable outputs. The result (a = 7, b = 15) now clearly glows near the maximum, tying to the correct k = 7 discovery. This also confirms the power of number-theoretic filtering in hybrid quantum-classical pipelines.<br>          
+The Signal Density from Invertible b Pairs Only above (full code on Qwork) isolates and displays only those (a, b) outcomes where b is invertible mod 16, a necessary condition for recovering k. All vertical bands where b is not invertible (even values) are zeroed out. This reveals a much sharper interference pattern, removing noise from unhelpful or unresolvable outputs. The result (a = 7, b = 15) now clearly glows near the maximum, tying to the correct k = 7 discovery. This also confirms the power of number-theoretic filtering in hybrid quantum-classical pipelines.
 <br>
 
           <img src="E72i2.png" alt="" class="experiment-image">
@@ -230,7 +231,7 @@ The Invertibility Mask for b Register above (full code on Qwork) shows which b v
 <br>
 The Log Signal Strength (Invertible b Only) above (full code on Qwork) shows the logarithmic signal strength (log(count)) restricted to the invertible b columns. It enhances dynamic range sensitivity while filtering irrelevant noise. Certain (a, b) slots, especially around b = 7, 15, show elevated signal presence. This plot proves that high signal density clusters tightly around specific invertible b values, strengthening confidence in the repeatability and non-randomness of those peaks. 
 <br>
-The Modular Aliasing Frequency per k above (full code on Qwork) aggregates how frequently each possible k ∈ Z₁₆ appeared across all valid (a, b) pairs. It shows the statistical competition of candidates, exposing aliasing effects. The distribution is surprisingly balanced, with a few dips (like k = 12) and spikes (k = 0, k = 8). Yet, k = 7 shows a reasonable frequency, confirming that even amid modular ambiguity, it ranks close to the leaders.<br>  
+The Modular Aliasing Frequency per k above (full code on Qwork) aggregates how frequently each possible k ∈ Z₁₆ appeared across all valid (a, b) pairs. It shows the statistical competition of candidates, exposing aliasing effects. The distribution is surprisingly balanced, with a few dips (like k = 12) and spikes (k = 0, k = 8). Yet, k = 7 shows a reasonable frequency, confirming that even amid modular ambiguity, it ranks close to the leaders.
 <br>
           <img src="E72i3.png" alt="" class="experiment-image">
         <p></p>
@@ -245,7 +246,7 @@ The Parity Distribution Across All Qubits above (full code on Qwork) shows if th
 <br>
 The Deviation from Ideal Surface (u + kv ≡ 0 mod 16) above (full code on Qwork) projects the QFT result bitstrings into a u, v plane and compares their modular deviation from the expected solution surface defined by u + 7v ≡ 0 mod 16. The majority of counts hug the zero-residue diagonal, which visually confirms that k = 7 governs the most constructive interference bands. 
 <br>
-In the end, this circuit successfully applied Shor’s algorithm on IBM’s quantum hardware to break a 4-bit elliptic curve key by identifying the scalar k in the equation Q = kP, using modular arithmetic and quantum Fourier interference. Through high-depth circuits with over 12,000 layers and tailored (a, b) register pairings, the result k = 7 emerged in a statistical tie for the top spot, validating its prominence across invertible group operations. Entropy maps and modular aliasing to phase collisions and mutual information showed that quantum interference strongly favored k = 7, while parity and information flow across registers confirmed circuit coherence and entangled structure. <br>          
+In the end, this circuit successfully applied Shor’s algorithm on IBM’s quantum hardware to break a 4-bit elliptic curve key by identifying the scalar k in the equation Q = kP, using modular arithmetic and quantum Fourier interference. Through high-depth circuits with over 12,000 layers and tailored (a, b) register pairings, the result k = 7 emerged in the second-highest single count, validating its prominence across invertible group operations. Entropy maps and modular aliasing to phase collisions and mutual information showed that quantum interference strongly favored k = 7, while parity and information flow across registers confirmed circuit coherence and entangled structure. 
 <br>
   <p>Code:<br>
         <p><pre><code>
