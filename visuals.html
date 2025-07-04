@@ -128,23 +128,33 @@
     <a href="https://x.com/SteveTipp">Follow Me</a>
 </footer>
 
-<!-- Three.js -->
+<!-- Libraries -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.js"></script>
 
-<!-- Robinson Congruence Loader -->
+<!-- Canvas Redirect & Size Fix -->
 <script>
     const originalAppend = document.body.appendChild;
     document.body.appendChild = function (element) {
         if (element instanceof HTMLCanvasElement) {
-            const target = document.getElementById('visual-1');
-            if (target) target.appendChild(element);
-            else originalAppend.call(document.body, element);
+            const container = document.getElementById('visual-1');
+            container.appendChild(element);
+
+            // ✅ Constrain canvas to container
+            element.style.width = '100%';
+            element.style.height = '100%';
+
+            // ✅ Store renderer reference if injected later
+            if (element.__threeRenderer) {
+                element.__threeRenderer.setSize(container.clientWidth, container.clientHeight);
+            }
         } else {
             originalAppend.call(document.body, element);
         }
     };
 </script>
+
+<!-- Robinson Congruence Visual -->
 <script src="Robinson_Congruence_Visual.js"></script>
 
 </body>
