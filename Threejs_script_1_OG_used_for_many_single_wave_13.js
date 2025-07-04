@@ -93,7 +93,7 @@ async function initWaves() {
         planes.push(wave);
     });
 
-    createLegend(keys);
+   
 }
 
 // Animate wave function
