@@ -41,6 +41,16 @@ function asGrid(counts) {
   return { M, max };
 }
 
+window.addEventListener('resize', onWindowResize, false);
+
+function onWindowResize() {
+  camera.aspect = window.innerWidth / window.innerHeight;
+  camera.updateProjectionMatrix();
+
+  renderer.setSize(window.innerWidth, window.innerHeight);
+}
+
+
 // Generate a wave-like geometry
 const gridSize = 50;
 const planeGeometry = new THREE.PlaneGeometry(10, 10, gridSize, gridSize);
