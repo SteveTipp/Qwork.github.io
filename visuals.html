@@ -5,14 +5,12 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="QWORK" content="Explore groundbreaking experiments in quantum mechanics and computing.">
 
-    <!-- Open Graph / Facebook -->
+    <!-- Social Metadata -->
     <meta property="og:title" content="QWORK - Quantum Computing"/>
     <meta property="og:description" content="Dive into the world of quantum computing.">
     <meta property="og:image" content="QImage4.png"/>
     <meta property="og:url" content="qubits.work"/>
     <meta property="og:type" content="website"/>
-
-    <!-- Twitter -->
     <meta name="twitter:card" content="summary_large_image">
     <meta name="twitter:title" content="Qwork - Quantum Computing">
     <meta name="twitter:description" content="Dive into the world of quantum computing.">
@@ -53,30 +51,24 @@
 
         .experiments-list {
             display: flex;
-            flex-wrap: wrap;
-            justify-content: center;
+            flex-direction: column;
+            align-items: center;
             padding: 20px;
         }
 
-        .experiment-link {
-            background-color: #000000;
+        .visual-title {
+            font-size: 1.4em;
             color: #00FF00;
-            padding: 10px;
-            margin: 5px;
-            text-decoration: none;
-            border: 1px solid #00FF00;
-            flex-basis: calc(50% - 10px);
+            margin-top: 40px;
+            margin-bottom: 10px;
+            text-align: center;
         }
 
-        .experiment-link:hover {
-            background-color: #001a00;
-        }
-
-        #visual-player {
+        .visual-box {
             width: 90%;
             max-width: 800px;
             aspect-ratio: 4 / 3;
-            margin: 40px auto;
+            margin: 0 auto 40px auto;
             border: 2px solid #00FF00;
             background-color: #000;
             overflow: hidden;
@@ -112,9 +104,7 @@
             header {
                 height: 200px;
             }
-
-            #visual-player {
-                height: auto;
+            .visual-box {
                 aspect-ratio: 1 / 1;
             }
         }
@@ -131,13 +121,18 @@
     </nav>
 
     <section class="experiments-list">
-        <!-- Centered Robinson Congruence Visual Box -->
-        <div id="visual-player"></div>
+
+        <div class="visual-title">Robinson Congruence</div>
+        <div id="visual-1" class="visual-box"></div>
+
+        <div class="visual-title">Multi-Layer Retrocausal Encryption</div>
+        <div id="visual-2" class="visual-box"></div>
+
     </section>
 
     <footer>
-        <a href="mailto:stevetippeconnic@gmail.com">Contact</a> <br>
-        <a href="https://x.com/SteveTipp">Follow Me</a> 
+        <a href="mailto:stevetippeconnic@gmail.com">Contact</a><br>
+        <a href="https://x.com/SteveTipp">Follow Me</a>
     </footer>
 
     <!-- Three.js -->
@@ -146,21 +141,29 @@
     <!-- OrbitControls -->
     <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.js"></script>
 
-    <!-- Canvas redirect to the visual player -->
+    <!-- SimplexNoise for wave -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/simplex-noise/2.4.0/simplex-noise.min.js"></script>
+
+    <!-- Fix for canvas injection into specific divs -->
     <script>
         const originalAppend = document.body.appendChild;
+        let visualCount = 0;
         document.body.appendChild = function(element) {
             if (element instanceof HTMLCanvasElement) {
-                const container = document.getElementById('visual-player');
-                container.appendChild(element);
+                const target = document.getElementById(`visual-${++visualCount}`);
+                if (target) target.appendChild(element);
+                else originalAppend.call(document.body, element);
             } else {
                 originalAppend.call(document.body, element);
             }
         };
     </script>
 
-    <!-- Robinson Congruence Visual -->
+    <!-- Load Robinson Congruence Visual -->
     <script src="Robinson_Congruence_Visual.js"></script>
+
+    <!-- Load Multi-Layer Retrocausal Encryption Visual -->
+    <script src="Threejs_script_1_OG_used_for_many_single_wave.js"></script>
 
 </body>
 </html>
