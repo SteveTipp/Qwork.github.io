@@ -74,10 +74,22 @@
 
         #visual-player {
             width: 90%;
-            max-width: 960px;
-            height: 600px;
+            max-width: 800px;
+            aspect-ratio: 4 / 3;
             margin: 40px auto;
             border: 2px solid #00FF00;
+            background-color: #000;
+            overflow: hidden;
+            position: relative;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        canvas {
+            width: 100%;
+            height: 100%;
+            display: block;
             position: relative;
         }
 
@@ -102,12 +114,9 @@
             }
 
             #visual-player {
-                height: 400px;
+                height: auto;
+                aspect-ratio: 1 / 1;
             }
-        }
-
-        canvas {
-            display: block;
         }
     </style>
 </head>
@@ -122,13 +131,13 @@
     </nav>
 
     <section class="experiments-list">
-        <!-- Visual container -->
+        <!-- Centered Robinson Congruence Visual Box -->
         <div id="visual-player"></div>
     </section>
 
     <footer>
         <a href="mailto:stevetippeconnic@gmail.com">Contact</a> <br>
-        <a href="https://x.com/SteveTipp">Follow Me</a>
+        <a href="https://x.com/SteveTipp">Follow Me</a> 
     </footer>
 
     <!-- Three.js -->
@@ -137,9 +146,8 @@
     <!-- OrbitControls -->
     <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.js"></script>
 
-    <!-- Robinson Congruence Visual -->
+    <!-- Canvas redirect to the visual player -->
     <script>
-        // Override document.body.appendChild so it goes to our container
         const originalAppend = document.body.appendChild;
         document.body.appendChild = function(element) {
             if (element instanceof HTMLCanvasElement) {
@@ -150,6 +158,9 @@
             }
         };
     </script>
+
+    <!-- Robinson Congruence Visual -->
     <script src="Robinson_Congruence_Visual.js"></script>
+
 </body>
 </html>
