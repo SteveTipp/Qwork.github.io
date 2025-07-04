@@ -3,9 +3,6 @@
 <head>
     <title>Qwork</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-
-
     <meta name="QWORK" content="Explore groundbreaking experiments in quantum mechanics and computing.">
 
     <!-- Open Graph / Facebook -->
@@ -15,30 +12,27 @@
     <meta property="og:url" content="qubits.work"/>
     <meta property="og:type" content="website"/>
 
-    <!-- Twitterr -->
+    <!-- Twitter -->
     <meta name="twitter:card" content="summary_large_image">
     <meta name="twitter:title" content="Qwork - Quantum Computing">
     <meta name="twitter:description" content="Dive into the world of quantum computing.">
     <meta name="twitter:image" content="QImage4.png">
 
-
-
-
-
-
-
-
-
-
-
-    
     <style>
-        body {
+        html, body {
+            margin: 0;
+            padding: 0;
+            overflow: hidden;
+            height: 100%;
             background-color: #000000; /* Black background */
             color: #FFFFFF; /* White text */
             font-family: Arial, sans-serif;
-            margin: 0;
-            padding: 0;
+        }
+        canvas {
+            display: block;
+            position: absolute;
+            top: 0;
+            left: 0;
         }
         header {
             background: url('QImage4.png') no-repeat center center;
@@ -68,19 +62,19 @@
             padding: 20px;
         }
         .experiment-link {
-            background-color: #000000; /* Black background */
-            color: #00FF00; /* Matrix green text */
+            background-color: #000000;
+            color: #00FF00;
             padding: 10px;
             margin: 5px;
             text-decoration: none;
-            border: 1px solid #00FF00; /* Matrix green border */
+            border: 1px solid #00FF00;
             flex-basis: calc(50% - 10px); 
         }
         .experiment-link:hover {
-            background-color: #001a00; /* :Lighter black for hover background */
+            background-color: #001a00;
         }
         footer {
-            color: #FFFFFF; /* White text */
+            color: #FFFFFF;
             text-align: center;
             padding: 20px 0;
         }
@@ -89,20 +83,18 @@
             text-decoration: none;
         }
         footer a:hover {
-            color: #00FF00; /* Matrix green on hover */
+            color: #00FF00;
         }
-          /* Media Query for devices with max width of 600px */
         @media (max-width: 450px) {
             header {
-                height: 200px; /* Set header height to 200px for smaller screens */
+                height: 200px;
             }
-    }
+        }
     </style>
 </head>
 <body>
 
-    <header>
-    </header>
+    <header></header>
 
     <nav>
         <a href="try_yourself.html">Try Yourself</a>
@@ -111,21 +103,22 @@
     </nav>
 
     <section class="experiments-list">
-    
-        <!-- List of experiments as links -->
-       
-
-
-        
-
-    
-        <!-- Continue with additional experiment links -->
+        <!-- Experiments could be listed here -->
     </section>
 
     <footer>
         <a href="mailto:stevetippeconnic@gmail.com">Contact</a> <br>
         <a href="https://x.com/SteveTipp">Follow Me</a> 
     </footer>
+
+    <!-- Three.js -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+
+    <!-- OrbitControls -->
+    <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.js"></script>
+
+    <!-- Robinson Congruence Visual -->
+    <script src="Robinson_Congruence_Visual.js"></script>
 
 </body>
 </html>
