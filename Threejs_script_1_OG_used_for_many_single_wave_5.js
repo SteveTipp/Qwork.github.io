@@ -1,7 +1,7 @@
 // script 1 (OG) used for many results (single wave)
 // Load JSON Data
 async function loadQuantumData() {
-    const response = await fetch('twistor_additional_analysis_v4_results.json'); 
+    const response = await fetch('twistor_error_correction_results.json'); 
     const data = await response.json();
     return data.raw_counts;
 }
