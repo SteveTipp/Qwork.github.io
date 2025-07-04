@@ -147,16 +147,26 @@
 <!-- Canvas Redirect & Size Fix -->
 <script>
     const originalAppend = document.body.appendChild;
+
     document.body.appendChild = function (element) {
         if (element instanceof HTMLCanvasElement) {
             const container = document.getElementById('visual-1');
             container.appendChild(element);
 
-            // ✅ Constrain canvas to container
+            // Ensure canvas is absolutely positioned inside the green box
+            element.style.position = 'absolute';
+            element.style.top = '0';
+            element.style.left = '0';
             element.style.width = '100%';
             element.style.height = '100%';
+            element.style.maxWidth = '100%';
+            element.style.maxHeight = '100%';
 
-            // ✅ Store renderer reference if injected later
+            // Ensure the container is position: relative to constrain canvas
+            container.style.position = 'relative';
+            container.style.overflow = 'hidden';
+
+            // Also set renderer size if available
             if (element.__threeRenderer) {
                 element.__threeRenderer.setSize(container.clientWidth, container.clientHeight);
             }
