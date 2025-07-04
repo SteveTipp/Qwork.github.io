@@ -62,18 +62,13 @@
             text-align: center;
         }
 
-        .visual-box {
+        .visual-box, iframe.visual-frame {
             width: 90%;
             max-width: 800px;
             aspect-ratio: 4 / 3;
             margin: 0 auto 40px auto;
             border: 2px solid #00FF00;
             background-color: #000;
-            overflow: hidden;
-            position: relative;
-            display: flex;
-            justify-content: center;
-            align-items: center;
         }
 
         canvas {
@@ -102,7 +97,7 @@
                 height: 200px;
             }
 
-            .visual-box {
+            .visual-box, iframe.visual-frame {
                 aspect-ratio: 1 / 1;
             }
         }
@@ -124,7 +119,7 @@
     <div id="visual-1" class="visual-box"></div>
 
     <div class="visual-title">Multi-Layer Retrocausal Encryption</div>
-    <div id="visual-2" class="visual-box"></div>
+    <iframe src="retrocausal.html" class="visual-frame" frameborder="0"></iframe>
 
 </section>
 
@@ -133,18 +128,16 @@
     <a href="https://x.com/SteveTipp">Follow Me</a>
 </footer>
 
-<!-- Scripts -->
+<!-- Three.js -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/simplex-noise/2.4.0/simplex-noise.min.js"></script>
 
-<!-- Canvas Targeting Logic -->
+<!-- Robinson Congruence Loader -->
 <script>
     const originalAppend = document.body.appendChild;
-    let visualCount = 0;
     document.body.appendChild = function (element) {
         if (element instanceof HTMLCanvasElement) {
-            const target = document.getElementById(`visual-${++visualCount}`);
+            const target = document.getElementById('visual-1');
             if (target) target.appendChild(element);
             else originalAppend.call(document.body, element);
         } else {
@@ -152,71 +145,7 @@
         }
     };
 </script>
-
-<!-- Robinson Congruence Visual -->
 <script src="Robinson_Congruence_Visual.js"></script>
-
-<!-- Retrocausal Bitstring Counts (converted from .json to .js) -->
-<script src="Multi_Layer_Retrocausal_Encryption_8.js"></script>
-
-<!-- Retrocausal Visual Code -->
-<script>
-function initRetrocausalWave() {
-    const container = document.getElementById('visual-2');
-    const canvas = document.createElement('canvas');
-    container.appendChild(canvas);
-
-    const renderer = new THREE.WebGLRenderer({ canvas, antialias: true });
-    renderer.setSize(container.clientWidth, container.clientHeight);
-    renderer.setPixelRatio(window.devicePixelRatio);
-
-    const scene = new THREE.Scene();
-    const camera = new THREE.PerspectiveCamera(75, container.clientWidth / container.clientHeight, 0.1, 1000);
-    camera.position.set(0, 5, 10);
-    camera.lookAt(0, 0, 0);
-
-    const controls = new THREE.OrbitControls(camera, renderer.domElement);
-    controls.enableDamping = true;
-
-    scene.add(new THREE.DirectionalLight(0xffffff, 1).position.set(10, 10, 10));
-
-    const geometry = new THREE.PlaneGeometry(10, 10, 50, 50);
-    const material = new THREE.MeshStandardMaterial({ color: 0x00ff00, wireframe: true });
-    const mesh = new THREE.Mesh(geometry, material);
-    mesh.rotation.x = -Math.PI / 2;
-    scene.add(mesh);
-
-    const noise = new SimplexNoise();
-    let time = 0;
-
-    const counts = window.retrocausalCounts;
-    const bitstrings = Object.keys(counts);
-    const maxCount = Math.max(...Object.values(counts));
-
-    function animate() {
-        requestAnimationFrame(animate);
-        time += 0.05;
-
-        const pos = geometry.attributes.position.array;
-        for (let i = 0; i < pos.length; i += 3) {
-            const x = pos[i];
-            const y = pos[i + 1];
-            const idx = (i / 3) % bitstrings.length;
-            const bitstring = bitstrings[idx];
-            const amp = (counts[bitstring] / maxCount) * 1.5;
-            pos[i + 2] = amp * Math.sin(x * 2 + time) * Math.cos(y * 2 + time);
-        }
-        geometry.attributes.position.needsUpdate = true;
-
-        controls.update();
-        renderer.render(scene, camera);
-    }
-
-    animate();
-}
-
-window.addEventListener('DOMContentLoaded', initRetrocausalWave);
-</script>
 
 </body>
 </html>
