@@ -21,7 +21,9 @@ function init() {
 
   // Renderer
   renderer = new THREE.WebGLRenderer({ antialias: true });
-  renderer.setSize(window.innerWidth, window.innerHeight);
+  const container = renderer.domElement.parentElement;
+  renderer.setSize(container.clientWidth, container.clientHeight);
+  renderer.domElement.__threeRenderer = renderer; // for resize support
   document.body.appendChild(renderer.domElement);
 
   // Controls
