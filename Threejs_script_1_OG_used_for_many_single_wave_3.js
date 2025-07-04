@@ -94,5 +94,15 @@ function animate() {
     renderer.render(scene, camera);
 }
 
+    // After updating the Z positions:
+    plane.geometry.computeBoundingBox();
+    const box = plane.geometry.boundingBox;
+    const center = new THREE.Vector3();
+    box.getCenter(center);
+    
+    // Recenter camera on the updated mesh center
+    camera.lookAt(center);
+    controls.target.copy(center);  // Also fix OrbitControls center
+
 // Start animation
 animate();
