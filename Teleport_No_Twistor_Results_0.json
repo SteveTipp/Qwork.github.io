@@ -1,0 +1,9 @@
+{
+    "experiment_name": "Quantum Teleportation Without Twistor Encoding",
+    "raw_counts": {
+        "01": 2093,
+        "10": 2092,
+        "11": 2165,
+        "00": 1842
+    }
+}
