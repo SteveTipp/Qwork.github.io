@@ -22,7 +22,7 @@ light.position.set(10, 10, 10);
 scene.add(light);
 
 // Camera
-camera.position.set(0, 25, 45);
+camera.position.set(0, 10, 20);
 camera.lookAt(0, 0, 0);
 
 // Noise + Time
