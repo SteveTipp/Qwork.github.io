@@ -5,7 +5,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="QWORK" content="Explore groundbreaking experiments in quantum mechanics and computing.">
 
-    <!-- Social Metadata -->
     <meta property="og:title" content="QWORK - Quantum Computing"/>
     <meta property="og:description" content="Dive into the world of quantum computing.">
     <meta property="og:image" content="QImage4.png"/>
@@ -29,7 +28,6 @@
             background: url('QImage4.png') no-repeat center center;
             background-size: contain;
             height: 400px;
-            position: relative;
         }
 
         nav {
@@ -82,7 +80,6 @@
             width: 100%;
             height: 100%;
             display: block;
-            position: relative;
         }
 
         footer {
@@ -104,6 +101,7 @@
             header {
                 height: 200px;
             }
+
             .visual-box {
                 aspect-ratio: 1 / 1;
             }
@@ -112,110 +110,113 @@
 </head>
 <body>
 
-    <header></header>
+<header></header>
 
-    <nav>
-        <a href="try_yourself.html">Try Yourself</a>
-        <a href="index.html">Experiments</a>
-        <a href="about.html">About Me</a>
-    </nav>
+<nav>
+    <a href="try_yourself.html">Try Yourself</a>
+    <a href="index.html">Experiments</a>
+    <a href="about.html">About Me</a>
+</nav>
 
-    <section class="experiments-list">
+<section class="experiments-list">
 
-        <div class="visual-title">Robinson Congruence</div>
-        <div id="visual-1" class="visual-box"></div>
+    <div class="visual-title">Robinson Congruence</div>
+    <div id="visual-1" class="visual-box"></div>
 
-        <div class="visual-title">Multi-Layer Retrocausal Encryption</div>
-        <div id="visual-2" class="visual-box"></div>
+    <div class="visual-title">Multi-Layer Retrocausal Encryption</div>
+    <div id="visual-2" class="visual-box"></div>
 
-    </section>
+</section>
 
-    <footer>
-        <a href="mailto:stevetippeconnic@gmail.com">Contact</a><br>
-        <a href="https://x.com/SteveTipp">Follow Me</a>
-    </footer>
+<footer>
+    <a href="mailto:stevetippeconnic@gmail.com">Contact</a><br>
+    <a href="https://x.com/SteveTipp">Follow Me</a>
+</footer>
 
-    <!-- Core libraries -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/simplex-noise/2.4.0/simplex-noise.min.js"></script>
+<!-- Scripts -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/simplex-noise/2.4.0/simplex-noise.min.js"></script>
 
-    <!-- Load Robinson Congruence (auto appends to first canvas) -->
-    <script>
-        const originalAppend = document.body.appendChild;
-        let visualCount = 0;
-        document.body.appendChild = function(element) {
-            if (element instanceof HTMLCanvasElement) {
-                const target = document.getElementById(`visual-${++visualCount}`);
-                if (target) target.appendChild(element);
-                else originalAppend.call(document.body, element);
-            } else {
-                originalAppend.call(document.body, element);
-            }
-        };
-    </script>
-    <script src="Robinson_Congruence_Visual.js"></script>
-
-    <!-- Modularized Multi-Layer Retrocausal Encryption Visual -->
-    <script>
-    async function initRetrocausalWave() {
-        const container = document.getElementById('visual-2');
-        const canvas = document.createElement('canvas');
-        container.appendChild(canvas);
-
-        const renderer = new THREE.WebGLRenderer({ canvas, antialias: true });
-        renderer.setSize(container.clientWidth, container.clientHeight);
-        renderer.setPixelRatio(window.devicePixelRatio);
-
-        const scene = new THREE.Scene();
-        const camera = new THREE.PerspectiveCamera(75, container.clientWidth / container.clientHeight, 0.1, 1000);
-        camera.position.set(0, 5, 10);
-        camera.lookAt(0, 0, 0);
-
-        const controls = new THREE.OrbitControls(camera, renderer.domElement);
-        controls.enableDamping = true;
-
-        scene.add(new THREE.DirectionalLight(0xffffff, 1).position.set(10, 10, 10));
-
-        const geometry = new THREE.PlaneGeometry(10, 10, 50, 50);
-        const material = new THREE.MeshStandardMaterial({ color: 0x00ff00, wireframe: true });
-        const mesh = new THREE.Mesh(geometry, material);
-        mesh.rotation.x = -Math.PI / 2;
-        scene.add(mesh);
-
-        const noise = new SimplexNoise();
-        let time = 0;
-
-        const response = await fetch('Multi_Layer_Retrocausal_Encryption_8.json');
-        const json = await response.json();
-        const counts = json.raw_counts;
-        const bitstrings = Object.keys(counts);
-        const maxCount = Math.max(...Object.values(counts));
-
-        function animate() {
-            requestAnimationFrame(animate);
-            time += 0.05;
-
-            const pos = geometry.attributes.position.array;
-            for (let i = 0; i < pos.length; i += 3) {
-                const x = pos[i];
-                const y = pos[i + 1];
-                const idx = (i / 3) % bitstrings.length;
-                const bitstring = bitstrings[idx];
-                const amp = (counts[bitstring] / maxCount) * 1.5;
-                pos[i + 2] = amp * Math.sin(x * 2 + time) * Math.cos(y * 2 + time);
-            }
-            geometry.attributes.position.needsUpdate = true;
-
-            controls.update();
-            renderer.render(scene, camera);
+<!-- Canvas Targeting Logic -->
+<script>
+    const originalAppend = document.body.appendChild;
+    let visualCount = 0;
+    document.body.appendChild = function (element) {
+        if (element instanceof HTMLCanvasElement) {
+            const target = document.getElementById(`visual-${++visualCount}`);
+            if (target) target.appendChild(element);
+            else originalAppend.call(document.body, element);
+        } else {
+            originalAppend.call(document.body, element);
         }
+    };
+</script>
 
-        animate();
+<!-- Robinson Congruence Visual -->
+<script src="Robinson_Congruence_Visual.js"></script>
+
+<!-- Retrocausal Bitstring Counts (converted from .json to .js) -->
+<script src="Multi_Layer_Retrocausal_Encryption_8.js"></script>
+
+<!-- Retrocausal Visual Code -->
+<script>
+function initRetrocausalWave() {
+    const container = document.getElementById('visual-2');
+    const canvas = document.createElement('canvas');
+    container.appendChild(canvas);
+
+    const renderer = new THREE.WebGLRenderer({ canvas, antialias: true });
+    renderer.setSize(container.clientWidth, container.clientHeight);
+    renderer.setPixelRatio(window.devicePixelRatio);
+
+    const scene = new THREE.Scene();
+    const camera = new THREE.PerspectiveCamera(75, container.clientWidth / container.clientHeight, 0.1, 1000);
+    camera.position.set(0, 5, 10);
+    camera.lookAt(0, 0, 0);
+
+    const controls = new THREE.OrbitControls(camera, renderer.domElement);
+    controls.enableDamping = true;
+
+    scene.add(new THREE.DirectionalLight(0xffffff, 1).position.set(10, 10, 10));
+
+    const geometry = new THREE.PlaneGeometry(10, 10, 50, 50);
+    const material = new THREE.MeshStandardMaterial({ color: 0x00ff00, wireframe: true });
+    const mesh = new THREE.Mesh(geometry, material);
+    mesh.rotation.x = -Math.PI / 2;
+    scene.add(mesh);
+
+    const noise = new SimplexNoise();
+    let time = 0;
+
+    const counts = window.retrocausalCounts;
+    const bitstrings = Object.keys(counts);
+    const maxCount = Math.max(...Object.values(counts));
+
+    function animate() {
+        requestAnimationFrame(animate);
+        time += 0.05;
+
+        const pos = geometry.attributes.position.array;
+        for (let i = 0; i < pos.length; i += 3) {
+            const x = pos[i];
+            const y = pos[i + 1];
+            const idx = (i / 3) % bitstrings.length;
+            const bitstring = bitstrings[idx];
+            const amp = (counts[bitstring] / maxCount) * 1.5;
+            pos[i + 2] = amp * Math.sin(x * 2 + time) * Math.cos(y * 2 + time);
+        }
+        geometry.attributes.position.needsUpdate = true;
+
+        controls.update();
+        renderer.render(scene, camera);
     }
 
-    window.addEventListener('DOMContentLoaded', initRetrocausalWave);
-    </script>
+    animate();
+}
+
+window.addEventListener('DOMContentLoaded', initRetrocausalWave);
+</script>
 
 </body>
 </html>
