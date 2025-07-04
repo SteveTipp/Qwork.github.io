@@ -26,6 +26,8 @@ function init() {
 
   // Controls
   controls = new THREE.OrbitControls(camera, renderer.domElement);
+  controls.target.set(0, 0, 0); // 👈 Add this line
+  controls.update();            // 👈 Add this too
 
   // Light
   const light = new THREE.DirectionalLight(0xffffff, 1);
