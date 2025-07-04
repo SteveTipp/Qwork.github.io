@@ -1,7 +1,7 @@
 
 // Load JSON Data
 async function loadQuantumData() {
-    const response = await fetch('Randomized_Gate_Stability_Results_0.json'); 
+    const response = await fetch('Twistor_QEC_Stability_Results_0.json'); 
     const data = await response.json();
     return data;
 }
