@@ -1,0 +1,13 @@
+{
+    "experiment_name": "Twistor-Enhanced Quantum Repetition Code",
+    "raw_counts": {
+        "011": 2983,
+        "101": 2628,
+        "100": 562,
+        "001": 545,
+        "111": 625,
+        "010": 541,
+        "000": 132,
+        "110": 176
+    }
+}
