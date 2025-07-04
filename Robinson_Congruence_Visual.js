@@ -20,10 +20,8 @@ function init() {
   camera.lookAt(0, 0, 0);
 
   // Renderer
-  const container = renderer.domElement.parentElement;
   renderer = new THREE.WebGLRenderer({ antialias: true });
   renderer.setSize(window.innerWidth, window.innerHeight);
-  renderer.domElement.__threeRenderer = renderer; // for resize support
   document.body.appendChild(renderer.domElement);
 
   // Controls
