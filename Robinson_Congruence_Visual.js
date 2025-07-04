@@ -16,7 +16,7 @@ function init() {
   camera = new THREE.PerspectiveCamera(
     60, window.innerWidth / window.innerHeight, 0.1, 500
   );
-  camera.position.set(0, 5, 20); 
+  camera.position.set(0, 5, 15); 
   camera.lookAt(0, 0, 0);
 
   // Renderer
@@ -26,8 +26,6 @@ function init() {
 
   // Controls
   controls = new THREE.OrbitControls(camera, renderer.domElement);
-  controls.target.set(0, 0, 0); // 👈 Add this line
-  controls.update();            // 👈 Add this too
 
   // Light
   const light = new THREE.DirectionalLight(0xffffff, 1);
