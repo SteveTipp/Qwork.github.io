@@ -21,8 +21,9 @@ function init() {
 
   // Renderer
   renderer = new THREE.WebGLRenderer({ antialias: true });
-  renderer.setSize(window.innerWidth, window.innerHeight);
-  document.body.appendChild(renderer.domElement);
+  const container = document.currentScript.closest('.visual-box') || document.body;
+  renderer.setSize(container.clientWidth, container.clientHeight);
+  container.appendChild(renderer.domElement);
 
   // Controls
   controls = new THREE.OrbitControls(camera, renderer.domElement);
