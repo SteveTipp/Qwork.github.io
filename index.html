@@ -3,106 +3,116 @@
 <head>
     <title>Qwork</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-
-
     <meta name="QWORK" content="Explore groundbreaking experiments in quantum mechanics and computing.">
 
-    <!-- Open Graph / Facebook -->
+    <!-- Social Metadata -->
     <meta property="og:title" content="QWORK - Quantum Computing"/>
     <meta property="og:description" content="Dive into the world of quantum computing.">
     <meta property="og:image" content="QImage4.png"/>
     <meta property="og:url" content="qubits.work"/>
     <meta property="og:type" content="website"/>
-
-    <!-- Twitterr -->
     <meta name="twitter:card" content="summary_large_image">
     <meta name="twitter:title" content="Qwork - Quantum Computing">
     <meta name="twitter:description" content="Dive into the world of quantum computing.">
     <meta name="twitter:image" content="QImage4.png">
 
-
-
-
-
-
-
-
-
-
-
-    
     <style>
         body {
-            background-color: #000000; /* Black background */
-            color: #FFFFFF; /* White text */
+            background-color: #000000;
+            color: #FFFFFF;
             font-family: Arial, sans-serif;
             margin: 0;
             padding: 0;
         }
+
         header {
             background: url('QImage4.png') no-repeat center center;
-            background-size: contain; 
-            height: 400px; 
+            background-size: contain;
+            height: 400px;
             position: relative;
         }
+
         nav {
             display: flex;
             justify-content: center;
             padding: 10px 0;
         }
+
         nav a {
-            color: #FFFFFF; /* White links */
+            color: #FFFFFF;
             margin: 0 20px;
-            justify-content: center;
             text-decoration: none;
             font-size: 1.2em;
         }
+
         nav a:hover {
-            color: #00FF00; /* Matrix green for hover state */
+            color: #00FF00;
         }
+
         .experiments-list {
             display: flex;
-            flex-wrap: wrap;
-            justify-content: center;
+            flex-direction: column;
+            align-items: center;
             padding: 20px;
         }
-        .experiment-link {
-            background-color: #000000; /* Black background */
-            color: #00FF00; /* Matrix green text */
-            padding: 10px;
-            margin: 5px;
-            text-decoration: none;
-            border: 1px solid #00FF00; /* Matrix green border */
-            flex-basis: calc(50% - 10px); 
+
+        .visual-title {
+            font-size: 1.4em;
+            color: #00FF00;
+            margin-top: 40px;
+            margin-bottom: 10px;
+            text-align: center;
         }
-        .experiment-link:hover {
-            background-color: #001a00; /* :Lighter black for hover background */
+
+        .visual-box {
+            width: 90%;
+            max-width: 800px;
+            aspect-ratio: 4 / 3;
+            margin: 0 auto 40px auto;
+            border: 2px solid #00FF00;
+            background-color: #000;
+            overflow: hidden;
+            position: relative;
+            display: flex;
+            justify-content: center;
+            align-items: center;
         }
+
+        canvas {
+            width: 100%;
+            height: 100%;
+            display: block;
+            position: relative;
+        }
+
         footer {
-            color: #FFFFFF; /* White text */
+            color: #FFFFFF;
             text-align: center;
             padding: 20px 0;
         }
+
         footer a {
             color: #FFFFFF;
             text-decoration: none;
         }
+
         footer a:hover {
-            color: #00FF00; /* Matrix green on hover */
+            color: #00FF00;
         }
-          /* Media Query for devices with max width of 600px */
+
         @media (max-width: 450px) {
             header {
-                height: 200px; /* Set header height to 200px for smaller screens */
+                height: 200px;
             }
-    }
+            .visual-box {
+                aspect-ratio: 1 / 1;
+            }
+        }
     </style>
 </head>
 <body>
 
-    <header>
-    </header>
+    <header></header>
 
     <nav>
         <a href="try_yourself.html">Try Yourself</a>
@@ -111,95 +121,101 @@
     </nav>
 
     <section class="experiments-list">
-    
-        <!-- List of experiments as links -->
-        <a href="experiment75.html" class="experiment-link"><center>Causal Quantum Timekeeping with Chained Bloch Clocks while Breaking a 3-Bit Elliptic Curve Key via Shor’s Algorithm   (133-Qubits)</center></a>
-        <a href="experiment74.html" class="experiment-link"><center>Quantum Timekeeping while Breaking a 3-Bit Elliptic Curve Key via Shor’s Algorithm  (133-Qubits)</center></a>
-        <a href="experiment73.html" class="experiment-link"><center>Breaking a 5-Bit Elliptic Curve Key  (133-Qubits)</center></a>
-        <a href="experiment72.html" class="experiment-link"><center>Breaking a 4-Bit Elliptic Curve Key (133-Qubits)</center></a>
-        <a href="experiment71.html" class="experiment-link"><center>Adinkra-Based E8 CSS Code for Quantum Error Detection (133-Qubits)</center></a>
-        <a href="experiment70.html" class="experiment-link"><center>Multi-Cavity Topological Casimir Tunneling (133-Qubits)</center></a>
-        <a href="experiment69.html" class="experiment-link"><center>Twistor‑Casimir Coupling in a Discrete Null Lattice (100-Qubits)</center></a>
-        <a href="experiment68.html" class="experiment-link"><center>Twistor‑Casimir Coupling in a Discrete Null Lattice (49-Qubits)</center></a>
-        <a href="experiment67.html" class="experiment-link"><center>Dynamic Casimir Photon Emission (133-Qubits)</center></a>
-        <a href="experiment66.html" class="experiment-link"><center>Breaking a 3-Bit Elliptic Curve Key (133-Qubits)</center></a>
-        <a href="experiment65.html" class="experiment-link"><center>Topological Chimeric Spinor Projection (127-Qubits)</center></a>
-        <a href="experiment64.html" class="experiment-link"><center>Dual‑Diagonal Twistor Surface Code (127-Qubits)</center></a>
-        <a href="experiment63.html" class="experiment-link"><center>Twistor-Entangled Quantum Repetition (127-Qubits)</center></a>
-        <a href="experiment62.html" class="experiment-link"><center>Twistor-Encoded Error Geometry (127-Qubits)</center></a>
-        <a href="experiment61.html" class="experiment-link"><center>Twistor-Encoded Quantum State Stabilization (127-Qubits)</center></a>
-        <a href="experiment60.html" class="experiment-link"><center>Twistor-Inspired Quantum Teleportation (127-Qubits)</center></a>
-        <a href="experiment59.html" class="experiment-link"><center>Twistor-Inspired Quantum Annealing (127-Qubits)</center></a>
-        <a href="experiment58.html" class="experiment-link"><center>Multi-Layer Retrocausal Encryption (127-Qubits)</center></a>
-        <a href="experiment57.html" class="experiment-link"><center>Delayed-Choice Entanglement Swapping (127-Qubits)</center></a>
-        <a href="experiment56.html" class="experiment-link"><center>Entanglement Dynamics Under the Influence of '(c^4)/G' (127-Qubits)</center></a>
-        <a href="experiment55.html" class="experiment-link"><center>Factoring 95 with Shors Algorithm (127-Qubits)</center></a>
-        <a href="experiment54.html" class="experiment-link"><center>Factoring 77 with Shor's Algorithm (Simplified) (127-Qubits)</center></a>
-        <a href="experiment53.html" class="experiment-link"><center>Exploring State Dynamics in Abstract 1 + 1, 2 + 1, and 3 + 1 Spacetime Dimensions (127-Qubits)</center></a>
-        <a href="experiment52.html" class="experiment-link"><center>Exploring the Geometric Phase of Robinson Congruences in Quantum Circuits (127-Qubits)</center></a>
-        <a href="experiment51.html" class="experiment-link"><center>Embedding Clifford Parallels in Multi-qubit Stabilizers (127-Qubits)</center></a>
-        <a href="experiment50.html" class="experiment-link"><center>Null-Light Ray Tomography with a Twistor Inspired Circuit (127-Qubits)</center></a>
-        <a href="experiment49.html" class="experiment-link"><center>Optimizing Internet Data Packet Routing (127-Qubits)</center></a>
-        <a href="experiment48.html" class="experiment-link"><center>Exploring the Traveling Salesman Problem in Non-Euclidean Spaces (127-Qubits)</center></a>
-        <a href="experiment47.html" class="experiment-link"><center>Quantum Optimization of Protein Folding Pathways (127-Qubits)</center></a>
-        <a href="experiment46.html" class="experiment-link"><center>Quantum Optimization of Neural Network Training Sequences (127-Qubits)</center></a>
-        <a href="experiment45.html" class="experiment-link"><center>Drone Delivery Route Optimization (127-Qubits)</center></a>
-        <a href="experiment44.html" class="experiment-link"><center>Quantum Algorithm Design for Warehouse Route Optimization (127-Qubits)</center></a>
-        <a href="experiment43.html" class="experiment-link"><center>Exploring Plasma Turbulence Using Hierarchical Qubit Clusters (127-Qubits)</center></a>
-        <a href="experiment42.html" class="experiment-link"><center>Simulating Quark-Gluon Plasma Interactions (127-Qubits)</center></a>
-        <a href="experiment41.html" class="experiment-link"><center>Exploring the Navier-Stokes Equations Using Carleman Linearization (127-Qubits)</center></a>
-        <a href="experiment40.html" class="experiment-link"><center>Quantum Field Simulation in Curved Spacetime (127-Qubits)</center></a>
-        <a href="experiment39.html" class="experiment-link"><center>Testing the Goldbach Conjecture using Shor’s Algorithm (127-Qubits)</center></a>
-        <a href="experiment38.html" class="experiment-link"><center>Exploring Prime Factorization Using Shor’s Algorithm (127-Qubits)</center></a>
-        <a href="experiment37.html" class="experiment-link"><center>Twistor-Inspired Quantum Error Correction (127-Qubits)</center></a>
-        <a href="experiment36.html" class="experiment-link"><center>Modeling the Dirac Equation (127-Qubits)</center></a>
-        <a href="experiment35.html" class="experiment-link"><center>Modeling Abstract Quantum Gravity Using Twistor Theory (127-Qubits)</center></a>
-        <a href="experiment34.html" class="experiment-link"><center>Conformal Invariance in Quantum Field Theory(127-Qubits)</center></a>
-        <a href="experiment33.html" class="experiment-link"><center>Quantum Exploration of Twistor Space (127-Qubits)</center></a>
-        <a href="experiment32.html" class="experiment-link"><center>Quantum Computation of Scattering Amplitudes Using Twistor Theory (127-Qubits)</center></a>
-        <a href="experiment31.html" class="experiment-link"><center>A Quantum-Based Secure Code Authentication App (127-Qubits)</center></a>
-        <a href="experiment30.html" class="experiment-link"><center>Quantum Timekeeping Using a Bloch Clock (127-Qubits)</center></a>
-        <a href="experiment29.html" class="experiment-link"><center>A Quantum Clock on a Bloch Sphere (127-Qubits)</center></a>
-        <a href="experiment28.html" class="experiment-link"><center>Investigating the Riemann Hypothesis via Quantum Path Integrals (127-Qubits)</center></a>
-        <a href="experiment27.html" class="experiment-link"><center>Investigating the Riemann Hypothesis via Quantum Path Integrals (50-Qubits)</center></a>
-        <a href="experiment26.html" class="experiment-link"><center>Quantum Simulation of Abstract Gravitational Instantons</center></a>
-        <a href="experiment25.html" class="experiment-link"><center>Quark-Antiquark Interaction Simulation</center></a>
-        <a href="experiment24.html" class="experiment-link"><center>Quantum Q-Learning</center></a>
-        <a href="experiment23.html" class="experiment-link"><center>Optimizing a Quantum Neuron Using Gradient Descent</center></a>
-        <a href="experiment22.html" class="experiment-link"><center>Exploring Quantum Chaos and Information Scrambling on an Abstract Black Hole's Event Horizon</center></a>
-        <a href="experiment21.html" class="experiment-link"><center>Testing Entropy, Variance, and Standard Deviation between 10 and 100 Qubits</center></a>
-        <a href="experiment20.html" class="experiment-link"><center>Creating a Quantum Bitcoin Seed Phrase</center></a>
-        <a href="experiment19.html" class="experiment-link"><center>A Quantum Neural Network</center></a>
-        <a href="experiment18.html" class="experiment-link"><center>Exploring Abstract Electron-Positron Annihilation</center></a>
-        <a href="experiment17.html" class="experiment-link"><center>A Quantum Walk</center></a>
-        <a href="experiment16.html" class="experiment-link"><center>Quantum Cats: Encoding a Cat in 100 Quantum States</center></a>
-        <a href="experiment15.html" class="experiment-link"><center>Using Quantum Cryptography to Create a Secure Bitcoin Key</center></a>
-        <a href="experiment14.html" class="experiment-link"><center>Reducing Entropy Through Quantum Teleportation</center></a>
-        <a href="experiment13.html" class="experiment-link"><center>10-Cluster Entanglement Network</center></a>
-        <a href="experiment12.html" class="experiment-link"><center>100-Qubit Quantum Entanglement</center></a>
-        <a href="experiment11.html" class="experiment-link"><center>Encoding Visual Data in 25 Quantum States</center></a>
-        <a href="experiment10.html" class="experiment-link"><center>Exploring Quantum Teleportation</center></a>
-        <a href="experiment9.html" class="experiment-link"><center>Exploring Quantum Gate-Induced Qubit Transitions</center></a>
-        <a href="experiment8.html" class="experiment-link"><center>Exploring Abstract Black Hole Physics</center></a>
-        <a href="experiment7.html" class="experiment-link"><center>Tracing Time-Dependent Quantum State Changes with the Objective Collapse Model</center></a>
-        <a href="experiment6.html" class="experiment-link"><center>Quantum Pixels: Encoding Visual Data within Qubits</center></a>
-        <a href="experiment5.html" class="experiment-link"><center>Testing Quantum Speed Limits</center></a>
-        <a href="experiment4.html" class="experiment-link"><center>Visualizing Two-Qubit Superposition</center></a>
-        <a href="experiment3.html" class="experiment-link"><center>Quantum Superposition in Musical Representation: Beethoven's Sonata on a Quantum Keyboard</center></a>
-        <a href="experiment2.html" class="experiment-link"><center>Single Qubit Collapse</center></a>
-        <a href="experiment1.html" class="experiment-link"><center>Recreating The 2022 Nobel Prize-Winning Entanglement Experiment</center></a>
 
+        <div class="visual-title">Robinson Congruence</div>
+        <div id="visual-1" class="visual-box"></div>
 
-        
+        <div class="visual-title">Multi-Layer Retrocausal Encryption</div>
+        <div id="visual-2" class="visual-box"></div>
 
-    
-        <!-- Continue with additional experiment links -->
     </section>
 
     <footer>
-        <a href="mailto:stevetippeconnic@gmail.com">Contact</a> <br>
-        <a href="https://x.com/SteveTipp">Follow Me</a> 
+        <a href="mailto:stevetippeconnic@gmail.com">Contact</a><br>
+        <a href="https://x.com/SteveTipp">Follow Me</a>
     </footer>
+
+    <!-- Core libraries -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/simplex-noise/2.4.0/simplex-noise.min.js"></script>
+
+    <!-- Load Robinson Congruence (auto appends to first canvas) -->
+    <script>
+        const originalAppend = document.body.appendChild;
+        let visualCount = 0;
+        document.body.appendChild = function(element) {
+            if (element instanceof HTMLCanvasElement) {
+                const target = document.getElementById(`visual-${++visualCount}`);
+                if (target) target.appendChild(element);
+                else originalAppend.call(document.body, element);
+            } else {
+                originalAppend.call(document.body, element);
+            }
+        };
+    </script>
+    <script src="Robinson_Congruence_Visual.js"></script>
+
+    <!-- Modularized Multi-Layer Retrocausal Encryption Visual -->
+    <script>
+    async function initRetrocausalWave() {
+        const container = document.getElementById('visual-2');
+        const canvas = document.createElement('canvas');
+        container.appendChild(canvas);
+
+        const renderer = new THREE.WebGLRenderer({ canvas, antialias: true });
+        renderer.setSize(container.clientWidth, container.clientHeight);
+        renderer.setPixelRatio(window.devicePixelRatio);
+
+        const scene = new THREE.Scene();
+        const camera = new THREE.PerspectiveCamera(75, container.clientWidth / container.clientHeight, 0.1, 1000);
+        camera.position.set(0, 5, 10);
+        camera.lookAt(0, 0, 0);
+
+        const controls = new THREE.OrbitControls(camera, renderer.domElement);
+        controls.enableDamping = true;
+
+        scene.add(new THREE.DirectionalLight(0xffffff, 1).position.set(10, 10, 10));
+
+        const geometry = new THREE.PlaneGeometry(10, 10, 50, 50);
+        const material = new THREE.MeshStandardMaterial({ color: 0x00ff00, wireframe: true });
+        const mesh = new THREE.Mesh(geometry, material);
+        mesh.rotation.x = -Math.PI / 2;
+        scene.add(mesh);
+
+        const noise = new SimplexNoise();
+        let time = 0;
+
+        const response = await fetch('Multi_Layer_Retrocausal_Encryption_8.json');
+        const json = await response.json();
+        const counts = json.raw_counts;
+        const bitstrings = Object.keys(counts);
+        const maxCount = Math.max(...Object.values(counts));
+
+        function animate() {
+            requestAnimationFrame(animate);
+            time += 0.05;
+
+            const pos = geometry.attributes.position.array;
+            for (let i = 0; i < pos.length; i += 3) {
+                const x = pos[i];
+                const y = pos[i + 1];
+                const idx = (i / 3) % bitstrings.length;
+                const bitstring = bitstrings[idx];
+                const amp = (counts[bitstring] / maxCount) * 1.5;
+                pos[i + 2] = amp * Math.sin(x * 2 + time) * Math.cos(y * 2 + time);
+            }
+            geometry.attributes.position.needsUpdate = true;
+
+            controls.update();
+            renderer.render(scene, camera);
+        }
+
+        animate();
+    }
+
+    window.addEventListener('DOMContentLoaded', initRetrocausalWave);
+    </script>
 
 </body>
 </html>
