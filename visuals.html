@@ -119,11 +119,18 @@
     
 
    <div class="visual-title">
-  <a href="https://stevetipp.github.io/Qwork.github.io/experiment65.html" target="_blank" style="color: #00ff00; text-decoration: none;">
+  <a href="https://stevetipp.github.io/Qwork.github.io/experiment65.html"
+     target="_blank"
+     style="color:#00ff00;text-decoration:none;">
     Topological Chimeric Spinor Projection
   </a>
 </div>
-<iframe src="retrocausal_16.html" class="visual-frame" frameborder="0"></iframe>
+
+<iframe class="visual-frame"
+        data-src="retrocausal_16.html"
+        frameborder="0"
+        loading="lazy">
+</iframe>
 
 
 
@@ -308,29 +315,32 @@
 
 <!-- Lazy Load & Unload Iframes to Reduce WebGL Load -->
 <script>
-    const observer = new IntersectionObserver((entries) => {
-        entries.forEach(entry => {
-            const iframe = entry.target;
-            if (entry.isIntersecting) {
-                if (!iframe.src && iframe.dataset.src) {
-                    iframe.src = iframe.dataset.src;
-                }
-            } else {
-                if (iframe.src) {
-                    iframe.src = '';
-                }
-            }
-        });
-    }, {
-        root: null,
-        rootMargin: '0px',
-        threshold: 0.1
-    });
+/* --- Unified lazy-load / unload --- */
+const io = new IntersectionObserver(
+  entries => entries.forEach(entry => {
+    const frame = entry.target;
 
-    document.querySelectorAll('iframe[data-src]').forEach(iframe => {
-        observer.observe(iframe);
-    });
+    if (entry.isIntersecting) {
+      /* First time in view → load the page */
+      if (!frame.src) frame.src = frame.dataset.src;
+
+      /* Tell the child scene to resume */
+      frame.contentWindow?.postMessage({action:'resume'}, '*');
+    } else {
+      /* Tell the child scene to pause cleanly */
+      frame.contentWindow?.postMessage({action:'pause'}, '*');
+
+      /* Drop the src to lose the WebGL context */
+      if (frame.src) frame.src = '';
+    }
+  }),
+  {root: null, rootMargin: '0px', threshold: 0.25}
+);
+
+document.querySelectorAll('iframe.visual-frame')
+        .forEach(f => io.observe(f));
 </script>
+
 
 </body>
 </html>
