@@ -287,24 +287,6 @@
 
 
 
-    
-<script>
-    const observer = new IntersectionObserver((entries) => {
-        entries.forEach(entry => {
-            const iframe = entry.target;
-            if (iframe.contentWindow) {
-                iframe.contentWindow.postMessage(
-                    { action: entry.isIntersecting ? 'resume' : 'pause' },
-                    '*'
-                );
-            }
-        });
-    }, { threshold: 0.1 });
-
-    document.querySelectorAll('iframe.visual-frame').forEach(iframe => {
-        observer.observe(iframe);
-    });
-</script>
 
 
 
