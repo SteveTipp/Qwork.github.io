@@ -28,8 +28,8 @@ light.position.set(10, 15, 12);
 scene.add(light);
 
 /* camera */
-camera.position.set(40, 0, 0);  
-camera.lookAt(0, 0, 0);  
+camera.position.set(60, 20, 0);    // zoom out (x = 60), tilt down from a height (y = 20)
+camera.lookAt(0, 0, 0); 
 
 /* orbit controls (non-module global) */
 const controls = new THREE.OrbitControls(camera, renderer.domElement);
