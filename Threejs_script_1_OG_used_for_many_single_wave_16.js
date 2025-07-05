@@ -114,30 +114,37 @@ async function init() {
 /* 6.  Animation loop                                                    */
 /* --------------------------------------------------------------------- */
 function animate() {
-  requestAnimationFrame(animate);
-  time += 0.003;
+    animationId = requestAnimationFrame(animate);
 
-  panels.forEach(p => {
-    const { mesh, norm } = p;
-    const pos  = mesh.geometry.attributes.position;
-    const arr  = pos.array;
+    time += 0.008;
 
-    for (let i = 0; i < arr.length; i += 3) {
-      // vertex local coordinates after PlaneGeometry creation
-      const x = arr[i];
-      const y = arr[i + 1];
+    panels.forEach(({ mesh, norm }) => {
+        const pos = mesh.geometry.attributes.position;
+        const orig = mesh.geometry.parameters;
+        const widthSegs = orig.widthSegments + 1;
+        const heightSegs = orig.heightSegments + 1;
 
-      // simplex noise for organic ripple
-      const n = noise.noise3D(x * 0.25, y * 0.25, time);
+        for (let i = 0; i < pos.count; i++) {
+            const ix = i % widthSegs;
+            const iz = Math.floor(i / widthSegs);
 
-      // z-displacement
-      arr[i + 2] = n * 3 * norm;   // scale by panel “heat”
-    }
-    pos.needsUpdate = true;
-  });
+            const x = ix / widthSegs * PLANE_SIZE;
+            const z = iz / heightSegs * PLANE_SIZE;
 
-  controls.update();
-  renderer.render(scene, camera);
+            const n = noise.noise3D(
+                mesh.position.x * 0.1 + x * 0.3,
+                mesh.position.z * 0.1 + z * 0.3,
+                time
+            );
+
+            const amplitude = n * 2.5 * norm;
+            pos.setY(i, amplitude);
+        }
+
+        pos.needsUpdate = true;
+    });
+
+    renderer.render(scene, camera);
 }
 
 /* --------------------------------------------------------------------- */
