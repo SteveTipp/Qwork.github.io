@@ -28,8 +28,8 @@ light.position.set(10, 15, 12);
 scene.add(light);
 
 /* camera */
-camera.position.set(0, 40, 80);
-camera.lookAt(0, 0, 0);
+camera.position.set(40, 0, 0);  
+camera.lookAt(0, 0, 0);  
 
 /* orbit controls (non-module global) */
 const controls = new THREE.OrbitControls(camera, renderer.domElement);
