@@ -111,32 +111,27 @@ async function init() {
 /* --------------------------------------------------------------------- */
 /* 6.  Animation loop                                                    */
 /* --------------------------------------------------------------------- */
+let animationId;
+
 function animate() {
-  requestAnimationFrame(animate);
-  time += 0.003;
-
-  panels.forEach(p => {
-    const { mesh, norm } = p;
-    const pos  = mesh.geometry.attributes.position;
-    const arr  = pos.array;
-
-    for (let i = 0; i < arr.length; i += 3) {
-      // vertex local coordinates after PlaneGeometry creation
-      const x = arr[i];
-      const y = arr[i + 1];
-
-      // simplex noise for organic ripple
-      const n = noise.noise3D(x * 0.25, y * 0.25, time);
-
-      // z-displacement
-      arr[i + 2] = n * 3 * norm;   // scale by panel “heat”
-    }
-    pos.needsUpdate = true;
-  });
-
-  controls.update();
-  renderer.render(scene, camera);
+    animationId = requestAnimationFrame(animate);
+    renderer.render(scene, camera);
 }
+
+// Start animation immediately
+animate();
+
+// Listen for pause/resume messages
+window.addEventListener("message", (event) => {
+    if (!event.data || !event.data.action) return;
+
+    if (event.data.action === "pause") {
+        cancelAnimationFrame(animationId);
+    } else if (event.data.action === "resume") {
+        animate(); // resume
+    }
+});
+
 
 /* --------------------------------------------------------------------- */
 /* 7. Kick everything off                                                */
