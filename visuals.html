@@ -123,7 +123,8 @@
     Topological Chimeric Spinor Projection
   </a>
 </div>
-<iframe src="retrocausal_16.html" class="visual-frame" frameborder="0"></iframe>
+<iframe src="retrocausal_16.html" class="visual-frame" frameborder="0" loading="lazy"></iframe>
+
 
 
     <div class="visual-title">
@@ -275,6 +276,32 @@
         }
     };
 </script>
+
+
+
+
+    
+<script>
+    const observer = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+            const iframe = entry.target;
+            if (iframe.contentWindow) {
+                iframe.contentWindow.postMessage(
+                    { action: entry.isIntersecting ? 'resume' : 'pause' },
+                    '*'
+                );
+            }
+        });
+    }, { threshold: 0.1 });
+
+    document.querySelectorAll('iframe.visual-frame').forEach(iframe => {
+        observer.observe(iframe);
+    });
+</script>
+
+
+
+    
 
 <!-- Robinson Congruence -->
 <script src="Robinson_Congruence_Visual.js"></script>
