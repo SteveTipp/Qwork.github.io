@@ -1,150 +1,137 @@
 
 
+// Load JSON data
 async function loadQuantumData() {
-
-  const url =
-    'GU_Chimeric_Spinor_Projection_Test_32768_0.json';
-
-  const res  = await fetch(url);
-  if (!res.ok) {
-    throw new Error(`Quantum-data load failed: ${res.status} ${res.statusText}`);
-  }
-  return await res.json();        // returns ONE object
+  const response = await fetch('ECDLP_8pts_Shors_Run_0.json');
+  const data = await response.json();
+  return data.counts;
 }
 
-
-const scene     = new THREE.Scene();
-const camera    = new THREE.PerspectiveCamera(
-  70,
-  window.innerWidth / window.innerHeight,
-  0.1,
-  1000
-);
-const renderer  = new THREE.WebGLRenderer({ antialias: true });
+// Three.js Setup
+const scene = new THREE.Scene();
+const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+const renderer = new THREE.WebGLRenderer({ antialias: true });
 renderer.setSize(window.innerWidth, window.innerHeight);
 document.body.appendChild(renderer.domElement);
 
-/* lighting */
-const light = new THREE.DirectionalLight(0xffffff, 1.0);
-light.position.set(10, 15, 12);
-scene.add(light);
-
-/* camera */
-camera.position.set(60, 20, 0);    // zoom out (x = 60), tilt down from a height (y = 20)
-camera.lookAt(0, 0, 0); 
-
-/* orbit controls (non-module global) */
+// Orbit controls
 const controls = new THREE.OrbitControls(camera, renderer.domElement);
 
+// Lighting
+const light = new THREE.DirectionalLight(0xffffff, 1);
+light.position.set(10, 10, 10);
+scene.add(light);
 
-const COL_BITS = 3;                     // first 3 bits  → column (0-7)
-const ROW_BITS = 4;                     // next 4 bits  → row    (0-15)
-const COLS     = 1 << COL_BITS;         // 8
-const ROWS     = 1 << ROW_BITS;         // 16
+// Camera Position
+camera.position.set(0, 20, 40);
+camera.lookAt(0, 0, 0);
 
-const PLANE_SIZE  = 6;                  // width & depth in world units
-const GRID_DIV    = 20;                 // segments per side
-const PLANE_SPACE = PLANE_SIZE + 1.5;   // gap between panels
+// Globals
+let mesh, redDots = [];
+let time = 0;
 
-const noise = new SimplexNoise();
-let   time  = 0;
-const panels = [];                      // store metadata for animation
+// Parse data into 2D matrix
+function parseCountsToGrid(counts) {
+  const gridSize = 8;
+  const matrix = Array.from({ length: gridSize }, () => Array(gridSize).fill(0));
+  let maxCount = 0;
 
-
-function makeWavePlane(panelInfo, colIdx, rowIdx) {
-  const geo = new THREE.PlaneGeometry(PLANE_SIZE, PLANE_SIZE, GRID_DIV, GRID_DIV);
-  const mat = new THREE.MeshStandardMaterial({
-    color: 0x00ff00,
-    wireframe: true
-  });
-
-  const mesh = new THREE.Mesh(geo, mat);
-  mesh.rotation.x = -Math.PI / 2;
-
-  mesh.position.x = (colIdx - (COLS - 1) / 2) * PLANE_SPACE;
-  mesh.position.z = (rowIdx - (ROWS - 1) / 2) * PLANE_SPACE;
-
-  scene.add(mesh);
-
-  panels.push({
-    mesh,
-    total: panelInfo.total,           // for amplitude scaling
-  });
-}
-
-
-async function init() {
-  const data         = await loadQuantumData();
-  const raw          = data.raw_counts;                 // big histogram
-  const panelBuckets = new Array(COLS * ROWS)
-    .fill(null)
-    .map(() => ({ counts: {}, total: 0 }));
-
-  /* bucket every bit-string ------------------------------------------- */
-  let globalMaxPanelTotal = 0;
-
-  for (const [bitStr, count] of Object.entries(raw)) {
-    if (bitStr.length !== 7) continue;                  // sanity
-
-    const col = parseInt(bitStr.slice(0, COL_BITS), 2);           // 0-7
-    const row = parseInt(bitStr.slice(COL_BITS),     2);          // 0-15
-    const idx = row * COLS + col;
-
-    const bucket = panelBuckets[idx];
-    bucket.counts[bitStr] = count;
-    bucket.total         += count;
-
-    if (bucket.total > globalMaxPanelTotal)
-      globalMaxPanelTotal = bucket.total;
+  for (const [bitstring, count] of Object.entries(counts)) {
+      const u = parseInt(bitstring.slice(3), 2); // rightmost 3 bits
+      const v = parseInt(bitstring.slice(0, 3), 2); // leftmost 3 bits
+      matrix[u][v] = count;
+      if (count > maxCount) maxCount = count;
   }
 
-  /* create one plane for every *non-empty* bucket --------------------- */
-  panelBuckets.forEach((bucket, idx) => {
-    if (bucket.total === 0) return;                     // skip empties
-    const col = idx % COLS;
-    const row = Math.floor(idx / COLS);
-    makeWavePlane(bucket, col, row);
-  });
-
-  /* stash global max for anim scaling */
-  panels.forEach(p => (p.norm = p.total / globalMaxPanelTotal));
+  return { matrix, maxCount };
 }
 
-/* --------------------------------------------------------------------- */
-/* 6.  Animation loop                                                    */
-/* --------------------------------------------------------------------- */
+// Build surface mesh + red dots
+function createWaveSurface(matrix, maxCount) {
+  const width = 16;
+  const segments = 64;
+  const geometry = new THREE.PlaneGeometry(width, width, segments, segments);
+
+  // Vertex color setup
+  const colors = [];
+  const gridX = segments + 1;
+  const gridY = segments + 1;
+
+  for (let y = 0; y < gridY; y++) {
+      for (let x = 0; x < gridX; x++) {
+          const u = Math.floor(x / (gridX / 8));
+          const v = Math.floor(y / (gridY / 8));
+          const isDiagonal = (u + 7 * v) % 8 === 0;
+          const color = isDiagonal ? new THREE.Color(0x0000ff) : new THREE.Color(0x00ff00);
+          colors.push(color.r, color.g, color.b);
+      }
+  }
+
+  geometry.setAttribute('color', new THREE.Float32BufferAttribute(colors, 3));
+
+  const material = new THREE.MeshBasicMaterial({ vertexColors: true, wireframe: true });
+  mesh = new THREE.Mesh(geometry, material);
+  mesh.rotation.x = -Math.PI / 2;
+  scene.add(mesh);
+
+  // Add red dots
+  const dotMaterial = new THREE.MeshBasicMaterial({ color: 0xff0000 });
+  for (let x = 0; x < 8; x++) {
+      for (let y = 0; y < 8; y++) {
+          const dotGeo = new THREE.SphereGeometry(0.15, 8, 8);
+          const dot = new THREE.Mesh(dotGeo, dotMaterial);
+          dot.position.set(x - 3.5, 0, y - 3.5); // Centered
+          redDots.push(dot);
+          scene.add(dot);
+      }
+  }
+
+  mesh.userData = { matrix, maxCount };
+}
+
+// Animate wave surface
 function animate() {
   requestAnimationFrame(animate);
-  time += 0.003;
+  time += 0.2;
 
-  panels.forEach(p => {
-    const { mesh, norm } = p;
-    const pos  = mesh.geometry.attributes.position;
-    const arr  = pos.array;
+  if (!mesh || !mesh.geometry || !mesh.geometry.attributes.position) return;
 
-    for (let i = 0; i < arr.length; i += 3) {
-      // vertex local coordinates after PlaneGeometry creation
-      const x = arr[i];
-      const y = arr[i + 1];
+  const { matrix, maxCount } = mesh.userData;
+  const pos = mesh.geometry.attributes.position;
+  const gridX = mesh.geometry.parameters.widthSegments + 1;
+  const gridY = mesh.geometry.parameters.heightSegments + 1;
 
-      // simplex noise for organic ripple
-      const n = noise.noise3D(x * 0.25, y * 0.25, time);
+  for (let i = 0; i < pos.count; i++) {
+      const x = i % gridX;
+      const y = Math.floor(i / gridX);
+      const u = Math.floor(x / (gridX / 8));
+      const v = Math.floor(y / (gridY / 8));
 
-      // z-displacement
-      arr[i + 2] = n * 3 * norm;   // scale by panel “heat”
-    }
-    pos.needsUpdate = true;
+      const amp = (matrix[u] && matrix[u][v]) ? matrix[u][v] / maxCount : 0;
+      const wave = Math.sin((x + time) * 0.4) * Math.cos((y + time) * 0.4);
+
+      pos.setZ(i, amp * wave * 20); // Amplified wave amplitude
+  }
+
+  // Update red dots
+  redDots.forEach((dot, i) => {
+      const u = i % 8;
+      const v = Math.floor(i / 8);
+      const amp = (matrix[u] && matrix[u][v]) ? matrix[u][v] / maxCount : 0;
+      dot.position.y = amp * 20 + 0.5;
   });
 
+  pos.needsUpdate = true;
   controls.update();
   renderer.render(scene, camera);
 }
 
-/* --------------------------------------------------------------------- */
-/* 7. Kick everything off                                                */
-/* --------------------------------------------------------------------- */
-init().then(animate).catch(err => console.error(err));
+// Main
+loadQuantumData().then(data => {
+  const { matrix, maxCount } = parseCountsToGrid(data);
+  createWaveSurface(matrix, maxCount);
+  animate();
+});
 
-/* --------------------------------------------------------------------- */
 
 
