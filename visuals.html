@@ -1,5 +1,4 @@
 
-
 <!DOCTYPE html>
 <html>
 <head>
@@ -18,92 +17,21 @@
     <meta name="twitter:image" content="QImage4.png">
 
     <style>
-        body {
-            background-color: #000000;
-            color: #FFFFFF;
-            font-family: Arial, sans-serif;
-            margin: 0;
-            padding: 0;
-        }
-
-        header {
-            background: url('QImage4.png') no-repeat center center;
-            background-size: contain;
-            height: 400px;
-        }
-
-        nav {
-            display: flex;
-            justify-content: center;
-            padding: 10px 0;
-        }
-
-        nav a {
-            color: #FFFFFF;
-            margin: 0 20px;
-            text-decoration: none;
-            font-size: 1.2em;
-        }
-
-        nav a:hover {
-            color: #00FF00;
-        }
-
-        .experiments-list {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            padding: 20px;
-        }
-
-        .visual-title {
-            font-size: 1.4em;
-            color: #00FF00;
-            margin-top: 40px;
-            margin-bottom: 10px;
-            text-align: center;
-        }
-
-        .visual-box,
-        iframe.visual-frame {
-            width: 90%;
-            max-width: 800px;
-            aspect-ratio: 4 / 3;
-            margin: 0 auto 40px auto;
-            border: 2px solid #00FF00;
-            background-color: #000;
-        }
-
-        canvas {
-            width: 100%;
-            height: 100%;
-            display: block;
-        }
-
-        footer {
-            color: #FFFFFF;
-            text-align: center;
-            padding: 20px 0;
-        }
-
-        footer a {
-            color: #FFFFFF;
-            text-decoration: none;
-        }
-
-        footer a:hover {
-            color: #00FF00;
-        }
-
-        @media (max-width: 450px) {
-            header {
-                height: 200px;
-            }
-
-            .visual-box,
-            iframe.visual-frame {
-                aspect-ratio: 1 / 1;
-            }
+        body{background:#000;color:#fff;font-family:Arial,sans-serif;margin:0;padding:0}
+        header{background:url('QImage4.png') no-repeat center/contain;height:400px}
+        nav{display:flex;justify-content:center;padding:10px 0}
+        nav a{color:#fff;margin:0 20px;text-decoration:none;font-size:1.2em}
+        nav a:hover{color:#0f0}
+        .experiments-list{display:flex;flex-direction:column;align-items:center;padding:20px}
+        .visual-title{font-size:1.4em;color:#0f0;margin:40px 0 10px;text-align:center}
+        .visual-box,iframe.visual-frame{width:90%;max-width:800px;aspect-ratio:4/3;margin:0 auto 40px;border:2px solid #0f0;background:#000}
+        canvas{width:100%;height:100%;display:block}
+        footer{color:#fff;text-align:center;padding:20px 0}
+        footer a{color:#fff;text-decoration:none}
+        footer a:hover{color:#0f0}
+        @media(max-width:450px){
+            header{height:200px}
+            .visual-box,iframe.visual-frame{aspect-ratio:1/1}
         }
     </style>
 </head>
@@ -119,116 +47,53 @@
 
 <section class="experiments-list">
 
-    <div class="visual-title">
-        <a href="https://stevetipp.github.io/Qwork.github.io/experiment65.html" target="_blank" style="color:#00ff00;text-decoration:none;">
-            Topological Chimeric Spinor Projection
-        </a>
-    </div>
+    <!------- VISUAL BLOCKS ------->
+    <div class="visual-title"><a href="https://stevetipp.github.io/Qwork.github.io/experiment65.html" target="_blank" style="color:#0f0;text-decoration:none">Topological Chimeric Spinor Projection</a></div>
     <iframe class="visual-frame" data-src="retrocausal_16.html" frameborder="0" loading="lazy"></iframe>
 
-    <div class="visual-title">
-        <a href="https://stevetipp.github.io/Qwork.github.io/experiment63.html" target="_blank" style="color:#00ff00;text-decoration:none;">
-            Twistor-Entangled Quantum Repetition
-        </a>
-    </div>
+    <div class="visual-title"><a href="https://stevetipp.github.io/Qwork.github.io/experiment63.html" target="_blank" style="color:#0f0;text-decoration:none">Twistor-Entangled Quantum Repetition</a></div>
     <iframe class="visual-frame" data-src="retrocausal_15.html" frameborder="0" loading="lazy"></iframe>
 
-    <div class="visual-title">
-        <a href="https://stevetipp.github.io/Qwork.github.io/experiment62.html" target="_blank" style="color:#00ff00;text-decoration:none;">
-            Twistor-Encoded Error Geometry
-        </a>
-    </div>
+    <div class="visual-title"><a href="https://stevetipp.github.io/Qwork.github.io/experiment62.html" target="_blank" style="color:#0f0;text-decoration:none">Twistor-Encoded Error Geometry</a></div>
     <iframe class="visual-frame" data-src="retrocausal_14.html" frameborder="0" loading="lazy"></iframe>
 
-    <div class="visual-title">
-        <a href="https://stevetipp.github.io/Qwork.github.io/experiment61.html" target="_blank" style="color:#00ff00;text-decoration:none;">
-            Quantum State Stabilization with no Twistor Encoding (Flat)
-        </a>
-    </div>
+    <div class="visual-title"><a href="https://stevetipp.github.io/Qwork.github.io/experiment61.html" target="_blank" style="color:#0f0;text-decoration:none">Quantum State Stabilization with no Twistor Encoding (Flat)</a></div>
     <iframe class="visual-frame" data-src="retrocausal_13.html" frameborder="0" loading="lazy"></iframe>
 
-    <div class="visual-title">
-        <a href="https://stevetipp.github.io/Qwork.github.io/experiment61.html" target="_blank" style="color:#00ff00;text-decoration:none;">
-            Quantum State Stabilization with Twistor-Encoding
-        </a>
-    </div>
+    <div class="visual-title"><a href="https://stevetipp.github.io/Qwork.github.io/experiment61.html" target="_blank" style="color:#0f0;text-decoration:none">Quantum State Stabilization with Twistor-Encoding</a></div>
     <iframe class="visual-frame" data-src="retrocausal_12.html" frameborder="0" loading="lazy"></iframe>
 
-    <div class="visual-title">
-        <a href="https://stevetipp.github.io/Qwork.github.io/experiment60.html" target="_blank" style="color:#00ff00;text-decoration:none;">
-            Twistor-Inspired Quantum Teleportation with no Twistor-inspired Encoding (Flat)
-        </a>
-    </div>
+    <div class="visual-title"><a href="https://stevetipp.github.io/Qwork.github.io/experiment60.html" target="_blank" style="color:#0f0;text-decoration:none">Twistor-Inspired Quantum Teleportation with no Encoding (Flat)</a></div>
     <iframe class="visual-frame" data-src="retrocausal_11.html" frameborder="0" loading="lazy"></iframe>
 
-    <div class="visual-title">
-        <a href="https://stevetipp.github.io/Qwork.github.io/experiment60.html" target="_blank" style="color:#00ff00;text-decoration:none;">
-            Twistor-Inspired Quantum Teleportation with Twistor-inspired Encoding
-        </a>
-    </div>
+    <div class="visual-title"><a href="https://stevetipp.github.io/Qwork.github.io/experiment60.html" target="_blank" style="color:#0f0;text-decoration:none">Twistor-Inspired Quantum Teleportation with Twistor Encoding</a></div>
     <iframe class="visual-frame" data-src="retrocausal_10.html" frameborder="0" loading="lazy"></iframe>
 
-    <div class="visual-title">
-        <a href="https://stevetipp.github.io/Qwork.github.io/experiment30.html" target="_blank" style="color:#00ff00;text-decoration:none;">
-            Quantum Timekeeping Using a Bloch Clock
-        </a>
-    </div>
+    <div class="visual-title"><a href="https://stevetipp.github.io/Qwork.github.io/experiment30.html" target="_blank" style="color:#0f0;text-decoration:none">Quantum Timekeeping Using a Bloch Clock</a></div>
     <iframe class="visual-frame" data-src="retrocausal_9.html" frameborder="0" loading="lazy"></iframe>
 
-    <div class="visual-title">
-        <a href="https://stevetipp.github.io/Qwork.github.io/experiment56.html" target="_blank" style="color:#00ff00;text-decoration:none;">
-            Entanglement Dynamics in Curved Spacetime under '(c^4)/G' 1.0
-        </a>
-    </div>
+    <div class="visual-title"><a href="https://stevetipp.github.io/Qwork.github.io/experiment56.html" target="_blank" style="color:#0f0;text-decoration:none">Entanglement Dynamics in Curved Spacetime under '(c^4)/G' 1.0</a></div>
     <iframe class="visual-frame" data-src="retrocausal_8.html" frameborder="0" loading="lazy"></iframe>
 
-    <div class="visual-title">
-        <a href="https://stevetipp.github.io/Qwork.github.io/experiment56.html" target="_blank" style="color:#00ff00;text-decoration:none;">
-            Entanglement Dynamics in Curved Spacetime under '(c^4)/G' 0.5
-        </a>
-    </div>
+    <div class="visual-title"><a href="https://stevetipp.github.io/Qwork.github.io/experiment56.html" target="_blank" style="color:#0f0;text-decoration:none">Entanglement Dynamics in Curved Spacetime under '(c^4)/G' 0.5</a></div>
     <iframe class="visual-frame" data-src="retrocausal_7.html" frameborder="0" loading="lazy"></iframe>
 
-    <div class="visual-title">
-        <a href="https://stevetipp.github.io/Qwork.github.io/experiment56.html" target="_blank" style="color:#00ff00;text-decoration:none;">
-            Entanglement Dynamics in Curved Spacetime under '(c^4)/G' 0.1
-        </a>
-    </div>
+    <div class="visual-title"><a href="https://stevetipp.github.io/Qwork.github.io/experiment56.html" target="_blank" style="color:#0f0;text-decoration:none">Entanglement Dynamics in Curved Spacetime under '(c^4)/G' 0.1</a></div>
     <iframe class="visual-frame" data-src="retrocausal_6.html" frameborder="0" loading="lazy"></iframe>
 
-    <div class="visual-title">
-        <a href="https://stevetipp.github.io/Qwork.github.io/experiment37.html" target="_blank" style="color:#00ff00;text-decoration:none;">
-            Twister-Inspired Error Correction
-        </a>
-    </div>
+    <div class="visual-title"><a href="https://stevetipp.github.io/Qwork.github.io/experiment37.html" target="_blank" style="color:#0f0;text-decoration:none">Twister-Inspired Error Correction</a></div>
     <iframe class="visual-frame" data-src="retrocausal_5.html" frameborder="0" loading="lazy"></iframe>
 
-    <div class="visual-title">
-        <a href="https://stevetipp.github.io/Qwork.github.io/experiment33.html" target="_blank" style="color:#00ff00;text-decoration:none;">
-            Exploration of Sir Roger Penrose’s Twistor Space
-        </a>
-    </div>
+    <div class="visual-title"><a href="https://stevetipp.github.io/Qwork.github.io/experiment33.html" target="_blank" style="color:#0f0;text-decoration:none">Exploration of Sir Roger Penrose’s Twistor Space</a></div>
     <iframe class="visual-frame" data-src="retrocausal_4.html" frameborder="0" loading="lazy"></iframe>
 
-    <div class="visual-title">
-        <a href="https://stevetipp.github.io/Qwork.github.io/experiment41.html" target="_blank" style="color:#00ff00;text-decoration:none;">
-            Navier-Stokes Equations Using Carleman Linearization
-        </a>
-    </div>
+    <div class="visual-title"><a href="https://stevetipp.github.io/Qwork.github.io/experiment41.html" target="_blank" style="color:#0f0;text-decoration:none">Navier-Stokes Equations Using Carleman Linearization</a></div>
     <iframe class="visual-frame" data-src="retrocausal_3.html" frameborder="0" loading="lazy"></iframe>
 
-    <div class="visual-title">
-        <a href="https://stevetipp.github.io/Qwork.github.io/experiment47.html" target="_blank" style="color:#00ff00;text-decoration:none;">
-            Quantum Optimization of Protein Folding Pathway
-        </a>
-    </div>
+    <div class="visual-title"><a href="https://stevetipp.github.io/Qwork.github.io/experiment47.html" target="_blank" style="color:#0f0;text-decoration:none">Quantum Optimization of Protein Folding Pathway</a></div>
     <iframe class="visual-frame" data-src="retrocausal_2.html" frameborder="0" loading="lazy"></iframe>
 
-    <div class="visual-title">
-        <a href="https://stevetipp.github.io/Qwork.github.io/experiment58.html" target="_blank" style="color:#00ff00;text-decoration:none;">
-            Multi-Layer Retrocausal Encryption
-        </a>
-    </div>
+    <div class="visual-title"><a href="https://stevetipp.github.io/Qwork.github.io/experiment58.html" target="_blank" style="color:#0f0;text-decoration:none">Multi-Layer Retrocausal Encryption</a></div>
     <iframe class="visual-frame" data-src="retrocausal.html" frameborder="0" loading="lazy"></iframe>
 
     <div class="visual-title">Robinson Congruence</div>
@@ -248,44 +113,43 @@
 <!-- Canvas redirect fix for Robinson Congruence -->
 <script>
 const originalAppend = document.body.appendChild;
-document.body.appendChild = function (element) {
-    if (element instanceof HTMLCanvasElement) {
-        const container = document.getElementById('visual-1');
-        container.appendChild(element);
-        element.style.position = 'absolute';
-        element.style.top      = '0';
-        element.style.left     = '0';
-        element.style.width    = '100%';
-        element.style.height   = '100%';
-        container.style.position = 'relative';
-        container.style.overflow = 'hidden';
-    } else {
-        originalAppend.call(document.body, element);
-    }
+document.body.appendChild = function (el){
+    if(el instanceof HTMLCanvasElement){
+        const box=document.getElementById('visual-1');
+        box.appendChild(el);
+        Object.assign(el.style,{position:'absolute',top:0,left:0,width:'100%',height:'100%'});
+        Object.assign(box.style,{position:'relative',overflow:'hidden'});
+    }else originalAppend.call(document.body,el);
 };
 </script>
 
-<!-- Unified lazy-load & unload for all iframes -->
+<!-- Unified lazy-load / unload -->
 <script>
-const io = new IntersectionObserver(
-    entries => entries.forEach(entry => {
-        const iframe = entry.target;
+const io=new IntersectionObserver(entries=>{
+  entries.forEach(entry=>{
+    const frame=entry.target;
 
-        if (entry.isIntersecting) {
-            /* Load (or keep) and resume */
-            if (!iframe.src) iframe.src = iframe.dataset.src;
-            iframe.contentWindow?.postMessage({action:'resume'}, '*');
-        } else {
-            /* Pause and free the WebGL context */
-            iframe.contentWindow?.postMessage({action:'pause'}, '*');
-            if (iframe.src) iframe.src = '';
-        }
-    }),
-    {root: null, rootMargin: '0px', threshold: 0.25}
-);
+    if(entry.isIntersecting){
+      /* 1️⃣ First time or after purge: load the page and send RESUME after it finishes */
+      if(!frame.src){
+        frame.addEventListener('load',function onload(){
+          frame.removeEventListener('load',onload);
+          frame.contentWindow?.postMessage({action:'resume'},'*');
+        });
+        frame.src=frame.dataset.src;
+      }else{
+        /* 2️⃣ Already loaded → just resume */
+        frame.contentWindow?.postMessage({action:'resume'},'*');
+      }
+    }else{
+      /* Pause and free GPU memory */
+      frame.contentWindow?.postMessage({action:'pause'},'*');
+      if(frame.src) frame.src='';
+    }
+  });
+},{threshold:0.25});
 
-document.querySelectorAll('iframe.visual-frame')
-        .forEach(f => io.observe(f));
+document.querySelectorAll('iframe.visual-frame').forEach(f=>io.observe(f));
 </script>
 
 <!-- Robinson Congruence demo -->
