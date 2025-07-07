@@ -1,12 +1,12 @@
 
-// Load JSON Data
+// 1. Load JSON Data
 async function loadQuantumData() {
     const response = await fetch('Randomized_Gate_Stability_Results_0.json'); 
     const data = await response.json();
     return data;
 }
 
-// Three.js Setup
+// 2. Three.js Setup
 const scene = new THREE.Scene();
 const camera = new THREE.PerspectiveCamera(80, window.innerWidth / window.innerHeight, 0.1, 1000);
 const renderer = new THREE.WebGLRenderer();
@@ -16,21 +16,21 @@ document.body.appendChild(renderer.domElement);
 const controls = new THREE.OrbitControls(camera, renderer.domElement);
 controls.enableDamping = true;
 
-// Lighting
+// 3. Lighting
 const light = new THREE.DirectionalLight(0xffffff, 1);
 light.position.set(10, 10, 10);
 scene.add(light);
 
-// Camera
+// 4. Camera
 camera.position.set(0, 16, 32);
 camera.lookAt(0, 0, 0);
 
-// Time + Noise
+// 5. Time + Noise
 let time = 0;
 const noise = new SimplexNoise();
 let planes = [];
 
-// Create 2D overlay legend
+// 6. Create 2D overlay legend
 function createLegend(keys) {
     const legendContainer = document.createElement('div');
     legendContainer.style.position = 'absolute';
@@ -53,7 +53,7 @@ function createLegend(keys) {
     document.body.appendChild(legendContainer);
 }
 
-// Generate wave panel
+// 7. Generate wave panel
 function createWavePlane(bitstringCounts, index) {
     const cols = 3;
     const planeSize = 15;
@@ -84,7 +84,7 @@ function createWavePlane(bitstringCounts, index) {
     };
 }
 
-// Load and position all wave states
+// 8. Load and position all wave states
 async function initWaves() {
     const allData = await loadQuantumData();
     const keys = Object.keys(allData);
@@ -99,7 +99,7 @@ async function initWaves() {
    
 }
 
-// Animate wave function
+// 9. Animate wave function
 function animate() {
     requestAnimationFrame(animate);
     time += 0.05;
@@ -133,5 +133,5 @@ function animate() {
     renderer.render(scene, camera);
 }
 
-// Start animation
+// 10. Start animation
 initWaves().then(() => animate());
