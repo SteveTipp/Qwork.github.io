@@ -1,6 +1,5 @@
 
-
-
+// 1. Load Json
 async function loadQuantumData() {
 
   const url =
@@ -25,16 +24,16 @@ const renderer  = new THREE.WebGLRenderer({ antialias: true });
 renderer.setSize(window.innerWidth, window.innerHeight);
 document.body.appendChild(renderer.domElement);
 
-/* lighting */
+// 2. Lighting 
 const light = new THREE.DirectionalLight(0xffffff, 1.0);
 light.position.set(10, 15, 12);
 scene.add(light);
 
-/* camera */
+// 3. camera 
 camera.position.set(60, 20, 0);    // zoom out (x = 60), tilt down from a height (y = 20)
 camera.lookAt(0, 0, 0); 
 
-/* orbit controls (non-module global) */
+// 4. orbit controls (non-module global) 
 const controls = new THREE.OrbitControls(camera, renderer.domElement);
 
 
@@ -81,7 +80,7 @@ async function init() {
     .fill(null)
     .map(() => ({ counts: {}, total: 0 }));
 
-  /* bucket every bit-string ------------------------------------------- */
+  // 5. bucket every bit-string  
   let globalMaxPanelTotal = 0;
 
   for (const [bitStr, count] of Object.entries(raw)) {
@@ -99,7 +98,7 @@ async function init() {
       globalMaxPanelTotal = bucket.total;
   }
 
-  /* create one plane for every *non-empty* bucket --------------------- */
+  // 6. create one plane for every *non-empty* bucket 
   panelBuckets.forEach((bucket, idx) => {
     if (bucket.total === 0) return;                     // skip empties
     const col = idx % COLS;
@@ -107,13 +106,12 @@ async function init() {
     makeWavePlane(bucket, col, row);
   });
 
-  /* stash global max for anim scaling */
+  // 7. stash global max for anim scaling 
   panels.forEach(p => (p.norm = p.total / globalMaxPanelTotal));
 }
 
-/* --------------------------------------------------------------------- */
-/* 6.  Animation loop                                                    */
-/* --------------------------------------------------------------------- */
+
+// 6. Animation loop                                                    
 function animate() {
   requestAnimationFrame(animate);
   time += 0.003;
@@ -141,11 +139,9 @@ function animate() {
   renderer.render(scene, camera);
 }
 
-/* --------------------------------------------------------------------- */
-/* 7. Kick everything off                                                */
-/* --------------------------------------------------------------------- */
+// 7. Kick everything off                                        
 init().then(animate).catch(err => console.error(err));
 
-/* --------------------------------------------------------------------- */
+
 
 
