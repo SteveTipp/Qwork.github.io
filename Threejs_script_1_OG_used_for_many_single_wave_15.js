@@ -1,31 +1,31 @@
 
-// Load JSON Data
+// 1. Load JSON Data
 async function loadQuantumData() {
     const response = await fetch('Twistor_Repetition_0.json');  // relative path for local testing
     const data = await response.json();
     return data.raw_counts;
 }
 
-// Setup
+// 2. Setup
 const scene = new THREE.Scene();
 const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
 const renderer = new THREE.WebGLRenderer();
 renderer.setSize(window.innerWidth, window.innerHeight);
 document.body.appendChild(renderer.domElement);
 
-// Controls
+// 3. Controls
 const controls = new THREE.OrbitControls(camera, renderer.domElement);
 
-// Lighting
+// 4. Lighting
 const light = new THREE.DirectionalLight(0xffffff, 1);
 light.position.set(10, 10, 10);
 scene.add(light);
 
-// Camera
+// 5. Camera
 camera.position.set(0, 10, 20);
 camera.lookAt(0, 0, 0);
 
-// Noise + Time
+// 6. Noise + Time
 const noise = new SimplexNoise();
 let time = 0;
 let planes = [];
