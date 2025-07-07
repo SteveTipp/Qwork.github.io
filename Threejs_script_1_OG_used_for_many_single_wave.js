@@ -1,12 +1,12 @@
 // script 1 (OG) used for many results (single wave)
-// Load JSON Data
+// 1. Load JSON Data
 async function loadQuantumData() {
     const response = await fetch('Multi_Layer_Retrocausal_Encryption_8.json'); 
     const data = await response.json();
     return data.raw_counts;
 }
 
-/* ---------- 2.  Three.js scene ---------- */
+// 2.  Three.js scene 
 const scene    = new THREE.Scene();
 const camera   = new THREE.PerspectiveCamera(
   75, window.innerWidth / window.innerHeight, 0.1, 1000);
@@ -23,12 +23,12 @@ controls.enableDamping = true;
 
 scene.add(new THREE.DirectionalLight(0xffffff, 1).position.set(10,10,10));
 
-/* ---------- 3.  Globals ---------- */
+// 3.  Globals  
 let waveMesh, redDots = [];
 let blochSphere, arrowHelper;
 let t = 0;
 
-/* ---------- 4.  Utility ---------- */
+// 4.  Utility  
 function asGrid(counts) {
   const M = Array.from({ length: 8 }, () => Array(8).fill(0));
   let max = 0;
@@ -43,7 +43,7 @@ function asGrid(counts) {
 
 
 
-// Generate a wave-like geometry
+// 5. Generate a wave-like geometry
 const gridSize = 50;
 const planeGeometry = new THREE.PlaneGeometry(10, 10, gridSize, gridSize);
 const planeMaterial = new THREE.MeshStandardMaterial({ color: 0x00FF00, wireframe: true });
@@ -51,20 +51,20 @@ const plane = new THREE.Mesh(planeGeometry, planeMaterial);
 plane.rotation.x = -Math.PI / 2; // Rotate to lay flat
 scene.add(plane);
 
-// Lighting
+// 6. Lighting
 const light = new THREE.DirectionalLight(0xffffff, 1);
 light.position.set(5, 5, 5);
 scene.add(light);
 
-// Camera position
+// 7. Camera position
 camera.position.set(0, 5, 10);
 camera.lookAt(0, 0, 0);
 
-// Noise function for wave effect
+// 8. Noise function for wave effect
 const noise = new SimplexNoise();
 let time = 0;
 
-// Load Quantum Data and Map It
+// 9. Load Quantum Data and Map It
 async function applyQuantumWavefunction() {
     const bitstringCounts = await loadQuantumData();
     const bitstrings = Object.keys(bitstringCounts);
@@ -88,7 +88,7 @@ async function applyQuantumWavefunction() {
     plane.geometry.attributes.position.needsUpdate = true;
 }
 
-// Animate the wave dynamically
+// 10. Animate the wave dynamically
 function animate() {
     requestAnimationFrame(animate);
     time += 0.05;
