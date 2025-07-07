@@ -1,35 +1,35 @@
 
-// Load JSON data
+// 1. Load JSON data
 async function loadQuantumData() {
   const response = await fetch('Dynamic_Casimir_Cavity_Chain_0.json');
   const data = await response.json();
   return data.raw_counts;
 }
 
-// Three.js Setup
+// 2. Three.js Setup
 const scene = new THREE.Scene();
 const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
 const renderer = new THREE.WebGLRenderer({ antialias: true });
 renderer.setSize(window.innerWidth, window.innerHeight);
 document.body.appendChild(renderer.domElement);
 
-// Orbit controls
+// 3. Orbit controls
 const controls = new THREE.OrbitControls(camera, renderer.domElement);
 
-// Lighting
+// 4. Lighting
 const light = new THREE.DirectionalLight(0xffffff, 1);
 light.position.set(10, 10, 10);
 scene.add(light);
 
-// Camera Position
+// 5. Camera Position
 camera.position.set(0, 20, 40);
 camera.lookAt(0, 0, 0);
 
-// Globals
+// 6. Globals
 let mesh, redDots = [];
 let time = 0;
 
-// Parse symmetric |11⟩ pairs into a 30×30 grid
+// 7. Parse symmetric |11⟩ pairs into a 30×30 grid
 function parseCountsToGrid(counts) {
   const gridSize = 30;
   const matrix = Array.from({ length: gridSize }, () => Array(gridSize).fill(0));
@@ -51,13 +51,13 @@ function parseCountsToGrid(counts) {
   return { matrix, maxCount };
 }
 
-// Build surface mesh + red dots
+// 8. Build surface mesh + red dots
 function createWaveSurface(matrix, maxCount) {
   const width = 30;
   const segments = 60;
   const geometry = new THREE.PlaneGeometry(width, width, segments, segments);
 
-  // Vertex color setup
+  // 9. Vertex color setup
   const colors = [];
   const gridX = segments + 1;
   const gridY = segments + 1;
@@ -79,7 +79,7 @@ function createWaveSurface(matrix, maxCount) {
   mesh.rotation.x = -Math.PI / 2;
   scene.add(mesh);
 
-  // Add red dots at grid points
+  // 10. Add red dots at grid points
   const dotMaterial = new THREE.MeshBasicMaterial({ color: 0xff0000 });
   for (let x = 0; x < 30; x++) {
       for (let y = 0; y < 30; y++) {
@@ -94,7 +94,7 @@ function createWaveSurface(matrix, maxCount) {
   mesh.userData = { matrix, maxCount };
 }
 
-// Animate wave surface
+// 11. Animate wave surface
 function animate() {
   requestAnimationFrame(animate);
   time += 0.2;
@@ -118,7 +118,7 @@ function animate() {
       pos.setZ(i, amp * wave * 12); // Amplified wave
   }
 
-  // Update red dot height to show photon intensity
+  // 12. Update red dot height to show photon intensity
   redDots.forEach((dot, i) => {
       const u = i % 30;
       const v = Math.floor(i / 30);
@@ -131,7 +131,7 @@ function animate() {
   renderer.render(scene, camera);
 }
 
-// Main
+// 13. Main
 loadQuantumData().then(data => {
   const { matrix, maxCount } = parseCountsToGrid(data);
   createWaveSurface(matrix, maxCount);
