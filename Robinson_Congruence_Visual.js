@@ -2,8 +2,7 @@
 
 
 // script.js
-// Assumes Three.js & OrbitControls are loaded in your HTML.
-
+// 1. Camera.
 let scene, camera, renderer, controls;
 const flows = []; // { material, speed }
 
@@ -19,20 +18,20 @@ function init() {
   camera.position.set(0, 2, 10);
   camera.lookAt(0, 0, 0);
 
-  // Renderer
+  // 2. Renderer
   renderer = new THREE.WebGLRenderer({ antialias: true });
   renderer.setSize(window.innerWidth, window.innerHeight);
   document.body.appendChild(renderer.domElement);
 
-  // Controls
+  // 3. Controls
   controls = new THREE.OrbitControls(camera, renderer.domElement);
 
-  // Light
+  // 4. Light
   const light = new THREE.DirectionalLight(0xffffff, 1);
   light.position.set(10, 10, 10);
   scene.add(light);
 
-  // Build the twistor tubes + flowing glow
+  // 5. Build the twistor tubes + flowing glow
   buildFlowTubes();
 
   window.addEventListener("resize", onWindowResize);
@@ -44,7 +43,7 @@ function onWindowResize() {
   renderer.setSize(window.innerWidth, window.innerHeight);
 }
 
-// The Robinson‐congruence field at t=0 (eq. 4.2 up to scale)
+// 6. The Robinson‐congruence field at t=0 (eq. 4.2 up to scale)
 function robinsonField(x, y, z) {
   return new THREE.Vector3(
     2 * (y - x * z),
@@ -53,7 +52,7 @@ function robinsonField(x, y, z) {
   );
 }
 
-// One RK4 step
+// 7. One RK4 step
 function rk4Step(p, h) {
   const k1 = robinsonField(p.x,p.y,p.z).multiplyScalar(h);
   const p2 = p.clone().addScaledVector(k1, 0.5);
@@ -68,7 +67,7 @@ function rk4Step(p, h) {
   );
 }
 
-// Integrate closed loop: forward + backward
+// 8. Integrate closed loop: forward + backward
 function integrateLoop(seed, h=0.05, steps=400) {
   const fwd = [], bwd = [];
   let p = seed.clone();
@@ -84,7 +83,7 @@ function integrateLoop(seed, h=0.05, steps=400) {
   return bwd.reverse().concat(fwd.slice(1));
 }
 
-// Build tubes + glow‐shader materials
+// 9. Build tubes + glow‐shader materials
 function buildFlowTubes() {
   const radii   = [0.6, 1.0, 1.4, 1.8];
   const zLevels = [-0.8, -0.3, 0.3, 0.8];
@@ -92,7 +91,7 @@ function buildFlowTubes() {
   const total   = radii.length * zLevels.length * nAngles;
   let idx = 0;
 
-  // Simple HSL → RGB in GLSL
+  // 10. HSL → RGB in GLSL
   const hsl2rgb = `
     vec3 hsl2rgb(vec3 c) {
       vec3 rgb = clamp(
@@ -103,7 +102,7 @@ function buildFlowTubes() {
     }
   `;
 
-  // Vertex & fragment for flowing pulses
+  // 11. Vertex & fragment for flowing pulses
   const vertexShader = `
     varying vec2 vUv;
     void main(){
@@ -157,7 +156,7 @@ function buildFlowTubes() {
           depthWrite: false
         });
 
-        // Mesh and store its material for animation
+        // 12. Mesh and store its material for animation
         scene.add(new THREE.Mesh(geo, mat));
         flows.push({ material: mat });
 
@@ -170,7 +169,7 @@ function buildFlowTubes() {
 function animate() {
   requestAnimationFrame(animate);
 
-  // Advance each shader’s time → makes pulses flow
+  // 13. Advance each shader’s time → makes pulses flow
   for (const obj of flows) {
     obj.material.uniforms.time.value += 0.01;
   }
