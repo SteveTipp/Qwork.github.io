@@ -1,35 +1,35 @@
 
-// Load JSON data
+// 1. Load JSON data
 async function loadQuantumData(path) {
   const response = await fetch(path);
   const data = await response.json();
   return data.counts;
 }
 
-// Three.js Setup
+// 2. Three.js Setup
 const scene = new THREE.Scene();
 const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
 const renderer = new THREE.WebGLRenderer({ antialias: true });
 renderer.setSize(window.innerWidth, window.innerHeight);
 document.body.appendChild(renderer.domElement);
 
-// Orbit controls
+// 3. Orbit controls
 const controls = new THREE.OrbitControls(camera, renderer.domElement);
 
-// Lighting
+// 4. Lighting
 const light = new THREE.DirectionalLight(0xffffff, 1);
 light.position.set(10, 10, 10);
 scene.add(light);
 
-// Camera Position
+// 5. Camera Position
 camera.position.set(0, 20, 40);
 camera.lookAt(0, 0, 0);
 
-// Globals
+// 6. Globals
 let meshes = [], redDotGroups = [];
 let time = 0;
 
-// Parse data into 2D matrix
+// 7. Parse data into 2D matrix
 function parseCountsToGrid(counts) {
   const gridSize = 8;
   const matrix = Array.from({ length: gridSize }, () => Array(gridSize).fill(0));
@@ -45,7 +45,7 @@ function parseCountsToGrid(counts) {
   return { matrix, maxCount };
 }
 
-// Build surface mesh + red dots
+// 8. Build surface mesh + red dots
 function createWaveSurface(matrix, maxCount, xOffset) {
   const width = 16;
   const segments = 64;
@@ -91,7 +91,7 @@ function createWaveSurface(matrix, maxCount, xOffset) {
   redDotGroups.push(redDots);
 }
 
-// Animate both wave surfaces
+// 9. Animate both wave surfaces
 function animate() {
   requestAnimationFrame(animate);
   time += 0.2;
@@ -131,7 +131,7 @@ function animate() {
   renderer.render(scene, camera);
 }
 
-// Main execution for two input files
+// 10. Main execution for two input files
 Promise.all([
   loadQuantumData('ECDLP_8pts_Shors_Run_0.json'),
   loadQuantumData('ECDLP_8pts_Shors_Run_Bloch_Clock_0.json') // second file
