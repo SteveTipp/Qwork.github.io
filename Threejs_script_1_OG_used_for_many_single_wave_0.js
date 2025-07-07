@@ -2,7 +2,7 @@
 // script 1 (OG) used for many results (single wave)
 // Load JSON Data
 async function loadQuantumData() {
-    const response = await fetch(''); 
+    const response = await fetch('empty.json'); 
     const data = await response.json();
     return data.raw_counts;
 }
