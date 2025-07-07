@@ -1,35 +1,35 @@
-// Load JSON Data (local server access)
+// 1. Load JSON Data (local server access)
 async function loadQuantumData() {
     const response = await fetch('Twistor_Guided_QEP_Mapping_1.json');
     const data = await response.json();
     return data;
 }
 
-// Three.js Setup
+// 2. Three.js Setup
 const scene = new THREE.Scene();
 const camera = new THREE.PerspectiveCamera(80, window.innerWidth / window.innerHeight, 0.1, 1000);
 const renderer = new THREE.WebGLRenderer({ antialias: true });
 renderer.setSize(window.innerWidth, window.innerHeight);
 document.body.appendChild(renderer.domElement);
 
-// Lighting
+// 3. Lighting
 const light = new THREE.DirectionalLight(0xffffff, 1);
 light.position.set(10, 10, 10);
 scene.add(light);
 
-// Camera Position
+// 4. Camera Position
 camera.position.set(0, 20, 40);
 camera.lookAt(0, 0, 0);
 
-// Controls (OrbitControls from global THREE)
+// 5. Controls (OrbitControls from global THREE)
 const controls = new THREE.OrbitControls(camera, renderer.domElement);
 
-// Noise + Time
+// 6. Noise + Time
 const noise = new SimplexNoise();
 let time = 0;
 let planes = [];
 
-// Generate each quantum wave panel
+// 7. Generate each quantum wave panel
 function createWavePlane(bitstringCounts, index) {
     const cols = 5;
     const planeSize = 13;
@@ -61,7 +61,7 @@ function createWavePlane(bitstringCounts, index) {
     };
 }
 
-// Load all panels from the JSON structure
+// 8. Load all panels from the JSON structure
 async function initWaves() {
     const dataset = await loadQuantumData();
     planes = [];
@@ -73,7 +73,7 @@ async function initWaves() {
     });
 }
 
-// Animate
+// 9. Animate
 function animate() {
     requestAnimationFrame(animate);
     time += 0.05;
@@ -106,5 +106,5 @@ function animate() {
     renderer.render(scene, camera);
 }
 
-// Start
+// 10. Start
 initWaves().then(() => animate());
