@@ -1,8 +1,8 @@
 
 //   script.js  
-// 1. global THREE, fetch, window 
 
-// 2. Parameters  
+
+// 1. Parameters  
 const JSON_PATH  = 'Dyn_Twistor_Casimir_10x10_0.json';   // run data
 const GRID       = 10;          // 10 × 10 lattice
 const SPACING    = 2.0;         // physical width of one cell
@@ -11,7 +11,7 @@ const BASE_COLOR = 0x00ff00;    // wire‑frame green
 const MAX_ORB_R  = 0.6;         // max red‑orb radius
 const MAX_ORB_H  = 4.0;         // max orb hover height
 
-// 3. Three.js Setup
+// 2. Three.js Setup
 const scene    = new THREE.Scene();
 const camera   = new THREE.PerspectiveCamera(
   75, window.innerWidth / window.innerHeight, 0.1, 1000
@@ -28,12 +28,12 @@ scene.add(light);
 camera.position.set(0, 12, 22);
 camera.lookAt(0, 0, 0);
 
-// 4. Gloabls 
+// 3. Gloabls 
 let waveMesh;
 let pairAmps = [];       // ρ_c normalised 0‒1 for 10 columns
 let time     = 0;
 
-// 5. Build wave and orbs
+// 4. Build wave and orbs
 function createVisuals(pairRates) {
   //  green wire‑frame plane 
   const size = GRID * SPACING;
@@ -47,14 +47,14 @@ function createVisuals(pairRates) {
   waveMesh.rotation.x = -Math.PI / 2;
   scene.add(waveMesh);
 
-  // 6. Normalise ρ_c 
+  // 5. Normalise ρ_c 
   const ρvals = Object.values(pairRates);
   const ρmax  = Math.max(...ρvals, 1e-6);
   for (let c = 0; c < GRID; c++) {
     pairAmps[c] = (pairRates[c.toString()] || 0) / ρmax;
   }
 
-  // 7. Glowing red Orbs
+  // 6. Glowing red Orbs
   const orbGroup = new THREE.Group();
   const orbMat   = new THREE.MeshBasicMaterial({ color: 0xff0000 });
 
@@ -75,7 +75,7 @@ function createVisuals(pairRates) {
   scene.add(orbGroup);
 }
 
-// 8. Animate
+// 7. Animate
 function animate() {
   requestAnimationFrame(animate);
   time += 0.05;
@@ -103,7 +103,7 @@ function animate() {
   renderer.render(scene, camera);
 }
 
-// 9. Main 
+// 8. Main 
 (async () => {
   try {
     const res  = await fetch(JSON_PATH);
