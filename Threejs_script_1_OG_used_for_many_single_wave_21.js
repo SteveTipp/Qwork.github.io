@@ -1,19 +1,18 @@
-
-// 1. Load JSON data
+// 1.  Load JSON data Shors_ECC_5_Bit_Key_0.json.        5_Bit_Empty.json
 async function loadQuantumData() {
   const response = await fetch('Shors_ECC_5_Bit_Key_0.json');
   const data = await response.json();
   return data.counts;
 }
 
-// 2. Three.js Setup
+// 2.  Three.js Setup
 const scene = new THREE.Scene();
 const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
 const renderer = new THREE.WebGLRenderer({ antialias: true });
 renderer.setSize(window.innerWidth, window.innerHeight);
 document.body.appendChild(renderer.domElement);
 
-// 3. Orbit controls
+// 3.  Orbit controls
 const controls = new THREE.OrbitControls(camera, renderer.domElement);
 
 // 4. Lighting
@@ -56,15 +55,29 @@ function createWaveSurface(matrix, maxCount) {
   const gridX = segments + 1;
   const gridY = segments + 1;
 
-  for (let y = 0; y < gridY; y++) {
-      for (let x = 0; x < gridX; x++) {
-          const u = Math.floor(x / (gridX / 32));
-          const v = Math.floor(y / (gridY / 32));
-          const isDiagonal = (u + 7 * v) % 32 === 0;
-          const color = isDiagonal ? new THREE.Color(0x0000ff) : new THREE.Color(0x00ff00);
-          colors.push(color.r, color.g, color.b);
-      }
-  }
+  const threshold = 0.2;  // 20% of maxCount
+
+for (let y = 0; y < gridY; y++) {
+    for (let x = 0; x < gridX; x++) {
+        const u = Math.floor(x / (gridX / 32));
+        const v = Math.floor(y / (gridY / 32));
+        const isDiagonal = (u + 7 * v) % 32 === 0;
+
+        let amp = 0;
+        if (matrix[u] && matrix[u][v]) {
+            amp = matrix[u][v] / maxCount;
+        }
+
+        let color;
+        if (isDiagonal && amp > threshold) {
+            color = new THREE.Color(0x0000ff); // Show blue only if strong
+        } else {
+            color = new THREE.Color(0x00ff00); // Default green
+        }
+
+        colors.push(color.r, color.g, color.b);
+    }
+}
 
   geometry.setAttribute('color', new THREE.Float32BufferAttribute(colors, 3));
 
@@ -125,7 +138,7 @@ function animate() {
   renderer.render(scene, camera);
 }
 
-// 13. Main
+// Main
 loadQuantumData().then(data => {
   const { matrix, maxCount } = parseCountsToGrid(data);
   createWaveSurface(matrix, maxCount);
