@@ -55,7 +55,7 @@ function createWaveSurface(matrix, maxCount) {
   const gridX = segments + 1;
   const gridY = segments + 1;
 
-  const threshold = 0.2;  // 20% of maxCount
+  const threshold = 0.1;  // 10% of maxCount
 
 for (let y = 0; y < gridY; y++) {
     for (let x = 0; x < gridX; x++) {
