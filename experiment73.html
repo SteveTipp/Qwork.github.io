@@ -223,10 +223,241 @@ barrier: 1<br>
 Total gates: 106455<br>
 Depth: 67428<br>
 Width: 133 qubits  |  10 clbits<br>
-
+<br>
 This experiment took 54 seconds to complete on 'ibm_torino'.<br>
-
+<br>
 The noise profile is nonuniform but decaying, meaning the quantum system likely resolved dominant harmonics in the interference but blurred out finer structures. The distribution tail still contains valid k = 7 candidates, this supports dictionary-style quantum attacks where top-N result scans (N = 100) are sufficient to retrieve the key.<br>
+<br>
+Full Backend Result Print:<br>
+qiskit1-cleansteventippeconnic@Stevens-MacBook-Pro-2 QC % /Users/steventippeconnic/Documents/QC/qiskit1-clean/bin/python /Users/steventippeconnic/Documents/QC/Shors_ECC_5_Bit_Key.py<br>
+2025-06-25 19:41:13,430 | INFO | Best physical qubits: [103, 12, 44, 94, 1, 5, 87, 64, 86, 128, 93, 125, 51, 114, 14]<br>
+2025-06-25 19:41:15,939 | INFO | Backend → ibm_torino<br>
+2025-06-25 19:41:21,089 | INFO | Pass: ContainsInstruction - 0.21315 (ms)<br>
+2025-06-25 19:41:21,089 | INFO | Pass: UnitarySynthesis - 0.00501 (ms)<br>
+2025-06-25 19:41:21,126 | INFO | Pass: HighLevelSynthesis - 36.59701 (ms)<br>
+2025-06-25 19:41:21,140 | INFO | Pass: BasisTranslator - 13.39889 (ms)<br>
+2025-06-25 19:41:21,140 | INFO | Pass: ElidePermutations - 0.00811 (ms)<br>
+2025-06-25 19:41:21,141 | INFO | Pass: RemoveDiagonalGatesBeforeMeasure - 1.26266 (ms)<br>
+2025-06-25 19:41:21,145 | INFO | Pass: RemoveIdentityEquivalent - 3.25489 (ms)<br>
+2025-06-25 19:41:21,152 | INFO | Pass: InverseCancellation - 7.59315 (ms)<br>
+2025-06-25 19:41:21,152 | INFO | Pass: ContractIdleWiresInControlFlow - 0.00715 (ms)<br>
+2025-06-25 19:41:21,198 | INFO | Pass: CommutativeCancellation - 46.12088 (ms)<br>
+2025-06-25 19:41:21,269 | INFO | Pass: ConsolidateBlocks - 69.05508 (ms)<br>
+2025-06-25 19:41:21,272 | INFO | Pass: Split2QUnitaries - 2.31194 (ms)<br>
+2025-06-25 19:41:21,272 | INFO | Pass: SetLayout - 0.37289 (ms)<br>
+2025-06-25 19:41:21,274 | INFO | Pass: FullAncillaAllocation - 0.37599 (ms)<br>
+2025-06-25 19:41:21,274 | INFO | Pass: EnlargeWithAncilla - 0.05507 (ms)<br>
+2025-06-25 19:41:21,325 | INFO | Pass: ApplyLayout - 51.35393 (ms)<br>
+2025-06-25 19:41:21,326 | INFO | Pass: CheckMap - 0.26393 (ms)<br>
+2025-06-25 19:41:21,326 | INFO | Pass: BarrierBeforeFinalMeasurements - 0.03910 (ms)<br>
+2025-06-25 19:41:21,574 | INFO | Pass: SabreSwap - 248.72589 (ms)<br>
+2025-06-25 19:41:21,585 | INFO | Pass: FilterOpNodes - 8.85296 (ms)<br>
+2025-06-25 19:41:21,608 | INFO | Pass: UnitarySynthesis - 23.01407 (ms)<br>
+2025-06-25 19:41:21,629 | INFO | Pass: HighLevelSynthesis - 21.21806 (ms)<br>
+2025-06-25 19:41:21,704 | INFO | Pass: BasisTranslator - 74.15891 (ms)<br>
+2025-06-25 19:41:21,731 | INFO | Pass: Depth - 25.68698 (ms)<br>
+2025-06-25 19:41:21,731 | INFO | Pass: Size - 0.00596 (ms)<br>
+2025-06-25 19:41:21,731 | INFO | Pass: MinimumPoint - 0.00906 (ms)<br>
+2025-06-25 19:41:21,818 | INFO | Pass: ConsolidateBlocks - 86.97081 (ms)<br>
+2025-06-25 19:41:21,866 | INFO | Pass: UnitarySynthesis - 48.30623 (ms)<br>
+2025-06-25 19:41:21,872 | INFO | Pass: RemoveIdentityEquivalent - 5.42998 (ms)<br>
+2025-06-25 19:41:21,906 | INFO | Pass: Optimize1qGatesDecomposition - 34.58810 (ms)<br>
+2025-06-25 19:41:21,981 | INFO | Pass: CommutativeCancellation - 74.61596 (ms)<br>
+2025-06-25 19:41:21,981 | INFO | Pass: ContractIdleWiresInControlFlow - 0.00978 (ms)<br>
+2025-06-25 19:41:21,987 | INFO | Pass: GatesInBasis - 6.15191 (ms)<br>
+2025-06-25 19:41:21,998 | INFO | Pass: Depth - 10.96106 (ms)<br>
+2025-06-25 19:41:21,998 | INFO | Pass: Size - 0.00501 (ms)<br>
+2025-06-25 19:41:22,869 | INFO | Pass: MinimumPoint - 870.30506 (ms)<br>
+2025-06-25 19:41:22,928 | INFO | Pass: ConsolidateBlocks - 58.93397 (ms)<br>
+2025-06-25 19:41:22,955 | INFO | Pass: UnitarySynthesis - 27.02093 (ms)<br>
+2025-06-25 19:41:22,959 | INFO | Pass: RemoveIdentityEquivalent - 3.16381 (ms)<br>
+2025-06-25 19:41:22,974 | INFO | Pass: Optimize1qGatesDecomposition - 15.18917 (ms)<br>
+2025-06-25 19:41:22,996 | INFO | Pass: CommutativeCancellation - 22.06397 (ms)<br>
+2025-06-25 19:41:22,996 | INFO | Pass: ContractIdleWiresInControlFlow - 0.00405 (ms)<br>
+2025-06-25 19:41:23,002 | INFO | Pass: GatesInBasis - 5.82886 (ms)<br>
+2025-06-25 19:41:23,010 | INFO | Pass: Depth - 7.74908 (ms)<br>
+2025-06-25 19:41:23,010 | INFO | Pass: Size - 0.00381 (ms)<br>
+2025-06-25 19:41:23,773 | INFO | Pass: MinimumPoint - 763.32211 (ms)<br>
+2025-06-25 19:41:23,826 | INFO | Pass: ConsolidateBlocks - 52.62804 (ms)<br>
+2025-06-25 19:41:23,847 | INFO | Pass: UnitarySynthesis - 20.98608 (ms)<br>
+2025-06-25 19:41:23,850 | INFO | Pass: RemoveIdentityEquivalent - 2.98095 (ms)<br>
+2025-06-25 19:41:23,865 | INFO | Pass: Optimize1qGatesDecomposition - 14.56404 (ms)<br>
+2025-06-25 19:41:23,888 | INFO | Pass: CommutativeCancellation - 22.64619 (ms)<br>
+2025-06-25 19:41:23,888 | INFO | Pass: ContractIdleWiresInControlFlow - 0.00405 (ms)<br>
+2025-06-25 19:41:23,894 | INFO | Pass: GatesInBasis - 5.71990 (ms)<br>
+2025-06-25 19:41:23,901 | INFO | Pass: Depth - 7.42388 (ms)<br>
+2025-06-25 19:41:23,901 | INFO | Pass: Size - 0.00501 (ms)<br>
+2025-06-25 19:41:24,679 | INFO | Pass: MinimumPoint - 777.63510 (ms)<br>
+2025-06-25 19:41:24,731 | INFO | Pass: ConsolidateBlocks - 51.75686 (ms)<br>
+2025-06-25 19:41:24,751 | INFO | Pass: UnitarySynthesis - 20.73216 (ms)<br>
+2025-06-25 19:41:24,755 | INFO | Pass: RemoveIdentityEquivalent - 3.15714 (ms)<br>
+2025-06-25 19:41:24,770 | INFO | Pass: Optimize1qGatesDecomposition - 14.50610 (ms)<br>
+2025-06-25 19:41:24,791 | INFO | Pass: CommutativeCancellation - 21.66319 (ms)<br>
+2025-06-25 19:41:24,792 | INFO | Pass: ContractIdleWiresInControlFlow - 0.00429 (ms)<br>
+2025-06-25 19:41:24,797 | INFO | Pass: GatesInBasis - 5.59807 (ms)<br>
+2025-06-25 19:41:24,805 | INFO | Pass: Depth - 7.38883 (ms)<br>
+2025-06-25 19:41:24,805 | INFO | Pass: Size - 0.00501 (ms)<br>
+2025-06-25 19:41:25,568 | INFO | Pass: MinimumPoint - 763.40008 (ms)<br>
+2025-06-25 19:41:25,619 | INFO | Pass: ConsolidateBlocks - 50.43793 (ms)<br>
+2025-06-25 19:41:25,638 | INFO | Pass: UnitarySynthesis - 19.01793 (ms)<br>
+2025-06-25 19:41:25,641 | INFO | Pass: RemoveIdentityEquivalent - 2.87890 (ms)<br>
+2025-06-25 19:41:25,656 | INFO | Pass: Optimize1qGatesDecomposition - 14.32610 (ms)<br>
+2025-06-25 19:41:25,677 | INFO | Pass: CommutativeCancellation - 21.00301 (ms)<br>
+2025-06-25 19:41:25,677 | INFO | Pass: ContractIdleWiresInControlFlow - 0.00429 (ms)<br>
+2025-06-25 19:41:25,682 | INFO | Pass: GatesInBasis - 5.61380 (ms)<br>
+2025-06-25 19:41:25,690 | INFO | Pass: Depth - 7.40933 (ms)<br>
+2025-06-25 19:41:25,690 | INFO | Pass: Size - 0.01502 (ms)<br>
+2025-06-25 19:41:26,462 | INFO | Pass: MinimumPoint - 771.63529 (ms)<br>
+2025-06-25 19:41:26,513 | INFO | Pass: ConsolidateBlocks - 50.94504 (ms)<br>
+2025-06-25 19:41:26,533 | INFO | Pass: UnitarySynthesis - 20.72191 (ms)<br>
+2025-06-25 19:41:26,537 | INFO | Pass: RemoveIdentityEquivalent - 3.08204 (ms)<br>
+2025-06-25 19:41:26,551 | INFO | Pass: Optimize1qGatesDecomposition - 14.10890 (ms)<br>
+2025-06-25 19:41:26,573 | INFO | Pass: CommutativeCancellation - 22.25590 (ms)<br>
+2025-06-25 19:41:26,574 | INFO | Pass: ContractIdleWiresInControlFlow - 0.00525 (ms)<br>
+2025-06-25 19:41:26,579 | INFO | Pass: GatesInBasis - 5.69582 (ms)<br>
+2025-06-25 19:41:26,587 | INFO | Pass: Depth - 7.96485 (ms)<br>
+2025-06-25 19:41:26,587 | INFO | Pass: Size - 0.00620 (ms)<br>
+2025-06-25 19:41:27,369 | INFO | Pass: MinimumPoint - 781.31986 (ms)<br>
+2025-06-25 19:41:27,418 | INFO | Pass: ConsolidateBlocks - 49.14474 (ms)<br>
+2025-06-25 19:41:27,436 | INFO | Pass: UnitarySynthesis - 17.74478 (ms)<br>
+2025-06-25 19:41:27,439 | INFO | Pass: RemoveIdentityEquivalent - 2.91300 (ms)<br>
+2025-06-25 19:41:27,453 | INFO | Pass: Optimize1qGatesDecomposition - 13.62681 (ms)<br>
+2025-06-25 19:41:27,473 | INFO | Pass: CommutativeCancellation - 19.76323 (ms)<br>
+2025-06-25 19:41:27,473 | INFO | Pass: ContractIdleWiresInControlFlow - 0.00405 (ms)<br>
+2025-06-25 19:41:27,478 | INFO | Pass: GatesInBasis - 5.45669 (ms)<br>
+2025-06-25 19:41:27,485 | INFO | Pass: Depth - 7.16114 (ms)<br>
+2025-06-25 19:41:27,486 | INFO | Pass: Size - 0.00620 (ms)<br>
+2025-06-25 19:41:28,190 | INFO | Pass: MinimumPoint - 704.77009 (ms)<br>
+2025-06-25 19:41:28,240 | INFO | Pass: ConsolidateBlocks - 49.98899 (ms)<br>
+2025-06-25 19:41:28,259 | INFO | Pass: UnitarySynthesis - 18.17393 (ms)<br>
+2025-06-25 19:41:28,262 | INFO | Pass: RemoveIdentityEquivalent - 2.93612 (ms)<br>
+2025-06-25 19:41:28,276 | INFO | Pass: Optimize1qGatesDecomposition - 13.61322 (ms)<br>
+2025-06-25 19:41:28,295 | INFO | Pass: CommutativeCancellation - 19.58299 (ms)<br>
+2025-06-25 19:41:28,295 | INFO | Pass: ContractIdleWiresInControlFlow - 0.00286 (ms)<br>
+2025-06-25 19:41:28,301 | INFO | Pass: GatesInBasis - 5.45430 (ms)<br>
+2025-06-25 19:41:28,308 | INFO | Pass: Depth - 7.16329 (ms)<br>
+2025-06-25 19:41:28,308 | INFO | Pass: Size - 0.00525 (ms)<br>
+2025-06-25 19:41:29,057 | INFO | Pass: MinimumPoint - 748.99983 (ms)<br>
+2025-06-25 19:41:29,106 | INFO | Pass: ConsolidateBlocks - 49.17812 (ms)<br>
+2025-06-25 19:41:29,107 | INFO | Pass: UnitarySynthesis - 0.00906 (ms)<br>
+2025-06-25 19:41:29,109 | INFO | Pass: RemoveIdentityEquivalent - 2.71010 (ms)<br>
+2025-06-25 19:41:29,123 | INFO | Pass: Optimize1qGatesDecomposition - 13.68499 (ms)<br>
+2025-06-25 19:41:29,142 | INFO | Pass: CommutativeCancellation - 19.32216 (ms)<br>
+2025-06-25 19:41:29,142 | INFO | Pass: ContractIdleWiresInControlFlow - 0.00310 (ms)<br>
+2025-06-25 19:41:29,148 | INFO | Pass: GatesInBasis - 5.47504 (ms)<br>
+2025-06-25 19:41:29,155 | INFO | Pass: Depth - 6.97398 (ms)<br>
+2025-06-25 19:41:29,155 | INFO | Pass: Size - 0.00429 (ms)<br>
+2025-06-25 19:41:29,155 | INFO | Pass: MinimumPoint - 0.00596 (ms)<br>
+2025-06-25 19:41:29,157 | INFO | Pass: ContainsInstruction - 0.01097 (ms)<br>
+2025-06-25 19:41:29,157 | INFO | Pass: InstructionDurationCheck - 0.00215 (ms)<br>
+2025-06-25 19:41:29,166 | INFO | Total Transpile Time - 11371.84906 (ms)<br>
+2025-06-25 19:41:29,294 | INFO | Circuit depth 67428, gate counts OrderedDict({'sx': 56613, 'cz': 34319, 'rz': 15355, 'x': 157, 'measure': 10, 'barrier': 1})<br>
+base_primitive._run:INFO:2025-06-25 19:41:29,994: Submitting job using options {'options': {}, 'version': 2, 'support_qiskit': True}<br>
+<br>
+SUCCESS — k = 7 found in top 100 results<br>
+<br>
+Top 100 invertible (a, b) pairs and recovered k:<br>
+  (a= 8, b=11)  →  k =  8   (count = 63)<br>
+  (a=12, b= 9)  →  k = 20   (count = 58)<br>
+  (a= 0, b= 3)  →  k =  0   (count = 54)<br>
+  (a= 1, b= 9)  →  k =  7   (count = 54) <<< <br>
+  (a=28, b= 1)  →  k =  4   (count = 53)<br>
+  (a= 0, b=11)  →  k =  0   (count = 53)<br>
+  (a= 8, b= 9)  →  k = 24   (count = 53)<br>
+  (a= 8, b= 3)  →  k =  8   (count = 53)<br>
+  (a= 8, b= 1)  →  k = 24   (count = 52)<br>
+  (a=16, b= 9)  →  k = 16   (count = 52)<br>
+  (a=12, b= 3)  →  k = 28   (count = 52)<br>
+  (a= 1, b=11)  →  k = 29   (count = 47)<br>
+  (a= 4, b= 3)  →  k = 20   (count = 47)<br>
+  (a=27, b= 9)  →  k = 29   (count = 47)<br>
+  (a=20, b= 9)  →  k = 12   (count = 47)<br>
+  (a=28, b= 9)  →  k =  4   (count = 46)<br>
+  (a=24, b= 3)  →  k = 24   (count = 46)<br>
+  (a= 0, b= 1)  →  k =  0   (count = 46)<br>
+  (a=24, b= 9)  →  k =  8   (count = 45)<br>
+  (a= 0, b= 9)  →  k =  0   (count = 45)<br>
+  (a= 4, b= 1)  →  k = 28   (count = 45)<br>
+  (a= 9, b= 9)  →  k = 31   (count = 44)<br>
+  (a=12, b=11)  →  k = 28   (count = 43)<br>
+  (a=16, b= 3)  →  k = 16   (count = 43)<br>
+  (a= 1, b= 1)  →  k = 31   (count = 43)<br>
+  (a=10, b= 1)  →  k = 22   (count = 42)<br>
+  (a=16, b= 1)  →  k = 16   (count = 42)<br>
+  (a= 4, b=11)  →  k = 20   (count = 42)<br>
+  (a=20, b= 1)  →  k = 12   (count = 41)<br>
+  (a=17, b= 1)  →  k = 15   (count = 41)<br>
+  (a=26, b= 1)  →  k =  6   (count = 41)<br>
+  (a=11, b= 3)  →  k =  7   (count = 41) <<< <br>
+  (a=10, b=11)  →  k =  2   (count = 41)<br>
+  (a=16, b=11)  →  k = 16   (count = 40)<br>
+  (a= 5, b= 1)  →  k = 27   (count = 40)<br>
+  (a=14, b= 9)  →  k =  2   (count = 40)<br>
+  (a=28, b= 3)  →  k = 12   (count = 40)<br>
+  (a= 4, b= 9)  →  k = 28   (count = 40)<br>
+  (a=30, b= 9)  →  k = 18   (count = 39)<br>
+  (a=24, b=11)  →  k = 24   (count = 39)<br>
+  (a= 2, b=11)  →  k = 26   (count = 39)<br>
+  (a=28, b=11)  →  k = 12   (count = 39)<br>
+  (a=17, b= 9)  →  k = 23   (count = 39)<br>
+  (a= 1, b= 3)  →  k = 21   (count = 39)<br>
+  (a= 2, b= 9)  →  k = 14   (count = 38)<br>
+  (a=27, b= 1)  →  k =  5   (count = 38)<br>
+  (a=15, b=11)  →  k = 19   (count = 38)<br>
+  (a=31, b= 1)  →  k =  1   (count = 38)<br>
+  (a=12, b= 1)  →  k = 20   (count = 37)<br>
+  (a= 9, b= 1)  →  k = 23   (count = 37)<br>
+  (a=25, b= 3)  →  k = 13   (count = 37)<br>
+  (a=17, b=11)  →  k = 13   (count = 37)<br>
+  (a=25, b=11)  →  k = 21   (count = 37)<br>
+  (a=14, b=11)  →  k = 22   (count = 36)<br>
+  (a=26, b=11)  →  k = 18   (count = 36)<br>
+  (a=24, b= 1)  →  k =  8   (count = 36)<br>
+  (a=10, b= 3)  →  k = 18   (count = 36)<br>
+  (a=13, b= 1)  →  k = 19   (count = 36)<br>
+  (a= 9, b=11)  →  k =  5   (count = 36)<br>
+  (a= 3, b= 3)  →  k = 31   (count = 36)<br>
+  (a=15, b= 9)  →  k =  9   (count = 35)<br>
+  (a=13, b= 9)  →  k = 27   (count = 35)<br>
+  (a=13, b=11)  →  k = 25   (count = 35)<br>
+  (a=26, b= 9)  →  k = 22   (count = 35)<br>
+  (a= 5, b= 3)  →  k =  9   (count = 34)<br>
+  (a= 9, b= 3)  →  k = 29   (count = 34)<br>
+  (a=29, b= 1)  →  k =  3   (count = 33)<br>
+  (a=11, b=11)  →  k = 31   (count = 33)<br>
+  (a= 2, b= 3)  →  k = 10   (count = 33)<br>
+  (a= 3, b= 1)  →  k = 29   (count = 32)<br>
+  (a=15, b= 1)  →  k = 17   (count = 32)<br>
+  (a=20, b= 3)  →  k =  4   (count = 32)<br>
+  (a=30, b=11)  →  k =  6   (count = 32)<br>
+  (a=25, b= 1)  →  k =  7   (count = 32) <<< <br>
+  (a=19, b= 9)  →  k =  5   (count = 31)<br>
+  (a=29, b= 9)  →  k = 11   (count = 31)<br>
+  (a= 3, b= 9)  →  k = 21   (count = 31)<br>
+  (a= 5, b=11)  →  k = 17   (count = 31)<br>
+  (a=17, b= 3)  →  k =  5   (count = 30)<br>
+  (a= 0, b=17)  →  k =  0   (count = 30)<br>
+  (a=30, b= 1)  →  k =  2   (count = 30)<br>
+  (a= 6, b=11)  →  k = 14   (count = 30)<br>
+  (a=11, b= 1)  →  k = 21   (count = 29)<br>
+  (a=18, b= 3)  →  k = 26   (count = 29)<br>
+  (a=21, b= 9)  →  k = 19   (count = 29)<br>
+  (a=10, b= 9)  →  k =  6   (count = 29)<br>
+  (a= 2, b= 1)  →  k = 30   (count = 29)<br>
+  (a=25, b= 9)  →  k = 15   (count = 28)<br>
+  (a= 8, b=19)  →  k =  8   (count = 28)<br>
+  (a= 5, b= 9)  →  k =  3   (count = 28)<br>
+  (a= 3, b=11)  →  k = 23   (count = 28)<br>
+  (a=10, b=17)  →  k = 22   (count = 28)<br>
+  (a=20, b=11)  →  k =  4   (count = 28)<br>
+  (a=31, b=11)  →  k =  3   (count = 28)<br>
+  (a=26, b= 3)  →  k =  2   (count = 27)<br>
+  (a=29, b=11)  →  k =  9   (count = 27)<br>
+  (a=14, b= 1)  →  k = 18   (count = 27)<br>
+  (a= 7, b= 1)  →  k = 25   (count = 27)<br>
+  (a=23, b=11)  →  k = 27   (count = 27)<br>
+  (a= 8, b=25)  →  k = 24   (count = 27)<br>
+<br>
 <br>
   <img src="e73i1.png" alt="" class="experiment-image">
         <p></p>
