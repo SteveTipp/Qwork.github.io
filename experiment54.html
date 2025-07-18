@@ -100,9 +100,8 @@
         <h1><center> Factoring 77 with Shor's Algorithm (Simplified) on IBM's 127-Qubit Quantum Computer </center></h1>
         <div class="content-block">
          
-The objective is to factor n = 77 into its prime components p and q, where n  = p * q. Factoring n is classically hard for large integers but is made efficient with Shor's algorithm, which relies on finding the period r of the modular function:  <br>
-f(a, x) = a^x mod n<br>
-where a is a chosen co-prime integer to n.<br>
+The objective is to factor n = 77 into its prime components p and q, where n  = p * q. Factoring n is classically hard for large integers but is made efficient with Shor's algorithm.<br>
+This early version of Shor’s is a condensed skeleton designed for backend testing and calibration alignment. It intentionally skips the modular exponentiation step, the heart of quantum period finding, and instead serves as a structural test of QFT execution and circuit layout on IBM’s quantum hardware. While it shows the circuit shape and measurement handling, it does not perform actual factorization. For a full implementation, go to my factor of 95.<br>
 
 
 <p>2. Backend Calibration<br>
@@ -114,19 +113,13 @@ A base a = 2 is selected such that gcd(a, n) = 1. If a is not co-prime to n, it 
 
 
 
-
-
-<p>4. Modular Exponentiation<br>
-The modular function f(a, x) = a^x mod n is computed, where x represents an input to the quantum circuit. The goal is to determine the periodicity r, the smallest positive integer such that:<br>
-a^r ≡ 1 mod n
-<br>
     
 
 
 
 
 
-<p>5. Quantum Circuit Initialization<br>
+<p>4. Quantum Circuit Initialization<br>
 Two registers are initialized. A quantum register of size 2n qubits for the modular exponentiation. A classical register of size n for measurement. <br>
 Hadamard gates are applied for initial superposition to all qubits in the first register:<br>
                       2^n - 1<br>
@@ -140,25 +133,25 @@ Hadamard gates are applied for initial superposition to all qubits in the first 
 
 
 
-<p>6. Quantum Fourier Transform (QFT)<br>
+<p>5. Quantum Fourier Transform (QFT)<br>
 The QFT is applied to the first quantum register to extract the periodicity r:<br>
                                  2^n - 1<br>
 QFT: 1/sqrt(2^n) ∑ e^(2πi * (kx)/(2^n) ∣k⟩<br>
                                   x = 0<br>
 The result is an interference pattern where peaks correspond to multiples of 1/r.<br>
 
-<p>7. Measurement<br>
+<p>6. Measurement<br>
 The first register is measured, collapsing the superposition into a specific eigenstate ∣k⟩.<br>
 The measured value k relates to r by:<br>
 k/2^n ≈ m/r (for some integer m)<br>
 
-<p>8: Classical Post-Processing<br>
+<p>7: Classical Post-Processing<br>
 The measured k is processed using the continued fraction algorithm to extract r. <br>
 If r is even and a^(r/2) ≡ −1 mod n, the factors of n are computed as:<br>
 p = gcd(a^(r/2) − 1, n), q = gcd(a^(r/2) + 1, n)<br>
 If the conditions are not met, a is reselected, and the process is repeated.<br>
 
-<p>9: Results and Visual<br>
+<p>8: Results and Visual<br>
 The measurement counts are visualized as a histogram, displaying the probability distribution of observed eigenstates ∣k⟩. The factors p and q are saved to a Json.<br>
 
 
