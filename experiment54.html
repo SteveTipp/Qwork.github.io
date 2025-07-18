@@ -138,31 +138,27 @@ Hadamard gates are applied for initial superposition to all qubits in the first 
 
 
 
-<p>6. Modular Exponentiation Circuit<br>
-Controlled unitary operations implement f(a, x), mapping each ∣x⟩ to ∣f(a, x)⟩:<br>
-                      2^n - 1<br>
-1/sqrt(2^n) ∑ ∣x⟩ ∣f(a, x)⟩<br>
-                      x = 0<br><br>
 
-<p>7. Quantum Fourier Transform (QFT)<br>
+
+<p>6. Quantum Fourier Transform (QFT)<br>
 The QFT is applied to the first quantum register to extract the periodicity r:<br>
                                  2^n - 1<br>
 QFT: 1/sqrt(2^n) ∑ e^(2πi * (kx)/(2^n) ∣k⟩<br>
                                   x = 0<br>
 The result is an interference pattern where peaks correspond to multiples of 1/r.<br>
 
-<p>8. Measurement<br>
+<p>7. Measurement<br>
 The first register is measured, collapsing the superposition into a specific eigenstate ∣k⟩.<br>
 The measured value k relates to r by:<br>
 k/2^n ≈ m/r (for some integer m)<br>
 
-<p>9: Classical Post-Processing<br>
+<p>8: Classical Post-Processing<br>
 The measured k is processed using the continued fraction algorithm to extract r. <br>
 If r is even and a^(r/2) ≡ −1 mod n, the factors of n are computed as:<br>
 p = gcd(a^(r/2) − 1, n), q = gcd(a^(r/2) + 1, n)<br>
 If the conditions are not met, a is reselected, and the process is repeated.<br>
 
-<p>10: Results and Visual<br>
+<p>9: Results and Visual<br>
 The measurement counts are visualized as a histogram, displaying the probability distribution of observed eigenstates ∣k⟩. The factors p and q are saved to a Json.<br>
 
 
