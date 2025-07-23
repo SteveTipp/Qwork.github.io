@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Experiment 20 - Qwork</title>
+    <title>Experiment 30 - Qwork</title>
     <style>
        body {
             background-color: #000000; /* Black background */
@@ -231,31 +231,31 @@ qr = QuantumRegister(127)  # 1 qubit for the Bloch clock, 126 qubits for the sup
 cr = ClassicalRegister(127)  # Classical register to store the results
 qc = QuantumCircuit(qr, cr)
 
-# Step 1: Initialize the Bloch clock qubit (qr[0])
+# Initialize the Bloch clock qubit (qr[0])
 qc.h(qr[0])  # Start the Bloch clock in superposition (|+> state)
 
-# Step 2: Create a superposition state across the 126 qubits
+# Create a superposition state across the 126 qubits
 for i in range(1, 127):
     qc.h(qr[i])  # Apply Hadamard gate to create superposition
 
-# Step 3: Apply a quantum algorithm that will eventually lead to collapse
+# Apply a quantum algorithm that will eventually lead to collapse
 # Example: Entangling the Bloch clock with all other qubits
 for i in range(1, 127):
-    qc. cx(qr[0], qr[i])  # Entangle the Bloch clock with all other qubits
+    qc.cx(qr[0], qr[i])  # Entangle the Bloch clock with all other qubits
 
-# Step 4: Evolve the Bloch clock through some quantum gates
+# Evolve the Bloch clock through some quantum gates
 qc.rx(np.pi / 4, qr[0])  # Rotate Bloch clock around X-axis
 qc.ry(np.pi / 4, qr[0])  # Rotate Bloch clock around Y-axis
 qc.rz(np.pi / 4, qr[0])  # Rotate Bloch clock around Z-axis
 
-# Step 5: Measure all qubits
+# Measure all qubits
 qc.measure(qr, cr)
 
 # Set up the IBMQ runtime service
 service = QiskitRuntimeService(
     channel='ibm_quantum',
     instance='ibm-q/open/main',
-    token='YOUR_IBMQ_KEY_O-`'  
+    token='YOUR_IBMQ_KEY'  
 )
 
 # Define the backend 
@@ -269,7 +269,7 @@ with Session(service=service, backend=backend) as session:
     sampler = SamplerV2(session=session)
     
     # Run the transpiled circuit with the specified number of shots
-    job = sampler. run([qc_transpiled], shots=8192)
+    job = sampler.run([qc_transpiled], shots=8192)
     job_result = job.result()
     
     # Retrieve the classical register name
@@ -289,7 +289,7 @@ with Session(service=service, backend=backend) as session:
 
 # Plotting the results 
 plot_histogram(pub_result)
-plt. show()
+plt.show()
 
 # Extract the operations that were applied to the Bloch clock qubit (qr[0])
 qc_bloch_clock = QuantumCircuit(1)
@@ -303,7 +303,7 @@ state_bloch_clock = Statevector.from_instruction(qc_bloch_clock)
 
 # Plot the Bloch sphere for the Bloch clock qubit
 plot_bloch_multivector(state_bloch_clock)
-plt. show()
+plt.show()
 
 ////////////////////////////////////////////////////////////////
 
@@ -377,7 +377,7 @@ ax.set_ylabel('Y')
 ax.set_zlabel('Z')
 ax.set_title("Color-Coded 3D Trajectory of Bloch Vector Over Time")
 
-plt. show()
+plt.show()
 
 ////////////////////////////////////////////////////////////////
 
@@ -421,7 +421,7 @@ plt.ylabel("Quantum Clock Phase")
 
 # Save the heatmap
 plt.savefig('/Users/Documents/job-cv13d1mg9ymg0081fz0g quantum_clock_state_collapse_results_1 Run Data/collapse_probabilities_heatmap.png')
-plt. show()
+plt.show()
 
 ////////////////////////////////////////////////////////////////
 
@@ -475,7 +475,7 @@ for i, ax in enumerate(axes.flat):
 
 plt.suptitle('Probability Distribution Over Time')
 plt.tight_layout()
-plt. show()
+plt.show()
 
 ////////////////////////////////////////////////////////////////
 
@@ -531,7 +531,7 @@ for i, ax in enumerate(axes.flat):
     ax.set_title(f'State at tick {i+1}: |{bitstring[i]}⟩')
 
 plt.suptitle('First 10 Quantum State Changes on the Bloch Sphere')
-plt. show()
+plt.show()
 
 # End
 
