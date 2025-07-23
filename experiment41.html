@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Experiment 20 - Qwork</title>
+    <title>Experiment 41 - Qwork</title>
     <style>
        body {
             background-color: #000000; /* Black background */
@@ -312,7 +312,7 @@ def create_navier_stokes_qc(n_qubits, time_step, orders):
         for qubit in range(n_qubits):
             qc.rz(np.pi / time_step, qubit)
         for qubit in range(n_qubits - 1):
-            qc. cx(qubit, qubit + 1)
+            qc.cx(qubit, qubit + 1)
     
     # Measurement
     qc.measure(range(n_qubits), range(n_qubits))
@@ -323,14 +323,14 @@ def create_navier_stokes_qc(n_qubits, time_step, orders):
 service = QiskitRuntimeService(
     channel='ibm_quantum',
     instance='ibm-q/open/main',
-    token='YOUR_IBMQ_KEY_O-`'
+    token='YOUR_IBMQ_KEY'
 )
 
 backend_name = 'ibm_brisbane'
 backend = service.backend(backend_name)
 
 # Logging 
-logging.basicConfig(level=logging. INFO)
+logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
 # Load calibration data
@@ -353,8 +353,8 @@ transpiled_qc = transpile(qc, backend=backend, optimization_level=3)
 with Session(service=service, backend=backend) as session:
     sampler = SamplerV2(session=session)
     
-    logger. info("Running the Navier-Stokes simulation on ibm_brisbane backend")
-    job = sampler. run([transpiled_qc], shots=shots)
+    logger.info("Running the Navier-Stokes simulation on ibm_brisbane backend")
+    job = sampler.run([transpiled_qc], shots=shots)
     job_result = job.result()
 
     # Measurement data 
@@ -372,9 +372,9 @@ with Session(service=service, backend=backend) as session:
 
 # Plot the results for analysis
 plot_histogram(counts)
-plt. show()
+plt.show()
 
-logger. info("Experiment complete.")
+logger.info("Experiment complete.")
 
 # End.
 
@@ -406,13 +406,13 @@ top_states = sorted_probabilities[:20]
 states, probs = zip(*top_states)
 
 plt.figure(figsize=(12, 6))
-plt. bar(states, probs)
+plt.bar(states, probs)
 plt.xticks(rotation=90)
 plt.xlabel('Bitstrings (Quantum States)')
 plt.ylabel('Probability')
 plt.title('Top 20 Quantum States in Navier-Stokes Simulation')
 plt.tight_layout()
-plt. show()
+plt.show()
 
 # Calculate Shannon Entropy
 entropy = -sum(p * np.log2(p) for p in probabilities.values() if p > 0)  # Avoid log(0)
@@ -427,7 +427,7 @@ plt.xlabel('Rank of State')
 plt.ylabel('Probability (Log Scale)')
 plt.title('Probability Distribution of All Measured States (Log Scale)')
 plt.tight_layout()
-plt. show()
+plt.show()
 
 # Cumulative Probability Distribution
 cumulative_probs = np.cumsum(all_probs)
@@ -437,7 +437,7 @@ plt.xlabel('Rank of State')
 plt.ylabel('Cumulative Probability')
 plt.title('Cumulative Probability Distribution')
 plt.tight_layout()
-plt. show()
+plt.show()
 
 #  Heatmap of Bitstring Probabilities
 bitstrings_matrix = np.array([list(map(int, state)) for state in all_states[:20]])  # Convert top 20 bitstrings to binary matrix
@@ -449,7 +449,7 @@ plt.xlabel('Qubit Index')
 plt.ylabel('Top 20 Bitstrings')
 plt.title('Heatmap of Bitstrings in Navier-Stokes Simulation')
 plt.tight_layout()
-plt. show()
+plt.show()
 
 //////////////////////////////////////////////////
 Density Plot of Probabilities, Correlation Heatmap (Bitwise Analysis) from Run Data
@@ -488,7 +488,7 @@ sns.kdeplot(probs, shade=True)
 plt.title('Density Plot of Quantum State Probabilities')
 plt.xlabel('Probability')
 plt.ylabel('Density')
-plt. show()
+plt.show()
 
 # Correlation Heatmap (Bitwise Analysis)
 # Convert top 50 bitstrings into a binary matrix
@@ -502,7 +502,7 @@ sns.heatmap(corr_matrix, annot=True, cmap='coolwarm', center=0)
 plt.title('Qubit Correlation Heatmap for Top 50 Quantum States')
 plt.xlabel('Qubit Index')
 plt.ylabel('Qubit Index')
-plt. show()
+plt.show()
 
 # End
 
