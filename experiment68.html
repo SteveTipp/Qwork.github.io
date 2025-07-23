@@ -272,11 +272,11 @@ from math import pi
 from qiskit import QuantumCircuit, QuantumRegister, ClassicalRegister, transpile
 from qiskit_ibm_runtime import QiskitRuntimeService, SamplerV2
 
-logging.basicConfig(level=logging .INFO, format="%(levelname)s: %(message)s")
+logging.basicConfig(level=logging.INFO, format="%(levelname)s: %(message)s")
 log = logging.getLogger("Twistor‑Casimir")
 
 # IBMQ
-TOKEN = "IBMQ_API_KEY_O-`"
+TOKEN = "IBMQ_API_KEY"
 INSTANCE = "IBMQ_CRN"
 
 service  = QiskitRuntimeService(
@@ -296,7 +296,7 @@ def best_qubits(cal_csv: str, n: int = 49) -> list[int]:
         ascending=[True, False, False],
     )
     winners = ordered["Qubit"].head(n).astype(int).tolist()
-    log .info("Initial‑layout physical qubits: %s", winners)
+    log.info("Initial‑layout physical qubits: %s", winners)
     return winners
 
 CAL_CSV = "/Users/steventippeconnic/Downloads/ibm_torino_calibrations_2025-05-12T17_23_16Z.csv"
@@ -334,7 +334,7 @@ qc.barrier(label="Twistor + Casimir phases")
 # Each column chain CX from top mirror -> … -> bottom mirror to correlate modes
 for c in range(7):
     for r in range(6):                        # 0 - 5 links neighbor rows
-        qc .cx(d_q[idx(r, c)], d_q[idx(r + 1, c)])
+        qc.cx(d_q[idx(r, c)], d_q[idx(r + 1, c)])
 qc.barrier(label="Vacuum entangling ladder")
 
 # Measurements 
@@ -348,11 +348,11 @@ qc_t = transpile(
     initial_layout=physical_layout,
     optimization_level=3,
 )
-log .info("Transpiled circuit depth: %d", qc_t.depth())
+log.info("Transpiled circuit depth: %d", qc_t.depth())
 
 # Execute 
 sampler = SamplerV2(mode=backend)
-job     = sampler .run([qc_t], shots=32768)
+job     = sampler.run([qc_t], shots=32768)
 result  = job.result()
 
 # Counts 
@@ -388,12 +388,12 @@ out = {
 JSON_PATH = "/Users/steventippeconnic/Documents/Twistor_Casimir_Coupling_0.json"
 with open(JSON_PATH, "w") as fp:
     json.dump(out, fp, indent=4)
-log .info("Results JSON saved → %s", JSON_PATH)
+log.info("Results JSON saved → %s", JSON_PATH)
 
 #  Console summary 
-log .info("Average boundary pair‑creation rate: %.5f", sum(pair_rates.values()) / 7)
+log.info("Average boundary pair‑creation rate: %.5f", sum(pair_rates.values()) / 7)
 for col, rate in pair_rates.items():
-    log .info("  column %d : %.5f", col, rate)
+    log.info("  column %d : %.5f", col, rate)
 
 # End
 
