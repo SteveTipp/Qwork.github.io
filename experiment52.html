@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Experiment 20 - Qwork</title>
+    <title>Experiment 52 - Qwork</title>
     <style>
        body {
             background-color: #000000; /* Black background */
@@ -219,26 +219,26 @@ from qiskit.visualization import plot_histogram
 import matplotlib.pyplot as plt
 
 # Logging
-logging.basicConfig(level=logging. INFO, format='%(asctime)s - %(levelname)s - %(message)s')
+logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
 logger = logging.getLogger(__name__)
 
 # Load calibration data
 def load_calibration_data(file_path):
-    logger. info("Loading calibration data from %s", file_path)
-    calibration_data = pd. read_csv(file_path)
+    logger.info("Loading calibration data from %s", file_path)
+    calibration_data = pd.read_csv(file_path)
     calibration_data.columns = calibration_data.columns.str.strip()
-    logger. info("Calibration data loaded successfully")
+    logger.info("Calibration data loaded successfully")
     return calibration_data
 
 # Parse calibration data
 def select_best_qubits(calibration_data, n_qubits):
-    logger. info("Selecting the best qubits based on T1, T2, and error rates")
+    logger.info("Selecting the best qubits based on T1, T2, and error rates")
     qubits_sorted = calibration_data.sort_values(
         by=['\u221ax (sx) error', 'T1 (us)', 'T2 (us)'], 
         ascending=[True, False, False]
     )
     best_qubits = qubits_sorted['Qubit'].head(n_qubits).tolist()
-    logger. info("Selected qubits: %s", best_qubits)
+    logger.info("Selected qubits: %s", best_qubits)
     return best_qubits
 
 # Load backend calibration data
@@ -250,16 +250,16 @@ num_qubits = 7
 best_qubits = select_best_qubits(calibration_data, num_qubits)
 
 # IBMQ
-logger. info("Setting up IBM Q service")
+logger.info("Setting up IBM Q service")
 service = QiskitRuntimeService(
     channel='ibm_quantum',
     instance='ibm-q/open/main',
-    token='YOUR_IBMQ_API_KEY_O-`'
+    token='YOUR_IBMQ_API_KEY'
 )
 
 backend_name = 'ibm_brisbane'
 backend = service.backend(backend_name)
-logger. info("Backend selected: %s", backend_name)
+logger.info("Backend selected: %s", backend_name)
 
 # Quantum and classical registers
 qr = QuantumRegister(num_qubits, 'light_directions')
@@ -278,22 +278,22 @@ for i in range(1, num_qubits):
 # Apply an interferometric protocol for Berry phase measurement
 qc.h(qr[0])  
 for i in range(1, num_qubits):
-    qc. cx(qr[0], qr[i])  
+    qc.cx(qr[0], qr[i])  
 
 # Measure
 qc.measure(qr, cr)
 
 # Transpile 
-logger. info("Transpiling the quantum circuit for the backend")
+logger.info("Transpiling the quantum circuit for the backend")
 qc_transpiled = transpile(qc, backend=backend, optimization_level=3)
-logger. info("Circuit transpilation complete")
+logger.info("Circuit transpilation complete")
 
 # Execute 
 shots = 16384
 with Session(service=service, backend=backend) as session:
     sampler = SamplerV2(session=session)
-    logger. info("Executing the circuit on the backend")
-    job = sampler. run([qc_transpiled], shots=shots)
+    logger.info("Executing the circuit on the backend")
+    job = sampler.run([qc_transpiled], shots=shots)
     job_result = job.result()
 
     # Extract BitArray counts
@@ -306,12 +306,12 @@ with Session(service=service, backend=backend) as session:
     file_path = '/Users/Documents/Geometric_Phase_RC_0.json'
     with open(file_path, 'w') as f:
         json.dump(results_data, f, indent=4)
-    logger. info("Results saved to %s", file_path)
+    logger.info("Results saved to %s", file_path)
 
 # Visual
 plot_histogram(counts)
 plt.title("Geometric Phase of Robinson Congruences")
-plt. show()
+plt.show()
 
 ///////////////////////////
 
@@ -337,13 +337,13 @@ def plot_histogram_measured_states(counts):
     sorted_probs = sorted(counts.items(), key=lambda x: x[1], reverse=True)
     bitstrings, _ = zip(*sorted_probs)
     plt.figure(figsize=(12, 6))
-    plt. bar(bitstrings[:50], [counts[b] for b in bitstrings[:50]], color='blue', alpha=0.7)
+    plt.bar(bitstrings[:50], [counts[b] for b in bitstrings[:50]], color='blue', alpha=0.7)
     plt.xticks(rotation=90, fontsize=8)
     plt.xlabel("Bitstrings")
     plt.ylabel("Counts")
     plt.title("Histogram of Measured States")
     plt.tight_layout()
-    plt. show()
+    plt.show()
 
 # Heatmap of Probabilities
 def plot_heatmap_probabilities(probabilities):
@@ -356,20 +356,20 @@ def plot_heatmap_probabilities(probabilities):
     plt.ylabel("Probability Density")
     plt.title("Heatmap of Probabilities")
     plt.tight_layout()
-    plt. show()
+    plt.show()
 
 # Dominant States
 def plot_dominant_states(counts, top_n=10):
     sorted_counts = sorted(counts.items(), key=lambda x: x[1], reverse=True)
     top_bitstrings, top_counts = zip(*sorted_counts[:top_n])
     plt.figure(figsize=(10, 5))
-    plt. bar(top_bitstrings, top_counts, color='green', alpha=0.8)
+    plt.bar(top_bitstrings, top_counts, color='green', alpha=0.8)
     plt.xticks(rotation=45, fontsize=10)
     plt.xlabel("Top Bitstrings")
     plt.ylabel("Counts")
     plt.title(f"Top {top_n} Dominant States")
     plt.tight_layout()
-    plt. show()
+    plt.show()
 
 # Cumulative Distribution Function
 def plot_cumulative_distribution(counts):
@@ -383,7 +383,7 @@ def plot_cumulative_distribution(counts):
     plt.title("Cumulative Distribution Function (CDF)")
     plt.grid(True)
     plt.tight_layout()
-    plt. show()
+    plt.show()
 
 # Probability Distribution Across All States (Line Plot)
 def plot_probability_distribution(probabilities):
@@ -396,20 +396,20 @@ def plot_probability_distribution(probabilities):
     plt.title("Probability Distribution Across All States")
     plt.grid(True)
     plt.tight_layout()
-    plt. show()
+    plt.show()
 
 # Logarithmic Histogram of Measured States
 def plot_logarithmic_histogram(counts):
     sorted_counts = sorted(counts.items(), key=lambda x: x[1], reverse=True)
     bitstrings, _ = zip(*sorted_counts)
     plt.figure(figsize=(12, 6))
-    plt. bar(bitstrings[:50], [np.log10(counts[b]) for b in bitstrings[:50]], color='orange', alpha=0.8)
+    plt.bar(bitstrings[:50], [np.log10(counts[b]) for b in bitstrings[:50]], color='orange', alpha=0.8)
     plt.xticks(rotation=90, fontsize=8)
     plt.xlabel("Bitstrings")
     plt.ylabel("Log10(Counts)")
     plt.title("Logarithmic Histogram of Measured States")
     plt.tight_layout()
-    plt. show()
+    plt.show()
 
 # State Transition Analysis (Scatter Plot)
 def plot_state_transition_analysis(probabilities):
@@ -422,7 +422,7 @@ def plot_state_transition_analysis(probabilities):
     plt.title("State Transition Analysis")
     plt.grid(True)
     plt.tight_layout()
-    plt. show()
+    plt.show()
 
 # Probability Deviation Analysis
 def plot_probability_deviation_analysis(probabilities):
@@ -440,7 +440,7 @@ def plot_probability_deviation_analysis(probabilities):
     plt.title("Probability Deviation Analysis")
     plt.grid(True)
     plt.tight_layout()
-    plt. show()
+    plt.show()
 
 # Full Probability Heatmap
 def plot_full_probability_heatmap(probabilities):
@@ -454,7 +454,7 @@ def plot_full_probability_heatmap(probabilities):
     plt.ylabel("Probability Density")
     plt.title("Full Probability Heatmap (Macro Overview)")
     plt.tight_layout()
-    plt. show()
+    plt.show()
 
 # Phase Contribution vs. Curvature vs. Counts
 def plot_phase_contribution_vs_curvature(counts):
@@ -471,7 +471,7 @@ def plot_phase_contribution_vs_curvature(counts):
     ax.set_zlabel("Measured Counts")
     ax.set_title("Phase Contribution vs. Curvature vs. Counts")
     plt.tight_layout()
-    plt. show()
+    plt.show()
 
 # 3D Surface Plot of Probabilities
 def plot_3d_surface_probabilities(probabilities):
@@ -488,7 +488,7 @@ def plot_3d_surface_probabilities(probabilities):
     ax.set_zlabel("Probability")
     ax.set_title("3D Surface Plot of Probabilities")
     plt.tight_layout()
-    plt. show()
+    plt.show()
 
 # Bitstring Pair Correlation (Scatter Plot)
 def plot_bitstring_pair_correlation(counts):
@@ -502,7 +502,7 @@ def plot_bitstring_pair_correlation(counts):
     plt.title("Bitstring Pair Correlation (Scatter Plot)")
     plt.grid(True)
     plt.tight_layout()
-    plt. show()
+    plt.show()
 
 # Main 
 def main():
