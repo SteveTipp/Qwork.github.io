@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Experiment 20 - Qwork</title>
+    <title>Experiment 64 - Qwork</title>
     <style>
        body {
             background-color: #000000; /* Black background */
@@ -236,7 +236,7 @@ from qiskit.circuit.library import RZGate
 from qiskit.visualization import plot_histogram
 import matplotlib.pyplot as plt
 
-logging.basicConfig(level=logging. INFO)
+logging.basicConfig(level=logging.INFO)
 log = logging.getLogger(__name__)
 
 #  IBMQ
@@ -250,14 +250,14 @@ backend = service.backend("ibm_sherbrooke")
 
 #  Pick best 49 physical qubits
 def best_qubits(csv_path: str, n: int) -> list[int]:
-df = pd. read_csv(csv_path)
+df = pd.read_csv(csv_path)
 df.columns = df.columns.str.strip()
 order = df.sort_values(
 ["√x (sx) error", "T1 (us)", "T2 (us)"],
 ascending=[True, False, False]
 )
 winners = order["Qubit"].head(n).tolist()
-log. info("Best qubits: %s", winners)
+log.info("Best qubits: %s", winners)
 return winners
 
 cal_csv = "/Users/steventippeconnic/Downloads/ibm_sherbrooke_calibrations_2025-04-17T21_06_13Z.csv"
@@ -296,11 +296,11 @@ a = a_q[idx]
 if stab_type == "X":
 qc.h(a)
 for d in data:
-qc. cx(d_q[d], a)
+qc.cx(d_q[d], a)
 qc.h(a)
 else:  # Z‑type
 for d in data:
-qc. cx(d_q[d], a)
+qc.cx(d_q[d], a)
 qc.measure(a, c_q[idx])
 qc.barrier()
 
@@ -330,8 +330,8 @@ shots = sum(counts.values())
 z1_fail = sum(f for b, f in counts.items() if parity(b, Z1_idx))
 z2_fail = sum(f for b, f in counts.items() if parity(b, Z2_idx))
 
-log. info("Logical‑Z1 failure rate: %.5f", z1_fail / shots)
-log. info("Logical‑Z2 failure rate: %.5f", z2_fail / shots)
+log.info("Logical‑Z1 failure rate: %.5f", z1_fail / shots)
+log.info("Logical‑Z2 failure rate: %.5f", z2_fail / shots)
 
 # Results and plot
 out = {
@@ -345,10 +345,10 @@ out = {
 }
 json_path = "/Users/steventippeconnic/Documents/QC/Dual_Diagonal_Twistor_Weighted_Surface_Code_0.json"
 with open(json_path, "w") as fp: json.dump(out, fp, indent=4)
-log. info("Results saved → %s", json_path)
+log.info("Results saved → %s", json_path)
 plot_histogram(counts,
 title="Dual‑Diagonal Twistor Surface‑Code Syndrome Outcomes")
-plt. show()
+plt.show()
 
 # End.
 
