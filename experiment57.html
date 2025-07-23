@@ -245,23 +245,23 @@ from qiskit.visualization import plot_histogram
 import matplotlib.pyplot as plt
 
 # Logging Setup
-logging.basicConfig(level=logging. INFO, format="%(asctime)s - %(levelname)s - %(message)s")
+logging.basicConfig(level=logging.INFO, format="%(asctime)s - %(levelname)s - %(message)s")
 logger = logging.getLogger(__name__)
 
 # Load Backend Calibration Data
 def load_calibration_data(file_path):
     logger. info("Loading calibration data from %s", file_path)
-    calibration_data = pd. read_csv(file_path)
+    calibration_data = pd.read_csv(file_path)
     calibration_data.columns = calibration_data.columns.str.strip()
-    logger. info("Calibration data loaded successfully")
+    logger.info("Calibration data loaded successfully")
     return calibration_data
 
 # Parse Calibration Data
 def select_best_qubits(calibration_data, n_qubits):
-    logger. info("Selecting the best qubits based on T1, T2, and error rates")
+    logger.info("Selecting the best qubits based on T1, T2, and error rates")
     qubits_sorted = calibration_data.sort_values(by=["√x (sx) error", "T1 (us)", "T2 (us)"], ascending=[True, False, False])
     best_qubits = qubits_sorted["Qubit"].head(n_qubits).tolist()
-    logger. info("Selected qubits: %s", best_qubits)
+    logger.info("Selected qubits: %s", best_qubits)
     return best_qubits
 
 # Load Calibration Data
@@ -273,16 +273,16 @@ num_qubits = 6  # 4 qubits + 2 control qubits for delayed choice
 best_qubits = select_best_qubits(calibration_data, num_qubits)
 
 # IBMQ 
-logger. info("Setting up IBM Q service")
+logger.info("Setting up IBM Q service")
 service = QiskitRuntimeService(
     channel="ibm_quantum",
     instance="ibm-q/open/main",
-    token='YOUR_IBMQ_API_KEY_O-`'
+    token='YOUR_IBMQ_API_KEY'
 )
 
 backend_name = "ibm_kyiv"
 backend = service.backend(backend_name)
-logger. info("Backend selected: %s", backend_name)
+logger.info("Backend selected: %s", backend_name)
 
 # Quantum and Classical Registers
 qr = QuantumRegister(num_qubits, "q")
@@ -291,34 +291,34 @@ qc = QuantumCircuit(qr, cr)
 
 # Create Two EPR Pairs (Qubit Pairs: (1,2) and (3,4))
 qc.h(qr[0])
-qc. cx(qr[0], qr[1])
+qc.cx(qr[0], qr[1])
 qc.h(qr[2])
-qc. cx(qr[2], qr[3])
+qc.cx(qr[2], qr[3])
 
 # Prepare a Delayed-Choice Bell-State Measurement (Victor's Measurement)
 qc.h(qr[4])  # Delayed-choice control qubit
 qc.h(qr[5])  # Auxiliary qubit for measurement
-qc. cx(qr[2], qr[3])  # Entangle qubits 2 and 3
+qc.cx(qr[2], qr[3])  # Entangle qubits 2 and 3
 qc.ccx(qr[4], qr[2], qr[5])  # Conditional entanglement based on delayed-choice qubit
 
 # Perform Entanglement Swapping
 qc.h(qr[4])  # Finalize delayed-choice decision
-qc. cx(qr[4], qr[2])  # Entangle qubit 1 with Qubit 4 via intermediate qubits
+qc.cx(qr[4], qr[2])  # Entangle qubit 1 with Qubit 4 via intermediate qubits
 
 # Measurement for Verification
 qc.measure(qr, cr)
 
 # Transpile 
-logger. info("Transpiling the quantum circuit for the backend")
+logger.info("Transpiling the quantum circuit for the backend")
 qc_transpiled = transpile(qc, backend=backend, optimization_level=3)
-logger. info("Circuit transpilation complete")
+logger.info("Circuit transpilation complete")
 
 # Execute 
 shots = 16384
 with Session(service=service, backend=backend) as session:
     sampler = SamplerV2(session=session)
-    logger. info("Executing the circuit on the backend")
-    job = sampler. run([qc_transpiled], shots=shots)
+    logger.info("Executing the circuit on the backend")
+    job = sampler.run([qc_transpiled], shots=shots)
     job_result = job.result()
 
     # Extract counts
@@ -336,12 +336,12 @@ with Session(service=service, backend=backend) as session:
     output_file = '/Users/Documents/Delayed_Choice_Entanglement_Swapping_0.json'
     with open(output_file, "w") as f:
         json.dump(results_data, f, indent=4)
-    logger. info(f"Results saved to {output_file}")
+    logger.info(f"Results saved to {output_file}")
 
 # Visual
 plot_histogram(counts)
 plt.title("Delayed-Choice Entanglement Swapping")
-plt. show()
+plt.show()
 
 ////////////////////////
 Code for All Visuals from Run Data
@@ -387,7 +387,7 @@ plt.xlabel("States")
 plt.ylabel("Counts")
 plt.xticks(rotation=90, fontsize=8)
 plt.tight_layout()
-plt. show()
+plt.show()
 
 # Correlations Between Qubits q0 and q3
 q0_q3_counts = {}
@@ -402,7 +402,7 @@ plt. bar(pairs, pair_counts / total_counts, color='green')
 plt.title("Correlations Between Qubits q0 and q3")
 plt.xlabel("q0-q3 States")
 plt.ylabel("Probability")
-plt. show()
+plt.show()
 
 # Impact of Delayed-Choice Qubit q4
 q4_counts = {"0": 0, "1": 0}
@@ -415,7 +415,7 @@ plt. bar(q4_counts.keys(), np.array(list(q4_counts.values())) / total_counts, co
 plt.title("Impact of Delayed-Choice Qubit q4")
 plt.xlabel("q4 State")
 plt.ylabel("Probability")
-plt. show()
+plt.show()
 
 # Noise Analysis: High vs. Low Frequency States
 high_count_threshold = 100
@@ -436,7 +436,7 @@ plt.ylabel("Counts")
 plt.legend()
 plt.xticks(rotation=90, fontsize=8)
 plt.tight_layout()
-plt. show()
+plt.show()
 
 # Cumulative Probability Distribution
 sorted_probs = np.sort(probabilities)[::-1]
@@ -447,7 +447,7 @@ plt.title("Cumulative Probability Distribution")
 plt.xlabel("State Index (Sorted by Probability)")
 plt.ylabel("Cumulative Probability")
 plt.grid()
-plt. show()
+plt.show()
 
 # Heatmap of State Probabilities
 plt.figure(figsize=(12, 8))
@@ -456,7 +456,7 @@ sns.heatmap(heatmap_data, annot=False, cmap="viridis", cbar=True, xticklabels=["
 plt.title("Heatmap of State Probabilities")
 plt.ylabel("States")
 plt.xlabel("Probability")
-plt. show()
+plt.show()
 
 # Histogram of High-Count States
 high_count_threshold = 1000
@@ -471,7 +471,7 @@ plt.xlabel("States")
 plt.ylabel("Counts")
 plt.xticks(rotation=90, fontsize=8)
 plt.tight_layout()
-plt. show()
+plt.show()
 
 # Probability of Delayed-Choice Correlations
 q4_correlations = {"0": {"00": 0, "01": 0, "10": 0, "11": 0}, "1": {"00": 0, "01": 0, "10": 0, "11": 0}}
@@ -494,7 +494,7 @@ for idx, (q4, correlations) in enumerate(q4_correlations.items()):
     axes[idx].set_ylabel("Probability")
 
 plt.tight_layout()
-plt. show()
+plt.show()
 
 # 3D Bar Plot of State Probabilities
 fig = plt.figure(figsize=(10, 7))
@@ -510,7 +510,7 @@ ax.set_title("3D Bar Plot of State Probabilities")
 ax.set_xlabel("State Index")
 ax.set_ylabel("Y Index")
 ax.set_zlabel("Probability")
-plt. show()
+plt.show()
 
 # 3D Cumulative Probability Surface
 fig = plt.figure(figsize=(12, 8))
@@ -529,7 +529,7 @@ ax.set_title("3D Cumulative Probability Surface")
 ax.set_xlabel("State Index (Sorted by Probability)")
 ax.set_ylabel("Y Index")
 ax.set_zlabel("Cumulative Probability")
-plt. show()
+plt.show()
 
 # 3D Delayed-Choice Qubit Correlations
 fig = plt.figure(figsize=(10, 7))
@@ -539,7 +539,7 @@ ax.set_title("3D Delayed-Choice Qubit Correlations")
 ax.set_xlabel("q0 State")
 ax.set_ylabel("q3 State")
 ax.set_zlabel("q4 State")
-plt. show()
+plt.show()
 
 # 3D State Transition Path
 fig = plt.figure(figsize=(12, 8))
@@ -580,7 +580,7 @@ ax.set_title("3D State Transition Path")
 ax.set_xlabel("Dominant State Index")
 ax.set_ylabel("Neighbor State Index")
 ax.set_zlabel("Transition Weight")
-plt. show()
+plt.show()
 
 # End
 
