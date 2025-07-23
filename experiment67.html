@@ -251,7 +251,7 @@ from qiskit_ibm_runtime import QiskitRuntimeService, SamplerV2
 from qiskit.visualization import plot_histogram
 import matplotlib.pyplot as plt
 
-logging.basicConfig(level=logging .INFO)
+logging.basicConfig(level=logging.INFO)
 log = logging.getLogger(__name__)
 
 # IBMQ
@@ -276,7 +276,7 @@ def best_qubits(csv_path: str, n: int) -> list[int]:
         ascending=[True, False, False],
     )
     winners = order["Qubit"].head(n).tolist()
-    log .info("Selected %s best qubits: %s", n, winners)
+    log.info("Selected %s best qubits: %s", n, winners)
     return winners
 
 # Most recent calibration data
@@ -310,7 +310,7 @@ trans = transpile(
 #  Execution 
 SHOTS = 8192
 sampler = SamplerV2(mode=backend)
-job = sampler .run([trans], shots=SHOTS)
+job = sampler.run([trans], shots=SHOTS)
 result = job.result()
 
 creg_name = trans.cregs[0].name  # "c"
@@ -323,7 +323,7 @@ def pair_created(bitstr: str, length: int = 60) -> bool:
 
 pair_events = sum(freq for bits, freq in counts.items() if pair_created(bits))
 pair_creation_rate = pair_events / SHOTS
-log .info("Vacuum‑pair creation rate: %.5f", pair_creation_rate)
+log.info("Vacuum‑pair creation rate: %.5f", pair_creation_rate)
 
 # Correlation count per individual pair 
 def pairwise_counts(raw: Counter, length: int = 60):
@@ -349,11 +349,11 @@ out = {
 JSON_PATH = Path("/Users/steventippeconnic/Documents/Dynamic_Casimir_Cavity_Chain_0.json")
 with JSON_PATH.open("w") as fp:
     json.dump(out, fp, indent=4)
-log .info("Results saved → %s", JSON_PATH)
+log.info("Results saved → %s", JSON_PATH)
 
 #  Visual
 plot_histogram(counts, title="Dynamic Casimir Chain – Measured Bitstrings")
-plt .show()
+plt.show()
 
 # End
 
