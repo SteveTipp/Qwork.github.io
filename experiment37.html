@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Experiment 20 - Qwork</title>
+    <title>Experiment 37 - Qwork</title>
     <style>
        body {
             background-color: #000000; /* Black background */
@@ -288,14 +288,14 @@ import logging
 import matplotlib.pyplot as plt
 
 # Setup logging
-logging.basicConfig(level=logging. INFO)
+logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
 # Load IBMQ account 
 service = QiskitRuntimeService(
     channel='ibm_quantum',
     instance='ibm-q/open/main',
-    token='YOUR_IBMQ_KEY_O-`' 
+    token='YOUR_IBMQ_KEY' 
 )
 backend = service.backend('ibm_kyiv')
 
@@ -351,9 +351,9 @@ for lq in logical_qubits:
     qc.h(lq)
 
 # Introduce deliberate errors for testing purposes
-qc. cx(logical_qubits[0], physical_qubits[10])
+qc.cx(logical_qubits[0], physical_qubits[10])
 qc.x(physical_qubits[20])
-qc. cz(physical_qubits[5], logical_qubits[1])
+qc.cz(physical_qubits[5], logical_qubits[1])
 
 # Apply twistor encoding again to reinforce the encoding
 twistor_encoding(qc, physical_qubits)
@@ -376,7 +376,7 @@ with Session(service=service, backend=backend) as session:
     sampler = SamplerV2(session=session)
     
     for idx, sub_qc in enumerate(subcircuits):
-        job = sampler. run([sub_qc], shots=8192)
+        job = sampler.run([sub_qc], shots=8192)
         job_result = job.result()
         
         # Retrieve the classical register name
@@ -402,7 +402,7 @@ with open(file_path, 'w') as f:
 
 # Visualize the combined results
 plot_histogram(all_counts)
-plt. show()
+plt.show()
 
 ///////////////////////////////////////////////////////////////////////
 
@@ -418,14 +418,14 @@ import matplotlib.pyplot as plt
 from scipy.spatial.distance import jensenshannon
 
 # Logging
-logging.basicConfig(level=logging. INFO)
+logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
 # Load IBMQ account 
 service = QiskitRuntimeService(
     channel='ibm_quantum',
     instance='ibm-q/open/main',
-    token='YOUR_IBMQ_KEY_O-`'
+    token='YOUR_IBMQ_KEY'
 )
 backend = service.backend('ibm_kyiv')
 
@@ -448,7 +448,7 @@ qc_traditional = QuantumCircuit(num_physical_qubits, num_logical_qubits)
 def encode_logical_qubits_traditional(qc, logical_qubits, physical_qubits):
     for lq in logical_qubits:
         qc.h(lq)
-        qc. cx(lq, physical_qubits[lq])
+        qc.cx(lq, physical_qubits[lq])
     qc.barrier()
 
 encode_logical_qubits_traditional(qc_traditional, logical_qubits, physical_qubits)
@@ -460,7 +460,7 @@ transpiled_qc_traditional = transpile(qc_traditional, backend=backend, optimizat
 with Session(service=service, backend=backend) as session:
     sampler = SamplerV2(session=session)
     
-    job_traditional = sampler. run([transpiled_qc_traditional], shots=8192)
+    job_traditional = sampler.run([transpiled_qc_traditional], shots=8192)
     job_result_traditional = job_traditional.result()
 
     # Get the traditional results
@@ -491,7 +491,7 @@ js_divergence = jensenshannon(twistor_vector, traditional_vector)
 classical_fidelity = 1 - js_divergence ** 2
 
 # Logging the results
-logger. info(f'Classical fidelity (Jensen-Shannon-based): {classical_fidelity}')
+logger.info(f'Classical fidelity (Jensen-Shannon-based): {classical_fidelity}')
 
 # Visualize the comparison of results
 fig, axs = plt.subplots(1, 2, figsize=(14, 5))
@@ -504,7 +504,7 @@ plot_histogram(twistor_counts, ax=axs[0])
 axs[1].set_title('Traditional Error Correction')
 plot_histogram(counts_traditional, ax=axs[1])
 
-plt. show()
+plt.show()
 
 # End.  
 
