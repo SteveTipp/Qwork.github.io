@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Experiment 20 - Qwork</title>
+    <title>Experiment 29 - Qwork</title>
     <style>
        body {
             background-color: #000000; /* Black background */
@@ -238,7 +238,7 @@ import matplotlib.pyplot as plt
 service = QiskitRuntimeService(
     channel='ibm_quantum',
     instance='ibm-q/open/main',
-    token='YOUR_IBM_KEY_O-`'
+    token='YOUR_IBM_KEY'
 )
 
 # Initialize quantum circuit
@@ -263,7 +263,7 @@ with Session(service=service, backend=backend) as session:
     sampler = SamplerV2(session=session)
     
     # Run the circuit 
-    job = sampler. run([qc_transpiled], shots=8192)
+    job = sampler.run([qc_transpiled], shots=8192)
     job_result = job.result()
     
     # Retrieve the classical register name
@@ -285,7 +285,7 @@ print(f"Results saved")
 
 # Plotting the results for analysis
 plot_histogram(pub_result)
-plt. show()
+plt.show()
 
 # End
 
@@ -356,7 +356,7 @@ ax.set_ylabel('Y')
 ax.set_zlabel('Z')
 ax.set_title("Color-Coded 3D Trajectory of Bloch Vector Over Time")
 
-plt. show()
+plt.show()
 
 ////////////////////////////////////////////////////////
 
@@ -448,7 +448,7 @@ ax.set_ylabel('Y')
 ax.set_zlabel('Z')
 ax.set_title("3D Trajectory of Bloch Vector with Key Points")
 
-plt. show()
+plt.show()
 
 ////////////////////////////////////////////////////////
 
@@ -521,7 +521,7 @@ ax.set_title("Quantum Clock Hands Over Time on Bloch Sphere")
 # Add a legend to differentiate time points
 ax.legend()
 
-plt. show()
+plt.show()
 
 
 </code></pre>
