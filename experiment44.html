@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Experiment 20 - Qwork</title>
+    <title>Experiment 44 - Qwork</title>
     <style>
        body {
             background-color: #000000; /* Black background */
@@ -276,23 +276,23 @@ from collections import Counter
 from qiskit.visualization import plot_histogram
 
 # Logging
-logging.basicConfig(level=logging. INFO, format='%(asctime)s - %(levelname)s - %(message)s')
+logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
 logger = logging.getLogger(__name__)
 
 # Calibration logging
 def load_calibration_data(file_path):
-    logger. info("Loading calibration data from %s", file_path)
-    calibration_data = pd.r ead_csv(file_path)
+    logger.info("Loading calibration data from %s", file_path)
+    calibration_data = pd.read_csv(file_path)
     calibration_data.columns = calibration_data.columns.str.strip()  
-    logger. info("Calibration data loaded successfully")
+    logger.info("Calibration data loaded successfully")
     return calibration_data
 
 # Parse calibration data
 def select_best_qubits(calibration_data, n_qubits):
-    logger. nfo("Selecting the best qubits based on T1, T2, and error rates")
+    logger.info("Selecting the best qubits based on T1, T2, and error rates")
     qubits_sorted = calibration_data.sort_values(by=['√x (sx) error', 'T1 (us)', 'T2 (us)'], ascending=[True, False, False])
     best_qubits = qubits_sorted['Qubit'].head(n_qubits).tolist()
-    logger. info("Selected qubits: %s", best_qubits)
+    logger.info("Selected qubits: %s", best_qubits)
     return best_qubits
 
 # Load Backend calibration data
@@ -304,7 +304,7 @@ num_locations = 8
 best_qubits = select_best_qubits(calibration_data, num_locations + 1)
 
 # IBMQ 
-logger. info("Setting up IBM Q service")
+logger.info("Setting up IBMQ service")
 service = QiskitRuntimeService(
     channel='ibm_quantum',
     instance='ibm-q/open/main',
@@ -313,7 +313,7 @@ service = QiskitRuntimeService(
 
 backend_name = 'ibm_brisbane'
 backend = service.backend(backend_name)
-logger. info("Backend selected: %s", backend_name)
+logger.info("Backend selected: %s", backend_name)
 
 # Quantum and classical registers
 qr = QuantumRegister(num_locations + 1)  
@@ -329,7 +329,7 @@ for i in range(1, num_locations + 1):
 
 # Entanglement for dependencies between locations
 for i in range(1, num_locations + 1):
-    qc. cx(qr[0], qr[i])  
+    qc.cx(qr[0], qr[i])  
 
 # Encoding travel distances on Bloch sphere
 for i in range(1, num_locations + 1):
@@ -344,16 +344,16 @@ qc.rz(np.pi / 4, qr[0])
 qc.measure(qr, cr)
 
 # Transpile
-logger. info("Transpiling the quantum circuit for the backend")
+logger.info("Transpiling the quantum circuit for the backend")
 qc_transpiled = transpile(qc, backend=backend, optimization_level=3)
-logger.i nfo("Circuit transpilation complete")
+logger.info("Circuit transpilation complete")
 
 # Execute 
 shots = 8192
 with Session(service=service, backend=backend) as session:
     sampler = SamplerV2(session=session)
-    logger. info("Executing the circuit on the backend")
-    job = sampler. run([qc_transpiled], shots=shots)
+    logger.info("Executing the circuit on the backend")
+    job = sampler.run([qc_transpiled], shots=shots)
     job_result = job.result()
 
     # Get results
@@ -368,12 +368,12 @@ with Session(service=service, backend=backend) as session:
     file_path = '/Users/Documents/QWarehouse_0.json'
     with open(file_path, 'w') as f:
         json.dump(results_data, f, indent=4)
-    logger. info("Results saved to %s", file_path)
+    logger.info("Results saved to %s", file_path)
 
 # Visualization
 plot_histogram(counts)
-plt. show()
-logger. info("Experiment complete")
+plt.show()
+logger.info("Experiment complete")
 
 Code for all Visualizations from Run Data
 # Imports
@@ -401,14 +401,14 @@ bitstrings, frequencies = zip(*sorted_counts)
 # Histogram of Frequencies
 def plot_histogram_of_frequencies(bitstrings, frequencies):
     plt.figure(figsize=(12, 6))
-    plt. bar(bitstrings[:30], frequencies[:30])  # Top 30 bitstrings
+    plt.bar(bitstrings[:30], frequencies[:30])  # Top 30 bitstrings
 
     plt.xticks(rotation=90)
     plt.xlabel('Bitstrings')
     plt.ylabel('Frequency')
     plt.title('Top 30 Most Frequent Bitstrings')
     plt.tight_layout()
-    plt. show()
+    plt.show()
 
 # Bitstring Frequency Heatmap
 def plot_heatmap_of_bitstrings(bitstrings, raw_counts):
@@ -421,7 +421,7 @@ def plot_heatmap_of_bitstrings(bitstrings, raw_counts):
     plt.xlabel('Qubit States')
     plt.ylabel('Bitstrings')
     plt.title('Heatmap of Top 100 Bitstrings')
-    plt. show()
+    plt.show()
 
 # Frequency Distribution Curve
 def plot_frequency_distribution(frequencies):
@@ -430,7 +430,7 @@ def plot_frequency_distribution(frequencies):
     plt.xlabel('Frequency')
     plt.ylabel('Count of Bitstrings')
     plt.title('Frequency Distribution of Bitstrings')
-    plt. show()
+    plt.show()
 
 # Bloch Sphere for Dominant Path
 def plot_bloch_sphere_of_dominant_path(raw_counts):
@@ -439,7 +439,7 @@ def plot_bloch_sphere_of_dominant_path(raw_counts):
     bloch_vector = Statevector.from_int(int(dominant_bitstring, 2), 2**len(state))
     fig = plot_bloch_multivector(bloch_vector)
     fig.suptitle('Bloch Sphere for Dominant Path: {}'.format(dominant_bitstring), fontsize=16)
-    plt. show()
+    plt.show()
 
 # Call all visualizations
 plot_histogram_of_frequencies(bitstrings, frequencies)
@@ -458,7 +458,7 @@ def plot_cumulative_frequency_distribution(raw_counts):
     plt.ylabel('Cumulative Probability')
     plt.title('Cumulative Distribution of Bitstring Frequencies')
     plt.grid()
-    plt. show()
+    plt.show()
 
 # Pairwise Qubit Correlation Heatmap
 def plot_qubit_correlation_heatmap(raw_counts):
@@ -477,7 +477,7 @@ def plot_qubit_correlation_heatmap(raw_counts):
     plt.title('Pairwise Qubit Correlation Heatmap')
     plt.xlabel('Qubits')
     plt.ylabel('Qubits')
-    plt. show()
+    plt.show()
 
 # Frequency Contribution by Bitstring Length
 def plot_bitstring_length_contribution(raw_counts):
@@ -491,11 +491,11 @@ def plot_bitstring_length_contribution(raw_counts):
     lengths, contributions = zip(*sorted(length_contribution.items()))
     
     plt.figure(figsize=(10, 5))
-    plt. bar(lengths, contributions, color='teal', edgecolor='black')
+    plt.bar(lengths, contributions, color='teal', edgecolor='black')
     plt.xlabel('Number of Active Locations (1s)')
     plt.ylabel('Probability Contribution')
     plt.title('Frequency Contribution by Bitstring Length')
-    plt. show()
+    plt.show()
 
 # Top Bitstrings Sorted by Weighted Probability
 def plot_top_weighted_bitstrings(raw_counts):
@@ -505,13 +505,13 @@ def plot_top_weighted_bitstrings(raw_counts):
     probabilities = [freq / total_counts for freq in top_frequencies]
     
     plt.figure(figsize=(12, 6))
-    plt. bar(top_bitstrings, probabilities, color='orange', edgecolor='black')
+    plt.bar(top_bitstrings, probabilities, color='orange', edgecolor='black')
     plt.xticks(rotation=90)
     plt.xlabel('Bitstrings')
     plt.ylabel('Weighted Probability')
     plt.title('Top 20 Bitstrings by Weighted Probability')
     plt.tight_layout()
-    plt. show()
+    plt.show()
 
 # Call all visualizations
 plot_cumulative_frequency_distribution(raw_counts)
@@ -534,7 +534,7 @@ def plot_3d_bitstring_frequencies(raw_counts):
     ax.set_ylabel('Qubit 2 State')
     ax.set_zlabel('Qubit 3 State')
     ax.set_title('3D Scatter Plot of Bitstring Frequencies')
-    plt. show()
+    plt.show()
 
 # 3D Bar Chart of Frequency Contribution by Bitstring Length
 def plot_3d_frequency_contribution_by_length(raw_counts):
@@ -563,7 +563,7 @@ def plot_3d_frequency_contribution_by_length(raw_counts):
     ax.set_ylabel('Y-Axis (Fixed)')
     ax.set_zlabel('Probability Contribution')
     ax.set_title('3D Bar Chart: Frequency Contribution by Bitstring Length')
-    plt. show()
+    plt.show()
 
 # 3D Surface Plot of Bitstring Correlations
 def plot_3d_correlation_surface(raw_counts):
@@ -588,7 +588,7 @@ def plot_3d_correlation_surface(raw_counts):
     ax.set_ylabel('Qubits')
     ax.set_zlabel('Correlation')
     ax.set_title('3D Surface Plot of Qubit Correlations')
-    plt. show()
+    plt.show()
 
 # Call all visualizations
 plot_3d_bitstring_frequencies(raw_counts)
