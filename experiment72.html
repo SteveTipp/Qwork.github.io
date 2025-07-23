@@ -281,7 +281,7 @@ log = logging.getLogger(__name__)
 
 # Calibration‑based qubit pick
 def best_qubits(csv_path: str, n: int) -> list[int]:
-    df = pd .read_csv(csv_path)
+    df = pd.read_csv(csv_path)
     df.columns = df.columns.str.strip()
     winners = (
         df.sort_values(["√x (sx) error", "T1 (us)", "T2 (us)"],
