@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Experiment 20 - Qwork</title>
+    <title>Experiment 53 - Qwork</title>
     <style>
        body {
             background-color: #000000; /* Black background */
@@ -214,23 +214,23 @@ import matplotlib.pyplot as plt
 import json
 
 # Logging
-logging.basicConfig(level=logging. INFO, format='%(asctime)s - %(levelname)s - %(message)s')
+logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
 logger = logging.getLogger(__name__)
 
 # Load calibration data
 def load_calibration_data(file_path):
-    logger. info("Loading calibration data from %s", file_path)
-    calibration_data = pd. read_csv(file_path)
+    logger.info("Loading calibration data from %s", file_path)
+    calibration_data = pd.read_csv(file_path)
     calibration_data.columns = calibration_data.columns.str.strip()
-    logger. info("Calibration data loaded successfully")
+    logger.info("Calibration data loaded successfully")
     return calibration_data
 
 # Select optimal qubits based on calibration data
 def select_optimal_qubits(calibration_data, num_qubits):
-    logger. info("Selecting optimal qubits based on error rates and coherence times")
+    logger.info("Selecting optimal qubits based on error rates and coherence times")
     qubits_sorted = calibration_data.sort_values(by=['\u221ax (sx) error', 'T1 (us)', 'T2 (us)'], ascending=[True, False, False])
     selected_qubits = qubits_sorted['Qubit'].head(num_qubits).tolist()
-    logger. info("Selected qubits: %s", selected_qubits)
+    logger.info("Selected qubits: %s", selected_qubits)
     return selected_qubits
 
 # Load calibration data
@@ -241,11 +241,11 @@ calibration_data = load_calibration_data(calibration_file)
 service = QiskitRuntimeService(
     channel='ibm_quantum',
     instance='ibm-q/open/main',
-    token='YOUR_IBMQ_API_KEY_O-`' 
+    token='YOUR_IBMQ_API_KEY' 
 )
 backend_name = 'ibm_kyiv'
 backend = service.backend(backend_name)
-logger. info("Backend selected: %s", backend_name)
+logger.info("Backend selected: %s", backend_name)
 
 # Qubits
 num_qubits = 30 
@@ -269,7 +269,7 @@ def construct_1p1_diagram(qc, qr):
 construct_1p1_diagram(qc_1p1, qr[:10])
 
 # Build 2 + 1 Spacetime diagram
-logger. info("Constructing 2+1 Spacetime diagram")
+logger.info("Constructing 2+1 Spacetime diagram")
 def construct_2p1_diagram(qc, qr_subset):
     for i in range(len(qr_subset)):  
         qc.h(qr_subset[i]) 
@@ -282,7 +282,7 @@ def construct_2p1_diagram(qc, qr_subset):
 construct_2p1_diagram(qc_2p1, qr[10:20])
 
 # Build 3 + 1 Spacetime diagram
-logger. info("Constructing 3+1 Spacetime diagram")
+logger.info("Constructing 3+1 Spacetime diagram")
 def construct_3p1_diagram(qc, qr_subset):
     for i in range(len(qr_subset)):  
         qc.h(qr_subset[i])  
@@ -310,11 +310,11 @@ qc_3p1.add_register(cr_3p1)
 qc_3p1.measure(qr[20:30], cr_3p1)
 
 # Transpile 
-logger. info("Transpiling the quantum circuits for the backend")
+logger.info("Transpiling the quantum circuits for the backend")
 qc_1p1_transpiled = transpile(qc_1p1, backend=backend, initial_layout=selected_qubits[:10], optimization_level=3)
 qc_2p1_transpiled = transpile(qc_2p1, backend=backend, initial_layout=selected_qubits[10:20], optimization_level=3)
 qc_3p1_transpiled = transpile(qc_3p1, backend=backend, initial_layout=selected_qubits[20:30], optimization_level=3)
-logger. info("Circuit transpilation complete")
+logger.info("Circuit transpilation complete")
 
 # Execute 
 shots = 16384
@@ -322,8 +322,8 @@ with Session(service=service, backend=backend) as session:
     sampler = SamplerV2(session=session)
 
     # 1 + 1 
-    logger. info("Executing the 1+1 diagram circuit on the backend")
-    job_1p1 = sampler. run([qc_1p1_transpiled], shots=shots)
+    logger.info("Executing the 1+1 diagram circuit on the backend")
+    job_1p1 = sampler.run([qc_1p1_transpiled], shots=shots)
     job_result_1p1 = job_1p1.result()
     counts_1p1 = job_result_1p1._pub_results[0]['__value__']['data']['meas_1p1'].get_counts()
 
@@ -331,11 +331,11 @@ with Session(service=service, backend=backend) as session:
     file_path_1p1 = '/Users/Documents/QSpacetime_1p1.json'
     with open(file_path_1p1, 'w') as f:
         json.dump(results_data_1p1, f, indent=4)
-    logger. info("1+1 results saved to %s", file_path_1p1)
+    logger.info("1+1 results saved to %s", file_path_1p1)
 
     # 2 + 1 
-    logger. info("Executing the 2+1 diagram circuit on the backend")
-    job_2p1 = sampler. run([qc_2p1_transpiled], shots=shots)
+    logger.info("Executing the 2+1 diagram circuit on the backend")
+    job_2p1 = sampler.run([qc_2p1_transpiled], shots=shots)
     job_result_2p1 = job_2p1.result()
     counts_2p1 = job_result_2p1._pub_results[0]['__value__']['data']['meas_2p1'].get_counts()
 
@@ -343,11 +343,11 @@ with Session(service=service, backend=backend) as session:
     file_path_2p1 = '/Users/Documents/QSpacetime_2p1.json'
     with open(file_path_2p1, 'w') as f:
         json.dump(results_data_2p1, f, indent=4)
-    logger. info("2+1 results saved to %s", file_path_2p1)
+    logger.info("2+1 results saved to %s", file_path_2p1)
 
     # 3+1 
-    logger. info("Executing the 3+1 diagram circuit on the backend")
-    job_3p1 = sampler. run([qc_3p1_transpiled], shots=shots)
+    logger.info("Executing the 3+1 diagram circuit on the backend")
+    job_3p1 = sampler.run([qc_3p1_transpiled], shots=shots)
     job_result_3p1 = job_3p1.result()
     counts_3p1 = job_result_3p1._pub_results[0]['__value__']['data']['meas_3p1'].get_counts()
 
@@ -355,20 +355,20 @@ with Session(service=service, backend=backend) as session:
     file_path_3p1 = '/Users/Documents/QSpacetime_3p1.json'
     with open(file_path_3p1, 'w') as f:
         json.dump(results_data_3p1, f, indent=4)
-    logger. info("3+1 results saved to %s", file_path_3p1)
+    logger.info("3+1 results saved to %s", file_path_3p1)
 
 # Visuals
 plot_histogram(counts_1p1)
 plt.title("1+1 Diagram Quantum Simulation")
-plt. show()
+plt.show()
 
 plot_histogram(counts_2p1)
 plt.title("2+1 Diagram Quantum Simulation")
-plt. show()
+plt.show()
 
 plot_histogram(counts_3p1)
 plt.title("3+1 Diagram Quantum Simulation")
-plt. show()
+plt.show()
  
 //////////////////////////////////
 # Imports
@@ -433,29 +433,29 @@ plt.yticks(range(len(results)), ["1+1", "2+1", "3+1"])
 plt.title("Heatmap of State Probabilities Across Dimensions")
 plt.xlabel("Bitstrings")
 plt.ylabel("Dimension")
-plt. show()
+plt.show()
 
 # Comparative Bar Chart Across Dimensions
 plt.figure(figsize=(12, 6))
 for idx, counts in enumerate(results):
-    plt. bar(range(len(counts)), list(counts.values()), alpha=0.5, label=f"{idx + 1}+{1} Diagram")
+    plt.bar(range(len(counts)), list(counts.values()), alpha=0.5, label=f"{idx + 1}+{1} Diagram")
 plt.title("Comparison of State Distributions Across Diagrams")
 plt.xlabel("Bitstrings")
 plt.ylabel("Counts")
 plt.legend()
-plt. show()
+plt.show()
 
 # Normalized Distribution
 for idx, counts in enumerate(results):
     total_counts = sum(counts.values())
     normalized_counts = {k: v / total_counts for k, v in counts.items()}
     plt.figure(figsize=(12, 6))
-    plt. bar(normalized_counts.keys(), normalized_counts.values())
+    plt.bar(normalized_counts.keys(), normalized_counts.values())
     plt.title(f"Normalized Distribution for {idx + 1}+{1} Diagram")
     plt.xlabel("Bitstrings")
     plt.ylabel("Normalized Probability")
     plt.xticks(rotation=90)
-    plt. show()
+    plt.show()
 
 # Cumulative Counts for Noise Analysis
 plt.figure(figsize=(10, 5))
@@ -466,7 +466,7 @@ plt.title("Cumulative Counts for Noise Analysis")
 plt.xlabel("Ranked States")
 plt.ylabel("Cumulative Counts")
 plt.legend()
-plt. show()
+plt.show()
 
 # State Entropy Across Dimensions
 entropies = []
@@ -476,11 +476,11 @@ for counts in results:
     entropies.append(entropy(probabilities))
 
 plt.figure(figsize=(8, 5))
-plt. bar(["1+1", "2+1", "3+1"], entropies, color=["blue", "orange", "green"])
+plt.bar(["1+1", "2+1", "3+1"], entropies, color=["blue", "orange", "green"])
 plt.title("State Entropy Across Dimensions")
 plt.xlabel("Dimension")
 plt.ylabel("Entropy")
-plt. show()
+plt.show()
 
 # Correlation Heatmap
 for idx, counts in enumerate(results):
@@ -499,7 +499,7 @@ for idx, counts in enumerate(results):
     plt.ylabel("Bitstrings")
     plt.xticks(range(len(bitstrings)), bitstrings, rotation=90)
     plt.yticks(range(len(bitstrings)), bitstrings)
-    plt. show()
+    plt.show()
 
 # Noise Influence by Dimension
 noise_ratios = []
@@ -510,11 +510,11 @@ for counts in results:
     noise_ratios.append(low_prob / high_prob)
 
 plt.figure(figsize=(8, 5))
-plt. bar(["1+1", "2+1", "3+1"], noise_ratios, color=["blue", "orange", "green"])
+plt.bar(["1+1", "2+1", "3+1"], noise_ratios, color=["blue", "orange", "green"])
 plt.title("Noise Influence by Dimension")
 plt.xlabel("Dimension")
 plt.ylabel("Low to High Probability Ratio")
-plt. show()
+plt.show()
 
 # Cumulative Probability Convergence
 for idx, counts in enumerate(results):
@@ -527,7 +527,7 @@ plt.title("Cumulative Probability Convergence")
 plt.xlabel("Ranked States")
 plt.ylabel("Cumulative Probability")
 plt.legend()
-plt. show()
+plt.show()
 
 # Extract unique states and normalize probabilities
 dimensions = ['1+1', '2+1', '3+1']
@@ -548,7 +548,7 @@ ax.set_ylabel("Normalized Counts")
 ax.legend()
 plt.xticks(rotation=90, fontsize=8)
 plt.tight_layout()
-plt. show()
+plt.show()
 
 # 3D Scatter Plot of State Probabilities
 fig = plt.figure(figsize=(10, 7))
@@ -564,7 +564,7 @@ ax.set_ylabel("Dimension")
 ax.set_zlabel("Probability")
 ax.legend()
 plt.tight_layout()
-plt. show()
+plt.show()
 
 # Conformal Boundary Representation in 3D
 fig = plt.figure(figsize=(10, 7))
@@ -583,7 +583,7 @@ for idx, probs in enumerate(probabilities):
 ax.set_title("Conformal Boundary Representation in 3D")
 ax.legend()
 plt.tight_layout()
-plt. show()
+plt.show()
 
 # Quantum State Transitions in 3D Across Dimensions
 fig = plt.figure(figsize=(10, 7))
@@ -600,7 +600,7 @@ ax.set_xlabel("Dimension Index")
 ax.set_ylabel("State Index")
 ax.set_zlabel("Probability Transition")
 plt.tight_layout()
-plt. show()
+plt.show()
 
 # End
 
