@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Experiment 20 - Qwork</title>
+    <title>Experiment 48 - Qwork</title>
     <style>
        body {
             background-color: #000000; /* Black background */
@@ -248,23 +248,23 @@ import matplotlib.pyplot as plt
 from scipy.spatial.transform import Rotation as R
 
 # Logging
-logging.basicConfig(level=logging. INFO, format='%(asctime)s - %(levelname)s - %(message)s')
+logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
 logger = logging.getLogger(__name__)
 
 # Load calibration data
 def load_calibration_data(file_path):
-    logger. info("Loading calibration data from %s", file_path)
-    calibration_data = pd. read_csv(file_path)
+    logger.info("Loading calibration data from %s", file_path)
+    calibration_data = pd.read_csv(file_path)
     calibration_data.columns = calibration_data.columns.str.strip()
-    logger. info("Calibration data loaded successfully")
+    logger.info("Calibration data loaded successfully")
     return calibration_data
 
 # Parse calibration data
 def select_best_qubits(calibration_data, n_qubits):
-    logger. info("Selecting the best qubits based on T1, T2, and error rates")
+    logger.info("Selecting the best qubits based on T1, T2, and error rates")
     qubits_sorted = calibration_data.sort_values(by=['\u221ax (sx) error', 'T1 (us)', 'T2 (us)'], ascending=[True, False, False])
     best_qubits = qubits_sorted['Qubit'].head(n_qubits).tolist()
-    logger. info("Selected qubits: %s", best_qubits)
+    logger.info("Selected qubits: %s", best_qubits)
     return best_qubits
 
 # Backend calibration data
@@ -278,16 +278,16 @@ num_cities = 10
 best_qubits = select_best_qubits(calibration_data, num_cities + 1)
 
 # IBMQ 
-logger. info("Setting up IBM Q service")
+logger.info("Setting up IBM Q service")
 service = QiskitRuntimeService(
     channel='ibm_quantum',
     instance='ibm-q/open/main',
-    token='YOUR_IBM_API_KEY_O-`'  
+    token='YOUR_IBM_API_KEY'  
 )
 
 backend_name = 'ibm_brisbane'
 backend = service.backend(backend_name)
-logger. info("Backend selected: %s", backend_name)
+logger.info("Backend selected: %s", backend_name)
 
 # Quantum and classical registers
 qr = QuantumRegister(num_cities + 1, 'city')
@@ -308,7 +308,7 @@ def encode_cities_on_bloch(num_cities):
     return cities
 
 cities_coords = encode_cities_on_bloch(num_cities)
-logger. info("Encoded cities on Bloch sphere with coordinates: %s", cities_coords)
+logger.info("Encoded cities on Bloch sphere with coordinates: %s", cities_coords)
 
 # Initialize qubits 
 for i in range(1, num_cities + 1):
@@ -317,7 +317,7 @@ for i in range(1, num_cities + 1):
 # Entangle qubits to represent possible transitions between cities
 for i in range(1, num_cities + 1):
     for j in range(i + 1, num_cities + 1):
-        qc. cx(qr[i], qr[j])
+        qc.cx(qr[i], qr[j])
 
 # Encode distances as rotation angles
 def calculate_rotation_angles(cities_coords):
@@ -336,7 +336,7 @@ def calculate_rotation_angles(cities_coords):
     return angles
 
 rotation_angles = calculate_rotation_angles(cities_coords)
-logger. info("Calculated rotation angles: %s", rotation_angles)
+logger.info("Calculated rotation angles: %s", rotation_angles)
 
 # Apply rotations to encode distances
 for i in range(1, num_cities + 1):
@@ -354,16 +354,16 @@ for i in range(num_cities):
 qc.measure(qr, cr)
 
 # Transpile
-logger. info("Transpiling the quantum circuit for the backend")
+logger.info("Transpiling the quantum circuit for the backend")
 qc_transpiled = transpile(qc, backend=backend, optimization_level=3)
-logger. info("Circuit transpilation complete")
+logger.info("Circuit transpilation complete")
 
 # Execute
 shots = 8192
 with Session(service=service, backend=backend) as session:
     sampler = SamplerV2(session=session)
-    logger. info("Executing the circuit on the backend")
-    job = sampler. run([qc_transpiled], shots=shots)
+    logger.info("Executing the circuit on the backend")
+    job = sampler.run([qc_transpiled], shots=shots)
     job_result = job.result()
 
     # Extract counts 
@@ -379,12 +379,12 @@ with Session(service=service, backend=backend) as session:
     file_path = '/Users/Documents/Non_Euclidean_TSP_Results_0.json'
     with open(file_path, 'w') as f:
         json.dump(results_data, f, indent=4)
-    logger. info("Results saved to %s", file_path)
+    logger.info("Results saved to %s", file_path)
 
 # Visual
 plot_histogram(counts)
 plt.title("TSP in Non-Euclidean Space: Measurement Results")
-plt. show()
+plt.show()
 
 Code For All Visuals
 # Imports
@@ -409,12 +409,12 @@ def plot_histogram_counts(counts):
     sorted_counts = sorted(counts.items(), key=lambda x: x[1], reverse=True)[:20]
     bitstrings, values = zip(*sorted_counts)
     plt.figure(figsize=(12, 6))
-    plt. bar(bitstrings, values, color='blue', alpha=0.7)
+    plt.bar(bitstrings, values, color='blue', alpha=0.7)
     plt.xticks(rotation=90)
     plt.title("Top 20 Quantum States by Counts")
     plt.xlabel("Bitstring")
     plt.ylabel("Counts")
-    plt. show()
+    plt.show()
 
 # 3D Bloch Sphere Representation
 def plot_bloch_sphere(cities_coords):
@@ -425,7 +425,7 @@ def plot_bloch_sphere(cities_coords):
     ax.set_xlabel("X")
     ax.set_ylabel("Y")
     ax.set_zlabel("Z")
-    plt. show()
+    plt.show()
 
 # Heatmap of Rotation Angles
 def plot_rotation_heatmap(rotation_angles):
@@ -435,7 +435,7 @@ def plot_rotation_heatmap(rotation_angles):
     plt.title("Heatmap of Geodesic Distances (Rotation Angles)")
     plt.xlabel("City Index")
     plt.ylabel("City Index")
-    plt. show()
+    plt.show()
 
 # Overlay High-Probability Pathways
 def plot_high_probability_paths(cities_coords, counts):
@@ -461,7 +461,7 @@ def plot_high_probability_paths(cities_coords, counts):
     ax.set_xlabel("X")
     ax.set_ylabel("Y")
     ax.set_zlabel("Z")
-    plt. show()
+    plt.show()
 
 # Call
 plot_histogram_counts(counts)
@@ -479,7 +479,7 @@ def plot_probability_pie(counts):
     plt.figure(figsize=(8, 8))
     plt.pie(values, labels=labels, autopct="%1.1f%%", startangle=140, colors=plt. cm.tab10.colors)
     plt.title("Probability Distribution of Top Quantum States")
-    plt. show()
+    plt.show()
 
 # 3D Geodesic Distance Network
 def plot_geodesic_network(cities_coords, rotation_angles):
@@ -506,7 +506,7 @@ def plot_geodesic_network(cities_coords, rotation_angles):
     ax.set_ylabel("Y")
     ax.set_zlabel("Z")
     plt.legend()
-    plt. show()
+    plt.show()
 
 # Cumulative Probability of Top Pathways
 def plot_cumulative_probability(counts):
@@ -521,7 +521,7 @@ def plot_cumulative_probability(counts):
     plt.xlabel("Number of Pathways")
     plt.ylabel("Cumulative Probability")
     plt.grid(True)
-    plt. show()
+    plt.show()
 
 # Histogram of City Pairs by Distance
 def plot_distance_histogram(rotation_angles):
@@ -532,7 +532,7 @@ def plot_distance_histogram(rotation_angles):
     plt.xlabel("Geodesic Distance (rad)")
     plt.ylabel("Frequency")
     plt.grid(True)
-    plt. show()
+    plt.show()
 
 # Call
 plot_probability_pie(counts)
@@ -552,7 +552,7 @@ def plot_city_probabilities(counts, cities_coords):
     plt.xlabel("City Index")
     plt.ylabel("Probability")
     plt.grid(True)
-    plt. show()
+    plt.show()
 
 # Correlation Matrix Heatmap
 def plot_correlation_heatmap(rotation_angles):
@@ -562,7 +562,7 @@ def plot_correlation_heatmap(rotation_angles):
     plt.title("Correlation Matrix of Geodesic Distances")
     plt.xlabel("City Index")
     plt.ylabel("City Index")
-    plt. show()
+    plt.show()
 
 # Pathway Probability Bar Chart
 def plot_pathway_bar_chart(counts):
@@ -572,12 +572,12 @@ def plot_pathway_bar_chart(counts):
     probabilities = [v / total_counts for v in values]
 
     plt.figure(figsize=(12, 6))
-    plt. bar(pathways, probabilities, color='green', alpha=0.7)
+    plt.bar(pathways, probabilities, color='green', alpha=0.7)
     plt.title("Pathway Probabilities (Top 10)")
     plt.xlabel("Pathway")
     plt.ylabel("Probability")
     plt.xticks(rotation=90)
-    plt. show()
+    plt.show()
 
 # City Transition Network Graph
 def plot_city_transition_network(cities_coords, rotation_angles):
@@ -600,7 +600,7 @@ def plot_city_transition_network(cities_coords, rotation_angles):
     plt.figure(figsize=(10, 8))
     plt.title("City Transition Network")
     nx.draw(G, pos, with_labels=True, node_color='red', edge_color='blue', node_size=500, font_size=10, alpha=0.7)
-    plt. show()
+    plt.show()
 
 # Call
 plot_city_probabilities(counts, cities_coords)
