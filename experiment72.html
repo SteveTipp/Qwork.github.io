@@ -288,7 +288,7 @@ def best_qubits(csv_path: str, n: int) -> list[int]:
                        ascending=[True, False, False])
         ["Qubit"].head(n).tolist()
     )
-    log .info("Best physical qubits: %s", winners)
+    log.info("Best physical qubits: %s", winners)
     return winners
 
 N_Q_TOTAL = 4 + 4 + 4          # a, b, point registers
@@ -345,17 +345,17 @@ service = QiskitRuntimeService(channel="ibm_cloud",
                                token=TOKEN,
                                instance=INSTANCE)
 backend = service.backend(BACKEND)
-log .info("Backend → %s", backend .name)
+log.info("Backend → %s", backend.name)
 
 qc_raw = shor_ecdlp_circuit()
 trans   = transpile(qc_raw,
                     backend         = backend,
                     initial_layout  = PHYSICAL,
                     optimization_level = 3)
-log .info("Circuit depth %d, gate counts %s", trans.depth(), trans.count_ops())
+log.info("Circuit depth %d, gate counts %s", trans.depth(), trans.count_ops())
 
 sampler = SamplerV2(mode=backend)
-job     = sampler .run([trans], shots=SHOTS)
+job     = sampler.run([trans], shots=SHOTS)
 result  = job.result()
 
 # Classical post‑processing
@@ -395,7 +395,7 @@ for (a, b), k, count in top_invertibles:
 # Save raw data
 out = {
     "experiment": "ECDLP_16pts_Shors",
-    "backend": backend .name,
+    "backend": backend.name,
     "physical_qubits": PHYSICAL,
     "shots": SHOTS,
     "counts": counts_raw
@@ -403,7 +403,7 @@ out = {
 JSON_PATH = "/Users/steventippeconnic/Documents/QC/Shors_ECC_4_Bit_Key_0.json"
 with open(JSON_PATH, "w") as fp:
     json.dump(out, fp, indent=4)
-log .info("Results saved → %s", JSON_PATH)
+log.info("Results saved → %s", JSON_PATH)
 
 # End
 
