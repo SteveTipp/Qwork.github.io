@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Experiment 20 - Qwork</title>
+    <title>Experiment 40 - Qwork</title>
     <style>
        body {
             background-color: #000000; /* Black background */
@@ -301,7 +301,7 @@ import json
 service = QiskitRuntimeService(
     channel='ibm_quantum',
     instance='ibm-q/open/main',
-    token='Your_IBMQ_API_KEY_O-`'  
+    token='Your_IBMQ_API_KEY'  
 )
 
 # Select backend
@@ -339,7 +339,7 @@ add_curvature_effects(qc, qubit_layout)
 for i in range(0, num_qubits, 2):
     qc.h(i)  # apply Hadamard gates for superposition
     if i + 1 < num_qubits:
-        qc. cx(i, i + 1)  # entangle neighboring qubits
+        qc.cx(i, i + 1)  # entangle neighboring qubits
 
 # Simulate some gravitational field effect by adding global phase shifts
 for qubit in range(num_qubits):
@@ -355,7 +355,7 @@ observable = SparsePauliOp.from_list([('Z' * num_qubits, 1)])
 def calculate_expectation_value(qc, observable, session):
     # Run the estimator with a wrapped circuit and observable
     estimator = EstimatorV2(session=session, backend=backend)
-    job = estimator. run([(qc, observable)])  
+    job = estimator.run([(qc, observable)])  
     result = job.result()
 
     # Access the expectation value from the result 
@@ -423,7 +423,7 @@ plt.legend()
 plt.grid(True)
 
 # Show the plot
-plt. show()
+plt.show()
 
 /////////////////////////////////////////
 
@@ -464,7 +464,7 @@ plt.ylabel('Frequency')
 plt.grid(True)
 
 # Show histogram
-plt. show()
+plt.show()
 
 ////////////////////////////////////////////
 
@@ -515,7 +515,7 @@ ax.set_ylabel('Y Axis - Data Points')
 ax.set_zlabel('Expectation Values')
 
 # Show the plot
-plt. show()
+plt.show()
 
 # End.
 
