@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Experiment 20 - Qwork</title>
+    <title>Experiment 28 - Qwork</title>
     <style>
        body {
             background-color: #000000; /* Black background */
@@ -338,7 +338,7 @@ import json
 import logging
 
 # IBM Qiskit API key
-api_key = "YOUR_IBMQ_KEY_0-`"
+api_key = "YOUR_IBMQ_KEY"
 
 # Initialize IBM Qiskit Runtime Service
 service = QiskitRuntimeService(channel='ibm_quantum', token=api_key)
@@ -347,7 +347,7 @@ service = QiskitRuntimeService(channel='ibm_quantum', token=api_key)
 backend = service.backend('ibm_brisbane')
 
 # Load calibration data
-calibration_data = pd. read_csv('/Users/Documents/ibm_brisbane_calibrations_2024-08-16T14_00_35Z.csv')
+calibration_data = pd.read_csv('/Users/Documents/ibm_brisbane_calibrations_2024-08-16T14_00_35Z.csv')
 
 # Convert relevant columns to numeric, handling errors
 calibration_data['T1 (us)'] = pd. to_numeric(calibration_data['T1 (us)'], errors='coerce')
@@ -357,7 +357,7 @@ if 'Pauli-X error' in calibration_data.columns:
     calibration_data['Pauli-X error'] = pd. to_numeric(calibration_data['Pauli-X error'], errors='coerce')
 
 # Logging
-logging.basicConfig(level=logging. INFO)
+logging.basicConfig(level=logging.INFO)
 
 # Define quantum states associated with possible zeros of the zeta function
 def initialize_qubits(qc, n_qubits):
@@ -410,14 +410,14 @@ for qubit in range(n_qubits):
 # Run the experiment 
 with Session(service=service, backend=backend) as session:
     sampler = SamplerV2(session=session)
-    job = sampler. run([transpiled_qc], shots=8192)
+    job = sampler.run([transpiled_qc], shots=8192)
     job_result = job.result()
 
 # Extract and log results
 # Correctly retrieve counts
 creg_name = qc.cregs[0].name  # Get the name of the classical register
 counts = job_result[0].data[creg_name].get_counts()
-logging. info(f"Experiment Results: {counts}")
+logging.info(f"Experiment Results: {counts}")
 
 # Save the JSON
 results_data = {
@@ -430,7 +430,7 @@ with open(file_path, 'w') as f:
 # Plot the results
 plot_histogram(counts)
 plt.title('Riemann Hypothesis Path Integral Exploration')
-plt. show()
+plt.show()
 # End
 
 
