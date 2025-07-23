@@ -177,7 +177,7 @@ def encode_color_to_statevector(color):
     return statevector
 
 # Authenticate and load your IBM Q account
-IBMQ. save_account('YOUR_ACCOUNT_NUMBER', overwrite=True)  # Replace 'YOUR_ACCOUNT_NUMBER' with your actual token
+IBMQ.save_account('YOUR_API_KEY', overwrite=True)  
 IBMQ.load_account()
 provider = IBMQ.get_provider(hub='ibm-q')
 backend = provider.get_backend('ibm_lagos')
@@ -264,7 +264,7 @@ axs[2].set_title('Reconstructed Image')
 axs[2].axis('off')
 
 plt.tight_layout()
-plt. show()
+plt.show()
 
 # Save the results to a JSON file
 data_to_save = {
