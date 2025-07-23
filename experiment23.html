@@ -588,7 +588,7 @@ iterations = np.arange(1, len(expectation_values) + 1)
 plt.style.use('dark_background')
 
 # Subplots of Expectation Values and Objective Function Values
-fig.axs = plt.subplots(2, 1, figsize=(12, 10), sharex=True)
+fig, axs = plt.subplots(2, 1, figsize=(12, 10), sharex=True)
 fig.suptitle('Subplots of Expectation Values and Objective Function Values', color='white')
 
 axs[0].plot(iterations, expectation_values, 'o-', color='white', label='Expectation Value')
