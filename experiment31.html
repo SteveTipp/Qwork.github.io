@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Experiment 20 - Qwork</title>
+    <title>Experiment 31 - Qwork</title>
     <style>
        body {
             background-color: #000000; /* Black background */
@@ -207,11 +207,11 @@ import matplotlib.pyplot as plt
 from datetime import datetime
 
 # Initialize logging
-logging.basicConfig(level=logging. INFO)
+logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
 # Input your IBM Quantum API key here
-api_key = 'YOUR_IBM_KEY_O-`'
+api_key = 'YOUR_IBM_KEY'
 
 # Load IBMQ account
 service = QiskitRuntimeService(
@@ -245,7 +245,7 @@ def get_code_from_quantum_circuit(qc, backend):
         sampler = SamplerV2(session=session)
         
         # Run the circuit
-        job = sampler. run([qc], shots=8192)
+        job = sampler.run([qc], shots=8192)
         job_result = job.result()
         
         # Retrieve the classical register name
@@ -310,7 +310,7 @@ def quantum_authenticator_loop(backend, num_iterations=3, json_file_path='/Users
     # Plotting the results
     if all_pub_results:
         plot_histogram(all_pub_results[-1])
-        plt. show()
+        plt.show()
 
 # Run the loop with a set number of iterations and save to JSON
 quantum_authenticator_loop(backend, num_iterations=3, json_file_path='/Users/Documents/Qauth_results.json')
@@ -339,7 +339,7 @@ plt.hist(bitstring_lengths, bins=range(126, 129), color='skyblue', edgecolor='bl
 plt.title('Histogram of Bitstring Lengths')
 plt.xlabel('Bitstring Length')
 plt.ylabel('Frequency')
-plt. show()
+plt.show()
 
 # Bitstring Frequencies (should all be 1)
 frequencies = [1 for _ in bitstrings]  # Since each bitstring occurs exactly once
@@ -349,7 +349,7 @@ plt.hist(frequencies, bins=range(1, 3), color='lightgreen', edgecolor='black')
 plt.title('Distribution of Bitstring Frequencies')
 plt.xlabel('Frequency')
 plt.ylabel('Number of Bitstrings')
-plt. show()
+plt.show()
 
 # Bitstring Heatmap
 bitarray = np.array([[int(bit) for bit in b] for b in bitstrings])
@@ -359,7 +359,7 @@ sns.heatmap(bitarray, cmap='coolwarm', cbar=False)
 plt.title('Bitstring Heatmap')
 plt.xlabel('Bit Position')
 plt.ylabel('Bitstring Index')
-plt. show()
+plt.show()
 
 ///////////////////////////////////////////////////////////
 
@@ -398,7 +398,7 @@ for file_path in file_paths:
             decoded_bitstring = decode_bitarray(bitarray_data)
             results.append(decoded_bitstring)
 
-# 1. Bitstring Frequency Comparison
+# Bitstring Frequency Comparison
 bitstring_counts_all = [Counter(result) for result in results]
 
 # Plot the bitstring frequency distributions for the three runs
@@ -411,9 +411,9 @@ for i, bitstring_counts in enumerate(bitstring_counts_all):
     plt.ylabel('Frequency')
 
 plt.tight_layout()
-plt. show()
+plt.show()
 
-# 2. Entropy Comparison
+# Entropy Comparison
 bitstring_entropies = []
 
 for bitstring_counts in bitstring_counts_all:
@@ -427,9 +427,9 @@ plt.title('Entropy Comparison Across Runs')
 plt.xlabel('Run Index')
 plt.ylabel('Entropy (Shannon)')
 plt.xticks([1, 2, 3], ['Run #1', 'Run #2', 'Run #3'])
-plt. show()
+plt.show()
 
-# 3. Bit-by-Bit Probability Comparison
+# Bit-by-Bit Probability Comparison
 bit_probabilities_all = []
 
 for decoded_bitstring in results:
@@ -447,7 +447,7 @@ plt.title('Bit-by-Bit Probability Comparison Across Runs')
 plt.xlabel('Bit Position')
 plt.ylabel('Run Index')
 plt.yticks([0.5, 1.5, 2.5], ['Run #1', 'Run #2', 'Run #3'])
-plt. show()
+plt.show()
 
 ///////////////////////////////////////////////////////////
 
@@ -495,7 +495,7 @@ bit_arrays = [np.array(list(map(int, decoded_bitstring))).reshape(-1, bitstring_
 for i, bit_array in enumerate(bit_arrays):
     print(f"New shape of bit array for Run #{i+1}: {bit_array.shape}")
 
-# 1. Correlation Between Bit Positions
+# Correlation Between Bit Positions
 bit_correlations = [np.corrcoef(bit_array.T) for bit_array in bit_arrays]
 
 plt.figure(figsize=(18, 6))
@@ -504,9 +504,9 @@ for i, corr in enumerate(bit_correlations):
     sns.heatmap(corr, cmap='coolwarm', vmin=-1, vmax=1, cbar=True)
     plt.title(f'Bit Position Correlation - Run #{i+1}')
 plt.tight_layout()
-plt. show()
+plt.show()
 
-# 2. Hamming Distance Analysis
+# Hamming Distance Analysis
 hamming_distances = [squareform(pdist(bit_array, metric='hamming')) for bit_array in bit_arrays]
 
 plt.figure(figsize=(18, 6))
@@ -515,9 +515,9 @@ for i, hamming in enumerate(hamming_distances):
     sns.heatmap(hamming, cmap='viridis', cbar=True)
     plt.title(f'Hamming Distance - Run #{i+1}')
 plt.tight_layout()
-plt. show()
+plt.show()
 
-# 3. Bitstring Transition Probability
+# Bitstring Transition Probability
 transition_probabilities = []
 
 for i in range(1, len(bit_arrays)):
@@ -531,9 +531,9 @@ sns.heatmap(transition_probabilities, cmap='Reds', annot=True, fmt=".2f")
 plt.title('Bit Transition Probabilities Between Runs')
 plt.xlabel('Bit Position')
 plt.ylabel('Transition Between Runs')
-plt. show()
+plt.show()
 
-# 4. Run Comparison Summary Plot
+# Run Comparison Summary Plot
 # Compare entropy and average Hamming distance for each run
 entropies = [entropy(np.mean(bit_array, axis=0)) for bit_array in bit_arrays]
 avg_hamming_distances = [np.mean(hamming) for hamming in hamming_distances]
@@ -551,7 +551,7 @@ ax[1].set_xlabel('Run Index')
 ax[1].set_ylabel('Average Hamming Distance')
 
 plt.tight_layout()
-plt. show()
+plt.show()
 
 # End
 
