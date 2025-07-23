@@ -246,7 +246,7 @@ def custom_encoder(obj):
     raise TypeError("Object of type '%s' is not JSON serializable" % type(obj).__name__)
 
 # Load IBMQ Account
-IBMQ. save_account('Your_IBM_Key_O-`', overwrite=True)
+IBMQ.save_account('Your_IBM_Key', overwrite=True)
 IBMQ.load_account()
 
 # Select a backend
@@ -256,18 +256,18 @@ device = provider.get_backend('ibm_osaka')  # Example backend, replace with your
 # Function to create Bell pair
 def create_bell_pair(qc, q1, q2):
     qc.h(q1)
-    qc. cx(q1, q2)
+    qc.cx(q1, q2)
 
 # Function to teleport qubit
 def teleport_qubit(qc, src, inter, trg):
-    qc. cx(src, inter)
+    qc.cx(src, inter)
     qc.h(src)
     qc.barrier()
     qc.measure(src, 0)
     qc.measure(inter, 1)
     qc.barrier()
-    qc. cx(inter, trg)
-    qc. cz(src, trg)
+    qc.cx(inter, trg)
+    qc.cz(src, trg)
 
 # Prepare the results dictionary
 results = {
@@ -327,7 +327,7 @@ print(f"Results saved to {results_file}")
 
 # Plotting the histogram of the runs
 plot_histogram([results[f"Distance_{distance}"]["measurement_distribution"] for distance in distances])
-plt. show()
+plt.show()
 
 </code></pre>
 </p>
