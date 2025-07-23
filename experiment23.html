@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Experiment 20 - Qwork</title>
+    <title>Experiment 23 - Qwork</title>
     <style>
        body {
             background-color: #000000; /* Black background */
@@ -316,7 +316,7 @@ import logging
 
 # Set up logging and IBM Quantum service
 logging.basicConfig(level=logging.DEBUG, format='%(asctime)s - %(levelname)s - %(message)s')
-API_KEY = 'Your_IBMQ_Key_O-`'  # Replace w/ IBMQ  key
+API_KEY = 'Your_IBMQ_Key'  # Replace w/ IBMQ  key
 service = QiskitRuntimeService(channel='ibm_quantum', token=API_KEY)
 backend = service.backend('ibm_osaka')
 
@@ -383,7 +383,7 @@ for run in range(1, number_of_runs + 1):
 
     # Analyze results
     counts = result.quasi_dists[0].binary_probabilities()
-    logging. info(f"Counts from run {run}: {counts}")
+    logging.info(f"Counts from run {run}: {counts}")
 
     # Save results to JSON
     results_data = {
@@ -467,7 +467,7 @@ with open(combined_file_path, 'w') as file:
 # Plot the combined results if there are counts to plot
 if combined_counts:
     plot_histogram(combined_counts)
-    plt. show()
+    plt.show()
 else:
     print("No valid counts data to plot.")
 # end
@@ -548,7 +548,7 @@ with open(analysis_file_path, 'w') as file:
 if combined_counts:
     plot_histogram(combined_counts)
     plt.title("Combined Measurement Outcomes")
-    plt. show()
+    plt.show()
 
 # Plot expectation values over iterations
 if expectation_values:
@@ -557,7 +557,7 @@ if expectation_values:
     plt.ylabel('Expectation Value')
     plt.title('Expectation Value Over Iterations')
     plt.legend()
-    plt. show()
+    plt.show()
 
 # Plot objective values over iterations
 if objective_values:
@@ -566,7 +566,7 @@ if objective_values:
     plt.ylabel('Objective Function Value')
     plt.title('Objective Function Value Over Iterations')
     plt.legend()
-    plt. show()
+    plt.show()
 # end
 
 Subplots of Expectation Values and Objective Function Values Code:
@@ -585,10 +585,10 @@ objective_values = data['objective_values']
 iterations = np.arange(1, len(expectation_values) + 1)
 
 # Set plot style
-plt. style.use('dark_background')
+plt.style.use('dark_background')
 
 # Subplots of Expectation Values and Objective Function Values
-fig, axs = plt.subplots(2, 1, figsize=(12, 10), sharex=True)
+fig.axs = plt.subplots(2, 1, figsize=(12, 10), sharex=True)
 fig.suptitle('Subplots of Expectation Values and Objective Function Values', color='white')
 
 axs[0].plot(iterations, expectation_values, 'o-', color='white', label='Expectation Value')
@@ -603,7 +603,7 @@ axs[1].grid(True, which='both', linestyle='--', linewidth=0.5)
 axs[1].legend()
 
 plt.savefig('/Users/Documents/Subplots_Expectation_Objective.png')
-plt. show()
+plt.show()
 # end
 
 Parallel Coordinates Plot Code:
@@ -629,7 +629,7 @@ df = pd.DataFrame({
 })
 
 # Set plot style
-plt. style.use('dark_background')
+plt.style.use('dark_background')
 
 # Parallel Coordinates Plot
 plt.figure(figsize=(12, 8))
@@ -638,7 +638,7 @@ plt.title('Parallel Coordinates Plot of Iterations, Expectation Values, and Obje
 plt.xlabel('Attributes', color='white')
 plt.ylabel('Values', color='white')
 plt.savefig('/Users/Documents/Parallel_Coordinates.png')
-plt. show()
+plt.show()
 
 Radial Heatmap Code:
 
@@ -669,8 +669,8 @@ plt. style.use('dark_background')
 fig, ax = plt.subplots(figsize=(12, 8), subplot_kw=dict(polar=True))
 theta = np.linspace(0, 2 * np.pi, len(iterations))
 
-bars = ax. bar(theta, normalized_expectation, width=0.3, color='blue', alpha=0.7, label='Expectation Value')
-bars = ax. bar(theta + 0.3, normalized_objective, width=0.3, color='red', alpha=0.7, label='Objective Function Value')
+bars = ax.bar(theta, normalized_expectation, width=0.3, color='blue', alpha=0.7, label='Expectation Value')
+bars = ax.bar(theta + 0.3, normalized_objective, width=0.3, color='red', alpha=0.7, label='Objective Function Value')
 
 ax.set_xticks(theta)
 ax.set_xticklabels([f'Iteration {i}' for i in iterations], color='white')
@@ -680,7 +680,7 @@ ax.set_title('Radial Heatmap of Expectation and Objective Values', color='white'
 ax.legend(loc='upper right')
 
 plt.savefig('/Users/Documents/Radial_Heatmap.png')
-plt. show()
+plt.show()
 # end.
 
 </code></pre>
