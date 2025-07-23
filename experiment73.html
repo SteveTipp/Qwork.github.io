@@ -524,20 +524,20 @@ P_IDX = 1   # Generator P  -> index 1
 Q_IDX = 23  # Public point Q = kP, here “23 mod 32” for k = 7
 
 # Logging helper
-logging.basicConfig(level=logging .INFO,
+logging.basicConfig(level=logging.INFO,
                     format="%(asctime)s | %(levelname)s | %(message)s")
 log = logging.getLogger(__name__)
 
 # Calibration‑based qubit pick
 def best_qubits(csv_path: str, n: int) -> list[int]:
-    df = pd .read_csv(csv_path)
+    df = pd.read_csv(csv_path)
     df.columns = df.columns.str.strip()
     winners = (
         df.sort_values(["√x (sx) error", "T1 (us)", "T2 (us)"],
                        ascending=[True, False, False])
         ["Qubit"].head(n).tolist()
     )
-    log .info("Best physical qubits: %s", winners)
+    log.info("Best physical qubits: %s", winners)
     return winners
 
 N_Q = 5
