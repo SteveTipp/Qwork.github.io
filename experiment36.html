@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Experiment 20 - Qwork</title>
+    <title>Experiment 36 - Qwork</title>
     <style>
        body {
             background-color: #000000; /* Black background */
@@ -265,7 +265,7 @@ for step in range(num_time_steps):
 qc.measure(qr, cr)
 
 # API Key input
-api_key = "YOUR_IBMQ_KEY_O-`"  # IBM APIQ key
+api_key = "YOUR_IBMQ_KEY"  
 
 # Initialize Qiskit Runtime Service
 service = QiskitRuntimeService(channel="ibm_quantum", token=api_key, instance='ibm-q/open/main')
@@ -282,16 +282,16 @@ with Session(service=service, backend=backend) as session:
     sampler = SamplerV2(session=session)
     
     # Run the sampler with specified circuits and shots
-    job = sampler. run([transpiled_qc], shots=8192)
+    job = sampler.run([transpiled_qc], shots=8192)
     result = job.result()
 
 # Extract counts from the result
-counts = result[0].data[cr. name].get_counts()
+counts = result[0].data[cr.name].get_counts()
 print("Counts:", counts)
 
 # Plot the counts
 plot_histogram(counts).show()
-plt. show()
+plt.show()
 
 # Prepare the results data
 results_data = {
@@ -346,7 +346,7 @@ plt.plot(frequencies, np.abs(fourier_transform))
 plt.title('Fourier Transform of Probability Distribution')
 plt.xlabel('Frequency')
 plt.ylabel('Magnitude')
-plt. show()
+plt.show()
 
 # End.
 
@@ -379,7 +379,7 @@ corr_matrix = np.corrcoef(binary_states)
 plt.figure(figsize=(15, 8))
 sns.heatmap(corr_matrix, cmap='coolwarm', annot=False)
 plt.title('Correlation Matrix of Quantum States')
-plt. show()
+plt.show()
 
 # End.
 
@@ -409,12 +409,12 @@ probabilities = {state: count / total_counts for state, count in selected_counts
 
 # Plot the probabilities for the selected states
 plt.figure(figsize=(10, 6))
-plt. bar(probabilities.keys(), probabilities.values())
+plt.bar(probabilities.keys(), probabilities.values())
 plt.title('Probabilities of Selected Quantum States')
 plt.xlabel('Quantum States')
 plt.ylabel('Probability')
 plt.xticks(rotation=90)
-plt. show()
+plt.show()
 
 # End.
 
@@ -450,7 +450,7 @@ plt.scatter(x_coords, y_coords, s=1, c='blue', alpha=0.6)
 plt.title('Phase Space Visualization of Quantum States')
 plt.xlabel('X Coordinate')
 plt.ylabel('Y Coordinate')
-plt. show()
+plt.show()
 
 # End.
 
@@ -504,7 +504,7 @@ plt.title('Entanglement Entropy Across Different Partitions')
 plt.xlabel('Partition Point')
 plt.ylabel('Entropy')
 plt.grid(True)
-plt. show()
+plt.show()
 
 # End.
 
@@ -548,7 +548,7 @@ ax.set_xlabel('Frequency X')
 ax.set_ylabel('Frequency Y')
 ax.set_zlabel('Frequency Z')
 fig.colorbar(scatter, ax=ax, label='Magnitude')
-plt. show()
+plt.show()
 
 # End.
 
@@ -589,7 +589,7 @@ plt.colorbar(label='Interference Magnitude')
 plt.title('Quantum State Interference Patterns')
 plt.xlabel('State Index')
 plt.ylabel('State Index')
-plt. show()
+plt.show()
 
 # 2. Mutual Information Matrix
 num_qubits = len(states[0])
@@ -614,7 +614,7 @@ plt.colorbar(label='Mutual Information')
 plt.title('Mutual Information Matrix Between Qubits')
 plt.xlabel('Qubit Index')
 plt.ylabel('Qubit Index')
-plt. show()
+plt.show()
 
 # 3. Wavefunction Phase Distribution
 phases = np.angle(np.random.rand(len(states)))
@@ -622,7 +622,7 @@ phases = np.angle(np.random.rand(len(states)))
 plt.figure(figsize=(10, 8))
 plt.polar(np.linspace(0, 2*np.pi, len(phases)), phases)
 plt.title('Wavefunction Phase Distribution')
-plt. show()
+plt.show()
 
 # 4. Topological Charge Density Visualization
 charge_density = [int(state, 2) for state in states]
@@ -635,7 +635,7 @@ plt.hist(log_charge_density, bins=50, color='blue', alpha=0.7)
 plt.title('Logarithmic Topological Charge Density')
 plt.xlabel('Log(Charge Density)')
 plt.ylabel('Frequency')
-plt. show()
+plt.show()
 
 # End.
 
