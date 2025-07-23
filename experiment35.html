@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Experiment 20 - Qwork</title>
+    <title>Experiment 35 - Qwork</title>
     <style>
        body {
             background-color: #000000; /* Black background */
@@ -240,7 +240,7 @@ import matplotlib.pyplot as plt
 service = QiskitRuntimeService(
     channel='ibm_quantum',
     instance='ibm-q/open/main',
-    token='YOUR_IBMQ_KEY_O-`'
+    token='YOUR_IBMQ_KEY'
 )
 
 # Define the backend
@@ -254,15 +254,15 @@ qc = QuantumCircuit(num_qubits)
 classical_reg = ClassicalRegister(num_qubits)
 qc.add_register(classical_reg)
 
-# Step 1: Initialize each twistor node in superposition
+# Initialize each twistor node in superposition
 for qubit in range(num_qubits):
     qc.h(qubit)  # Hadamard gate to create superposition
 
-# Step 2: Model twistor propagation by introducing entanglement
+# Model twistor propagation by introducing entanglement
 for qubit in range(0, num_qubits - 1, 2):
-    qc. cz(qubit, qubit + 1)  # Controlled-Z gate for entanglement
+    qc.cz(qubit, qubit + 1)  # Controlled-Z gate for entanglement
 
-# Step 3: Apply rotations to model quantum gravitational effects
+# Apply rotations to model quantum gravitational effects
 for qubit in range(num_qubits):
     theta_x = np.random.uniform(0, 2 * np.pi)
     theta_y = np.random.uniform(0, 2 * np.pi)
@@ -271,11 +271,11 @@ for qubit in range(num_qubits):
     qc.ry(theta_y, qubit)
     qc.rz(theta_z, qubit)
 
-# Step 4: Add additional entanglement to model more complex interactions
+# Add additional entanglement to model more complex interactions
 for qubit in range(0, num_qubits - 2, 3):
-    qc. cx(qubit, qubit + 2)  # Controlled-X gate for further entanglement
+    qc.cx(qubit, qubit + 2)  # Controlled-X gate for further entanglement
 
-# Step 5: Measure all qubits
+# Measure all qubits
 qc.measure(range(num_qubits), range(num_qubits))
 
 # Transpile the circuit on ibm_kyoto 
@@ -286,7 +286,7 @@ with Session(service=service, backend=backend) as session:
     sampler = SamplerV2(session=session)
     
     # Run the circuit 
-    job = sampler. run([transpiled_qc], shots=8192)
+    job = sampler.run([transpiled_qc], shots=8192)
     job_result = job.result()
     
     # Retrieve the classical register name
@@ -306,7 +306,7 @@ with Session(service=service, backend=backend) as session:
 
 # Plotting the results 
 plot_histogram(pub_result)
-plt. show()
+plt.show()
 
 # End.
 
@@ -340,7 +340,7 @@ num_qubits = len(next(iter(raw_counts.keys())))
 plt.figure(figsize=(12, 8))
 plot_histogram(raw_counts)
 plt.title("Histogram of Measurement Outcomes")
-plt. show()
+plt.show()
 
 # 2. Heatmap of Qubit Correlations
 # Create a correlation matrix from the raw counts
@@ -360,7 +360,7 @@ correlation_matrix /= sum(raw_counts.values())
 plt.figure(figsize=(12, 10))
 sns.heatmap(correlation_matrix, cmap='coolwarm', annot=False)
 plt.title("Heatmap of Qubit Correlations")
-plt. show()
+plt.show()
 
 # 3. Entropy Analysis
 # Calculate the probability distribution from raw counts
@@ -375,10 +375,10 @@ print(f"System Entropy: {system_entropy:.4f} bits")
 
 # Visualize the entropy on a bar chart
 plt.figure(figsize=(8, 6))
-plt. bar(["Entropy"], [system_entropy], color='teal')
+plt.bar(["Entropy"], [system_entropy], color='teal')
 plt.title("Entropy of the Twistor Network")
 plt.ylabel("Entropy (bits)")
-plt. show()
+plt.show()
 
 # 4. State Distribution Analysis (Hamming Weight)
 # Calculate the Hamming weight for each outcome and count the occurrences
@@ -396,11 +396,11 @@ for weight in hamming_weights:
 
 # Plot the distribution of Hamming weights
 plt.figure(figsize=(10, 6))
-plt. bar(hamming_weights.keys(), hamming_weights.values(), color='coral')
+plt.bar(hamming_weights.keys(), hamming_weights.values(), color='coral')
 plt.title("Distribution of Hamming Weights")
 plt.xlabel("Hamming Weight")
 plt.ylabel("Probability")
-plt. show()
+plt.show()
 
 # End.
 
@@ -447,7 +447,7 @@ plt.title('Bitstring Cluster Analysis with PCA')
 plt.xlabel('PCA Component 1')
 plt.ylabel('PCA Component 2')
 plt.colorbar(label='Cluster')
-plt. show()
+plt.show()
 
 # Visualization 2: Distribution of Hamming Distances
 def hamming_distance(s1, s2):
@@ -463,7 +463,7 @@ plt.hist(hamming_distances, bins=range(128), color='purple', edgecolor='black')
 plt.xlabel('Hamming Distance')
 plt.ylabel('Frequency')
 plt.title('Distribution of Hamming Distances Between Bitstrings')
-plt. show()
+plt.show()
 
 # Visualization 3: Fourier Transform of Bitstrings
 def bitstring_to_int(bitstring):
@@ -483,7 +483,7 @@ plt.plot(fft_magnitude, color='orange')
 plt.xlabel('Frequency Component')
 plt.ylabel('Magnitude')
 plt.title('Fourier Transform of Bitstrings')
-plt. show()
+plt.show()
 
 # End.
 
