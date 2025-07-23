@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Experiment 20 - Qwork</title>
+    <title>Experiment 55 - Qwork</title>
     <style>
        body {
             background-color: #000000; /* Black background */
@@ -249,7 +249,7 @@ from qiskit.visualization import plot_histogram
 import matplotlib.pyplot as plt
 
 # Logging
-logging.basicConfig(level=logging. INFO, format='%(asctime)s - %(levelname)s - %(message)s')
+logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
 logger = logging.getLogger(__name__)
 
 # Calibration file path
@@ -257,15 +257,15 @@ calibration_file = '/Users/Downloads/ibm_brisbane_calibrations_2025-01-11T01_36_
 
 # Load calibration data
 def load_calibration_data(file_path):
-    logger. info("Loading calibration data from %s", file_path)
-    calibration_data = pd. read_csv(file_path)
+    logger.info("Loading calibration data from %s", file_path)
+    calibration_data = pd.read_csv(file_path)
     calibration_data.columns = calibration_data.columns.str.strip()  # Strip spaces
-    logger. info("Calibration data loaded successfully")
+    logger.info("Calibration data loaded successfully")
     return calibration_data
 
 # Parse calibration data and select best qubits
 def select_best_qubits(calibration_data, num_qubits):
-    logger. info("Selecting the best qubits based on T1, T2, and error rates")
+    logger.info("Selecting the best qubits based on T1, T2, and error rates")
     sort_columns = ['√x (sx) error', 'T1 (us)', 'T2 (us)']
     
     # Columns check
@@ -278,7 +278,7 @@ def select_best_qubits(calibration_data, num_qubits):
         ascending=[True, False, False]
     )
     best_qubits = sorted_qubits['Qubit'].head(num_qubits).tolist()
-    logger. info("Selected qubits: %s", best_qubits)
+    logger.info("Selected qubits: %s", best_qubits)
     return best_qubits
 
 # Modular Multiplication 
@@ -313,7 +313,7 @@ logger.info("Backend selected: %s", backend_name)
 
 # Shors circuit
 def create_shors_circuit(n, a, num_qubits):
-    logger. info(f"Creating Shor's circuit for factoring {n} with base {a} and {num_qubits} qubits")
+    logger.info(f"Creating Shor's circuit for factoring {n} with base {a} and {num_qubits} qubits")
     qc = QuantumCircuit(num_qubits, num_qubits)
 
     # Apply Hadamard gates to create superposition
@@ -380,7 +380,7 @@ def run_shors_experiment(n, a, num_qubits, calibration_data, shots=16384):
         result_file_path = f'/Users/Documents/Shors_95_0.json'
         with open(result_file_path, 'w') as f:
             json.dump(counts, f, indent=4)
-        logger. info(f"Results saved to {result_file_path}")
+        logger.info(f"Results saved to {result_file_path}")
 
         # Plot 
         plot_histogram(counts)
@@ -521,7 +521,7 @@ plt.ylabel("Cumulative Count")
 plt.title("Cumulative Distribution of Counts")
 plt.legend()
 plt.grid()
-plt. show()
+plt.show()
 
 # Heatmap of Decimal Values vs. Counts
 plt.figure(figsize=(12, 6))
@@ -543,7 +543,7 @@ plt.yticks([])
 plt.title("Heatmap of Count Frequency Distribution")
 plt.xlabel("Unique Count Values")
 plt.tight_layout()
-plt. show()
+plt.show()
 
 # 3D Surface Plot of Counts vs. Decimal Values
 fig = plt.figure(figsize=(12, 8))
