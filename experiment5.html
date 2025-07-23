@@ -162,11 +162,10 @@ def default_converter(o):
         return o.__str__()
 
 # Your IBM Quantum Experience API Token
-# Replace 'YOUR_API_TOKEN' with your actual IBM Quantum Experience API token
 api_token = 'YOUR_API_TOKEN'
 
 # Load your IBM Quantum account using the API token directly
-IBMQ. save_account(api_token, overwrite=True)
+IBMQ.save_account(api_token, overwrite=True)
 provider = IBMQ.load_account()
 
 # Set up the provider and the backend
@@ -234,7 +233,7 @@ ghz_circuit.measure_all()
 t_qc = transpile(ghz_circuit, backend, optimization_level=3)
 
 # Execute the job
-job = backend. run(t_qc, shots=1024)
+job = backend.run(t_qc, shots=1024)
 job_monitor(job)
 result = job.result()
 
@@ -308,7 +307,7 @@ axs[1, 1].grid(True)
 axs[1, 1].set_title('Mandelstam-Tamm Speed Limit over Time')
 
 plt.tight_layout()
-plt. show()
+plt.show()
 </code></pre>
 </p>
             
