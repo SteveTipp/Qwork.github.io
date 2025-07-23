@@ -197,7 +197,7 @@ return obj.isoformat()
 return json.JSONEncoder.default(self, obj)
 
 # Authenticate and load your IBM Q account
-IBMProvider. save_account(token='YOUR_TOKEN', overwrite=True)
+IBMProvider.save_account(token='YOUR_TOKEN', overwrite=True)
 provider = IBMProvider()
 
 # Access the backend
@@ -281,7 +281,7 @@ normalized_counts = {outcome: count / total_counts for outcome, count in aggrega
 plot_histogram(normalized_counts, ax=ax)
 ax.set_title('Aggregated Results')
 
-plt. show()
+plt.show()
 
 # Save results and backend information to a JSON file
 experiment_data = {
