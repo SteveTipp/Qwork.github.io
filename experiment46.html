@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Experiment 20 - Qwork</title>
+    <title>Experiment 46 - Qwork</title>
     <style>
        body {
             background-color: #000000; /* Black background */
@@ -280,23 +280,23 @@ import matplotlib.pyplot as plt
 from collections import Counter
 
 # Logging
-logging.basicConfig(level=logging. INFO, format='%(asctime)s - %(levelname)s - %(message)s')
+logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
 logger = logging.getLogger(__name__)
 
 # Load calibration data
 def load_calibration_data(file_path):
-    logger. info("Loading calibration data from %s", file_path)
-    calibration_data = pd. read_csv(file_path)
+    logger.info("Loading calibration data from %s", file_path)
+    calibration_data = pd.read_csv(file_path)
     calibration_data.columns = calibration_data.columns.str.strip()  
-    logger. info("Calibration data loaded")
+    logger.info("Calibration data loaded")
     return calibration_data
 
 # Parse calibration data
 def select_best_qubits(calibration_data, n_qubits):
-    logger. info("Selecting the best qubits based on T1, T2, and error rates")
+    logger.info("Selecting the best qubits based on T1, T2, and error rates")
     qubits_sorted = calibration_data.sort_values(by=['√x (sx) error', 'T1 (us)', 'T2 (us)'], ascending=[True, False, False])
     best_qubits = qubits_sorted['Qubit'].head(n_qubits).tolist()
-    logger. info("Selected qubits: %s", best_qubits)
+    logger.info("Selected qubits: %s", best_qubits)
     return best_qubits
 
 # Load backend calibration data
@@ -308,17 +308,17 @@ num_batches = 6
 best_qubits = select_best_qubits(calibration_data, num_batches + 1)
 
 # IBMQ 
-logger. info("Setting up IBMQ service")
+logger.info("Setting up IBMQ service")
 service = QiskitRuntimeService(
     channel='ibm_quantum',
     instance='ibm-q/open/main',
-    token='YOUR_IBMQ_API_KEY_O-`'  
+    token='YOUR_IBMQ_API_KEY'  
 )
 
 # Backend
 backend_name = 'ibm_kyiv'
 backend = service.backend(backend_name)
-logger. info("Backend selected: %s", backend_name)
+logger.info("Backend selected: %s", backend_name)
 
 # Quantum and classical registers
 qr = QuantumRegister(num_batches + 1, 'batch')  
@@ -334,7 +334,7 @@ for i in range(1, num_batches + 1):
 
 # Entangle Control Qubit with Data Batches 
 for i in range(1, num_batches + 1):
-    qc. cx(qr[0], qr[i])  
+    qc.cx(qr[0], qr[i])  
 
 # Encode Transition Effort Between Training Batches
 for i in range(1, num_batches + 1):
@@ -350,16 +350,16 @@ qc.rz(np.pi / 16, qr[0])
 qc.measure(qr, cr)
 
 # Transpile
-logger. info("Transpiling the quantum circuit for the backend")
+logger.info("Transpiling the quantum circuit for the backend")
 qc_transpiled = transpile(qc, backend=backend, optimization_level=3)
-logger. info("Circuit transpilation complete")
+logger.info("Circuit transpilation complete")
 
 # Execute 
 shots = 16384 
 with Session(service=service, backend=backend) as session:
     sampler = SamplerV2(session=session)
-    logger. info("Executing the circuit on the backend")
-    job = sampler. run([qc_transpiled], shots=shots)
+    logger.info("Executing the circuit on the backend")
+    job = sampler.run([qc_transpiled], shots=shots)
     job_result = job.result()
 
     # Extract BitArray counts
@@ -372,12 +372,12 @@ with Session(service=service, backend=backend) as session:
     file_path = '/Users/Documents/QNN_TrainingSequence_Results_0.json'
     with open(file_path, 'w') as f:
         json.dump(results_data, f, indent=4)
-    logger. info("Results saved to %s", file_path)
+    logger.info("Results saved to %s", file_path)
 
 # Visual
 plot_histogram(counts)
 plt.title("Optimized Training Batch Sequences")
-plt. show()
+plt.show()
 
 Code for all Visuals from Run Data
 # Imports
@@ -401,12 +401,12 @@ counts = results['raw_counts']
 def plot_full_histogram(counts):
     sorted_counts = dict(sorted(counts.items(), key=lambda x: x[1], reverse=True))
     plt.figure(figsize=(12, 6))
-    plt. bar(sorted_counts.keys(), sorted_counts.values(), color='blue')
+    plt.bar(sorted_counts.keys(), sorted_counts.values(), color='blue')
     plt.xticks(rotation=90, fontsize=8)
     plt.xlabel("Bitstrings")
     plt.ylabel("Frequency")
     plt.title("Histogram of All Quantum Measurement Outcomes")
-    plt. show()
+    plt.show()
 
 # Top 10 Most Frequent Bitstrings
 def plot_top_10_sequences(counts):
@@ -415,11 +415,11 @@ def plot_top_10_sequences(counts):
     print("Top 10 Optimal Sequences:\n", df_sorted)
 
     plt.figure(figsize=(8, 5))
-    plt. bar(df_sorted["Bitstring"], df_sorted["Frequency"], color='green')
+    plt.bar(df_sorted["Bitstring"], df_sorted["Frequency"], color='green')
     plt.xlabel("Top 10 Bitstrings")
     plt.ylabel("Frequency")
     plt.title("Top 10 Most Frequent Quantum Measurement Outcomes")
-    plt. show()
+    plt.show()
 
 # Distribution of Leading Bits
 def plot_leading_bit_distribution(counts):
@@ -429,11 +429,11 @@ def plot_leading_bit_distribution(counts):
         leading_bit_counts[leading_bit] += freq
 
     plt.figure(figsize=(6, 4))
-    plt. bar(leading_bit_counts.keys(), leading_bit_counts.values(), color='purple')
+    plt.bar(leading_bit_counts.keys(), leading_bit_counts.values(), color='purple')
     plt.xlabel("Leading Bit (Control Qubit State)")
     plt.ylabel("Total Frequency")
     plt.title("Distribution of Leading Bits (Control Qubit Influence)")
-    plt. show()
+    plt.show()
 
 # Heatmap of Bitstring Frequency Patterns
 def plot_bitstring_heatmap(counts):
@@ -451,7 +451,7 @@ def plot_bitstring_heatmap(counts):
     plt.xlabel("Bit Position")
     plt.ylabel("Bitstring Index")
     plt.title("Heatmap of Bitstring Frequency Patterns")
-    plt. show()
+    plt.show()
 
 # Execute
 plot_full_histogram(counts)
@@ -472,7 +472,7 @@ def plot_cumulative_frequency(counts):
     plt.ylabel("Cumulative Probability")
     plt.title("Cumulative Frequency Distribution of Measurement Outcomes")
     plt.grid()
-    plt. show()
+    plt.show()
 
 # Frequency Distribution by Hamming Weight
 def plot_hamming_weight_distribution(counts):
@@ -483,11 +483,11 @@ def plot_hamming_weight_distribution(counts):
     hamming_counts = Counter(hamming_weights)
 
     plt.figure(figsize=(8, 5))
-    plt. bar(hamming_counts.keys(), hamming_counts.values(), color='orange')
+    plt.bar(hamming_counts.keys(), hamming_counts.values(), color='orange')
     plt.xlabel("Hamming Weight (Number of '1's)")
     plt.ylabel("Frequency")
     plt.title("Frequency Distribution by Hamming Weight")
-    plt. show()
+    plt.show()
 
 # Top Leading Qubit Patterns Heatmap
 def plot_leading_qubit_heatmap(counts):
@@ -507,7 +507,7 @@ def plot_leading_qubit_heatmap(counts):
         plt.xlabel("Batch Qubit Position")
         plt.ylabel("Measurement Index")
         plt.title("Heatmap of Batch Qubit Patterns for Leading Bit '1'")
-        plt. show()
+        plt.show()
     else:
         print("No patterns found for leading bit '1'.")
 
@@ -518,12 +518,12 @@ def plot_normalized_frequency_distribution(counts):
     sorted_counts = dict(sorted(normalized_counts.items(), key=lambda x: x[1], reverse=True))
 
     plt.figure(figsize=(10, 6))
-    plt. bar(sorted_counts.keys(), sorted_counts.values(), color='purple')
+    plt.bar(sorted_counts.keys(), sorted_counts.values(), color='purple')
     plt.xticks(rotation=90, fontsize=8)
     plt.xlabel("Bitstrings")
     plt.ylabel("Normalized Frequency")
     plt.title("Normalized Frequency Distribution of Quantum Measurement Outcomes")
-    plt. show()
+    plt.show()
 
 # Execute visualizations
 plot_cumulative_frequency(counts)
@@ -555,7 +555,7 @@ def plot_3d_surface_hamming_weight(counts):
     ax.set_ylabel('Hamming Weight')
     ax.set_zlabel('Frequency')
     ax.set_title("3D Surface Plot of Frequencies by Hamming Weight")
-    plt. show()
+    plt.show()
 
 # 3D Scatter Plot of Leading Bit Influence
 def plot_3d_scatter_leading_bit(counts):
@@ -589,7 +589,7 @@ def plot_3d_scatter_leading_bit(counts):
     ax.set_ylabel("Measurement Index")
     ax.set_zlabel("Qubit State (0 or 1)")
     ax.set_title("3D Scatter Plot of Leading Bit Influence")
-    plt. show()
+    plt.show()
 
 # Heatmap of Normalized Pairwise Correlations
 def plot_correlation_heatmap(counts):
@@ -609,7 +609,7 @@ def plot_correlation_heatmap(counts):
     plt.title("Heatmap of Normalized Pairwise Correlations Between Qubits")
     plt.xlabel("Qubit Position")
     plt.ylabel("Qubit Position")
-    plt. show()
+    plt.show()
 
 # Cumulative Frequency Gradient Map
 def plot_cumulative_gradient_map(counts):
@@ -628,7 +628,7 @@ def plot_cumulative_gradient_map(counts):
     plt.title("Cumulative Frequency Gradient Map")
     plt.colorbar(label="Cumulative Probability")
     plt.grid()
-    plt. show()
+    plt.show()
 
 # Execute visualizations
 plot_3d_surface_hamming_weight(counts)
