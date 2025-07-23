@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Experiment 20 - Qwork</title>
+    <title>Experiment 32 - Qwork</title>
     <style>
        body {
             background-color: #000000; /* Black background */
@@ -226,7 +226,7 @@ from datetime import datetime
 from scipy.stats import unitary_group
 
 # Setup logging
-logging.basicConfig(level=logging. INFO, filename='scattering_amplitudes.log',
+logging.basicConfig(level=logging.INFO, filename='scattering_amplitudes.log',
 filemode='w', format='%(asctime)s - %(levelname)s - %(message)s')
 
 # Function to serialize datetime objects
@@ -238,14 +238,14 @@ return o.isoformat()
 service = QiskitRuntimeService(
 channel='ibm_quantum',
 instance='ibm-q/open/main',
-token='YOUR_IBMQ_KEY_O-`' 
+token='YOUR_IBMQ_KEY' 
 )
 
 # Choose the backend 
 backend = service.backend("ibm_brisbane")
 
 # Retrieve and print calibration data for record-keeping
-calibration_data = backend. properties().to_dict()
+calibration_data = backend.properties().to_dict()
 logging. info("Backend Calibration Data: %s", json.dumps(calibration_data, indent=4, default=datetime_converter))
 
 # Define number of qubits and classical bits
@@ -285,14 +285,14 @@ quantum_circuit.measure(range(num_qubits), range(num_qubits))
 transpiled_circuit = transpile(quantum_circuit, backend=backend, optimization_level=3)
 
 # Log transpiled circuit depth and gate count
-logging. info("Transpiled Circuit Depth: %d", transpiled_circuit.depth())
-logging. info("Transpiled Circuit Gate Count: %s", transpiled_circuit.count_ops())
+logging.info("Transpiled Circuit Depth: %d", transpiled_circuit.depth())
+logging.info("Transpiled Circuit Gate Count: %s", transpiled_circuit.count_ops())
 
 # Execution on backend with SamplerV2
 with Session(service=service, backend=backend) as session:
 sampler = SamplerV2(session=session)
 # Run the circuit
-job = sampler. run([transpiled_circuit], shots=8192)
+job = sampler.run([transpiled_circuit], shots=8192)
 job_result = job.result()
 # Retrieve the classical register name
 classical_register = quantum_circuit.cregs[0].name
@@ -312,7 +312,7 @@ plot_histogram(pub_result)
 plt.title("Scattering Amplitudes")
 
 plt.savefig('/Users/Documents/scattering_amplitudes_histogram.png')
-plt. show()
+plt.show()
 
 ////////////////////////////////////////////////////////////////
 
@@ -348,7 +348,7 @@ plt.xlabel('Hamming Distance')
 plt.ylabel('Frequency')
 plt.grid(True)
 plt.savefig('/Users/steventippeconnic/Documents/QC/hamming_distance_distribution.png')  # Save the plot
-plt. show()
+plt.show()
 
 /////////////////////////////////////////////////////////////////
 
@@ -383,7 +383,7 @@ plt.xlabel('Frequency')
 plt.ylabel('Amplitude')
 plt.grid(True)
 plt.savefig('/Users/steventippeconnic/Documents/QC/fourier_scattering_amplitudes.png')
-plt. show()
+plt.show()
 
 /////////////////////////////////////////////////////////////////
 
@@ -416,7 +416,7 @@ plt.xlabel('Principal Component 1')
 plt.ylabel('Principal Component 2')
 plt.grid(True)
 plt.savefig('/Users/steventippeconnic/Documents/QC/pca_scattering_amplitudes.png')
-plt. show()
+plt.show()
 
 ///////////////////////////////////////////////////////////////
 
@@ -449,7 +449,7 @@ plt.xlabel('t-SNE Component 1')
 plt.ylabel('t-SNE Component 2')
 plt.grid(True)
 plt.savefig('/Users/steventippeconnic/Documents/QC/tsne_scattering_amplitudes.png')
-plt.s how()
+plt.show()
 
 ///////////////////////////////////////////////////////////////
 
@@ -475,13 +475,13 @@ bitwise_entropy = [entropy(np.bincount(binary_arrays[:, i])) for i in range(bina
 
 # Plot the entropy values
 plt.figure(figsize=(10, 6))
-plt. bar(range(len(bitwise_entropy)), bitwise_entropy)
+plt.bar(range(len(bitwise_entropy)), bitwise_entropy)
 plt.title('Entropy of Each Bit Position Across All Binary Strings')
 plt.xlabel('Bit Position')
 plt.ylabel('Entropy')
 plt.grid(True)
 plt.savefig('/Users/steventippeconnic/Documents/QC/entropy_scattering_amplitudes.png')
-plt. show()
+plt.show()
 
 ///////////////////////////////////////////////////////////////
 
@@ -512,7 +512,7 @@ plt.title('Correlation Matrix of Binary Strings')
 plt.xlabel('Bit Position')
 plt.ylabel('Bit Position')
 plt.savefig('/Users/steventippeconnic/Documents/QC/correlation_scattering_amplitudes.png')
-plt. show()
+plt.show()
 
 # End
 
