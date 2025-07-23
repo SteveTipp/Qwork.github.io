@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Experiment 20 - Qwork</title>
+    <title>Experiment 43 - Qwork</title>
     <style>
        body {
             background-color: #000000; /* Black background */
@@ -302,21 +302,21 @@ def create_hierarchical_turbulence_circuit(num_qubits, cluster_size, timesteps):
     for t in range(timesteps):
         for cluster_start in range(0, num_qubits, cluster_size):
             for qubit in range(cluster_start, min(cluster_start + cluster_size, num_qubits) - 1):
-                qc. cz(qubit, qubit + 1)  
+                qc.cz(qubit, qubit + 1)  
                 qc.rx(np.pi / (t + 1), qubit)
                 qc.rz(2 * np.pi / cluster_size, qubit)
 
         # Inter-cluster interactions
         for cluster_start in range(0, num_qubits - cluster_size, cluster_size):
             if cluster_start + cluster_size < num_qubits:
-                qc. cz(cluster_start, cluster_start + cluster_size)  
+                qc.cz(cluster_start, cluster_start + cluster_size)  
 
     # Measurement
     qc.measure(range(num_qubits), range(num_qubits))
     return qc
 
 # Logging 
-logging.basicConfig(level=logging. INFO)
+logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
 # Calibration data
@@ -336,7 +336,7 @@ selected_qubits = select_best_qubits(calibration_data, num_qubits)
 service = QiskitRuntimeService(
     channel='ibm_quantum',
     instance='ibm-q/open/main',
-    token='YOUR_IBMQ_API_O-`'
+    token='YOUR_IBMQ_API'
 )
 
 # Backend
@@ -350,8 +350,8 @@ transpiled_qc = transpile(qc, backend=backend, initial_layout=selected_qubits, o
 # Execute 
 with Session(service=service, backend=backend) as session:
     sampler = SamplerV2(session=session)
-    logger. info("Executing hierarchical plasma turbulence simulation on ibm_sherbrooke...")
-    job = sampler. run([transpiled_qc], shots=shots)
+    logger.info("Executing hierarchical plasma turbulence simulation on ibm_sherbrooke...")
+    job = sampler.run([transpiled_qc], shots=shots)
     job_result = job.result()
 
     # Results
@@ -364,9 +364,9 @@ with Session(service=service, backend=backend) as session:
 # Plot results
 plot_histogram(counts)
 plt.title("Hierarchical Plasma Turbulence Simulation Results")
-plt. show()
+plt.show()
 
-logger. info("Experiment completed successfully.")
+logger.info("Experiment completed successfully.")
 
 Visual Code 1
 # Imports
@@ -397,7 +397,7 @@ plt.title('Distribution of Measured Quantum State Probabilities')
 plt.xlabel('Probability')
 plt.ylabel('Frequency')
 plt.grid(True)
-plt. show()
+plt.show()
 
 # Heatmap of qubit correlations
 qubit_matrix = np.array([list(map(int, list(bitstring))) for bitstring in probabilities.keys()])
@@ -409,7 +409,7 @@ plt.colorbar(label='Correlation Coefficient')
 plt.title('Qubit Correlation Heatmap')
 plt.xlabel('Qubit Index')
 plt.ylabel('Qubit Index')
-plt. show()
+plt.show()
 
 # Print entropy result
 print(f"Entropy of the distribution: {entropy}")
@@ -445,12 +445,12 @@ clusters = fcluster(Z, t=correlation_threshold, criterion='distance')
 cluster_counts = Counter(clusters)
 
 plt.figure(figsize=(10, 6))
-plt. bar(cluster_counts.keys(), cluster_counts.values(), color='blue', alpha=0.7)
+plt.bar(cluster_counts.keys(), cluster_counts.values(), color='blue', alpha=0.7)
 plt.title('Cluster Sizes Based on Qubit Correlations')
 plt.xlabel('Cluster Index')
 plt.ylabel('Cluster Size')
 plt.grid(True)
-plt. show()
+plt.show()
 
 # Bitstring Probability Distribution (Logarithmic) 
 sorted_probabilities = sorted(probabilities.values(), reverse=True)
@@ -462,7 +462,7 @@ plt.title('Logarithmic Bitstring Probability Distribution')
 plt.xlabel('Bitstring Index (Sorted)')
 plt.ylabel('Probability (Log Scale)')
 plt.grid(True, which='both', linestyle='--', linewidth=0.5)
-plt. show()
+plt.show()
 
 # Heatmap of High Probability States 
 top_bitstrings = sorted(probabilities.items(), key=lambda x: x[1], reverse=True)[:20]
@@ -476,7 +476,7 @@ plt.xlabel('Qubit Index')
 plt.ylabel('Bitstring Rank')
 plt.xticks(range(top_states.shape[1]), fontsize=8, rotation=90)
 plt.yticks(range(len(top_bitstrings)), [f"#{i+1}" for i in range(len(top_bitstrings))], fontsize=8)
-plt. show()
+plt.show()
 
 # Qubit Entanglement Heatmap
 mutual_info_matrix = -np.log2(np.abs(correlation_matrix + 1e-9))  # Mutual information calculation
@@ -488,7 +488,7 @@ plt.colorbar(label='Mutual Information')
 plt.title('Qubit Entanglement Heatmap')
 plt.xlabel('Qubit Index')
 plt.ylabel('Qubit Index')
-plt. show()
+plt.show()
 
 # State Probability Evolution
 sorted_probs = sorted(probabilities.values(), reverse=True)
@@ -500,7 +500,7 @@ plt.title('State Probability Evolution')
 plt.xlabel('State Rank (Sorted)')
 plt.ylabel('Cumulative Probability')
 plt.grid(True, linestyle='--', linewidth=0.5)
-plt. show()
+plt.show()
 
 # Binary Pattern Frequency
 top_bitstrings = [bitstring for bitstring, _ in top_states]
@@ -517,12 +517,12 @@ most_common_substrings = substring_counts.most_common(10)
 labels, values = zip(*most_common_substrings)
 
 plt.figure(figsize=(10, 6))
-plt. bar(labels, values, color='blue', alpha=0.7)
+plt.bar(labels, values, color='blue', alpha=0.7)
 plt.title('Binary Pattern Frequency in Dominant States')
 plt.xlabel('Binary Pattern')
 plt.ylabel('Frequency')
 plt.grid(axis='y', linestyle='--', linewidth=0.5)
-plt. show()
+plt.show()
 
 # Probability Heatmap Across All States 
 sorted_indices = np.argsort(state_probs)[::-1]  # Sort states by probability (descending)
@@ -535,7 +535,7 @@ plt.colorbar(label='Qubit State (0 or 1)')
 plt.title('Probability Heatmap Across Top 100 States')
 plt.xlabel('Qubit Index')
 plt.ylabel('State Rank')
-plt. show()
+plt.show()
 
 # Frequency of State Transitions (Hamming Distance) 
 hamming_distances = []
@@ -546,12 +546,12 @@ hamming_distances.append(int(hamming(list(map(int, state1)), list(map(int, state
 hamming_counts = np.bincount(hamming_distances)
 
 plt.figure(figsize=(10, 6))
-plt. bar(range(len(hamming_counts)), hamming_counts, color='blue', alpha=0.7)
+plt.bar(range(len(hamming_counts)), hamming_counts, color='blue', alpha=0.7)
 plt.title('Frequency of State Transitions by Hamming Distance')
 plt.xlabel('Hamming Distance')
 plt.ylabel('Frequency')
 plt.grid(axis='y', linestyle='--', linewidth=0.5)
-plt. show()
+plt.show()
 
 # Correlation Network Density 
 correlation_matrix = np.corrcoef(qubit_matrix.T)
@@ -568,18 +568,18 @@ plt.title('Correlation Network Density')
 plt.xlabel('Correlation Threshold')
 plt.ylabel('Number of Edges')
 plt.grid(True, linestyle='--', linewidth=0.5)
-plt. show()
+plt.show()
 
 # Qubit Stability Analysis 
 stability = (qubit_matrix == qubit_matrix[0]).mean(axis=0)  
 
 plt.figure(figsize=(10, 6))
-plt. bar(range(len(stability)), stability, color='blue', alpha=0.7)
+plt.bar(range(len(stability)), stability, color='blue', alpha=0.7)
 plt.title('Qubit Stability Analysis')
 plt.xlabel('Qubit Index')
 plt.ylabel('Stability (%)')
 plt.grid(axis='y', linestyle='--', linewidth=0.5)
-plt. show()
+plt.show()
 
 # 3D Probability Landscape 
 x = np.arange(qubit_matrix.shape[1])
@@ -594,7 +594,7 @@ ax.set_title('3D Probability Landscape')
 ax.set_xlabel('Qubit Index')
 ax.set_ylabel('State Index')
 ax.set_zlabel('Probability')
-plt. show()
+plt.show()
 
 # Qubit State Heatmap 
 timesteps = 10 
@@ -618,7 +618,7 @@ plt.colorbar(label='Qubit State (0 or 1)')
 plt.title('Qubit State Heatmap Across Time')
 plt.xlabel('Qubit Index')
 plt.ylabel('Timestep')
-plt. show()
+plt.show()
 
 # Energy Distribution Across Clusters 
 Z = linkage(qubit_matrix, method='ward')
@@ -632,12 +632,12 @@ cluster_energies[cluster] += state
 
 # Plot cluster energy distribution
 plt.figure(figsize=(10, 6))
-plt. bar(cluster_energies.keys(), cluster_energies.values(), color='blue', alpha=0.7)
+plt.bar(cluster_energies.keys(), cluster_energies.values(), color='blue', alpha=0.7)
 plt.title('Energy Distribution Across Clusters')
 plt.xlabel('Cluster Index')
 plt.ylabel('Total Energy')
 plt.grid(axis='y', linestyle='--', linewidth=0.5)
-plt. show() 
+plt.show() 
 
 # End.
 
