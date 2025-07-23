@@ -219,7 +219,7 @@ from datetime import datetime
 import matplotlib.pyplot as plt
 
 # IBM Quantum api and backend
-IBMQ. save_account('Your_IBM_Key_O-', overwrite=True)
+IBMQ.save_account('Your_IBM_Key_O-', overwrite=True)
 IBMQ.load_account()
 provider = IBMQ.get_provider(hub='ibm-q')
 backend = provider.get_backend('ibm_kyoto')  # Adjust to your specific backend
@@ -271,7 +271,7 @@ with open(output_file, 'w') as f:
 
 # Display histogram of measurement results with counts
 plot_histogram(counts, title='Measurement Results', bar_labels=True)
-plt. show() 
+plt.show() 
 
 # Feynman-like Diagram from Run Result Code
 # imports
@@ -322,7 +322,7 @@ fig.patch.set_facecolor('black')
 ax.set_facecolor('black')
 
 # Display the Feynman-like diagram
-plt. show()
+plt.show()
         
            
             
