@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Experiment 20 - Qwork</title>
+    <title>Experiment 56 - Qwork</title>
     <style>
        body {
             background-color: #000000; /* Black background */
@@ -261,23 +261,23 @@ from scipy.linalg import expm
 import matplotlib.pyplot as plt
 
 # Logging
-logging.basicConfig(level=logging. INFO, format='%(asctime)s - %(levelname)s - %(message)s')
+logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
 logger = logging.getLogger(__name__)
 
 # Load calibration data
 def load_calibration_data(file_path):
-    logger. info("Loading calibration data from %s", file_path)
-    calibration_data = pd. read_csv(file_path)
+    logger.info("Loading calibration data from %s", file_path)
+    calibration_data = pd.read_csv(file_path)
     calibration_data.columns = calibration_data.columns.str.strip()
-    logger. info("Calibration data loaded successfully")
+    logger.info("Calibration data loaded successfully")
     return calibration_data
 
 # Select best qubits
 def select_best_qubits(calibration_data, n_qubits):
-    logger. info("Selecting the best qubits based on T1, T2, and error rates")
+    logger.info("Selecting the best qubits based on T1, T2, and error rates")
     qubits_sorted = calibration_data.sort_values(by=['\u221ax (sx) error', 'T1 (us)', 'T2 (us)'], ascending=[True, False, False])
     best_qubits = qubits_sorted['Qubit'].head(n_qubits).tolist()
-    logger. info("Selected qubits: %s", best_qubits)
+    logger.info("Selected qubits: %s", best_qubits)
     return best_qubits
 
 # Load most recent calibration data
@@ -289,16 +289,16 @@ n_qubits = 2
 best_qubits = select_best_qubits(calibration_data, n_qubits)
 
 # IBMQ 
-logger. info("Setting up IBM Q service")
+logger.info("Setting up IBM Q service")
 service = QiskitRuntimeService(
     channel='ibm_quantum',
     instance='ibm-q/open/main',
-    token='YOUR_IBMQ_API_KEY_O-`'  
+    token='YOUR_IBMQ_API_KEY'  
 )
 
 backend_name = 'ibm_sherbrooke'
 backend = service.backend(backend_name)
-logger. info("Backend selected: %s", backend_name)
+logger.info("Backend selected: %s", backend_name)
 
 # Quantum and classical registers
 qr = QuantumRegister(n_qubits, 'q')
@@ -308,7 +308,7 @@ cr = ClassicalRegister(n_qubits, 'c')
 c = 3e8  # Speed of light (m/s)
 G = 6.67430e-11  # Gravitational constant (m^3 kg^-1 s^-2)
 superforce = c**4 / G  # Maximum theoretical force (N)
-logger. info("Superforce value: %e N", superforce)
+logger.info("Superforce value: %e N", superforce)
 
 # A distortion function based on the Superforce
 def spacetime_distortion_with_superforce(qc, qubit, force_fraction):
@@ -319,7 +319,7 @@ def spacetime_distortion_with_superforce(qc, qubit, force_fraction):
     qc.rx(scaled_angle * np.pi / 4, qubit)
     qc.rz(scaled_angle * np.pi / 3, qubit)
     qc.ry(scaled_angle * np.pi / 5, qubit)
-    logger. info("Applied spacetime distortion with scaled angle: %f", scaled_angle)
+    logger.info("Applied spacetime distortion with scaled angle: %f", scaled_angle)
 
 # Noise model 
 def apply_force_scaled_noise(qc, qubit, force_fraction):
@@ -328,7 +328,7 @@ def apply_force_scaled_noise(qc, qubit, force_fraction):
     scaled_noise = noise_strength / (1e30)  
     qc.rx(scaled_noise * np.pi / 2, qubit)
     qc.ry(scaled_noise * np.pi / 4, qubit)
-    logger. info("Applied noise to qubit %s with scaled noise: %f", qubit, scaled_noise)
+    logger.info("Applied noise to qubit %s with scaled noise: %f", qubit, scaled_noise)
 
 # Apply distortions and save results 
 distortion_strengths = [0.1, 0.5, 1.0]
@@ -338,7 +338,7 @@ for fraction in distortion_strengths:
     
     # Create Bell state
     qc.h(qr[0])
-    qc. cx(qr[0], qr[1])
+    qc.cx(qr[0], qr[1])
     
     # Apply spacetime distortion
     spacetime_distortion_with_superforce(qc, qr[1], fraction)
@@ -355,8 +355,8 @@ for fraction in distortion_strengths:
     # Execute 
     with Session(service=service, backend=backend) as session:
         sampler = SamplerV2(session=session)
-        logger. info("Executing the circuit on the backend for distortion strength: %f", fraction)
-        job = sampler. run([qc_transpiled], shots=16384)
+        logger.info("Executing the circuit on the backend for distortion strength: %f", fraction)
+        job = sampler.run([qc_transpiled], shots=16384)
         job_result = job.result()
     
         # Extract counts
@@ -374,7 +374,7 @@ for fraction in distortion_strengths:
         output_file = f'/Users/Documents/Entanglement_Dynamics_Curved_Spacetime_SF_{fraction}.json'
         with open(output_file, 'w') as f:
             json.dump(results_data, f, indent=4)
-        logger. info(f"Results for distortion {fraction} saved to {output_file}")
+        logger.info(f"Results for distortion {fraction} saved to {output_file}")
 
 ////////////////////
 Code For all Visuals from Run Data
@@ -450,7 +450,7 @@ plt.ylabel('Probability')
 plt.title('State Probability Distribution Across Distortions')
 plt.legend()
 plt.grid(axis='y', linestyle='--', alpha=0.6)
-plt. show()
+plt.show()
 
 # Asymmetry Across Distortions
 plt.figure(figsize=(8, 5))
@@ -460,7 +460,7 @@ plt.ylabel('Asymmetry (|P(|10⟩) - P(|01⟩)|)')
 plt.title('Asymmetry Across Distortion Strengths')
 plt.grid(linestyle='--', alpha=0.6)
 plt.legend()
-plt. show()
+plt.show()
 
 # Entanglement Entropy Across Distortions
 plt.figure(figsize=(8, 5))
@@ -470,7 +470,7 @@ plt.ylabel('Entropy (bits)')
 plt.title('Entanglement Entropy Across Distortion Strengths')
 plt.grid(linestyle='--', alpha=0.6)
 plt.legend()
-plt. show()
+plt.show()
 
 # State Evolution Across Distortions
 plt.figure(figsize=(10, 6))
@@ -483,7 +483,7 @@ plt.ylabel('Probability')
 plt.title('State Evolution Across Distortion Strengths')
 plt.legend()
 plt.grid(axis='y', linestyle='--', alpha=0.6)
-plt. show()
+plt.show()
 
 # Cumulative Probability of Entangled States
 plt.figure(figsize=(8, 5))
@@ -493,7 +493,7 @@ plt.ylabel('Cumulative Probability')
 plt.title('Cumulative Probability of Entangled States')
 plt.grid(linestyle='--', alpha=0.6)
 plt.legend()
-plt. show()
+plt.show()
 
 # Probability Ratios (|10⟩ / |01⟩)
 plt.figure(figsize=(8, 5))
@@ -503,7 +503,7 @@ plt.ylabel('Ratio')
 plt.title('Probability Ratios (|10⟩ / |01⟩) Across Distortions')
 plt.grid(linestyle='--', alpha=0.6)
 plt.legend()
-plt. show()
+plt.show()
 
 # Entropy Change Rate
 entropy_change_rate = np.gradient(entropies, distortion_strengths)  # Derivative of entropy
@@ -514,7 +514,7 @@ plt.ylabel('Change Rate')
 plt.title('Rate of Entropy Change Across Distortions')
 plt.grid(linestyle='--', alpha=0.6)
 plt.legend()
-plt. show()
+plt.show()
 
 # State Coherence Analysis
 plt.figure(figsize=(8, 5))
@@ -524,7 +524,7 @@ plt.ylabel('Coherence Loss')
 plt.title('State Coherence Analysis Across Distortions')
 plt.grid(linestyle='--', alpha=0.6)
 plt.legend()
-plt. show()
+plt.show()
 
 # Heatmap of State Probabilities
 plt.figure(figsize=(10, 6))
@@ -535,7 +535,7 @@ plt.yticks(np.arange(len(state_labels)), state_labels)
 plt.xlabel('Distortion Strength (f)')
 plt.ylabel('States')
 plt.title('Heatmap of State Probabilities Across Distortions')
-plt. show()
+plt.show()
 
 # 3D Surface Plot of State Probabilities
 fig = plt.figure(figsize=(12, 8))
@@ -551,7 +551,7 @@ ax.set_xlabel('Distortion Strength (f)')
 ax.set_ylabel('States')
 ax.set_zlabel('Probability')
 ax.set_title('3D Surface Plot of State Probabilities')
-plt. show()
+plt.show()
 
 # Heatmap of Asymmetry
 plt.figure(figsize=(10, 6))
@@ -562,7 +562,7 @@ plt.colorbar(label='Asymmetry')
 plt.yticks([])
 plt.xlabel('Distortion Strength (f)')
 plt.title('Heatmap of Asymmetry Across Distortions')
-plt. show()
+plt.show()
 
 # 3D Surface Plot of Entanglement Entropy
 fig = plt.figure(figsize=(12, 8))
@@ -578,7 +578,7 @@ ax.set_xlabel('Distortion Strength (f)')
 ax.set_ylabel('Entropy Layer')
 ax.set_zlabel('Entropy (bits)')
 ax.set_title('3D Surface Plot of Entanglement Entropy')
-plt. show()
+plt.show()
 
 # End
 
