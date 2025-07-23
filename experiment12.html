@@ -249,7 +249,7 @@ from qiskit_ibm_provider import IBMProvider
 import matplotlib.pyplot as plt
 
 # Enter your IBMQ API key here
-ibm_api_key = 'Your_API_Key_Mfer'
+ibm_api_key = 'Your_API_Key'
 provider = IBMProvider(ibm_api_key)
 
 # backend name
@@ -300,7 +300,7 @@ def complex_to_json(obj):
 
 # Display histogram of the results
 plot_histogram(result.get_counts(circuit))
-plt. show()
+plt.show()
 
 # Prepare data for JSON serialization
 data = {
