@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Experiment 20 - Qwork</title>
+    <title>Experiment 45 - Qwork</title>
     <style>
        body {
             background-color: #000000; /* Black background */
@@ -274,19 +274,19 @@ logger = logging.getLogger(__name__)
 
 # Load calibration data
 def load_calibration_data(file_path):
-    logger. info("Loading calibration data from %s", file_path)
-    calibration_data = pd. read_csv(file_path)
+    logger.info("Loading calibration data from %s", file_path)
+    calibration_data = pd.read_csv(file_path)
     calibration_data.columns = calibration_data.columns.str.strip()  
-    logger. info("Calibration data loaded successfully")
+    logger.info("Calibration data loaded successfully")
     return calibration_data
 
 # Parse calibration data
 def select_best_qubits(calibration_data, n_qubits):
-    logger. info("Selecting the best qubits based on T1, T2, and error rates")
+    logger.info("Selecting the best qubits based on T1, T2, and error rates")
     print("Calibration data columns:", calibration_data.columns)
     qubits_sorted = calibration_data.sort_values(by=['√x (sx) error', 'T1 (us)', 'T2 (us)'], ascending=[True, False, False])
     best_qubits = qubits_sorted['Qubit'].head(n_qubits).tolist()
-    logger. info("Selected qubits: %s", best_qubits)
+    logger.info("Selected qubits: %s", best_qubits)
     return best_qubits
 
 # Load backend calibration data
@@ -298,16 +298,16 @@ num_locations = 6
 best_qubits = select_best_qubits(calibration_data, num_locations + 1)
 
 # IBMQ 
-logger. info("Setting up IBM Q service")
+logger.info("Setting up IBMQ service")
 service = QiskitRuntimeService(
     channel='ibm_quantum',
     instance='ibm-q/open/main',
-    token='YOUR_IBMQ_API_KEY_O-`'
+    token='YOUR_IBMQ_API_KEY'
 )
 
 backend_name = 'ibm_brisbane'
 backend = service.backend(backend_name)
-logger. info("Backend selected: %s", backend_name)
+logger.info("Backend selected: %s", backend_name)
 
 # Quantum and classical registers
 qr = QuantumRegister(num_locations + 1)  
@@ -323,7 +323,7 @@ for i in range(1, num_locations + 1):
 
 # Apply entanglement to simulate dependencies between locations
 for i in range(1, num_locations + 1):
-    qc. cx(qr[0], qr[i])  
+    qc.cx(qr[0], qr[i])  
 
 # Encode energy consumption/travel costs on the Bloch sphere
 for i in range(1, num_locations + 1):
@@ -340,14 +340,14 @@ qc.measure(qr, cr)
 # Transpile 
 logger. info("Transpiling the quantum circuit for the backend")
 qc_transpiled = transpile(qc, backend=backend, optimization_level=3)
-logger. info("Circuit transpilation complete")
+logger.info("Circuit transpilation complete")
 
 # Execute 
 shots = 16384  
 with Session(service=service, backend=backend) as session:
     sampler = SamplerV2(session=session)
-    logger. info("Executing the circuit on the backend")
-    job = sampler. run([qc_transpiled], shots=shots)
+    logger.info("Executing the circuit on the backend")
+    job = sampler.run([qc_transpiled], shots=shots)
     job_result = job.result()
 
     # Results
@@ -362,11 +362,11 @@ with Session(service=service, backend=backend) as session:
     file_path = '/Users/Documents/Quantum_DroneDelivery_1.json'
     with open(file_path, 'w') as f:
         json.dump(results_data, f, indent=4)
-    logger. info("Results saved to %s", file_path)
+    logger.info("Results saved to %s", file_path)
 
 # Visualization
 plot_histogram(counts)
-plt. show()
+plt.show()
 
 //////////////////
 
@@ -390,24 +390,24 @@ total_counts = sum(counts.values())
 
 # Histogram of Bitstring Counts
 def plot_histogram_counts(counts):
-    plt. bar(counts.keys(), counts.values())
+    plt.bar(counts.keys(), counts.values())
     plt.xlabel('Bitstrings')
     plt.ylabel('Counts')
     plt.title('Frequency Distribution of Measured Bitstrings')
     plt.xticks(rotation=90, fontsize=6)
     plt.tight_layout()
-    plt.s how()
+    plt.show()
 
 # Most Frequent Routes
 def plot_top_routes(counts, top_n=10):
     sorted_counts = Counter(counts).most_common(top_n)
     bitstrings, freqs = zip(*sorted_counts)
-    plt. bar(bitstrings, freqs, color='green')
+    plt.bar(bitstrings, freqs, color='green')
     plt.xlabel('Top 10 Bitstrings')
     plt.ylabel('Counts')
     plt.title('Most Frequent Delivery Sequences')
     plt.xticks(rotation=45, fontsize=8)
-    plt. show()
+    plt.show()
 
 # Cumulative Distribution of Counts
 def plot_cumulative_distribution(counts):
@@ -419,7 +419,7 @@ def plot_cumulative_distribution(counts):
     plt.ylabel('Cumulative Probability')
     plt.title('Cumulative Distribution of Measured Counts')
     plt.grid()
-    plt. show()
+    plt.show()
 
 # Heatmap of Bitstring Patterns
 def plot_heatmap_patterns(counts):
@@ -429,7 +429,7 @@ def plot_heatmap_patterns(counts):
     plt.xlabel('Locations')
     plt.ylabel('Bitstrings')
     plt.title('Heatmap of Delivery Sequence Patterns')
-    plt. show()
+    plt.show()
 
 # Call the visualization functions
 plot_histogram_counts(counts)
@@ -442,39 +442,39 @@ def plot_route_length_distribution(counts):
     bitstrings = list(counts.keys())
     hamming_weights = [sum(map(int, bit)) for bit in bitstrings]  # Calculate Hamming weight for each bitstring
     weight_counts = Counter(hamming_weights)
-    plt. bar(weight_counts.keys(), weight_counts.values(), color='blue')
+    plt.bar(weight_counts.keys(), weight_counts.values(), color='blue')
     plt.xlabel('Number of Locations Visited (Hamming Weight)')
     plt.ylabel('Frequency')
     plt.title('Distribution of Route Lengths (Hamming Weight)')
     plt.xticks(range(max(weight_counts.keys()) + 1))
     plt.tight_layout()
-    plt. show()
+    plt.show()
 
 # Top 10 Routes with Cumulative Probabilities
 def plot_top_10_cumulative_probabilities(counts):
     sorted_counts = Counter(counts).most_common(10)
     bitstrings, freqs = zip(*sorted_counts)
     cumulative_probs = np.cumsum([freq / total_counts for freq in freqs])
-    plt. bar(range(len(bitstrings)), cumulative_probs, tick_label=bitstrings, color='purple')
+    plt.bar(range(len(bitstrings)), cumulative_probs, tick_label=bitstrings, color='purple')
     plt.xlabel('Top 10 Bitstrings')
     plt.ylabel('Cumulative Probability')
     plt.title('Cumulative Probabilities of Top 10 Routes')
     plt.xticks(rotation=45, fontsize=8)
     plt.tight_layout()
-    plt. show()
+    plt.show()
 
 # Distribution of Route Inclusion Frequencies
 def plot_location_inclusion_frequency(counts):
     bitstrings = list(counts.keys())
     inclusion_matrix = np.array([list(map(int, bit)) for bit in bitstrings])
     location_inclusion = inclusion_matrix.T @ np.array(list(counts.values()))
-    plt. bar(range(len(location_inclusion)), location_inclusion, color='orange')
+    plt.bar(range(len(location_inclusion)), location_inclusion, color='orange')
     plt.xlabel('Locations')
     plt.ylabel('Inclusion Frequency')
     plt.title('Frequency of Location Inclusion Across Routes')
     plt.xticks(range(len(location_inclusion)), [f"Location {i}" for i in range(len(location_inclusion))], rotation=45)
     plt.tight_layout()
-    plt. show()
+    plt.show()
 
 # Entropy of the Bitstring Distribution
 def plot_entropy_of_distribution(counts):
@@ -483,7 +483,7 @@ def plot_entropy_of_distribution(counts):
     plt. bar(["Entropy"], [entropy_value], color='red')
     plt.title(f'Shannon Entropy of Measured Bitstrings: {entropy_value:.4f}')
     plt.ylabel('Entropy (bits)')
-    plt. show()
+    plt.show()
 
 # Call the visualization functions
 plot_route_length_distribution(counts)
@@ -517,7 +517,7 @@ def plot_3d_bar_top_routes(counts):
     ax.set_title('3D Bar Plot of Top 10 Routes')
 
     plt.tight_layout()
-    plt. show()
+    plt.show()
 
 # 3D Scatter Plot of Bitstring Probabilities
 def plot_3d_scatter_probabilities(counts):
@@ -540,7 +540,7 @@ def plot_3d_scatter_probabilities(counts):
     ax.set_title('3D Scatter Plot of Bitstring Probabilities')
 
     plt.tight_layout()
-    plt. show()
+    plt.show()
 
 # Parallel Coordinates Plot of Top 10 Routes
 def plot_parallel_coordinates_top_routes(counts):
@@ -559,7 +559,7 @@ def plot_parallel_coordinates_top_routes(counts):
     ax.set_title("Parallel Coordinates Plot of Top 10 Routes")
     plt.legend(loc='upper left', bbox_to_anchor=(1.05, 1), title="Bitstrings")
     plt.tight_layout()
-    plt. show()
+    plt.show()
 
 # 3D Surface Plot of Route Inclusion Frequencies
 def plot_3d_surface_inclusion(counts):
@@ -581,7 +581,7 @@ def plot_3d_surface_inclusion(counts):
     ax.set_zlabel('Inclusion')
     ax.set_title('3D Surface Plot of Route Inclusion Frequencies')
 
-    plt. show()
+    plt.show()
 
 # Call the visualization functions
 plot_3d_bar_top_routes(counts)
