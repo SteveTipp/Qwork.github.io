@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Experiment 20 - Qwork</title>
+    <title>Experiment 26 - Qwork</title>
     <style>
        body {
             background-color: #000000; /* Black background */
@@ -279,7 +279,7 @@ import logging
 import matplotlib.pyplot as plt
 
 # IBM Quantum API key 
-api_key = "YOUR_IBM_API_KEY_O-`"
+api_key = "YOUR_IBM_API_KEY"
 channel = "ibm_quantum"  # Typical channel for IBM Quantum services
 
 # Initialize Qiskit Runtime Service 
@@ -297,7 +297,7 @@ for i in range(127):
 
 # Add a sequence of CNOT gates to entangle the qubits, simulating interactions
 for i in range(126):
-    qc. cx(i, i + 1)
+    qc.cx(i, i + 1)
 
 # Evolve the state with unitary operators simulating path integrals
 unitary = UnitaryGate(np.array([[1, 0], [0, np.exp(1j * np.pi/4)]]))
@@ -321,7 +321,7 @@ with Session(service=service, backend=backend) as session:
     sampler = SamplerV2(session=session)
     
     # Run the circuit 
-    job = sampler. run([qc], shots=8192)
+    job = sampler.run([qc], shots=8192)
     job_result = job.result()
     
     # Retrieve the classical register name
@@ -341,7 +341,7 @@ with Session(service=service, backend=backend) as session:
 
 # Plotting the results for analysis
 plot_histogram(pub_result)
-plt. show()
+plt.show()
 
 CODE FOR VISUALS FROM RUN DATA
 # imports
@@ -373,9 +373,9 @@ hamming_distances = pdist(bitstrings_array, metric='hamming')
 hamming_matrix = squareform(hamming_distances)
 
 # Color scheme
-plt. style.use('dark_background')
+plt.style.use('dark_background')
 
-# 1. Multidimensional Scaling (MDS) Visualization
+# Multidimensional Scaling (MDS) Visualization
 def mds_visualization():
     mds = MDS(n_components=2, dissimilarity="precomputed")
     mds_coords = mds. fit_transform(hamming_matrix)
@@ -387,9 +387,9 @@ def mds_visualization():
     plt.ylabel('MDS Dimension 2', color='white')
     plt.grid(True, color='gray')
     plt.savefig('/Users/Documents/mds_visualization.png')
-    plt. show()
+    plt.show()
 
-# 2. t-SNE Visualization
+# t-SNE Visualization
 def tsne_visualization():
     tsne = TSNE(n_components=2, metric="hamming")
     tsne_coords = tsne. fit_transform(bitstrings_array)
@@ -401,9 +401,9 @@ def tsne_visualization():
     plt.ylabel('t-SNE Dimension 2', color='white')
     plt.grid(True, color='gray')
     plt.savefig('/Users/Documents/tsne_visualization.png')
-    plt. show()
+    plt.show()
 
-# 3. 3D PCA Visualization
+# 3D PCA Visualization
 def pca_3d_visualization():
     pca_3d = PCA(n_components=3)
     bitstrings_pca_3d = pca_3d.fit_transform(bitstrings_array)
@@ -416,9 +416,9 @@ def pca_3d_visualization():
     ax.set_ylabel('Principal Component 2', color='white')
     ax.set_zlabel('Principal Component 3', color='white')
     plt.savefig('/Users/Documents/pca_3d_visualization.png')
-    plt. show()
+    plt.show()
 
-# 4. Hierarchical Clustering Dendrogram
+# Hierarchical Clustering Dendrogram
 def hierarchical_clustering_dendrogram():
     linked = linkage(bitstrings_array, 'ward')
     plt.figure(figsize=(12, 8))
@@ -428,9 +428,9 @@ def hierarchical_clustering_dendrogram():
     plt.ylabel('Distance', color='white')
     plt.grid(True, color='gray')
     plt.savefig('/Users/Documents/hierarchical_clustering_dendrogram.png')
-    plt. show()
+    plt.show()
 
-# 5. Correlation Matrix Heatmap
+# Correlation Matrix Heatmap
 def correlation_matrix_heatmap():
     correlation_matrix = np.corrcoef(bitstrings_array.T)
     plt.figure(figsize=(12, 10))
@@ -439,9 +439,9 @@ def correlation_matrix_heatmap():
     plt.xlabel('Qubit Index', color='white')
     plt.ylabel('Qubit Index', color='white')
     plt.savefig('/Users/Documents/correlation_matrix_heatmap.png')
-    plt. show()
+    plt.show()
 
-# 6. Path Integral Visualization 
+# Path Integral Visualization 
 def path_integral_visualization():
     plt.figure(figsize=(10, 6))
     plt.plot(np.random.randn(100).cumsum(), color='blue', alpha=0.7)
@@ -450,9 +450,9 @@ def path_integral_visualization():
     plt.ylabel('Amplitude', color='white')
     plt.grid(True, color='gray')
     plt.savefig('/Users/Documents/path_integral_visualization.png')
-    plt. show()
+    plt.show()
 
-# 7. Quantum State Evolution Over Time 
+# Quantum State Evolution Over Time 
 def quantum_state_evolution_animation():
     fig, ax = plt.subplots(figsize=(10, 6))
     line, = ax.plot([], [], color='green')
@@ -467,8 +467,8 @@ def quantum_state_evolution_animation():
         return line,
 
     ani = FuncAnimation(fig, animate, frames=100, interval=50)
-    ani. save('/User/Documents/quantum_state_evolution.gif', writer='imagemagick')
-    plt. show()
+    ani.save('/User/Documents/quantum_state_evolution.gif', writer='imagemagick')
+    plt.show()
 
 # Run all visualizations
 mds_visualization()
