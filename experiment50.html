@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Experiment 20 - Qwork</title>
+    <title>Experiment 50 - Qwork</title>
     <style>
        body {
             background-color: #000000; /* Black background */
@@ -238,23 +238,23 @@ import seaborn as sns
 from qiskit.quantum_info import DensityMatrix
 
 # Logging setup
-logging.basicConfig(level=logging. INFO, format='%(asctime)s - %(levelname)s - %(message)s')
+logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
 logger = logging.getLogger(__name__)
 
 # Load calibration data
 def load_calibration_data(file_path):
-    logger. info("Loading calibration data from %s", file_path)
-    calibration_data = pd. read_csv(file_path)
+    logger.info("Loading calibration data from %s", file_path)
+    calibration_data = pd.read_csv(file_path)
     calibration_data.columns = calibration_data.columns.str.strip()
-    logger. info("Calibration data loaded successfully")
+    logger.info("Calibration data loaded successfully")
     return calibration_data
 
 # Select the best qubits based on T1, T2, and error rates
 def select_best_qubits(calibration_data, n_qubits):
-    logger. info("Selecting the best qubits based on T1, T2, and error rates")
+    logger.info("Selecting the best qubits based on T1, T2, and error rates")
     qubits_sorted = calibration_data.sort_values(by=['\u221ax (sx) error', 'T1 (us)', 'T2 (us)'], ascending=[True, False, False])
     best_qubits = qubits_sorted['Qubit'].head(n_qubits).tolist()
-    logger. info("Selected qubits: %s", best_qubits)
+    logger.info("Selected qubits: %s", best_qubits)
     return best_qubits
 
 # Load backend calibration data
@@ -266,16 +266,16 @@ num_qubits = 4
 best_qubits = select_best_qubits(calibration_data, num_qubits)
 
 # IBMQ 
-logger. info("Setting up IBM Q service")
+logger.info("Setting up IBM Q service")
 service = QiskitRuntimeService(
     channel='ibm_quantum',
     instance='ibm-q/open/main',
-    token='YOUR_IBMQ_API_KEY_O-`'  
+    token='YOUR_IBMQ_API_KEY'  
 )
 
 backend_name = 'ibm_brisbane'
 backend = service.backend(backend_name)
-logger. info("Backend selected: %s", backend_name)
+logger.info("Backend selected: %s", backend_name)
 
 # Parametric null-ray preparation circuit 
 def prepare_null_ray_circuit(theta, phi):
@@ -286,25 +286,25 @@ def prepare_null_ray_circuit(theta, phi):
     # Prepare initial state using sx and rz (decomposition of u gate)
     for i in range(0, num_qubits, 2):
         qc.rz(phi, qr[i])
-        qc. sx(qr[i])
+        qc.sx(qr[i])
         qc.rz(theta, qr[i])
 
         qc.rz(-phi, qr[i + 1])
-        qc. sx(qr[i + 1])
+        qc.sx(qr[i + 1])
         qc.rz(-theta, qr[i + 1])
 
     # Decomposition with rz, sx, and x
     for i in range(0, num_qubits, 2):
         qc.rz(np.pi / 2, qr[i + 1])
-        qc. sx(qr[i + 1])
+        qc.sx(qr[i + 1])
         qc.rz(-np.pi / 2, qr[i + 1])
-        qc. sx(qr[i])
+        qc.sx(qr[i])
         qc.rz(np.pi / 2, qr[i])
-        qc. sx(qr[i])
+        qc.sx(qr[i])
         qc.rz(-np.pi / 2, qr[i])
-        qc. sx(qr[i + 1])
+        qc.sx(qr[i + 1])
         qc.rz(np.pi / 2, qr[i + 1])
-        qc. sx(qr[i + 1])
+        qc.sx(qr[i + 1])
         qc.rz(-np.pi / 2, qr[i + 1])
 
     return qc
@@ -322,10 +322,10 @@ for theta in angles:
 
 # Execute 
 shots = 16384
-logger. info("Starting quantum tomography on %d circuits", len(circuits))
+logger.info("Starting quantum tomography on %d circuits", len(circuits))
 with Session(service=service, backend=backend) as session:
     sampler = SamplerV2(session=session)
-    job = sampler. run(circuits, shots=shots)
+    job = sampler.run(circuits, shots=shots)
     job_result = job.result()
 
     # Results
@@ -338,14 +338,14 @@ with Session(service=service, backend=backend) as session:
     file_path = '/Users/Documents/NullRay_Twister_Result_0.json'
     with open(file_path, 'w') as f:
         json.dump(results_data, f, indent=4)
-    logger. info("Results saved to %s", file_path)
+    logger.info("Results saved to %s", file_path)
 
 # Visual
 for result in results_data:
     counts = result["counts"]
     plot_histogram(counts)
     plt.title(f"Circuit {result['circuit_idx']} Measurement Results")
-    plt. show()
+    plt.show()
 
 /////////////////
 
@@ -385,7 +385,7 @@ def plot_heatmap():
     plt.title("Measurement Distribution Heatmap", fontsize=16)
     plt.xlabel("States", fontsize=14)
     plt.ylabel("Circuits", fontsize=14)
-    plt. show()
+    plt.show()
 
 # Bloch Sphere Projections for Selected Circuits
 def plot_bloch_spheres():
@@ -401,7 +401,7 @@ def plot_bloch_spheres():
 
         plot_bloch_multivector(dm)
         plt.title(f"Bloch Sphere Projection: Circuit {idx}", fontsize=16)
-        plt. show()
+        plt.show()
 
 # Interference Strength Across Circuits
 def plot_interference_strength():
@@ -418,7 +418,7 @@ def plot_interference_strength():
     plt.xlabel("Circuit Index", fontsize=14)
     plt.ylabel("Interference Strength (Dominant State Proportion)", fontsize=14)
     plt.grid(True)
-    plt. show()
+    plt.show()
 
 # Error Rate Analysis
 def plot_error_rate():
@@ -441,7 +441,7 @@ def plot_error_rate():
     plt.xlabel("Circuit Index", fontsize=14)
     plt.ylabel("Total Error (Observed vs Expected)", fontsize=14)
     plt.grid(True)
-    plt. show()
+    plt.show()
 
 # State Population Histogram
 def plot_state_population():
@@ -453,12 +453,12 @@ def plot_state_population():
             state_populations[state] += count
 
     state_counts = [state_populations[state] for state in labels]
-    plt. bar(labels, state_counts, color='blue')
+    plt.bar(labels, state_counts, color='blue')
     plt.title("Overall State Population Histogram", fontsize=16)
     plt.xlabel("States", fontsize=14)
     plt.ylabel("Total Counts", fontsize=14)
     plt.xticks(rotation=90)
-    plt. show()
+    plt.show()
 
 # Cumulative Interference Strength
 def plot_cumulative_interference():
@@ -477,7 +477,7 @@ def plot_cumulative_interference():
     plt.xlabel("Circuit Index", fontsize=14)
     plt.ylabel("Cumulative Strength", fontsize=14)
     plt.grid(True)
-    plt. show()
+    plt.show()
 
 # State Entropy Across Circuits
 def plot_state_entropy():
@@ -494,7 +494,7 @@ def plot_state_entropy():
     plt.xlabel("Circuit Index", fontsize=14)
     plt.ylabel("Entropy (bits)", fontsize=14)
     plt.grid(True)
-    plt. show()
+    plt.show()
 
 # Dominant State Evolution
 def plot_dominant_state_evolution():
@@ -514,7 +514,7 @@ def plot_dominant_state_evolution():
     plt.ylabel("Proportion of Total Counts", fontsize=14)
     plt.legend()
     plt.grid(True)
-    plt. show()
+    plt.show()
 
 # Call
 plot_heatmap()
