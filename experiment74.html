@@ -346,10 +346,10 @@ log = logging.getLogger(__name__)
 
 # Calibration Based Qubit Selection
 def best_qubits(csv_path: str, n: int) -> list[int]:
-    df = pd .read_csv(csv_path)
+    df = pd.read_csv(csv_path)
     df.columns = df.columns.str.strip()
     winners = df.sort_values(["√x (sx) error", "T1 (us)", "T2 (us)"], ascending=[True, False, False])["Qubit"].head(n).tolist()
-    log .info("Best physical qubits: %s", winners)
+    log.info("Best physical qubits: %s", winners)
     return winners
 
 N_Q_TOTAL = 3 + 3 + 3
@@ -407,18 +407,18 @@ def shor_ecdlp_with_bloch_clock():
 # Run on IBMQ
 service = QiskitRuntimeService(channel="ibm_cloud", token=TOKEN, instance=INSTANCE)
 backend = service.backend(BACKEND)
-log .info("Backend → %s", backend .name)
+log.info("Backend → %s", backend .name)
 
 qc = shor_ecdlp_with_bloch_clock()
 trans = transpile(qc, backend=backend, initial_layout=PHYSICAL + [0], optimization_level=3)
-log .info("Circuit depth %d, gate counts %s", trans.depth(), trans.count_ops())
+log.info("Circuit depth %d, gate counts %s", trans.depth(), trans.count_ops())
 
 sampler = SamplerV2(mode=backend)
-job = sampler .run([trans], shots=SHOTS)
+job = sampler.run([trans], shots=SHOTS)
 result = job.result()
 
 # Extract results
-cregs = {creg .name: creg.size for creg in trans.cregs}
+cregs = {creg.name: creg.size for creg in trans.cregs}
 clk_name = [name for name in cregs if "clk" in name][0]
 main_name = [name for name in cregs if "c" == name][0]
 
@@ -436,7 +436,7 @@ for i, ((a_val, b_val), freq) in enumerate(top[:10]):
         continue
     inv_b = pow(b_val, -1, ORDER)
     k_candidate = (-a_val * inv_b) % ORDER
-    log .info("Candidate k = %d  from (a=%d, b=%d, count=%d)", k_candidate, a_val, b_val, freq)
+    log.info("Candidate k = %d  from (a=%d, b=%d, count=%d)", k_candidate, a_val, b_val, freq)
     if k_candidate == TARGET_K:
         k_found = k_candidate
         print(f"\nSUCCESS — recovered correct k = {k_candidate} from top-{i+1} (a={a_val}, b={b_val}, count={freq})")
@@ -457,7 +457,7 @@ out = {
 JSON_PATH = "/Users/steventippeconnic/Documents/QC/ECDLP_8pts_Shors_Run_Bloch_Clock_0.json"
 with open(JSON_PATH, "w") as fp:
     json.dump(out, fp, indent=4)
-log .info("Results saved → %s", JSON_PATH)
+log.info("Results saved → %s", JSON_PATH)
 
 # Bloch Clock Visualization (Ideal)
 qc_bloch = QuantumCircuit(1)
@@ -467,7 +467,7 @@ qc_bloch.ry(np.pi / 4, 0)
 qc_bloch.rz(np.pi / 4, 0)
 state = Statevector.from_instruction(qc_bloch)
 plot_bloch_multivector(state)
-plt .show()
+plt.show()
 
 # End
 
