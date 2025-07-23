@@ -321,20 +321,20 @@ Q_IDX = 7                      # public point Q = k·P, here “7 mod 8”
                                #   Only Q is needed to build the oracle
 
 # Logging helper
-logging.basicConfig(level=logging .INFO,
+logging.basicConfig(level=logging.INFO,
                     format="%(asctime)s | %(levelname)s | %(message)s")
 log = logging.getLogger(__name__)
 
 # Calibration‑based qubit pick
 def best_qubits(csv_path: str, n: int) -> list[int]:
-    df = pd .read_csv(csv_path)
+    df = pd.read_csv(csv_path)
     df.columns = df.columns.str.strip()
     winners = (
         df.sort_values(["√x (sx) error", "T1 (us)", "T2 (us)"],
                        ascending=[True, False, False])
         ["Qubit"].head(n).tolist()
     )
-    log .info("Best physical qubits: %s", winners)
+    log.info("Best physical qubits: %s", winners)
     return winners
 
 N_Q_TOTAL = 3 + 3 + 3          # a, b, point registers
@@ -398,14 +398,14 @@ service = QiskitRuntimeService(channel="ibm_cloud",
                                token=TOKEN,
                                instance=INSTANCE)
 backend = service.backend(BACKEND)
-log .info("Backend → %s", backend .name)
+log.info("Backend → %s", backend .name)
 
 qc_raw = shor_ecdlp_circuit()
 trans   = transpile(qc_raw,
                     backend         = backend,
                     initial_layout  = PHYSICAL,
                     optimization_level = 3)
-log .info("Circuit depth %d, gate counts %s", trans.depth(), trans.count_ops())
+log.info("Circuit depth %d, gate counts %s", trans.depth(), trans.count_ops())
 
 sampler = SamplerV2(mode=backend)
 job     = sampler .run([trans], shots=SHOTS)
@@ -449,7 +449,7 @@ out = {
 JSON_PATH = "/Users/steventippeconnic/Documents/ECDLP_8pts_Shors_Run_0.json"
 with open(JSON_PATH, "w") as fp:
     json.dump(out, fp, indent=4)
-log .info("Results saved → %s", JSON_PATH)
+log.info("Results saved → %s", JSON_PATH)
 
 # End 
 
