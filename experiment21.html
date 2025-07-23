@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Experiment 20 - Qwork</title>
+    <title>Experiment 21 - Qwork</title>
     <style>
        body {
             background-color: #000000; /* Black background */
@@ -333,7 +333,7 @@ def calculate_determinant(matrix):
         return None
 
 # Initialize Qiskit runtime service with IBMQ key
-API_KEY = 'Your_IBMQ_Key_O-`'  
+API_KEY = 'Your_IBMQ_Key'  
 service = QiskitRuntimeService(channel='ibm_quantum', token=API_KEY)
 
 # Define  backend
@@ -361,7 +361,7 @@ transpiled_circuit = transpile(circuit, backend=backend, optimization_level=3)
 
 # Execute the circuit using a runtime session
 with Session(service=service, backend=backend) as session:
-    job = session. run(program_id="sampler", inputs={'circuits': [transpiled_circuit]})
+    job = session.run(program_id="sampler", inputs={'circuits': [transpiled_circuit]})
     result = job.result()
 
 # Flatten the list of dictionaries into a single dictionary
@@ -386,7 +386,7 @@ with open(file_path, 'w') as file:
 
 # Plot the results
 plot_histogram(counts)
-plt. show()
+plt.show()
 # end
 
 (100 Qubit Circuit)
@@ -423,7 +423,7 @@ def calculate_determinant(matrix):
         return None
 
 # Initialize Qiskit runtime service with IBMQ API key
-API_KEY = 'Your_IBMQ_Key_O-`'  
+API_KEY = 'Your_IBMQ_Key'  
 service = QiskitRuntimeService(channel='ibm_quantum', token=API_KEY)
 
 # Define backend
@@ -451,7 +451,7 @@ transpiled_circuit = transpile(circuit, backend=backend, optimization_level=3)
 
 # Execute the circuit using a runtime session
 with Session(service=service, backend=backend) as session:
-    job = session. run(program_id="sampler", inputs={'circuits': [transpiled_circuit]})
+    job = session.run(program_id="sampler", inputs={'circuits': [transpiled_circuit]})
     result = job.result()
 
 # Flatten the list of dictionaries into a single dictionary
@@ -476,7 +476,7 @@ with open(file_path, 'w') as file:
 
 # Plot the results
 plot_histogram(counts)
-plt. show()
+plt.show()
 # end
 
 </code></pre>
