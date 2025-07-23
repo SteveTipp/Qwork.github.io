@@ -210,7 +210,7 @@ qc = QuantumCircuit(num_qubits, num_qubits)
 
 # Quantum teleportation setup 
 qc.h(0)  # Prepare Qubit 0 in a superposition state
-qc. cx(0, 1)  # Entangle Qubit 0 with Qubit 1
+qc.cx(0, 1)  # Entangle Qubit 0 with Qubit 1
 
 # Measure Qubits 0 and 1
 qc.measure([0, 1], [0, 1])
@@ -221,13 +221,13 @@ qc.x(2).c_if(qc.clbits[0], 1)  # Apply X-gate on Qubit 2 if Qubit 0 is 1
 # Execute the circuit on a quantum computer
 backend = provider.get_backend('ibm_nairobi')
 transpiled_circuit = transpile(qc, backend=backend)
-job = backend. run(transpiled_circuit)
+job = backend.run(transpiled_circuit)
 job_monitor(job)
 
 # Retrieve and plot the results
 results = job.result().get_counts(qc)
 plot_histogram(results)
-plt. show()
+plt.show()
 
 # Save results and backend information to a JSON file
 results_data = {
