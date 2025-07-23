@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Experiment 20 - Qwork</title>
+    <title>Experiment 24 - Qwork</title>
     <style>
        body {
             background-color: #000000; /* Black background */
@@ -323,7 +323,7 @@ def run_qc(qc, service, backend):
     with Session(service=service, backend=backend) as session:
         sampler = SamplerV2(session=session)
         transpiled_qc = transpile(qc, backend)
-        job = sampler. run([transpiled_qc], shots=8192)
+        job = sampler.run([transpiled_qc], shots=8192)
         job.wait_for_final_state()
         result = job.result()
         classical_register_name = qc.cregs[0].name
@@ -412,7 +412,7 @@ plt.colorbar()
 plt.xlabel('Action')
 plt.ylabel('State')
 plt.title('Q-Table Heatmap')
-plt. show()
+plt.show()
 
 # Derive policy from Q-table
 policy = np.argmax(q_table, axis=1)
@@ -421,11 +421,11 @@ for state in range(state_space_size):
     print(f"State {state}: Action {policy[state]}")
 
 # Visualize the policy
-plt. bar(range(state_space_size), policy)
+plt.bar(range(state_space_size), policy)
 plt.xlabel('State')
 plt.ylabel('Best Action')
 plt.title('Derived Policy')
-plt. show()
+plt.show()
 
 # End
 
