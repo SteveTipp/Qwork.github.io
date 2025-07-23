@@ -184,12 +184,12 @@ qc.append(gravitational_gate(), [ehq[i]])
 # Hawking Radiation Simulation
 for i in range(20):
 qc.ry(np.pi/2, hrq[i])
-qc. cx(cq[1], hrq[i])
+qc.cx(cq[1], hrq[i])
 
 # Quantum Teleportation 
 qc.h(tq[0])
-qc. cx(tq[0], tq[1])
-qc. cx(tq[2], tq[0])
+qc.cx(tq[0], tq[1])
+qc.cx(tq[2], tq[0])
 qc.h(tq[2])
 qc.measure(tq[2], cr[107])
 qc.measure(tq[0], cr[108])
