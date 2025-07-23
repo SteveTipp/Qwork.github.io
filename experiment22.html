@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Experiment 20 - Qwork</title>
+    <title>Experiment 22 - Qwork</title>
     <style>
        body {
             background-color: #000000; /* Black background */
@@ -291,7 +291,7 @@ from scipy.optimize import curve_fit
 logging.basicConfig(level=logging.DEBUG, format='%(asctime)s - %(levelname)s - %(message)s')
 
 # Load IBMQ Account
-API_KEY = 'Your_API_Key_O-`'  # Replace with your actual IBM Quantum API key
+API_KEY = 'Your_API_Key'  # Replace with your actual IBM Quantum API key
 service = QiskitRuntimeService(channel='ibm_quantum', token=API_KEY)
 
 # Define backend
@@ -323,14 +323,14 @@ for i in range(hrq):
     target_qubit = ehq + pq + i
     if control_qubit != target_qubit:  # Ensure control and target qubits are not the same
         qc.ry(np.pi / 2, target_qubit)
-        qc. cx(control_qubit, target_qubit)
+        qc.cx(control_qubit, target_qubit)
         qc.append(CPhaseGate(np.pi / 2), [control_qubit, target_qubit])  # Add a controlled phase gate
 
 # Quantum Teleportation
 start_tq = ehq + pq + hrq
 qc.h(start_tq)
-qc. cx(start_tq, start_tq + 1)
-qc. cx(start_tq + 2, start_tq)
+qc.cx(start_tq, start_tq + 1)
+qc.cx(start_tq + 2, start_tq)
 qc.h(start_tq + 2)
 qc.measure(start_tq + 2, total_qubits - 3)
 qc.measure(start_tq, total_qubits - 2)
@@ -370,7 +370,7 @@ for scale in scale_factors:
     transpiled_qc = transpile(qc, backend=backend, optimization_level=3)
     with Session(service=service, backend=backend) as session:
         sampler = Sampler()
-        job = sampler. run(circuits=[transpiled_qc], shots=1000)
+        job = sampler.run(circuits=[transpiled_qc], shots=1000)
         result = job.result()
     noisy_results.append(result.quasi_dists[0])
 
@@ -403,7 +403,7 @@ transpiled_qc = transpile(qc, backend=backend, optimization_level=3)
 
 with Session(service=service, backend=backend) as session:
     sampler = Sampler()
-    job = sampler. run(circuits=[transpiled_qc], shots=1000)
+    job = sampler.run(circuits=[transpiled_qc], shots=1000)
     result = job.result()
 
 # Flatten the list of dictionaries into a single dictionary
@@ -427,7 +427,7 @@ with open(file_path, 'w') as file:
 
 # Plot the results
 plot_histogram(noise_free_results)
-plt. show()
+plt.show()
 # end
 
 3D Scatter Plot of PCA Components Code:
@@ -473,7 +473,7 @@ ax.set_facecolor('black')
 fig.patch.set_facecolor('black')
 plt.colorbar(sc)
 plt.savefig('/Users/Documents/pca_3d_scatter_black.png', bbox_inches='tight')
-plt. show()
+plt.show()
 
 # Create a 3D histogram of the measurement probabilities
 fig = plt.figure(figsize=(12, 8))
@@ -505,7 +505,7 @@ ax.tick_params(axis='z', colors='white')
 ax.set_facecolor('black')
 fig.patch.set_facecolor('black')
 plt.savefig('/Users/Documents/3d_histogram_black.png', bbox_inches='tight')
-plt. show()
+plt.show()
 # end
 
 3D Lyapunov Exponent Plot Code:
@@ -559,7 +559,7 @@ ax.set_ylabel('Measurement Index', color='white')
 ax.set_zlabel('Lyapunov Exponent', color='white')
 
 # Styling
-plt. style.use('dark_background')
+plt.style.use('dark_background')
 ax.set_facecolor('black')
 fig.patch.set_facecolor('black')
 
@@ -572,7 +572,7 @@ ax.tick_params(axis='y', colors='white')
 ax.tick_params(axis='z', colors='white')
 
 plt.colorbar(surf, ax=ax, pad=0.1)
-plt. show()
+plt.show()
 # end
 
 3D Quantum Black Hole Event Horizon Simulation Code:
@@ -624,7 +624,7 @@ ax.set_ylabel('Measurement Index', color='white')
 ax.set_zlabel('Effect Magnitude', color='white')
 
 # Styling
-plt. style.use('dark_background')
+plt.style.use('dark_background')
 ax.set_facecolor('black')
 fig.patch.set_facecolor('black')
 
@@ -637,7 +637,7 @@ ax.tick_params(axis='y', colors='white')
 ax.tick_params(axis='z', colors='white')
 
 plt.colorbar(surf, ax=ax, pad=0.1)
-plt. show()
+plt.show()
 # end
 
 </code></pre>
