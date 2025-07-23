@@ -188,7 +188,7 @@ for phase in time_phase:
     tqc = transpile(qc, backend)
     
     # Run the quantum circuit
-    result = backend. run(tqc, shots=1).result()
+    result = backend.run(tqc, shots=1).result()
     
     # Extract results
     counts = result.get_counts()
@@ -216,7 +216,7 @@ plt.legend()
 plt.title('Adaptive Qubit Collapse on IBM Quantum Hardware')
 plt.xlabel('Measurement Number')
 plt.ylabel('Cumulative Count')
-plt. show()
+plt.show()
 </code></pre>
 </p>
             
