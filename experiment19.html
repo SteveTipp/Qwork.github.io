@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Experiment 18 - Qwork</title>
+    <title>Experiment 19 - Qwork</title>
     <style>
        body {
             background-color: #000000; /* Black background */
@@ -477,12 +477,12 @@ if __name__ == "__main__":
         print(f"{loss_name}: {loss_value}")
 
     #  dark background for plots
-    plt. style.use('dark_background')
+    plt.style.use('dark_background')
 
     #  bar chart for loss values
     plt.figure(figsize=(10, 5))
     loss_values = optimization_history['loss'][0]
-    bars = plt. bar(loss_values.keys(), loss_values.values(), color='white', edgecolor='white')
+    bars = plt.bar(loss_values.keys(), loss_values.values(), color='white', edgecolor='white')
     
     # text 
     for bar in bars:
@@ -495,7 +495,7 @@ if __name__ == "__main__":
     plt.tick_params(axis='x', colors='white')
     plt.tick_params(axis='y', colors='white')
     
-    plt. show()
+    plt.show()
 
     # Save json 
     save_path = '/Users/O-'/QNN_ANALYSIS_RUN.json'
