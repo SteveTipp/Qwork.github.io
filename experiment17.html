@@ -339,7 +339,7 @@ import numpy as np
 import json
 
 # IBM account setup
-IBMQ. save_account('Your_IBM_Key_O-', overwrite=True)  
+IBMQ.save_account('Your_IBM_Key_O-', overwrite=True)  
 IBMQ.load_account()
 provider = IBMQ.get_provider(hub='ibm-q')
 backend = provider.get_backend('ibm_osaka')  
