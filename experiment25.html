@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Experiment 20 - Qwork</title>
+    <title>Experiment 25 - Qwork</title>
     <style>
        body {
             background-color: #000000; /* Black background */
@@ -232,8 +232,8 @@ from datetime import datetime
 import matplotlib.pyplot as plt
 
 # IBM Quantum API key and backend setup
-api_key = 'YOUR_IBM_API_KEY_O-`'  # Replace with your API key
-QiskitRuntimeService. save_account(channel='ibm_quantum', token=api_key, overwrite=True)
+api_key = 'YOUR_IBM_API_KEY'  # Replace with your API key
+QiskitRuntimeService.save_account(channel='ibm_quantum', token=api_key, overwrite=True)
 
 # Account saved and loaded
 try:
@@ -250,10 +250,10 @@ print(f"Backend '{backend_name}' selected.")
 # Gate for quark-antiquark interaction
 def quark_antiquark_interaction_gate(qc, quark_qubit, antiquark_qubit):
     # Interaction sequence to form a meson (e.g, pion)
-    qc. cx(quark_qubit, antiquark_qubit)
+    qc.cx(quark_qubit, antiquark_qubit)
     qc.h(quark_qubit)
     qc.x(quark_qubit)
-    qc. cx(antiquark_qubit, quark_qubit)
+    qc.cx(antiquark_qubit, quark_qubit)
 
 # Initialize a Quantum Circuit with 2 qubits (representing quark and antiquark)
 qc = QuantumCircuit(2)
@@ -277,11 +277,11 @@ print("Quantum circuit transpiled.")
 # Execute the circuit with Qiskit Runtime
 with Session(service=service, backend=backend) as session:
     sampler = SamplerV2(session=session)
-    job = sampler. run([transpiled_qc], shots=8192)
+    job = sampler.run([transpiled_qc], shots=8192)
     job_result = job.result()
 
 # Extract counts from the job result
-counts = job_result[0].data[cr. name].get_counts()
+counts = job_result[0].data[cr.name].get_counts()
 
 # Save data to a JSON file
 data = {
@@ -297,7 +297,7 @@ with open(output_file, 'w') as f:
 
 # Display histogram of measurement results with counts
 plot_histogram(counts, title='Measurement Results', bar_labels=True)
-plt. show()
+plt.show()
 
 # Feynman-like Diagram from Run Result Code
 # imports
@@ -348,7 +348,7 @@ fig.patch.set_facecolor('black')
 ax.set_facecolor('black')
 
 # Display the Feynman-like diagram
-plt. show()
+plt.show()
 
 # End
 
