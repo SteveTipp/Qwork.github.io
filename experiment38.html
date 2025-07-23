@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Experiment 20 - Qwork</title>
+    <title>Experiment 38 - Qwork</title>
     <style>
        body {
             background-color: #000000; /* Black background */
@@ -298,7 +298,7 @@ from qiskit_ibm_runtime import QiskitRuntimeService, Session, SamplerV2
 service = QiskitRuntimeService(
     channel='ibm_quantum',
     instance='ibm-q/open/main',
-    token='YOUR_IBMQ_KEY_O-`'
+    token='YOUR_IBMQ_KEY'
 )
 
 # Set up ibm_osaka backend
@@ -306,7 +306,7 @@ backend_name = 'ibm_brisbane'
 backend = service.backend(backend_name)
 
 # Logging setup
-logging.basicConfig(level=logging. INFO)
+logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
 # Large semi-prime number to factor using Shor's algorithm
@@ -365,8 +365,8 @@ with Session(service=service, backend=backend) as session:
     sampler = SamplerV2(session=session)
     
     # Run the circuit 
-    logger. info("Running Shor's algorithm on ibm_osaka backend")
-    job = sampler. run([transpiled_qc], shots=8192)
+    logger.info("Running Shor's algorithm on ibm_osaka backend")
+    job = sampler.run([transpiled_qc], shots=8192)
     
     # Wait for the job to complete
     job.wait_for_final_state()
@@ -381,7 +381,7 @@ with Session(service=service, backend=backend) as session:
     counts = job_result[0].data[classical_register].get_counts()
 
     # Log the results
-    logger. info(f"Resulting counts: {counts}")
+    logger.info(f"Resulting counts: {counts}")
 
 # Analyze the measurement results to determine the period (r) of modular exponentiation
 def analyze_shor_results(counts, n_count):
@@ -458,7 +458,7 @@ with open(file_path, 'w') as file:
 
 # Plot the histogram 
 plot_histogram(counts)
-plt. show()
+plt.show()
 
 logger. info("Experiment complete.")
 
@@ -488,26 +488,26 @@ bitstrings = [x[0] for x in top_counts]
 frequencies = [x[1] for x in top_counts]
 
 plt.figure(figsize=(10, 6))
-plt. bar(bitstrings, frequencies)
+plt.bar(bitstrings, frequencies)
 plt.title('Top 10 Most Frequent Measurement Outcomes in Shor’s Algorithm')
 plt.xlabel('Bitstring (Measurement Outcome)')
 plt.ylabel('Frequency')
 plt.xticks(rotation=45)
 plt.tight_layout()
-plt. show()
+plt.show()
 
 # Plot Full Distribution of Measurement Counts
 all_bitstrings = [x[0] for x in sorted_counts]
 all_frequencies = [x[1] for x in sorted_counts]
 
 plt.figure(figsize=(14, 8))
-plt. bar(all_bitstrings, all_frequencies)
+plt.bar(all_bitstrings, all_frequencies)
 plt.title('Distribution of Measurement Outcomes in Shor’s Algorithm')
 plt.xlabel('Bitstring (Measurement Outcome)')
 plt.ylabel('Frequency')
 plt.xticks(rotation=90)
 plt.tight_layout()
-plt. show()
+plt.show()
 
 //////////////////////////////////////////////////////
 
@@ -537,7 +537,7 @@ sns.heatmap(data_heatmap, cmap="Blues", annot=False, cbar=True, xticklabels=bits
 plt.title('Heatmap of Bitstring Frequencies in Shor\'s Algorithm')
 plt.xticks(rotation=90)
 plt.tight_layout()
-plt. show()
+plt.show()
 
 # Phase Distribution Plot
 # Convert bitstrings to decimals
@@ -558,7 +558,7 @@ plt.title('Harmonic Frequency Analysis of Shor\'s Algorithm')
 plt.xlabel('Phase')
 plt.ylabel('Frequency')
 plt.legend()
-plt. show()
+plt.show()
 
 # Clustering of Similar Bitstrings
 # Convert bitstrings to vectors of 0s and 1s
@@ -576,7 +576,7 @@ plt.title('Clustering of Bitstring Frequencies in Shor\'s Algorithm')
 plt.xlabel('Bitstring Index')
 plt.ylabel('Frequency')
 plt.tight_layout()
-plt. show()
+plt.show()
 
 # Error Distribution Plot
 ideal_phases = np.linspace(0, 1, len(phases))
@@ -588,7 +588,7 @@ plt.title('Error Distribution between Detected Phases and Ideal Phases')
 plt.xlabel('Error')
 plt.ylabel('Frequency')
 plt.tight_layout()
-plt. show()
+plt.show()
 
 # Phase vs. Bitstring Index Plot
 plt.figure(figsize=(10, 6))
@@ -597,7 +597,7 @@ plt.title('Phase vs Bitstring Index')
 plt.xlabel('Bitstring Index')
 plt.ylabel('Phase')
 plt.tight_layout()
-plt. show()
+plt.show()
 
 ///////////////////////////////////////////////////////
 
@@ -637,7 +637,7 @@ plt.xlabel('Bitstring Index')
 plt.ylabel('Error')
 plt.xticks(rotation=45)
 plt.tight_layout()
-plt. show()
+plt.show()
 
 # Phase Differences Heatmap 
 # Calculate pairwise phase differences
@@ -649,7 +649,7 @@ plt.title('Phase Differences Heatmap')
 plt.xlabel('Phase Index')
 plt.ylabel('Phase Index')
 plt.tight_layout()
-plt. show()
+plt.show()
 
 # Cross-Bitstring Correlation 
 # Convert bitstrings to vectors of 0s and 1s
@@ -662,7 +662,7 @@ plt.figure(figsize=(10, 6))
 sns.heatmap(bit_corr_matrix, cmap="coolwarm", annot=False)
 plt.title('Cross-Bitstring Correlation Heatmap')
 plt.tight_layout()
-plt. show()
+plt.show()
 
 # Eigenvalue Distribution (Quantum Phase Estimation)
 # Histogram of estimated eigenvalues derived from phases.
@@ -675,7 +675,7 @@ plt.title('Eigenvalue Distribution from Quantum Phase Estimation')
 plt.xlabel('Real Part of Eigenvalue')
 plt.ylabel('Frequency')
 plt.tight_layout()
-plt. show()
+plt.show()
 
 # Clustering of Phases 
 phase_data = np.array(phases).reshape(-1, 1)
@@ -692,7 +692,7 @@ plt.title('Clustering of Phases in Shor\'s Algorithm')
 plt.xlabel('Index')
 plt.ylabel('Phase')
 plt.tight_layout()
-plt. show()
+plt.show()
 
 # End.
 
