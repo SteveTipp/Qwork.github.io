@@ -596,14 +596,14 @@ service = QiskitRuntimeService(channel="ibm_cloud",
                                token=TOKEN,
                                instance=INSTANCE)
 backend = service.backend(BACKEND)
-log .info("Backend → %s", backend .name)
+log.info("Backend → %s", backend .name)
 
 qc_raw = shor_ecdlp_circuit()
 trans = transpile(qc_raw,
                   backend=backend,
                   initial_layout=PHYSICAL,
                   optimization_level=3)
-log .info("Circuit depth %d, gate counts %s", trans.depth(), trans.count_ops())
+log.info("Circuit depth %d, gate counts %s", trans.depth(), trans.count_ops())
 
 sampler = SamplerV2(mode=backend)
 job = sampler .run([trans], shots=SHOTS)
@@ -654,7 +654,7 @@ out = {
 JSON_PATH = "/Users/steventippeconnic/Documents/QC/Shors_ECC_5_Bit_Key_0.json"
 with open(JSON_PATH, "w") as fp:
     json.dump(out, fp, indent=4)
-log .info("Results saved → %s", JSON_PATH)
+log.info("Results saved → %s", JSON_PATH)
 
 # End
 
