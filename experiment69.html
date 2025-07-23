@@ -248,7 +248,7 @@ from math import pi
 from qiskit import QuantumCircuit, QuantumRegister, ClassicalRegister, transpile
 from qiskit_ibm_runtime import QiskitRuntimeService, SamplerV2
 
-logging.basicConfig(level=logging .INFO, format="%(levelname)s: %(message)s")
+logging.basicConfig(level=logging.INFO, format="%(levelname)s: %(message)s")
 log = logging.getLogger("Dyn‑Twistor‑Casimir")
 
 # IBMQ
@@ -272,7 +272,7 @@ def best_qubits(cal_csv: str, n: int = 100) -> list[int]:
         ascending=[True, False, False],
     )
     winners = ranked["Qubit"].head(n).astype(int).tolist()
-    log .info("Initial‑layout qubits: %s", winners)
+    log.info("Initial‑layout qubits: %s", winners)
     return winners
 
 CAL_CSV = "/Users/steventippeconnic/Downloads/ibm_torino_calibrations_2025-05-14T16_23_55Z.csv"
@@ -316,7 +316,7 @@ for layer, φ in enumerate(phase_layers, 1):
 # Column‑wise CX ladder (9 links) 
 for c in range(COLS):
     for r in range(ROWS - 1):          # 0..8 -> link neighbor rows
-        qc .cx(q_reg[idx(r, c)], q_reg[idx(r + 1, c)])
+        qc.cx(q_reg[idx(r, c)], q_reg[idx(r + 1, c)])
 qc.barrier(label="vacuum‑ladder")
 
 # Measurement 
@@ -330,13 +330,13 @@ qc_t = transpile(
     initial_layout=layout,
     optimization_level=3,
 )
-log .info("Transpiled depth : %d", qc_t.depth())
-log .info("Transpiled CXs   : %d", qc_t.count_ops().get("cx", 0))
+log.info("Transpiled depth : %d", qc_t.depth())
+log.info("Transpiled CXs   : %d", qc_t.count_ops().get("cx", 0))
 
 # Execute  
 SHOTS = 32768
 sampler = SamplerV2(mode=backend)
-job     = sampler .run([qc_t], shots=SHOTS)
+job     = sampler.run([qc_t], shots=SHOTS)
 result  = job.result()
 
 creg_name = qc_t.cregs[0].name   
@@ -368,11 +368,11 @@ out = {
 JSON_PATH = "/Users/steventippeconnic/Documents/Dyn_Twistor_Casimir_10x10_0.json"
 with open(JSON_PATH, "w") as fp:
     json.dump(out, fp, indent=4)
-log .info("Results saved → %s", JSON_PATH)
+log.info("Results saved → %s", JSON_PATH)
 
 # Console summary 
 avg_rate = sum(pair_rates.values()) / COLS
-log .info("Average ρ_c : %.5f", avg_rate)
+log.info("Average ρ_c : %.5f", avg_rate)
 for col, ρ in pair_rates.items():
     log .info("  column %2d : %.5f", col, ρ)
 
