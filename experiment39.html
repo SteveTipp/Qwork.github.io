@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Experiment 20 - Qwork</title>
+    <title>Experiment 39 - Qwork</title>
     <style>
        body {
             background-color: #000000; /* Black background */
@@ -276,7 +276,7 @@ import matplotlib.pyplot as plt
 service = QiskitRuntimeService(
     channel='ibm_quantum',
     instance='ibm-q/open/main',
-    token='YOUR_IBMQ_KEY_O-`'
+    token='YOUR_IBMQ_KEY'
 )
 
 # Load backend calibration data (download most recent)
@@ -315,7 +315,7 @@ def create_shors_prime_check_circuit(even_number):
     
     # Modular exponentiation and prime factorization
     for i in range(num_qubits):
-        qc. cx(i, (i+1) % num_qubits)  # Apply a controlled-X (CNOT) gate in a loop
+        qc.cx(i, (i+1) % num_qubits)  # Apply a controlled-X (CNOT) gate in a loop
     
     # Perform Quantum Fourier Transform to factorize
     qft = QFT(num_qubits)
@@ -351,7 +351,7 @@ transpiled_qc = transpile(qc, backend=backend, optimization_level=3)
 with Session(service=service, backend=backend) as session:
     sampler = SamplerV2(session=session)
     # Run the circuit
-    job = sampler. run([transpiled_qc], shots=8192)
+    job = sampler.run([transpiled_qc], shots=8192)
     job_result = job.result()
 
     # Retrieve the classical register name
@@ -362,7 +362,7 @@ with Session(service=service, backend=backend) as session:
 
 # Plot the histogram of results
 plot_histogram(pub_result)
-plt. show()
+plt.show()
 
 # Save results to JSON
 results_data = {
@@ -405,7 +405,7 @@ def binary_to_decimal(binary_str):
 print("Plotting Histogram of Measurement Outcomes")
 plot_histogram(counts)
 plt.title("Distribution of Quantum Measurement Outcomes")
-plt. show()
+plt.show()
 
 # Heatmap of Measurement Frequencies
 # Convert the counts to a 2D heatmap-like structure
@@ -425,7 +425,7 @@ for i, binary_key in enumerate(binary_keys):
 plt.figure(figsize=(10, 8))
 sns.heatmap(heatmap_data, annot=False, cmap="coolwarm")
 plt.title("Heatmap of Quantum Measurement Frequencies")
-plt. show()
+plt.show()
 
 # Sort the measurement outcomes by frequency 
 most_frequent_outcomes = sorted(counts.items(), key=lambda x: x[1], reverse=True)[:10]
@@ -442,7 +442,7 @@ plt.xlabel('Measurement Outcomes (Binary)')
 plt.ylabel('Frequency')
 plt.title('Top 10 Most Frequent Quantum Measurement Outcomes')
 plt.xticks(rotation=90)
-plt. show()
+plt.show()
 
 # Print the range of binary outcomes and prime pair sums
 binary_outcome_range = [binary_to_decimal(outcome) for outcome in counts.keys()]
@@ -463,13 +463,13 @@ frequencies = [outcome[1] for outcome in sorted_counts[:20]]
 
 # Plot the distribution of binary states
 plt.figure(figsize=(12, 6))
-plt. bar(binary_outcomes, frequencies, color='green')
+plt.bar(binary_outcomes, frequencies, color='green')
 plt.title("Distribution of Top 20 Binary Measurement Outcomes (Decimal)")
 plt.xlabel("Binary Outcome (as Decimal)")
 plt.ylabel("Frequency")
 plt.xticks(rotation=90)
 plt.grid(True)
-plt. show()
+plt.show()
 
 # Prime Factor Residual Analysis
 print("Plotting Prime Factor Residual Heatmap")
@@ -494,7 +494,7 @@ plt.xlabel('Binary Measurement Outcomes')
 plt.yticks(ticks=np.arange(len(prime_pairs)), labels=[f"{p1} + {p2}" for p1, p2 in prime_pairs], rotation=0)
 plt.xticks(rotation=90)
 plt.grid(True)
-plt. show()
+plt.show()
 
 # Extract counts and prime pairs
 counts = results_data['counts']
@@ -528,7 +528,7 @@ plt.xlabel("Residual (Difference between Outcome and Prime Sum)")
 plt.ylabel("Density")
 plt.legend(title="Prime Pairs")
 plt.grid(True)
-plt. show()
+plt.show()
 
 # Quantum Outcome Spread Across All Prime Pairs
 print("Plotting Quantum Outcome Spread Across All Prime Pairs")
@@ -551,7 +551,7 @@ plt.ylabel("Prime Pairs (Summed)")
 plt.xticks(rotation=90)
 plt.yticks(ticks=np.arange(len(prime_pairs)), labels=[f"{p1} + {p2}" for p1, p2 in prime_pairs], rotation=0)
 plt.grid(True)
-plt. show()
+plt.show()
 
 # Create a matrix 
 outcome_matrix = np.zeros((len(prime_pairs), len(counts)))
@@ -571,7 +571,7 @@ plt.ylabel("Prime Pairs (Summed)")
 plt.xticks(rotation=90)
 plt.yticks(ticks=np.arange(len(prime_pairs)), labels=[f"{p1} + {p2}" for p1, p2 in prime_pairs], rotation=0)
 plt.grid(True)
-plt. show()
+plt.show()
 
 # Prime Sum Distance vs Outcome Frequency
 print("Plotting Prime Sum Distance vs Outcome Frequency")
@@ -591,7 +591,7 @@ plt.title("Prime Sum Distance vs Outcome Frequency")
 plt.xlabel("Distance from Prime Sum")
 plt.ylabel("Outcome Frequency")
 plt.grid(True)
-plt. show()
+plt.show()
 
 # Prime Sum Difference Heatmap 
 print("Plotting Prime Sum Difference Heatmap")
@@ -613,7 +613,7 @@ plt.ylabel("Prime Pair Sums")
 plt.xticks(rotation=90)
 plt.yticks(ticks=np.arange(len(prime_pairs)), labels=[f"{p1} + {p2}" for p1, p2 in prime_pairs], rotation=0)
 plt.grid(True)
-plt.  show()
+plt.show()
 
 # Extracting counts from the data
 quantum_outcomes = data.get('counts', {})  # This holds the quantum measurement outcomes
@@ -647,7 +647,7 @@ sns.heatmap(z_scores, cmap='coolwarm', xticklabels=prime_sums, yticklabels=False
 plt.title("Heatmap of Z-Scores for Residuals")
 plt.xlabel("Prime Sums")
 plt.ylabel("Quantum Outcomes (hidden)")
-plt. show()
+plt.show()
 
 # End.
 
