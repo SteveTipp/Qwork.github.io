@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Experiment 20 - Qwork</title>
+    <title>Experiment 65 - Qwork</title>
     <style>
        body {
             background-color: #000000; /* Black background */
@@ -251,7 +251,7 @@ from qiskit.visualization import plot_histogram
 import matplotlib.pyplot as plt
 
 # Logging
-logging.basicConfig(level=logging. INFO, format="%(levelname)s | %(message)s")
+logging.basicConfig(level=logging.INFO, format="%(levelname)s | %(message)s")
 log = logging.getLogger(__name__)
  
 # IBMQ
@@ -264,7 +264,7 @@ service = QiskitRuntimeService(
     instance=INSTANCE_CRN,
 )
 backend = service.backend("ibm_sherbrooke")
-log. info("Backend: %s", backend. name)
+log.info("Backend: %s", backend. name)
 
 # Select best seven physical qubits from calibration CSV
 def pick_best_qubits(csv_path: str, n: int) -> list[int]:
@@ -278,7 +278,7 @@ def pick_best_qubits(csv_path: str, n: int) -> list[int]:
 
 CAL_FILE = "/Users/steventippeconnic/Downloads/ibm_sherbrooke_calibrations_2025-04-23T16_45_20Z.csv"
 PHYSICAL_QUBITS = pick_best_qubits(CAL_FILE, 7)
-log .info("Chosen physical qubits: %s", PHYSICAL_QUBITS)
+log.info("Chosen physical qubits: %s", PHYSICAL_QUBITS)
 
 # Build 7 qubit topological spinor circuit
 qr = QuantumRegister(7, "q")
@@ -296,18 +296,18 @@ qc.barrier()
 theta = pi / 4
 flag  = qr[6]                 # q6 as parity flag
 for q in qr[4:6]:             # compute parity(q4,q5) -> q6
-    qc. cx(q, flag)
+    qc.cx(q, flag)
 qc.barrier()
 for q in qr[:4]:
     qc.crz(+2 * theta, flag, q)
     qc.rz(-2 * theta, q)
 for q in reversed(qr[4:6]):   # uncompute parity
-    qc. cx(q, flag)
+    qc.cx(q, flag)
 qc.barrier(label="U_obs")
 
 # Measurements
 qc.measure(qr, cr)
-log. info("Original depth: %s", qc.depth())
+log.info("Original depth: %s", qc.depth())
 
 # Ideal 7-qubit statevector (strip measurements only)
 ideal_sv   = Statevector.from_instruction(qc.remove_final_measurements(inplace=False))
@@ -320,12 +320,12 @@ trans = transpile(
     initial_layout = PHYSICAL_QUBITS,
     optimization_level = 3,
 )
-log. info("Transpiled depth: %s | CX count: %s",
+log.info("Transpiled depth: %s | CX count: %s",
          trans.depth(), trans.count_ops().get("cx", 0))
 
 # Execute with SamplerV2 (shots = 32768)
 sampler = SamplerV2(mode=backend)
-job     = sampler. run([trans], shots=32768)
+job     = sampler.run([trans], shots=32768)
 result  = job.result()
 
 creg_name = trans.cregs[0].name         
@@ -340,7 +340,7 @@ def classical_fidelity(exp_counts: dict, ideal: dict, N: int) -> float:
     return sum(sqrt(p_exp.get(k, 0) * ideal.get(k, 0)) for k in keys) ** 2
 
 fidelity = classical_fidelity(counts, ideal_probs, shots)
-log. info("Classical fidelity ≈ %.4f", fidelity)
+log.info("Classical fidelity ≈ %.4f", fidelity)
 
 # Save results
 OUT_PATH = pathlib.Path(
@@ -361,7 +361,7 @@ with open(OUT_PATH, "w") as fp:
         fp,
         indent=4,
     )
-log. info("Results saved → %s", OUT_PATH)
+log.info("Results saved → %s", OUT_PATH)
 
 # Histogram
 plot_histogram(
@@ -370,7 +370,7 @@ plot_histogram(
     figsize=(10, 4),
 )
 plt.tight_layout()
-plt. show()
+plt.show()
 
 # End
 
