@@ -273,7 +273,7 @@ logging.basicConfig(level=logging. INFO)
 log = logging.getLogger(__name__)
 
 # IBMQ 
-TOKEN = "YOUR_IBMQ_KEY_O-`"
+TOKEN = "YOUR_IBMQ_KEY"
 service = QiskitRuntimeService(
 channel="ibm_cloud",
 token=TOKEN,
@@ -283,7 +283,7 @@ backend = service.backend("ibm_torino")
 
 # Load and pick best 80 qubits from calibration 
 def best_qubits(csv_path: str, n: int) -> list[int]:
-    df = pd. read_csv(csv_path)
+    df = pd.read_csv(csv_path)
     df.columns = df.columns.str.strip()
     order = df.sort_values(
         ["√x (sx) error", "T1 (us)", "T2 (us)"],
@@ -345,7 +345,7 @@ trans = transpile(
 
 # Execute 
 sampler = SamplerV2(mode=backend)
-job = sampler. run([trans], shots=32768)
+job = sampler.run([trans], shots=32768)
 result = job.result()
 
 # Extract counts
@@ -384,11 +384,11 @@ json_path = "/Users/steventippeconnic/Documents/QC/Topological_Casimir_Tunneling
 with open(json_path, "w") as fp:
     json.dump(output, fp, indent=4)
 
-log. info("Results saved → %s", json_path)
+log.info("Results saved → %s", json_path)
 
 # Visual
 plot_histogram(counts, title="Casimir Topological Mode Outcomes")
-plt. show()
+plt.show()
 
 # End
 
