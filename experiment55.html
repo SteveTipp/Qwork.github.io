@@ -290,7 +290,7 @@ def modular_multiplication(qc, a, n, control_qubit, target_qubits, ancillary_qub
 
     # Apply controlled NOT gates to set up for modular multiplication by 'a'
     for i in range(num_target_qubits):
-        qc. cx(control_qubit, target_qubits[i])
+        qc.cx(control_qubit, target_qubits[i])
 
     # Modular reduction
     for i in range(num_target_qubits):
@@ -298,18 +298,18 @@ def modular_multiplication(qc, a, n, control_qubit, target_qubits, ancillary_qub
 
     # Reset ancillary qubits
     for i in range(len(ancillary_qubits)):
-        qc. cx(control_qubit, ancillary_qubits[i])
+        qc.cx(control_qubit, ancillary_qubits[i])
 
 # IBMQ
 service = QiskitRuntimeService(
     channel='ibm_quantum',
     instance='ibm-q/open/main',
-    token='YOUR_IBMQ_API_KEY_O-`'  
+    token='YOUR_IBMQ_API_KEY'  
 )
 
 backend_name = 'ibm_brisbane'
 backend = service.backend(backend_name)
-logger. info("Backend selected: %s", backend_name)
+logger.info("Backend selected: %s", backend_name)
 
 # Shors circuit
 def create_shors_circuit(n, a, num_qubits):
@@ -346,14 +346,14 @@ def create_shors_circuit(n, a, num_qubits):
 
 # Transpile / optimize 
 def optimize_circuit(qc, backend):
-    logger. info("Transpiling the circuit for the backend")
+    logger.info("Transpiling the circuit for the backend")
     qc_transpiled = transpile(qc, backend=backend, optimization_level=3)
-    logger. info("Circuit transpilation complete")
+    logger.info("Circuit transpilation complete")
     return qc_transpiled
 
 # Run Shors / shots
 def run_shors_experiment(n, a, num_qubits, calibration_data, shots=16384):
-    logger. info(f"Running Shor's algorithm to factor {n} with base {a}")
+    logger.info(f"Running Shor's algorithm to factor {n} with base {a}")
 
     # Select best qubits based on calibration data
     best_qubits = select_best_qubits(calibration_data, num_qubits)
@@ -365,7 +365,7 @@ def run_shors_experiment(n, a, num_qubits, calibration_data, shots=16384):
     # Execute 
     with Session(service=service, backend=backend) as session:
         sampler = SamplerV2(session=session)
-        logger. info("Executing the circuit on the backend")
+        logger.info("Executing the circuit on the backend")
         job = sampler. run([qc_transpiled], shots=shots)
         job_result = job.result()
 
@@ -385,12 +385,12 @@ def run_shors_experiment(n, a, num_qubits, calibration_data, shots=16384):
         # Plot 
         plot_histogram(counts)
         plt.title(f"Results for Shor's Algorithm (n={n})")
-        plt. show()
+        plt.show()
 
         return counts
 
 # Calibration
-logger. info("Loading calibration data")
+logger.info("Loading calibration data")
 calibration_data = load_calibration_data(calibration_file)
 
 # Parameters 
@@ -470,7 +470,7 @@ plt.ylabel("Frequency")
 plt.title("Decoded Bitstring Distribution")
 plt.grid(True, linestyle='--', alpha=0.6)
 plt.tight_layout()
-plt. show()
+plt.show()
 
 # Periodicity Detection
 from scipy.signal import find_peaks
@@ -488,7 +488,7 @@ plt.title("Periodicity Detection in Measurement Outcomes")
 plt.legend()
 plt.grid(True, linestyle='--', alpha=0.6)
 plt.tight_layout()
-plt. show()
+plt.show()
 
 # Histogram of Bitstring Counts
 plt.figure(figsize=(12, 6))
@@ -498,7 +498,7 @@ plt.ylabel("Counts")
 plt.title("Histogram of Measured Bitstrings")
 plt.xticks(rotation=90, fontsize=8)
 plt.tight_layout()
-plt. show()
+plt.show()
 
 # Periodicity Peaks (Fourier Transform)
 frequencies = np.fft.fft(counts)
@@ -509,7 +509,7 @@ plt.xlabel("Frequency")
 plt.ylabel("Magnitude")
 plt.title("Periodicity Peaks (FFT of Counts)")
 plt.grid()
-plt. show()
+plt.show()
 
 # Cumulative Counts
 sorted_counts = np.sort(counts)[::-1]
@@ -531,7 +531,7 @@ plt.xlabel("Decimal Values")
 plt.ylabel("Counts")
 plt.title("Heatmap of Decimal Values vs. Counts")
 plt.tight_layout()
-plt. show()
+plt.show()
 
 # Heatmap of Count Frequency Distribution (Retained)
 unique_counts, freq = np.unique(counts, return_counts=True)
@@ -555,7 +555,7 @@ ax.set_xlabel("Decimal Value Index")
 ax.set_ylabel("Decimal Value Index")
 ax.set_zlabel("Counts Interaction")
 plt.title("3D Surface Plot of Counts vs. Decimal Values")
-plt. show()
+plt.show()
 
 # Logarithmic Plot of Bitstring Counts (Retained)
 plt.figure(figsize=(10, 6))
@@ -567,7 +567,7 @@ plt.title("Logarithmic Plot of Bitstring Counts")
 plt.grid(True, linestyle="--", alpha=0.5)
 plt.legend()
 plt.tight_layout()
-plt. show()
+plt.show()
 
 # Polar Plot of Periodicity in Measured Outcomes (Retained)
 angles = (2 * np.pi * np.array(decimal_values)) / (2**len(bitstrings[0]))
@@ -578,7 +578,7 @@ ax.set_theta_zero_location("N")
 ax.set_theta_direction(-1)
 plt.title("Polar Plot of Periodicity in Measurement Outcomes")
 plt.tight_layout()
-plt. show()
+plt.show()
 
 # End 
 
