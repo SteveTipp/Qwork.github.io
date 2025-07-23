@@ -161,7 +161,7 @@ def default_serializer(obj):
     raise TypeError(f"Object of type {obj.__class__.__name__} is not JSON serializable")
 
 # Initialize the IBMProvider with your API key
-provider = IBMProvider(token='Your_Token_Here')  # Replace with your actual token
+provider = IBMProvider(token='Your_Token_Here') 
 
 # Create a two-qubit quantum circuit
 qc = QuantumCircuit(2)
@@ -170,7 +170,7 @@ qc = QuantumCircuit(2)
 qc.h(0)
 
 # Apply a CNOT gate with the first qubit as control and the second as target
-qc. cx(0, 1)
+qc.cx(0, 1)
 
 # Get the provider and select 'ibm_nairobi'
 backend = provider.get_backend('ibm_nairobi')
@@ -196,8 +196,8 @@ with open('backend_information.json', 'w') as outfile:
 t_qc = transpile(qc, backend, optimization_level=3)
 
 # Monitor and execute the job
-from qiskit. tools.monitor import job_monitor
-job = backend. run(t_qc, shots=1024)
+from qiskit.tools.monitor import job_monitor
+job = backend.run(t_qc, shots=1024)
 job_monitor(job)  # Monitor the job's execution
 result = job.result()
 
@@ -216,7 +216,7 @@ with open('experiment_results.json', 'w') as outfile:
 # Plot a histogram of the counts
 plot_histogram(counts)
 plt.savefig('histogram.png')  # Save the histogram plot
-plt. show()
+plt.show()
 
 # The following code is for the 3D plot visualization part
 # Create a 3D grid of points
@@ -245,7 +245,7 @@ ax.set_ylabel('Y')
 ax.set_zlabel('Z')
 plt.colorbar(sc)
 plt.savefig('3d_entanglement_plot.png')  # Save the 3D plot
-plt. show()
+plt.show()
 
 # Serialize and save the 3D plot data
 plot_data = [{'x': X[i][j][k], 'y': Y[i][j][k], 'z': Z[i][j][k], 'entanglement_degree': entanglement_degree[i][j][k]} 
