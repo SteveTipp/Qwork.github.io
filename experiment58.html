@@ -289,16 +289,16 @@ num_qubits = 4
 best_qubits = select_best_qubits(calibration_data, num_qubits)
 
 # IBMQ 
-logger. info("Setting up IBM Q service")
+logger.info("Setting up IBM Q service")
 service = QiskitRuntimeService(
     channel="ibm_quantum",
     instance="ibm-q/open/main",
-    token='Your_IBMQ_Key_O-`'
+    token='Your_IBMQ_Key'
 )
 
 backend_name = "ibm_kyiv"
 backend = service.backend(backend_name)
-logger. info("Backend selected: %s", backend_name)
+logger.info("Backend selected: %s", backend_name)
 
 # Quantum and Classical Registers
 qr = QuantumRegister(num_qubits, "q")
@@ -307,16 +307,16 @@ qc = QuantumCircuit(qr, cr)
 
 # Prepare a specific bitstring (|0000>) as plaintext
 plaintext_bitstring = "0000"  # Target bitstring
-logger. info(f"Preparing initial plaintext state: {plaintext_bitstring}")
+logger.info(f"Preparing initial plaintext state: {plaintext_bitstring}")
 
 for i, bit in enumerate(plaintext_bitstring):
     if bit == "1":
         qc.x(qr[i])  # Apply X gate to set qubit to |1>
-logger. info("Plaintext state prepared successfully")
+logger.info("Plaintext state prepared successfully")
 
 # Encryption Layer Setup
 layers = 2  
-logger. info("Setting up %d layer of retrocausal encryption", layers)
+logger.info("Setting up %d layer of retrocausal encryption", layers)
 
 # Define Retrocausal Logic
 start, end = 0, num_qubits
@@ -324,7 +324,7 @@ start, end = 0, num_qubits
 # Create EPR pairs within the layer
 for i in range(start, end - 1, 2):
     qc.h(qr[i])
-    qc. cx(qr[i], qr[i + 1])
+    qc.cx(qr[i], qr[i + 1])
 
 # Add delayed choice control qubit
 control_qubit = end - 1  
@@ -338,20 +338,20 @@ for i in range(start, end - 2, 2):
 qc.h(qr[control_qubit])
 
 # Measurement for Decryption Verification
-logger. info("Adding measurement for decryption verification")
+logger.info("Adding measurement for decryption verification")
 qc.measure(qr, cr)
 
 # Transpile 
-logger. info("Transpiling the quantum circuit for the backend")
+logger.info("Transpiling the quantum circuit for the backend")
 qc_transpiled = transpile(qc, backend=backend, optimization_level=3)
-logger. info("Circuit transpilation complete")
+logger.info("Circuit transpilation complete")
 
 # Execute 
 shots = 16384  
 with Session(service=service, backend=backend) as session:
     sampler = SamplerV2(session=session)
-    logger. info("Executing the circuit on the backend")
-    job = sampler. run([qc_transpiled], shots=shots)
+    logger.info("Executing the circuit on the backend")
+    job = sampler.run([qc_transpiled], shots=shots)
     job_result = job.result()
 
     # Extract counts
@@ -369,12 +369,12 @@ with Session(service=service, backend=backend) as session:
     output_file = '/Users/Documents/Multi_Layer_Retrocausal_Encryption_0.json'
     with open(output_file, "w") as f:
         json.dump(results_data, f, indent=4)
-    logger. info(f"Results saved to {output_file}")
+    logger.info(f"Results saved to {output_file}")
 
 # Visual
 plot_histogram(counts)
 plt.title("Multi-Layer Retrocausal Encryption")
-plt. show()
+plt.show()
 
 Code For All Visuals
 # Imports
@@ -424,7 +424,7 @@ plt.xlabel("Bitstring")
 plt.ylabel("Counts")
 plt.title("Histogram of Measurement Outcomes")
 plt.tight_layout()
-plt. show()
+plt.show()
 
 # Normalized Probability Distribution
 plt.figure(figsize=(12, 6))
@@ -436,7 +436,7 @@ plt.ylabel("Probability")
 plt.title("Normalized Probability Distribution")
 plt.legend()
 plt.tight_layout()
-plt. show()
+plt.show()
 
 # Heatmap of Bitstring Deviations
 bit_length = 4  # Using 4 qubits
@@ -453,7 +453,7 @@ plt.ylabel("Qubit Index")
 plt.title("Heatmap of Bitstring Deviations")
 plt.xticks(rotation=90, fontsize=8)
 plt.tight_layout()
-plt. show()
+plt.show()
 
 # State Frequency Correlation Plot
 plt.figure(figsize=(12, 6))
@@ -464,7 +464,7 @@ plt.ylabel("Probability")
 plt.title("State Frequency Correlation")
 plt.legend()
 plt.tight_layout()
-plt. show()
+plt.show()
 
 # Cumulative Probability Distribution
 sorted_probs = sorted([val / total_shots for val in counts.values()], reverse=True)
@@ -476,7 +476,7 @@ plt.title("Cumulative Probability Distribution")
 plt.xlabel("Sorted Bitstrings (Ranked)")
 plt.ylabel("Cumulative Probability")
 plt.grid()
-plt. show()
+plt.show()
 
 # Hamming Distance Distribution
 def hamming_distance(s1, s2):
@@ -494,7 +494,7 @@ plt.xlabel("Hamming Distance")
 plt.ylabel("Probability")
 plt.xticks(range(5))
 plt.grid()
-plt. show()
+plt.show()
 
 # Error Rate Per Qubit (Bitwise Flip Probabilities)
 num_qubits = len(target_state)
@@ -514,7 +514,7 @@ plt.xlabel("Qubit Index")
 plt.ylabel("Error Probability")
 plt.xticks(range(num_qubits))
 plt.grid()
-plt. show()
+plt.show()
 
 # Fourier Transform of Bitstring Frequencies
 bitstring_frequencies = np.array(list(counts.values()))
@@ -526,7 +526,7 @@ plt.title("Fourier Transform of Bitstring Frequencies")
 plt.xlabel("Frequency Index")
 plt.ylabel("Amplitude")
 plt.grid()
-plt. show()
+plt.show()
 
 # Quantum Entropy Distribution (3D Surface Plot)
 entropy_values = [-p * np.log2(p) if p > 0 else 0 for p in sorted_probabilities]  
@@ -540,7 +540,7 @@ ax.set_xlabel("Bitstring Index")
 ax.set_ylabel("Bitstring Index")
 ax.set_zlabel("Entropy")
 ax.set_title("Quantum Entropy Distribution")
-plt. show()
+plt.show()
 
 # Qubit Correlation Matrix (3D Heatmap)
 qubit_matrix = np.zeros((4, 4))  # Assuming 4 qubits
@@ -559,7 +559,7 @@ ax.set_xlabel("Qubit Index")
 ax.set_ylabel("Qubit Index")
 ax.set_zlabel("Correlation")
 ax.set_title("Qubit Correlation 3D Heatmap")
-plt. show()
+plt.show()
 
 # Phase Space Representation of Bitstrings (Bloch Projection)
 fig = plt.figure(figsize=(10, 7))
@@ -578,7 +578,7 @@ ax.set_xlabel("X (Real)")
 ax.set_ylabel("Y (Imaginary)")
 ax.set_zlabel("Probability")
 ax.set_title("3D Phase Space Projection of Bitstrings")
-plt. show()
+plt.show()
 
 # Quantum State Density Over Time (3D Surface)
 time_steps = np.linspace(0, 10, len(sorted_bitstrings))  
@@ -592,7 +592,7 @@ ax.set_xlabel("Time Steps")
 ax.set_ylabel("Bitstring Index")
 ax.set_zlabel("Probability")
 ax.set_title("Quantum State Density Evolution Over Time")
-plt. show()
+plt.show()
 
 # End
 
