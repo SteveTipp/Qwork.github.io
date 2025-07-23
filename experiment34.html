@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Experiment 20 - Qwork</title>
+    <title>Experiment 34 - Qwork</title>
     <style>
        body {
             background-color: #000000; /* Black background */
@@ -256,14 +256,14 @@ import matplotlib.pyplot as plt
 import pandas as pd
 
 # Logging
-logging.basicConfig(level=logging. INFO)
+logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
 # Load IBM Quantum account
 service = QiskitRuntimeService(
     channel='ibm_quantum',
     instance='ibm-q/open/main',
-    token='YOUR_IBMQ_KEY_O-`'  
+    token='YOUR_IBMQ_KEY'  
 )
 
 backend = service.backend('ibm_brisbane')
@@ -314,13 +314,13 @@ for i in range(0, num_qubits - 3, 4):
 
 for i in range(0, num_qubits - 6, 5):
     qc.crx(np.pi / 2, i, i + 5)
-    qc. cx(i + 1, i + 6)
+    qc.cx(i + 1, i + 6)
 
 for i in range(0, num_qubits - 10, 6):
     qc.crz(np.pi / 8, i, i + 6)
     qc.crx(np.pi / 7, i + 1, i + 7)
     qc.cry(np.pi / 5, i + 2, i + 8)
-    qc. cx(i + 3, i + 9)
+    qc.cx(i + 3, i + 9)
     qc.crz(np.pi / 6, i + 4, i + 10)
 
 # Step 3: Measure in the twistor basis
@@ -336,7 +336,7 @@ with Session(service=service, backend=backend) as session:
     sampler = SamplerV2(session=session)
     
     # Run the circuit 
-    job = sampler. run([transpiled_qc], shots=8192)
+    job = sampler.run([transpiled_qc], shots=8192)
     job_result = job.result()
     
     # Retrieve the classical register name
@@ -356,7 +356,7 @@ with Session(service=service, backend=backend) as session:
 
 # Plotting the results 
 plot_histogram(pub_result)
-plt. show()
+plt.show()
 
 # End
 
@@ -380,11 +380,11 @@ counts = results['raw_counts']
 # Plot 1: Bitstring Frequency Distribution
 bitstring_frequencies = Counter(counts)
 plt.figure(figsize=(10, 6))
-plt. bar(range(len(bitstring_frequencies)), list(bitstring_frequencies.values()), color='blue')
+plt.bar(range(len(bitstring_frequencies)), list(bitstring_frequencies.values()), color='blue')
 plt.xlabel('Bitstring Index')
 plt.ylabel('Frequency')
 plt.title('Bitstring Frequency Distribution')
-plt. show()
+plt.show()
 
 # Plot 2: Hamming Weight Distribution
 hamming_weights = [bitstring.count('1') for bitstring in counts.keys()]
@@ -393,7 +393,7 @@ plt.hist(hamming_weights, bins=range(128), color='green', edgecolor='black')
 plt.xlabel('Hamming Weight')
 plt.ylabel('Frequency')
 plt.title('Hamming Weight Distribution')
-plt. show()
+plt.show()
 
 # Plot 3: Pairwise Bit Correlations
 num_qubits = 127
@@ -411,7 +411,7 @@ plt.colorbar()
 plt.xlabel('Qubit Index')
 plt.ylabel('Qubit Index')
 plt.title('Pairwise Bit Correlations')
-plt. show()
+plt.show()
 
 ///////////////////////////////////////////////////////////////////
 
@@ -456,7 +456,7 @@ plt.title('Bitstring Cluster Analysis with PCA')
 plt.xlabel('PCA Component 1')
 plt.ylabel('PCA Component 2')
 plt.colorbar(label='Cluster')
-plt. show()
+plt.show()
 
 # Visualization 2: Distribution of Hamming Distances
 def hamming_distance(s1, s2):
@@ -472,7 +472,7 @@ plt.hist(hamming_distances, bins=range(128), color='purple', edgecolor='black')
 plt.xlabel('Hamming Distance')
 plt.ylabel('Frequency')
 plt.title('Distribution of Hamming Distances Between Bitstrings')
-plt. show()
+plt.show()
 
 # Visualization 3: Fourier Transform of Bitstrings
 def bitstring_to_int(bitstring):
@@ -492,7 +492,7 @@ plt.plot(fft_magnitude, color='orange')
 plt.xlabel('Frequency Component')
 plt.ylabel('Magnitude')
 plt.title('Fourier Transform of Bitstrings')
-plt. show()
+plt.show()
 
 # End.
 
@@ -542,7 +542,7 @@ ax.set_ylabel('Qubit Index 2')
 ax.set_zlabel('Qubit Index 3')
 ax.set_title('3D Pairwise Correlation of Qubits')
 
-plt. show()
+plt.show()
 
 # End.
 
