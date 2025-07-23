@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Experiment 20 - Qwork</title>
+    <title>Experiment 49 - Qwork</title>
     <style>
        body {
             background-color: #000000; /* Black background */
@@ -256,23 +256,23 @@ import matplotlib.pyplot as plt
 from collections import Counter
 
 # Logging
-logging.basicConfig(level=logging. INFO, format='%(asctime)s - %(levelname)s - %(message)s')
+logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
 logger = logging.getLogger(__name__)
 
 # Load calibration data
 def load_calibration_data(file_path):
-    logger. info("Loading calibration data from %s", file_path)
-    calibration_data = pd. read_csv(file_path)
+    logger.info("Loading calibration data from %s", file_path)
+    calibration_data = pd.read_csv(file_path)
     calibration_data.columns = calibration_data.columns.str.strip()
-    logger. info("Calibration data loaded successfully")
+    logger.info("Calibration data loaded successfully")
     return calibration_data
 
 # Parse calibration data
 def select_best_qubits(calibration_data, n_qubits):
-    logger. info("Selecting the best qubits based on T1, T2, and error rates")
+    logger.info("Selecting the best qubits based on T1, T2, and error rates")
     qubits_sorted = calibration_data.sort_values(by=['\u221ax (sx) error', 'T1 (us)', 'T2 (us)'], ascending=[True, False, False])
     best_qubits = qubits_sorted['Qubit'].head(n_qubits).tolist()
-    logger. info("Selected qubits: %s", best_qubits)
+    loggerinfo("Selected qubits: %s", best_qubits)
     return best_qubits
 
 # Load backend calibration data
@@ -288,12 +288,12 @@ logger. info("Setting up IBM Q service")
 service = QiskitRuntimeService(
     channel='ibm_quantum',
     instance='ibm-q/open/main',
-    token='YOUR_IBMQ_API_KEY_O-`'  
+    token='YOUR_IBMQ_API_KEY'  
 )
 
 backend_name = 'ibm_kyiv'
 backend = service.backend(backend_name)
-logger. info("Backend selected: %s", backend_name)
+logger.info("Backend selected: %s", backend_name)
 
 # Quantum and classical registers
 qr = QuantumRegister(num_nodes + 1, 'node')  
@@ -308,7 +308,7 @@ for i in range(1, num_nodes + 1):
 
 # Entangle Control Qubit with Network Nodes
 for i in range(1, num_nodes + 1):
-    qc. cx(qr[0], qr[i])
+    qc.cx(qr[0], qr[i])
 
 # Encode Latency/Bandwidth Constraints
 for i in range(1, num_nodes + 1):
@@ -324,16 +324,16 @@ qc.rz(np.pi / 32, qr[0])
 qc.measure(qr, cr)
 
 # Transpile 
-logger. info("Transpiling the quantum circuit for the backend")
+logger.info("Transpiling the quantum circuit for the backend")
 qc_transpiled = transpile(qc, backend=backend, optimization_level=3)
-logger. info("Circuit transpilation complete")
+logger.info("Circuit transpilation complete")
 
 # Execute 
 shots = 16384
 with Session(service=service, backend=backend) as session:
     sampler = SamplerV2(session=session)
-    logger. info("Executing the circuit on the backend")
-    job = sampler. run([qc_transpiled], shots=shots)
+    logger.info("Executing the circuit on the backend")
+    job = sampler.run([qc_transpiled], shots=shots)
     job_result = job.result()
 
     # Extract BitArray counts
@@ -346,12 +346,12 @@ with Session(service=service, backend=backend) as session:
     file_path = '/Users/Documents/QInternetRouting_Results_0.json'
     with open(file_path, 'w') as f:
         json.dump(results_data, f, indent=4)
-    logger. info("Results saved to %s", file_path)
+    logger.info("Results saved to %s", file_path)
 
 # Visual
 plot_histogram(counts)
 plt.title("Optimized Internet Packet Routing")
-plt. show()
+plt.show()
 
 Code For All Visuals From Run Data
 # Imports
@@ -386,13 +386,13 @@ heatmap_data = df.pivot_table(index="Leading Bits", columns="Trailing Bits", val
 # Histogram of All Bitstrings
 def plot_histogram_bitstrings(counts):
     plt.figure(figsize=(12, 6))
-    plt. bar(counts.keys(), counts.values(), width=0.8)
+    plt.bar(counts.keys(), counts.values(), width=0.8)
     plt.title("Distribution of Routing Configurations")
     plt.xlabel("Bitstrings")
     plt.ylabel("Frequency")
     plt.xticks(rotation=90, fontsize=8)
     plt.tight_layout()
-    plt. show()
+    plt.show()
 
 # Top 10 Optimal Routes
 def plot_top_10_routes(counts):
@@ -400,13 +400,13 @@ def plot_top_10_routes(counts):
     top_10 = dict(sorted_counts[:10])
 
     plt.figure(figsize=(10, 6))
-    plt. bar(top_10.keys(), top_10.values(), color='green')
+    plt.bar(top_10.keys(), top_10.values(), color='green')
     plt.title("Top 10 Optimal Routing Configurations")
     plt.xlabel("Bitstrings")
     plt.ylabel("Frequency")
     plt.xticks(rotation=45)
     plt.tight_layout()
-    plt.s how()
+    plt.show()
 
 # Cumulative Distribution
 def plot_cumulative_distribution(counts):
@@ -420,7 +420,7 @@ def plot_cumulative_distribution(counts):
     plt.xlabel("Bitstring Index (Sorted by Frequency)")
     plt.ylabel("Cumulative Proportion")
     plt.grid()
-    plt. show()
+    plt.show()
 
 # Frequency Heatmap
 def plot_frequency_heatmap(heatmap_data):
@@ -429,7 +429,7 @@ def plot_frequency_heatmap(heatmap_data):
     plt.title("Heatmap of Routing Configuration Frequencies")
     plt.xlabel("Trailing Bits (Decimal)")
     plt.ylabel("Leading Bits (Decimal)")
-    plt. show()
+    plt.show()
 
 # Call
 plot_histogram_bitstrings(counts)
@@ -446,7 +446,7 @@ def plot_scatter_frequencies(bitstring_decimal, frequencies):
     plt.ylabel("Frequency")
     plt.grid(True)
     plt.tight_layout()
-    plt. show()
+    plt.show()
 
 # Boxplot of Bitstring Frequencies
 def plot_boxplot_frequencies(frequencies):
@@ -455,7 +455,7 @@ def plot_boxplot_frequencies(frequencies):
     plt.title("Boxplot of Bitstring Frequencies")
     plt.xlabel("Frequency")
     plt.tight_layout()
-    plt. show()
+    plt.show()
 
 # Frequency Density Plot
 def plot_density_frequencies(frequencies):
@@ -466,20 +466,20 @@ def plot_density_frequencies(frequencies):
     plt.ylabel("Density")
     plt.grid(True)
     plt.tight_layout()
-    plt. show()
+    plt.show()
 
 # Leading Bit Distribution
 def plot_leading_bit_distribution(leading_bits):
     leading_counts = pd.Series(leading_bits).value_counts()
 
     plt.figure(figsize=(10, 6))
-    plt. bar(leading_counts.index, leading_counts.values, color="orange")
+    plt.bar(leading_counts.index, leading_counts.values, color="orange")
     plt.title("Distribution of Leading Bits")
     plt.xlabel("Leading Bits")
     plt.ylabel("Count")
     plt.xticks(rotation=45)
     plt.tight_layout()
-    plt. show()
+    plt.show()
 
 # Call 
 plot_scatter_frequencies(bitstring_decimal, frequencies)
@@ -496,7 +496,7 @@ def plot_3d_scatter(bitstring_decimal, frequencies, leading_bits):
     ax.set_xlabel("Bitstring (Decimal)")
     ax.set_ylabel("Frequency")
     ax.set_zlabel("Leading Bits (Decimal)")
-    plt. show()
+    plt.show()
 
 # Heatmap of Leading vs. Trailing Bits
 def plot_leading_trailing_heatmap(leading_bits, trailing_bits, frequencies):
@@ -508,7 +508,7 @@ def plot_leading_trailing_heatmap(leading_bits, trailing_bits, frequencies):
     plt.title("Heatmap: Leading vs. Trailing Bits")
     plt.xlabel("Trailing Bits (Decimal)")
     plt.ylabel("Leading Bits (Decimal)")
-    plt. show()
+    plt.show()
 
 # 3D Surface Plot: Frequencies by Leading and Trailing Bits
 def plot_3d_surface(heatmap_data):
@@ -523,7 +523,7 @@ def plot_3d_surface(heatmap_data):
     ax.set_xlabel("Trailing Bits (Decimal)")
     ax.set_ylabel("Leading Bits (Decimal)")
     ax.set_zlabel("Frequency")
-    plt. show()
+    plt.show()
 
 # Pair Plot of Leading Bits, Trailing Bits, and Frequencies
 def plot_pairplot(df):
@@ -532,7 +532,7 @@ def plot_pairplot(df):
     sns.pairplot(pairplot_data, vars=["Leading Bits", "Trailing Bits", "Frequency"], diag_kind="kde", palette="husl")
     plt.subplots_adjust(top=0.9)
     plt.suptitle("Pair Plot: Leading Bits, Trailing Bits, and Frequencies", y=0.95, fontsize=16)
-    plt. show()
+    plt.show()
 
 # Call 
 plot_3d_scatter(bitstring_decimal, frequencies, leading_bits)
