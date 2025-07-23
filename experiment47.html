@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Experiment 20 - Qwork</title>
+    <title>Experiment 47 - Qwork</title>
     <style>
        body {
             background-color: #000000; /* Black background */
@@ -260,23 +260,23 @@ from qiskit.visualization import plot_histogram
 import matplotlib.pyplot as plt
 
 # Logging
-logging.basicConfig(level=logging. INFO, format='%(asctime)s - %(levelname)s - %(message)s')
+logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
 logger = logging.getLogger(__name__)
 
 # Load calibration data
 def load_calibration_data(file_path):
-    logger. info("Loading calibration data from %s", file_path)
-    calibration_data = pd. read_csv(file_path)
+    logger.info("Loading calibration data from %s", file_path)
+    calibration_data = pd.read_csv(file_path)
     calibration_data.columns = calibration_data.columns.str.strip()
-    logger. info("Calibration data loaded successfully")
+    logger.info("Calibration data loaded successfully")
     return calibration_data
 
 # Parse calibration data
 def select_best_qubits(calibration_data, n_qubits):
-    logger. info("Selecting the best qubits based on T1, T2, and error rates")
+    logger.info("Selecting the best qubits based on T1, T2, and error rates")
     qubits_sorted = calibration_data.sort_values(by=['\u221ax (sx) error', 'T1 (us)', 'T2 (us)'], ascending=[True, False, False])
     best_qubits = qubits_sorted['Qubit'].head(n_qubits).tolist()
-    logger. info("Selected qubits: %s", best_qubits)
+    logger.info("Selected qubits: %s", best_qubits)
     return best_qubits
 
 # Load backend calibration data
@@ -288,16 +288,16 @@ num_intermediate_configs = 10
 best_qubits = select_best_qubits(calibration_data, num_intermediate_configs + 1)
 
 # IBMQ 
-logger. info("Setting up IBM Q service")
+logger.info("Setting up IBM Q service")
 service = QiskitRuntimeService(
     channel='ibm_quantum',
     instance='ibm-q/open/main',
-    token='YOUR_IBMQ_API_KEY_O-`'  
+    token='YOUR_IBMQ_API_KEY'  
 )
 
 backend_name = 'ibm_brisbane'
 backend = service.backend(backend_name)
-logger. info("Backend selected: %s", backend_name)
+logger.info("Backend selected: %s", backend_name)
 
 # Quantum and classical registers
 qr = QuantumRegister(num_intermediate_configs + 1, 'config')  
@@ -311,7 +311,7 @@ for i in range(1, num_intermediate_configs + 1):
 
 # Entangle Control Qubit with Intermediate Protein Configurations
 for i in range(1, num_intermediate_configs + 1):
-    qc. cx(qr[0], qr[i])
+    qc.cx(qr[0], qr[i])
 
 # Encode Transition Energies Between Configurations (Transition energies represent the free energy difference between folding states)
 for i in range(1, num_intermediate_configs + 1):
@@ -327,16 +327,16 @@ qc.rz(np.pi / 16, qr[0])
 qc.measure(qr, cr)
 
 # Transpile 
-logger. info("Transpiling the quantum circuit for the backend")
+logger.info("Transpiling the quantum circuit for the backend")
 qc_transpiled = transpile(qc, backend=backend, optimization_level=3)
-logger. info("Circuit transpilation complete")
+logger.info("Circuit transpilation complete")
 
 # Execute 
 shots = 16384
 with Session(service=service, backend=backend) as session:
     sampler = SamplerV2(session=session)
-    logger. info("Executing the circuit on the backend")
-    job = sampler. run([qc_transpiled], shots=shots)
+    logger.info("Executing the circuit on the backend")
+    job = sampler.run([qc_transpiled], shots=shots)
     job_result = job.result()
 
     # Extract BitArray counts
@@ -349,12 +349,12 @@ with Session(service=service, backend=backend) as session:
     file_path = '/Users/Documents/QProtein_Folding_Results_0.json'
     with open(file_path, 'w') as f:
         json.dump(results_data, f, indent=4)
-    logger. info("Results saved to %s", file_path)
+    logger.info("Results saved to %s", file_path)
 
 # Visualizes the likelihood of each folding pathway 
 plot_histogram(counts)
 plt.title("Optimized Protein Folding Pathways")
-plt. show()
+plt.show()
 
 Code For All Visuals From Run Data
 # Imports
@@ -380,12 +380,12 @@ def plot_histogram(raw_counts):
     sorted_counts = sorted(raw_counts.items(), key=lambda x: x[1], reverse=True)
     bitstrings, frequencies = zip(*sorted_counts[:50])  
     plt.figure(figsize=(15, 8))
-    plt. bar(bitstrings, frequencies, color='blue', alpha=0.7)
+    plt.bar(bitstrings, frequencies, color='blue', alpha=0.7)
     plt.xticks(rotation=90, fontsize=8)
     plt.xlabel("Bitstrings (Protein Folding Pathways)")
     plt.ylabel("Frequency")
     plt.title("Histogram of Protein Folding Pathway Frequencies")
-    plt. show()
+    plt.show()
 
 # Cumulative Frequency Distribution
 def plot_cumulative_frequency(raw_counts):
@@ -397,7 +397,7 @@ def plot_cumulative_frequency(raw_counts):
     plt.ylabel("Cumulative Frequency")
     plt.title("Cumulative Frequency Distribution of Pathways")
     plt.grid(True)
-    plt. show()
+    plt.show()
 
 # Heatmap of Transition Costs
 def plot_heatmap(raw_counts):
@@ -411,7 +411,7 @@ def plot_heatmap(raw_counts):
     plt.xlabel("Qubit Index (Configurations)")
     plt.ylabel("Pathway Index")
     plt.title("Heatmap of Transition Costs Across Pathways")
-    plt. show()
+    plt.show()
 
 # Cluster Analysis of Pathways
 from sklearn.decomposition import PCA
@@ -433,7 +433,7 @@ def plot_cluster_analysis(raw_counts):
     plt.title("Cluster Analysis of Protein Folding Pathways")
     plt.legend()
     plt.grid(True)
-    plt. show()
+    plt.show()
 
 # Call
 plot_histogram(raw_counts)
@@ -462,7 +462,7 @@ def plot_pathway_dominance_pie(raw_counts):
     legend_labels = [f"{label}: {percent}" for label, percent in zip(labels, percentages)]
     plt.legend(wedges, legend_labels, title="Top Pathways", loc="center left", bbox_to_anchor=(1, 0.5))
     plt.title("Dominance of Top Protein Folding Pathways")
-    plt. show()
+    plt.show()
 
 # Energy Landscape Bar Plot
 def plot_energy_landscape(raw_counts):
@@ -475,12 +475,12 @@ def plot_energy_landscape(raw_counts):
     sorted_bitstrings = np.array(bitstrings)[sorted_indices]
     
     plt.figure(figsize=(12, 6))
-    plt. bar(sorted_bitstrings[:30], sorted_energies[:30], color='orange', alpha=0.7)
+    plt.bar(sorted_bitstrings[:30], sorted_energies[:30], color='orange', alpha=0.7)
     plt.xticks(rotation=90, fontsize=8)
     plt.xlabel("Bitstrings (Protein Folding Pathways)")
     plt.ylabel("Transition Energy (Arbitrary Units)")
     plt.title("Energy Landscape of Protein Folding Pathways")
-    plt. show()
+    plt.show()
 
 # Entropy Distribution
 def plot_entropy_distribution(raw_counts):
@@ -495,7 +495,7 @@ def plot_entropy_distribution(raw_counts):
     plt.ylabel("Shannon Entropy")
     plt.title("Entropy Distribution of Protein Folding Pathways")
     plt.grid(True)
-    plt. show()
+    plt.show()
 
 # Principal Component Trajectory
 def plot_pca_trajectory(raw_counts):
@@ -512,7 +512,7 @@ def plot_pca_trajectory(raw_counts):
     plt.ylabel("PCA Component 2")
     plt.title("Principal Component Trajectory of Protein Folding Pathways")
     plt.grid(True)
-    plt. show()
+    plt.show()
 
 # Call
 plot_pathway_dominance_pie(raw_counts)
@@ -536,7 +536,7 @@ def plot_3d_energy_landscape(raw_counts):
     ax.set_ylabel("Energy (Arbitrary Units)")
     ax.set_zlabel("Transition Energy")
     ax.set_title("3D Energy Landscape of Protein Folding Pathways")
-    plt. show()
+    plt.show()
 
 # Transition Pathway Network
 def plot_transition_pathway_network(raw_counts):
@@ -552,7 +552,7 @@ def plot_transition_pathway_network(raw_counts):
     plt.title("Transition Pathway Network")
     pos = nx.spring_layout(G, seed=42)  
     nx.draw(G, pos, with_labels=False, node_size=10, edge_color="blue", alpha=0.6)
-    plt. show()
+    plt.show()
 
 # Probability Density Heatmap
 def plot_2d_heatmap_pathways(raw_counts):
@@ -580,7 +580,7 @@ def plot_2d_heatmap_pathways(raw_counts):
     plt.xlabel("Qubit 2")
     plt.ylabel("Qubit 1")
     plt.title("2D Heatmap of Aggregated Pathway Frequencies")
-    plt. show()
+    plt.show()
 
 # Energy Distribution Curve
 def plot_cumulative_energy_distribution(raw_counts):
@@ -601,7 +601,7 @@ def plot_cumulative_energy_distribution(raw_counts):
     plt.ylabel("Cumulative Energy")
     plt.title("Cumulative Energy Distribution Across Pathways")
     plt.grid(True)
-    plt. show()
+    plt.show()
 
 # Call
 plot_3d_energy_landscape(raw_counts)
