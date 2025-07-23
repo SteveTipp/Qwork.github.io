@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Experiment 20 - Qwork</title>
+    <title>Experiment 42 - Qwork</title>
     <style>
        body {
             background-color: #000000; /* Black background */
@@ -294,7 +294,7 @@ def create_qcd_qc(n_qubits, time_steps):
     # QCD dynamics
     for step in range(time_steps):
         for qubit in range(n_qubits - 1):
-            qc. cx(qubit, qubit + 1)
+            qc.cx(qubit, qubit + 1)
         for qubit in range(n_qubits):
             qc.rz(np.pi / time_steps, qubit)
     
@@ -307,14 +307,14 @@ def create_qcd_qc(n_qubits, time_steps):
 service = QiskitRuntimeService(
     channel='ibm_quantum',
     instance='ibm-q/open/main',
-    token='YOUR_IBMQ_API_KEY_O-`'  
+    token='YOUR_IBMQ_API_KEY'  
 )
 
 backend_name = 'ibm_brisbane'
 backend = service.backend(backend_name)
 
 # Logging 
-logging.basicConfig(level=logging. INFO)
+logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
 # Load calibration data
@@ -336,8 +336,8 @@ transpiled_qc = transpile(qc, backend=backend, optimization_level=3, initial_lay
 with Session(service=service, backend=backend) as session:
     sampler = SamplerV2(session=session)
     
-    logger. info("Running the QCD simulation on ibm_kyiv backend")
-    job = sampler. run([transpiled_qc], shots=shots)
+    logger.info("Running the QCD simulation on ibm_kyiv backend")
+    job = sampler.run([transpiled_qc], shots=shots)
     job_result = job.result()
 
     # Correctly access the measurement data inside _pub_results
@@ -356,7 +356,7 @@ with Session(service=service, backend=backend) as session:
 # Plot results 
 plot_histogram(counts)
 plt.title("QCD Simulation Results")
-plt. show()
+plt.show()
 
 Code for visuals.
 # Imports
@@ -392,35 +392,35 @@ def bitstring_to_int(bitstring):
 # Histogram of Bitstring Counts
 plt.figure(figsize=(12, 6))
 sorted_counts = dict(sorted(raw_counts.items(), key=lambda item: item[1], reverse=True)[:20])
-plt. bar(sorted_counts.keys(), sorted_counts.values(), color='blue')
+plt.bar(sorted_counts.keys(), sorted_counts.values(), color='blue')
 plt.xticks(rotation=90)
 plt.title("Top 20 Most Frequent Bitstrings")
 plt.ylabel("Counts")
 plt.xlabel("Bitstrings")
 plt.tight_layout()
-plt. show()
+plt.show()
 
 # Probability Distribution Heatmap
 plt.figure(figsize=(10, 8))
 sorted_probabilities = dict(sorted(probabilities.items(), key=lambda item: item[1], reverse=True)[:20])
-plt. bar(sorted_probabilities.keys(), sorted_probabilities.values(), color='green')
+plt.bar(sorted_probabilities.keys(), sorted_probabilities.values(), color='green')
 plt.xticks(rotation=90)
 plt.title("Top 20 Bitstring Probabilities")
 plt.ylabel("Probability")
 plt.xlabel("Bitstrings")
 plt.tight_layout()
-plt. show()
+plt.show()
 
 # Cluster Size Distribution
 cluster_counts = Counter(len(cluster) for bitstring in probabilities.keys() 
                          for cluster in ''.join(bitstring).split('0') if cluster)
 plt.figure(figsize=(8, 6))
-plt. bar(cluster_counts.keys(), cluster_counts.values(), color='purple')
+plt.bar(cluster_counts.keys(), cluster_counts.values(), color='purple')
 plt.title("Cluster Size Distribution")
 plt.ylabel("Frequency")
 plt.xlabel("Cluster Size (Number of Consecutive 1s)")
 plt.tight_layout()
-plt. show()
+plt.show()
 
 # Qubit Correlation Matrix
 n_qubits = len(next(iter(raw_counts.keys())))
@@ -437,7 +437,7 @@ plt.title("Qubit Correlation Matrix")
 plt.xlabel("Qubit Index")
 plt.ylabel("Qubit Index")
 plt.tight_layout()
-plt. show()
+plt.show()
 
 # Cumulative Probability Distribution
 sorted_probabilities = sorted(probabilities.values(), reverse=True)
@@ -449,7 +449,7 @@ plt.ylabel("Cumulative Probability")
 plt.xlabel("Bitstring Rank")
 plt.grid()
 plt.tight_layout()
-plt. show()
+plt.show()
 
 # Hamming Distance Distribution
 bitstrings = list(probabilities.keys())
@@ -462,7 +462,7 @@ plt.title("Hamming Distance Distribution")
 plt.ylabel("Frequency")
 plt.xlabel("Hamming Distance")
 plt.tight_layout()
-plt. show()
+plt.show()
 
 # State Space Coverage (t-SNE Visualization)
 bitstring_vectors = np.array([list(map(int, bitstring)) for bitstring in probabilities.keys()])
@@ -475,7 +475,7 @@ plt.title("State Space Coverage (t-SNE)")
 plt.xlabel("Dimension 1")
 plt.ylabel("Dimension 2")
 plt.tight_layout()
-plt. show()
+plt.show()
 
 # Mutual Information Between Qubits
 mutual_information = np.zeros((n_qubits, n_qubits))
@@ -494,7 +494,7 @@ plt.title("Mutual Information Between Qubits")
 plt.xlabel("Qubit Index")
 plt.ylabel("Qubit Index")
 plt.tight_layout()
-plt. show() 
+plt.show() 
   
 Code for 3D Visuals.
 import numpy as np
@@ -538,7 +538,7 @@ ax.set_xlabel("Dimension 1")
 ax.set_ylabel("Dimension 2")
 ax.set_zlabel("Dimension 3")
 plt.tight_layout()
-plt. show()
+plt.show()
 
 # UMAP Visualization of State Space Coverage
 umap_2d = UMAP(n_components=2, random_state=42)
@@ -551,7 +551,7 @@ plt.title("State Space Coverage (UMAP)")
 plt.xlabel("Dimension 1")
 plt.ylabel("Dimension 2")
 plt.tight_layout()
-plt. show()
+plt.show()
 
 # UMAP 3D Visualization
 umap_3d = UMAP(n_components=3, random_state=42)
@@ -566,7 +566,7 @@ ax.set_xlabel("Dimension 1")
 ax.set_ylabel("Dimension 2")
 ax.set_zlabel("Dimension 3")
 plt.tight_layout()
-plt. show()
+plt.show()
 
 # Phase Transition Analysis
 # Simulate varying coupling strengths and observe changes in cluster structure
@@ -594,7 +594,7 @@ plt.xlabel("Dimension 1")
 plt.ylabel("Dimension 2")
 plt.legend(loc="upper right")
 plt.tight_layout()
-plt. show()
+plt.show()
 
 # Time Evolution Study
 # Example of time-resolved simulation (replace logic with actual Hamiltonian time evolution if applicable)
@@ -629,7 +629,7 @@ cbar_ax = fig.add_axes([0.92, 0.15, 0.02, 0.7])
 cbar = fig.colorbar(scatter_list[0], cax=cbar_ax)
 cbar.set_label('Probability')
 plt.tight_layout(rect=[0, 0, 0.9, 1])
-plt. show()
+plt.show()
 
 
 
