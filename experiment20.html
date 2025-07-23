@@ -190,14 +190,14 @@ from qiskit_ibm_runtime import QiskitRuntimeService, RuntimeOptions
 import numpy as np
 
 # Setup IBMQ account
-API_KEY = 'Your_IBMQ_Key_Here_O-`'  # Replace with IBMQ API key
+API_KEY = 'Your_IBMQ_Key_Here'  # Replace with IBMQ API key
 service = QiskitRuntimeService(channel='ibm_quantum', token=API_KEY)
 
 backend = service.backend('ibm_sherbrooke')  # IBM backend 
 
 # Load BIP-39 words from text file
 with open('/Users/Documents/BIPwords.txt', 'r') as file:
-    bip39_words = file. read().splitlines()
+    bip39_words = file.read().splitlines()
 
 def generate_seed_phrase(num_qubits, backend):
     circ = QuantumCircuit(num_qubits)
@@ -207,11 +207,11 @@ def generate_seed_phrase(num_qubits, backend):
 
     # Transpile the circuit for backend
     pm = generate_preset_pass_manager(optimization_level=1, target=backend. target)
-    transpiled_circuits = pm. run([circ])
+    transpiled_circuits = pm.run([circ])
 
     # Execute the circuit with Qiskit Runtime
     options = RuntimeOptions(backend=backend. name)
-    job = service. run(program_id="sampler", inputs={'circuits': transpiled_circuits}, options=options)
+    job = service.run(program_id="sampler", inputs={'circuits': transpiled_circuits}, options=options)
     result = job.result()
 
     # Accessing quasi-probabilities from SamplerResult
