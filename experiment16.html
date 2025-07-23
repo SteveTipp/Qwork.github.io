@@ -328,7 +328,7 @@ def encode_rgb_to_statevector(red, green, blue):
     return Statevector.from_instruction(qc)
 
 # Selecting a quantum provider and backend
-IBMQ. save_account('Your_API_Key', overwrite=True)
+IBMQ.save_account('Your_API_Key', overwrite=True)
 IBMQ.load_account()
 provider = IBMQ.get_provider(hub='ibm-q')
 backend = provider.get_backend('ibm_osaka')
@@ -417,7 +417,7 @@ axs[2].set_title('Reconstructed Image')
 axs[2].axis('off')
 
 plt.tight_layout()
-plt. show()
+plt.show()
 
 # Convert avg_colors to a list of lists (from a list of NumPy arrays)
 avg_colors_list = [color.tolist() for color in avg_colors]
