@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Experiment 20 - Qwork</title>
+    <title>Experiment 33 - Qwork</title>
     <style>
        body {
             background-color: #000000; /* Black background */
@@ -223,14 +223,14 @@ import logging
 import matplotlib.pyplot as plt
 
 # Logging setup
-logging.basicConfig(level=logging. INFO)
+logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
-# Step 1: Load IBMQ
+# Load IBMQ
 service = QiskitRuntimeService(
     channel='ibm_quantum',
     instance='ibm-q/open/main',
-    token='YOUR_IBMQ_KEY_O-`'
+    token='YOUR_IBMQ_KEY'
 )
 
 # Setup backend and session
@@ -242,7 +242,7 @@ num_qubits = 127
 # Create a quantum circuit for 127 qubits
 qc = QuantumCircuit(num_qubits)
 
-# Step 2: Quantum State Preparation - Encode space-time event into quantum state
+# Quantum State Preparation. Encode space-time event into quantum state
 group_size = 2  
 for i in range(0, num_qubits, group_size):
     if i + group_size <= num_qubits:
@@ -254,7 +254,7 @@ for i in range(0, num_qubits, group_size):
         unitary_matrix = random_unitary(2**remaining_qubits).data
         qc.append(UnitaryGate(unitary_matrix), range(i, num_qubits))
 
-# Step 3: Twistor Mapping - Apply simplified custom gates to map space-time to twistor space
+# Twistor Mapping. Apply simplified custom gates to map space-time to twistor space
 for i in range(0, num_qubits, 6):  # Increase step to reduce the number of applied gates
     qc.cry(np.pi/6, i, (i+1) % num_qubits)  # Controlled rotation around Y-axis 
     qc.crz(np.pi/6, i, (i+2) % num_qubits)  # Controlled rotation around Z-axis 
@@ -268,7 +268,7 @@ for i in range(0, num_qubits, group_size):
         unitary_matrix = random_unitary(2**remaining_qubits).data
         qc.append(UnitaryGate(unitary_matrix), range(i, num_qubits))
 
-# Step 4: Evolution - Apply complex evolution gates for _ in range(3):  
+# Evolution. Apply complex evolution gates for _ in range(3):  
     for i in range(0, num_qubits, group_size):
         if i + group_size <= num_qubits:
             unitary_matrix = random_unitary(2**group_size).data
@@ -278,10 +278,10 @@ for i in range(0, num_qubits, group_size):
             unitary_matrix = random_unitary(2**remaining_qubits).data
             qc.append(UnitaryGate(unitary_matrix), range(i, num_qubits))
 
-# Step 5: Measurement 
+# Measurement 
 qc.measure_all()
 
-# Step 6: Transpilation backend and calibration data
+# Transpilation backend and calibration data
 transpiled_qc = transpile(qc, backend=backend, optimization_level=3)
 
 # Execution on backend with SamplerV2
@@ -289,7 +289,7 @@ with Session(service=service, backend=backend) as session:
     sampler = SamplerV2(session=session)
     
     # Run the circuit
-    job = sampler. run([transpiled_qc], shots=8192)
+    job = sampler.run([transpiled_qc], shots=8192)
     job_result = job.result()
     
     # Retrieve the classical register name
@@ -309,9 +309,9 @@ with Session(service=service, backend=backend) as session:
 
 # Plotting the results for analysis
 plot_histogram(pub_result)
-plt. show()
+plt.show()
 
-logger. info("Twistor space exploration experiment completed successfully.")
+logger.info("Twistor space exploration experiment completed successfully.")
 
 # end
 
@@ -353,7 +353,7 @@ sns.heatmap(hamming_distances, cmap='viridis')
 plt.title('Hamming Distance Heatmap of Outcomes')
 plt.xlabel('Outcome Index')
 plt.ylabel('Outcome Index')
-plt. show()
+plt.show()
 
 # Entropy Calculation
 counts = np.array(list(data['raw_counts'].values()))
@@ -369,7 +369,7 @@ plt.scatter(pca_result[:, 0], pca_result[:, 1], alpha=0.5)
 plt.title('PCA of Hamming Distances Between Outcomes')
 plt.xlabel('PCA 1')
 plt.ylabel('PCA 2')
-plt. show()
+plt.show()
 
 # t-SNE Visualization
 tsne = TSNE(n_components=2, perplexity=30.0)
@@ -379,7 +379,7 @@ plt.scatter(tsne_result[:, 0], tsne_result[:, 1], alpha=0.5)
 plt.title('t-SNE of Hamming Distances Between Outcomes')
 plt.xlabel('t-SNE 1')
 plt.ylabel('t-SNE 2')
-plt. show()
+plt.show()
 
 # End.
 
