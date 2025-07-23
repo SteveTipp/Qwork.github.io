@@ -327,7 +327,7 @@ def best_qubits(csv_path: str, n: int) -> list[int]:
     order = df.sort_values(["√x (sx) error", "T1 (us)", "T2 (us)"],
                            ascending=[True, False, False])
     winners = order["Qubit"].head(n).tolist()
-    log .info("Best qubits -> %s", winners)
+    log.info("Best qubits -> %s", winners)
     return winners
 
 CAL_CSV  = "/Users/steventippeconnic/Downloads/ibm_torino_calibrations_2025-06-18T22_23_14Z.csv"
@@ -353,7 +353,7 @@ bit_idxs = lambda bits: [i for i in range(8) if (bits >> (7 - i)) & 1]
 for r, pattern in enumerate(H):
     anc = aZ[r]
     for q in bit_idxs(pattern):
-        qc .cx(d[q], anc)
+        qc.cx(d[q], anc)
     qc.measure(anc, c[r])
 qc.barrier()
 
