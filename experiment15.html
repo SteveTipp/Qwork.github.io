@@ -208,7 +208,7 @@ from qiskit. tools.monitor import job_monitor
 from qiskit.visualization import plot_histogram
 
 # IBM Quantum account setup
-IBMQ. save_account(‘YOUR_API_KEY_O-‘, overwrite=True)  # Fill in your IBM Quantum token
+IBMQ. save_account(‘YOUR_API_KEY, overwrite=True)  # Fill in your IBM Quantum token
 IBMQ.load_account()
 provider = IBMQ.get_provider(hub='ibm-q')
 backend = provider.get_backend('ibm_osaka')  # Update backend if necessary
@@ -266,7 +266,7 @@ def hex_to_wif(hex_key):
 key_part_1 = generate_key_part(127, backend)
 key_part_2 = generate_key_part(127, backend)
 
-# Concatenate 🐈‍⬛ the two parts and add any additional bits if needed to reach 256 bits
+# Concatenate the two parts and add any additional bits if needed to reach 256 bits
 quantum_key_binary = key_part_1 + key_part_2 + "11"  # Ensuring 256 bits
 quantum_key_hex = hex(int(quantum_key_binary, 2))[2:].zfill(64)
 
