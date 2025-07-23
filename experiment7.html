@@ -165,10 +165,10 @@ import json
 import matplotlib.pyplot as plt
 
 # Input your IBM Q Experience API key here
-IBM_API_KEY = 'Your_API_Key' # Replace with your IBM API key
+IBM_API_KEY = 'Your_API_Key' 
 
 # Load IBM Q account
-IBMQ. save_account(IBM_API_KEY, overwrite=True)
+IBMQ.save_account(IBM_API_KEY, overwrite=True)
 IBMQ.load_account()
 
 # Function to create and run the quantum circuit on IBM quantum machine
@@ -197,7 +197,7 @@ circuit.measure(qreg, creg)
 transpiled_circuit = transpile(circuit, backend)
 
 # Run the circuit on the selected backend
-job = backend. run(transpiled_circuit)
+job = backend.run(transpiled_circuit)
 result = job.result()
 
 # Collect results
@@ -237,13 +237,13 @@ states = list(ocm_results['final_counts'].keys())
 frequencies = list(ocm_results['final_counts'].values())
 
 plt.figure(figsize=(15, 8))
-plt. bar(states, frequencies, color='blue')
+plt.bar(states, frequencies, color='blue')
 plt.xlabel('Quantum States')
 plt.ylabel('Frequency of Observation')
 plt.title('Distribution of Quantum States in OCM Experiment')
 plt.xticks(rotation=90)
 plt.grid(axis='y')
-plt. show()
+plt.show()
 
 print(f"Results saved to {json_file_path}")
 </code></pre>
