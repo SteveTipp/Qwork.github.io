@@ -104,7 +104,6 @@
          
 This experiment breaks a 6-bit elliptic curve cryptographic key using a Shor-style quantum attack. Executed on @IBM's 133-qubit ibm_torino with @Qiskit Runtime 2.0, a 18-qubit circuit, comprised of 12 logical qubits and 6 ancilla, interferes over ℤ₆₄ to extract the secret scalar k from the public key relation Q = kP, without ever encoding k directly into the oracle. From 16,384 shots, the quantum interference reveals a diagonal ridge in the 64 x 64 QFT outcome space. The quantum circuit, over 340,000 layers deep, produced valid interference patterns despite extreme circuit depth, and classical post-processing revealed k = 42 in the top 100 invertible (a, b) results, tied for the fifth most statistically relevant observed bitstring.
 <br> 
-<a href="https://arxiv.org/abs/2507.10592">arXiv Link</a>
 <br> 
 Code Walkthrough
 <br>           
