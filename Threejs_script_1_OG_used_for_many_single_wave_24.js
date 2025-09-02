@@ -23,7 +23,7 @@ light.position.set(10, 10, 10);
 scene.add(light);
 
 // Camera
-camera.position.set(0, 40, 90);
+camera.position.set(0, 40, 130);
 camera.lookAt(0, 0, 0);
 
 // Globals
