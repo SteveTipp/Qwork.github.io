@@ -135,7 +135,8 @@ Apply Hadamards to every qubit in a and b:<br>
 <p>4. Oracle construction U_f<br>
 Goal is a reversible map:  <br>
 ∣a⟩ ∣b⟩ ∣0⟩ -> ∣a⟩ ∣b⟩ ∣aP + bQ⟩<br>
-Add aP: for each bit a_i (weight 2^𝑖), add (2^𝑖 P) mod 64 Add bQ: compute (2^𝑖 𝑄) mod 64, then add controlled on 𝑏_𝑖. <br>
+Add aP: for each bit a_i (weight 2^𝑖), add (2^𝑖 P) mod 64. <br>
+Add bQ: compute (2^𝑖 𝑄) mod 64, then add controlled on 𝑏_𝑖. <br>
 These use 6-qubit controlled permutation gates. All constants are derived from the elliptic curve’s generator P and the public point Q.  <br>
 No gate ever directly references the secret k.<br>
 
