@@ -20,7 +20,7 @@ const controls = new THREE.OrbitControls(camera, renderer.domElement);
 const light = new THREE.DirectionalLight(0xffffff, 1);
 light.position.set(10, 10, 10);
 scene.add(light);
-camera.position.set(0, 40, 75);
+camera.position.set(0, 20, 40);
 camera.lookAt(0, 0, 0);
 
 // handle resize (helps avoid blank viewports)
