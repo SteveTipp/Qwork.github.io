@@ -1077,7 +1077,8 @@ plt.figure(figsize=(6, 6))
 ax = plt.subplot(111, projection='polar')
 ax.bar(theta, r, width=2*np.pi/ORDER, bottom=0.0, align='edge', edgecolor='k', linewidth=0.5)
 if k_th is not None:
-    ax.plot([2*np.pi*k_th/ORDER, 2*np.pi*k_th/ORDER], [0, r.max()*1.05], 'r--', linewidth=2, label=f'theory k={k_th}')
+    ax.plot([2*np.pi*k_th/ORDER, 2*np.pi*k_th/ORDER], 
+	[0, r.max()*1.05], 'r--', linewidth=2, label=f'theory k={k_th}')
     ax.legend(loc='upper left', bbox_to_anchor=(1.05, 1.05))
 ax.set_theta_zero_location('N')
 ax.set_theta_direction(-1)
