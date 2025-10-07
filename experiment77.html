@@ -126,8 +126,8 @@ and define the scale:<br>
 C_2 ≡ ΔE/Δm ​(units J/kg).<br>
 Map the SI inputs (m, E) to integers modulo N:<br>
 M_(idx) ​≡ ⌊m/Δm + 1/2⌋ (mod N), E_(idx) ​≡ ⌊E/ΔE​ + 1/2⌋(mod N).<br>
-Note: Δm = 1kg and ΔE = 10^16 J so C_2 = 10^16 J/kg. <br>
-Example (independent E near 1 kg rest energy): E ≈ 8.9875 x 10^16 J ⇒ E_(idx) ≈ 9 (mod 16) and M_(idx) = 1. Then:<br>
+Note: Δm = 1kg and ΔE = 10¹⁶ J so C_2 = 10¹⁶ J/kg. <br>
+Example (independent E near 1 kg rest energy): E ≈ 8.9875 x 10¹⁶ J ⇒ E_(idx) ≈ 9 (mod 16) and M_(idx) = 1. Then:<br>
 k ≡ E_(idx) ​(M_(idx))^−1 ​≡ 9 (mod 16).<br>
 <br>
 
@@ -160,7 +160,7 @@ After both transforms:<br>
 ψ_2⟩ = (1/N²​) ∑{u,v∈Z_N} ∑{a,b∈Z_N}​ ω^(ua + vb) ∣u⟩ ∣v⟩ ∣aE_(idx) ​+ bM_(idx)​⟩.<br>
 Ridge condition (result), interference is constructive precisely on a linear relation between (u,v):<br>
 u + kv ≡ 0 (mod N), k ≡ E_(idx) (M_(idx))^-1 (mod N).<br>
-Note: different endianness or a sign choice in the adder flips the sign, this circuit/convention yields u + kv ≡ 0. With ΔE = 10^16 J, M_(idx) = 1, E_(idx) ≈ 9, so the expected ridge is u + 9v ≡ 0 (mod 16).<br>
+Note: different endianness or a sign choice in the adder flips the sign, this circuit/convention yields u + kv ≡ 0. With ΔE = 10¹⁶ J, M_(idx) = 1, E_(idx) ≈ 9, so the expected ridge is u + 9v ≡ 0 (mod 16).<br>
 <br>
   
 <p>6. Measurement and per-shot slope extraction <br>
@@ -175,14 +175,14 @@ By construction,<br>
 E/m = (E_(idx)/M_(idx)) C_2 ≡ (k + tN) C_2​, t ∈ Z,<br>  
 so:<br>  
 C²​ ≈ (k +tN) C_2, c ≈ √((k + tN) C_2).<br>  
-Here C_2 = ΔE/Δm = 10^16 J/kg. With the example above, k ≈ 9 and typically t = 0 already places c in a realistic window:<br>  
+Here C_2 = ΔE/Δm = 10¹⁶ J/kg. With the example above, k ≈ 9 and typically t = 0 already places c in a realistic window:<br>  
 c²​ ≈ 9 x 10¹⁶ m²​/s²​ ⇒ c ≈ 3 x 10⁸ m/s.<br>  
-The factor of 9 multiplies 10¹⁶ in the c² term, so the physical speed c is its square root, c ≈ √(9 x 10^16) = 3 x 10⁸ m/s.<br>  
+The factor of 9 multiplies 10¹⁶ in the c² term, so the physical speed c is its square root, c ≈ √(9 x 10¹⁶) = 3 x 10⁸ m/s.<br>  
 <br>  
   
 <p>8. Choosing ticks to avoid degeneracy<br>
 If E_(idx) ≡ 0 (mod 16), the oracle becomes f(a, b) ≡ bM_(idx)​ and the ridge collapses to the degenerate u ≡ 0 line (k = 0).<br>
-This experiment's fix (ΔE = 10^16 J) ensures E_(idx) ≢ 0 for typical macroscopic E, giving a nonzero, usually odd slope. <br>
+This experiment's fix (ΔE = 10¹⁶ J) ensures E_(idx) ≢ 0 for typical macroscopic E, giving a nonzero, usually odd slope. <br>
 Ensure M_(idx)​ is invertible mod N (for N = 16, any odd M_(idx) is fine, this uses M_(idx) = 1).<br>
 <br>
   
