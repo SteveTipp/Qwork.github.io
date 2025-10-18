@@ -133,24 +133,34 @@ function createWaveSurface(matrix, maxCount, ridgeTopSet) {
     }
   }
 
-  // Yellow spheres 
-  const hMat = new THREE.MeshBasicMaterial({ color: 0xffff00 });
-  ridgeTopSet.forEach(key => {
-    const [uStr, vStr] = key.split(',');
-    const u = parseInt(uStr, 10);
-    const v = parseInt(vStr, 10);
-    const amp = matrix[u][v] / maxCount;
+  // Yellow spheres (updated to show no yellow spheres when no keys are found or empty json)
+const hMat = new THREE.MeshBasicMaterial({ color: 0xffff00 });
+ridgeTopSet.forEach(key => {
+  const [uStr, vStr] = key.split(',');
+  const u = parseInt(uStr, 10);
+  const v = parseInt(vStr, 10);
 
-    const sph = new THREE.Mesh(new THREE.SphereGeometry(0.8, 20, 20), hMat);
-    sph.position.set(
-      (u - (GRID - 1) / 2) * STEP,
-      amp * 20 + 1.0,
-      (v - (GRID - 1) / 2) * STEP
-    );
-    sph.userData = { u, v };
-    highlightSpheres.push(sph);
-    scene.add(sph);
-  });
+  // Skip if matrix entry is missing or amplitude is zero / invalid
+  if (!matrix[u] || !isFinite(matrix[u][v]) || matrix[u][v] <= 0) return;
+
+  const amp = matrix[u][v] / maxCount;
+  if (!isFinite(amp) || amp <= 0) return; // second layer of safety
+
+  const sph = new THREE.Mesh(new THREE.SphereGeometry(0.8, 20, 20), hMat);
+  sph.position.set(
+    (u - (GRID - 1) / 2) * STEP,
+    amp * 20 + 1.0,
+    (v - (GRID - 1) / 2) * STEP
+  );
+  sph.userData = { u, v };
+  highlightSpheres.push(sph);
+  scene.add(sph);
+});
+
+// If no valid highlights found, clear list & log message
+if (highlightSpheres.length === 0) {
+  console.log("No valid ridge highlights found — skipping yellow spheres.");
+}
 }
 
 // Animate 
