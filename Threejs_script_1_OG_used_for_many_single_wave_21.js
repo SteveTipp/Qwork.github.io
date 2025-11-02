@@ -11,7 +11,7 @@ const TOP_N = 100;                   // global top N to consider
 
 // Load JSON
 async function loadQuantumData() {
-  const res = await fetch('Shors_ECC_5_Bit_Key_0.json'); // or 5_Bit_Key_Empty.json.    Shors_ECC_5_Bit_Key_0.json.     5_Bit_Key_Perfect.json.
+  const res = await fetch('Shors_ECC_5_Bit_Key_0.json'); // or 5_Bit_Key_Empty.json.    Shors_ECC_5_Bit_Key_0.json.     5_Bit_Key_Idealized.json.
   const data = await res.json();
   return data.counts;
 }
