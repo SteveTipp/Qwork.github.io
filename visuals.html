@@ -82,13 +82,35 @@ This Threejs visual renders the quantum interference landscape of the E = mc² 4
     This Threejs render compares the quantum interference waveforms of my two Shor-style attack runs breaking a 3-bit elliptic curve key, the left shows the standard run, while the right shows the one that includes a Bloch clock qubit to segment computation over time. In the side view, the Bloch clock run has taller, more coherent interference fringes with denser red peaks, meaning stronger constructive interference and a later collapse in the computation timeline. The standard run appears noisier and shallower, showing earlier-stage measurement with less-developed phase structure. From the top view, the Bloch clock run shows structured, radial ridges and concentrated measurement clusters aligned to valid (a, b) modular residue classes, while the standard run is flatter and more diffuse. These show that the Bloch clock acts as a temporal-like filter, which allows only the more mature, high-fidelity slices of quantum evolution to be analyzed.
     </div>
 
+	
+
+	<div class="visual-title"><a href="https://stevetipp.github.io/Qwork.github.io/experiment73.html" target="_blank" style="color:#0f0;text-decoration:none">Breaking a 5-Bit Elliptic Curve Key (Total Interference Field)</a></div>
+    <iframe class="visual-frame" data-src="Threejs_26.html" frameborder="0" loading="lazy"></iframe>
+
+    <div style="color:#0f0; text-align:center; max-width:800px; margin:20px auto; font-family:sans-serif; line-height:1.5;">
+    This Threejs render visualizes the quantum interference pattern resulting from my arXiv 5-bit elliptic curve key-breaking experiment using a Shor-style attack. The 32x32 wave mesh represents the full outcome space of the two 5-qubit registers (a, b), with each grid cell corresponding to a measured (u, v) bitstring from the QFT output. The wave height and ripple intensity are scaled to the relative count of each bitstring, revealing where quantum probability concentrated. A diagonal structure, emerging from the condition u + kv ≡ 0 mod  32, appears as an oscillating ridge aligned to the secret key k = 7, visually encoding the modular relation exploited by the Shor-style attack. Green and blue grid colors separate background from target modular lines, while red dots rise with amplitude to show shot density. The three most probable correct key outputs are marked with large yellow spheres.
+    </div>
+
+
+	
+
     
     <div class="visual-title"><a href="https://stevetipp.github.io/Qwork.github.io/experiment73.html" target="_blank" style="color:#0f0;text-decoration:none">Breaking a 5-Bit Elliptic Curve Key (Interference Replication)</a></div>
     <iframe class="visual-frame" data-src="Threejs_21.html" frameborder="0" loading="lazy"></iframe>
 
     <div style="color:#0f0; text-align:center; max-width:800px; margin:20px auto; font-family:sans-serif; line-height:1.5;">
-    This Threejs render visualizes the quantum interference pattern resulting from my arXiv 5-bit elliptic curve key-breaking experiment using a Shor-style attack. The 32x32 wave mesh represents the full outcome space of the two 5-qubit registers (a, b), with each grid cell corresponding to a measured (u, v) bitstring from the QFT output. The wave height and ripple intensity are scaled to the relative count of each bitstring, revealing where quantum probability concentrated. A diagonal structure, emerging from the condition u + kv ≡ 0 mod  32, appears as an oscillating ridge aligned to the secret key k = 7, visually encoding the modular relation exploited by the Shor-style attack. Green and blue grid colors separate background from target modular lines, while red dots rise with amplitude to show shot density. The three most probable correct key outputs are marked with large yellow spheres.
+    This Three.js render repeats the main quantum interference pattern from my arXiv 5-bit elliptic-curve key-breaking experiment using a Shor-style attack. The 32x32 wave mesh mirrors the (a, b) register space, with each cell showing a measured (u, v) bitstring from the QFT output. Wave height and ripple intensity follow raw counts, showing the repeated ridge structure u + kv ≡ 0 (mod 32) aligned with the secret key k = 7. Green and blue grids mark modular regions, red dots rise with amplitude, and the three most probable key outputs appear as yellow spheres.
     </div>
+
+
+
+	<div class="visual-title"><a href="https://stevetipp.github.io/Qwork.github.io/experiment73.html" target="_blank" style="color:#0f0;text-decoration:none">Breaking a 5-Bit Elliptic Curve Key (Idealized Run (~10⁻⁶ - 10⁻⁷))</a></div>
+    <iframe class="visual-frame" data-src="Threejs_27.html" frameborder="0" loading="lazy"></iframe>
+
+    <div style="color:#0f0; text-align:center; max-width:800px; margin:20px auto; font-family:sans-serif; line-height:1.5;">
+    This Three.js render visualizes the idealized backend result (~10⁻⁶ - 10⁻⁷), showing how the full interference pattern would appear on a high-fidelity quantum computer. The 32×32 wave mesh represents the complete run space, with every correct modular line sharply defined and minimal noise across the field. The ridge u + kv ≡ 0 (mod 32) remains dominant, marking the recovered key k = 7, while the background tail reveals the residual quantum structure beneath the noise floor.
+    </div>
+	
 
     
     <div class="visual-title"><a href="https://stevetipp.github.io/Qwork.github.io/experiment72.html" target="_blank" style="color:#0f0;text-decoration:none">Breaking a 4-Bit Elliptic Curve Key</a></div>
