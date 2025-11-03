@@ -1,6 +1,7 @@
 
 
-// Updated to highlight the top three states with yellow spheres
+
+// 5_bit_ECC_break_visual_Interference_Repeat.js
 // Config 
 const HALF_BITS = 5;                 // 5 per axis
 const TOTAL_BITS = 2 * HALF_BITS;    // 10
@@ -11,7 +12,7 @@ const TOP_N = 100;                   // global top N to consider
 
 // Load JSON
 async function loadQuantumData() {
-  const res = await fetch('Shors_ECC_5_Bit_Key_0.json'); // or 5_Bit_Key_Empty.json.    Shors_ECC_5_Bit_Key_0.json.     5_Bit_Key_Idealized.json.
+  const res = await fetch('Shors_ECC_5_Bit_Key_0.json'); // or 5_Bit_Key_Empty.json, 5_Bit_Idealized.json, Shors_ECC_5_Bit_Key_0.json.
   const data = await res.json();
   return data.counts;
 }
@@ -41,14 +42,15 @@ let time = 0;
 
 // Helpers 
 const pad10 = s => s.padStart(TOTAL_BITS, '0').slice(-TOTAL_BITS);
+const rev   = s => s.split('').reverse().join(''); // mirror Python's bs[::-1]
 
-// returns array of {bit, padded, u, v, count}
+// This file's surface build uses raw halves 
 function parseEntries(counts) {
   const entries = [];
   for (const [bit, c] of Object.entries(counts)) {
     const b = pad10(bit);
-    const v = parseInt(b.slice(0, HALF_BITS), 2);     // left 5 bits
-    const u = parseInt(b.slice(HALF_BITS),    2);     // right 5 bits
+    const v = parseInt(b.slice(0, HALF_BITS), 2);     // left 5 bits -> display v
+    const u = parseInt(b.slice(HALF_BITS),    2);     // right 5 bits -> display u
     entries.push({ bit, padded: b, u, v, count: Number(c) });
   }
   return entries;
@@ -64,29 +66,61 @@ function buildMatrix(entries) {
   return { matrix, maxCount };
 }
 
-// Ridge entries within the global top-N, then keep the top 3 by count
-function ridgeTop3FromGlobalTopN(counts, K = 7, N = 100) {
-  const entries = parseEntries(counts);
 
-  const topGlobal = entries.sort((a, b) => b.count - a.count).slice(0, N);
-  const ridgeInTop = topGlobal.filter(e => ((e.u + K * e.v) % MOD) === 0);
+// modular inverse for odd v modulo 2^n via Newton iteration
+function invModPow2(v, nBits = 5) {
+  if ((v & 1) === 0) return null;
+  const mask = (1 << nBits) - 1;
+  let x = 1;
+  for (let i = 0; i < nBits; i++) x = (x * (2 - (v * x))) & mask;
+  return x & mask;
+}
 
-  // Deduplicate by (u,v) in case of variant keys; keep the highest count per (u,v)
-  const bestPerUV = new Map();
-  for (const e of ridgeInTop) {
-    const key = `${e.u},${e.v}`;
-    const prev = bestPerUV.get(key);
-    if (!prev || e.count > prev.count) bestPerUV.set(key, e);
+// Parse into classical (a,b) as in the first visual
+function parseEntriesClassical(counts, nBits = 5) {
+  const TOTAL = 2 * nBits;
+  const out = [];
+  for (const [bit, cRaw] of Object.entries(counts)) {
+    const b10   = bit.padStart(TOTAL, '0').slice(-TOTAL);
+    const left  = b10.slice(0, nBits);
+    const right = b10.slice(nBits);
+    const a = parseInt(rev(right), 2); // a = int(right[::-1], 2)
+    const b = parseInt(rev(left),  2); // b = int(left[::-1],  2)
+    out.push({ a, b, count: Number(cRaw) });
+  }
+  return out;
+}
+
+// Return a Set of "u,v" strings where (u,v) = (a,b) for placement
+function selectTop3ByClassical_identity(counts, targetK = K, nBits = 5) {
+  const MOD = 1 << nBits;
+  const classical = parseEntriesClassical(counts, nBits);
+
+  // Sort all by count (desc), then walk to collect invertible b
+  const sortedAll = [...classical].sort((x, y) => y.count - x.count);
+
+  const topInvertibles = [];
+  for (const e of sortedAll) {
+    if ((e.b & 1) === 0) continue;     // keep only invertible b (odd)
+    const bInv = invModPow2(e.b, nBits);
+    if (bInv == null) continue;
+    const k = ((MOD - (e.a % MOD)) * bInv) % MOD;  // k ≡ −a·b⁻¹ (mod 2^n)
+    topInvertibles.push({ ...e, k });
+    if (topInvertibles.length === TOP_N) break;
   }
 
-  const top3 = [...bestPerUV.values()].sort((a, b) => b.count - a.count).slice(0, 3);
-  console.log('Selected ridge top-3 within global top-100:', top3);
-  return new Set(top3.map(e => `${e.u},${e.v}`));
+  // First three with k == targetK (already count-desc)
+  const picks = topInvertibles.filter(e => e.k === targetK).slice(0, 3);
+
+  // Place at (u,v) = (a,b) directly - NO bit-reversal here
+  const uvKeys = new Set(picks.map(e => `${e.a},${e.b}`));
+  console.log('Top-3 (a,b) chosen; placing at (u,v)=(a,b):', [...uvKeys]);
+  return uvKeys;
 }
 
 // Build surface + dots + highlights 
 function createWaveSurface(matrix, maxCount, ridgeTopSet) {
-  const WIDTH    = GRID * 2;            
+  const WIDTH    = GRID * 2;     // visual (Interference) repeat 
   const SEGMENTS = WIDTH;
   const STEP     = WIDTH / (GRID - 1);
 
@@ -105,7 +139,7 @@ function createWaveSurface(matrix, maxCount, ridgeTopSet) {
 
       const color = (isRidge && amp > threshold)
         ? new THREE.Color(0x0000ff) // ridge cells (blue)
-        : new THREE.Color(0x00ff00); // default grid (green)
+        : new THREE.Color(0x00ff00); // grid (green)
       colors.push(color.r, color.g, color.b);
     }
   }
@@ -133,34 +167,31 @@ function createWaveSurface(matrix, maxCount, ridgeTopSet) {
     }
   }
 
-  // Yellow spheres (updated to show no yellow spheres when no keys are found or empty json)
-const hMat = new THREE.MeshBasicMaterial({ color: 0xffff00 });
-ridgeTopSet.forEach(key => {
-  const [uStr, vStr] = key.split(',');
-  const u = parseInt(uStr, 10);
-  const v = parseInt(vStr, 10);
+  // Yellow spheres driven by classical method (placed at (u,v) = (a,b))
+  const hMat = new THREE.MeshBasicMaterial({ color: 0xffff00 });
+  ridgeTopSet.forEach(key => {
+    const [uStr, vStr] = key.split(',');
+    const u = parseInt(uStr, 10);
+    const v = parseInt(vStr, 10);
 
-  // Skip if matrix entry is missing or amplitude is zero / invalid
-  if (!matrix[u] || !isFinite(matrix[u][v]) || matrix[u][v] <= 0) return;
+    if (!matrix[u] || !isFinite(matrix[u][v]) || matrix[u][v] <= 0) return;
+    const amp = matrix[u][v] / maxCount;
+    if (!isFinite(amp) || amp <= 0) return;
 
-  const amp = matrix[u][v] / maxCount;
-  if (!isFinite(amp) || amp <= 0) return; // second layer of safety
+    const sph = new THREE.Mesh(new THREE.SphereGeometry(0.8, 20, 20), hMat);
+    sph.position.set(
+      (u - (GRID - 1) / 2) * STEP,
+      amp * 20 + 1.0,
+      (v - (GRID - 1) / 2) * STEP
+    );
+    sph.userData = { u, v };
+    highlightSpheres.push(sph);
+    scene.add(sph);
+  });
 
-  const sph = new THREE.Mesh(new THREE.SphereGeometry(0.8, 20, 20), hMat);
-  sph.position.set(
-    (u - (GRID - 1) / 2) * STEP,
-    amp * 20 + 1.0,
-    (v - (GRID - 1) / 2) * STEP
-  );
-  sph.userData = { u, v };
-  highlightSpheres.push(sph);
-  scene.add(sph);
-});
-
-// If no valid highlights found, clear list & log message
-if (highlightSpheres.length === 0) {
-  console.log("No valid ridge highlights found — skipping yellow spheres.");
-}
+  if (highlightSpheres.length === 0) {
+    console.log("No valid highlights found - skipping yellow spheres.");
+  }
 }
 
 // Animate 
@@ -205,14 +236,13 @@ function animate() {
 
 // Main 
 loadQuantumData().then(counts => {
-  // select exactly three ridge states within the global top-100
-  const ridgeTopSet = ridgeTop3FromGlobalTopN(counts, K, TOP_N);
+  const ridgeTopSet = selectTop3ByClassical_identity(counts, K, HALF_BITS);
 
-  // build surface from all counts
+  // Build surface from all counts with files mapping
   const entries = parseEntries(counts);
   const { matrix, maxCount } = buildMatrix(entries);
+
 
   createWaveSurface(matrix, maxCount, ridgeTopSet);
   animate();
 });
-
