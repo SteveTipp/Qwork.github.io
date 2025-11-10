@@ -101,7 +101,7 @@
         <h1><center> Breaking a 4-Bit Elliptic Curve Key with a 133-Qubit Quantum Computer </center></h1>
         <div class="content-block">
          
-This experiment breaks a 4-bit elliptic curve cryptographic key using Shor’s algorithm. Executed on @IBM’s 133-qubit ibm_torino processor with @qiskit, a 12-qubit circuit, 8 logical and 4 ancilla, interferes over ℤ₁₆ to extract the secret scalar k from the public key relation Q = kP, without ever encoding k directly into the oracle. From 16,384 shots, the quantum interference reveals a diagonal ridge in the 16x16 QFT outcome space. Post-processing reveals that k = 7 emerges among the top invertible candidates as the second-highest single count count across the recovered k values. Thus, the 4-bit elliptic curve key is broken with high confidence from measurement statistics.
+This experiment breaks a 4-bit elliptic curve cryptographic key using a Shor-style algorithm. Executed on @IBM’s 133-qubit ibm_torino processor with @qiskit, a 12-qubit circuit, 8 logical and 4 ancilla, interferes over ℤ₁₆ to extract the secret scalar k from the public key relation Q = kP, without ever encoding k directly into the oracle. From 16,384 shots, the quantum interference reveals a diagonal ridge in the 16x16 QFT outcome space. Post-processing reveals that k = 7 emerges among the top invertible candidates as the second-highest single count count across the recovered k values. Thus, the 4-bit elliptic curve key is broken with high confidence from measurement statistics.
  <br>  
 Code Walkthrough
  <br>           
