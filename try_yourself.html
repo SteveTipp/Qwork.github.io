@@ -117,9 +117,11 @@
     <script>
 	     
         function flipParticle() {
-            var result = Math.random() < 0.5 ? "Spin Up" : "Spin Down"; /* Figure out spin state with 50% randomness */
-            document.getElementById("result").textContent = "The particle is: " + result;
-        }
+    var result = Math.random() < 0.5 ? "Spin Up" : "Spin Down"; 
+    var el = document.getElementById("result");
+    el.textContent = "The particle is: " + result;
+    el.style.color = "#00FF00";
+}
 	    
     </script>
 
