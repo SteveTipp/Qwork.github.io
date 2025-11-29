@@ -10,7 +10,7 @@ const MOD = GRID;                    // 32
 
 // Load JSON
 async function loadQuantumData() {
-  const res = await fetch('Shors_ECC_5_Bit_DualQFT_Random_Noise_0.json');
+  const res = await fetch('Shor_style_ECC_5_Bit_DualQFT_Random_Noise_0.json');
   const data = await res.json();
   return data.counts;
 }
