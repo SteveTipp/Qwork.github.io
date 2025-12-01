@@ -1015,7 +1015,11 @@ out = {
     "shots": SHOTS,
     "counts": counts_raw
 }
-JSON_PATH = "/Users/steventippeconnic/Documents/QC/Shor_style_ECC_5_Bit_Key_Noise_Baseline_Scramble_IF_Single_QFT_0.json"
+JSON_PATH = (
+    "/Users/steventippeconnic/Documents/QC/"
+    "Shor_style_ECC_5_Bit_Key_Noise_Baseline_"
+    "Scramble_IF_Single_QFT_0.json"
+)
 with open(JSON_PATH, "w") as fp:
     json.dump(out, fp, indent=4)
 
