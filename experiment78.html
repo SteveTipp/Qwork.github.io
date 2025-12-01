@@ -103,7 +103,7 @@
         <h1><center> Noise Modifications for 'Breaking a 5-Bit Elliptic Curve Key'  </center></h1>
         <div class="content-block">  
 <br>			
-<a href="https://github.com/SteveTipp/Qwork.github.io/blob/main/5-Bit%20Noise%20Runs%20Modifications%201%2C%202%2C%203.zip">Backend ZIP Link</a>
+<a href="https://github.com/SteveTipp/Qwork.github.io/blob/main/5-Bit%20Noise%20Runs%20Modifications%201%2C%202%2C%203.%204%2C%205%2C%206%20All%20Data.zip">Backend ZIP Link</a>
 <br>
 		
 <p>1. No-QFT Pure Hardware Noise (Baseline Run)<br>
@@ -168,6 +168,98 @@ Splitting a ∪ b into two random QFT groups destroys regular frequency reinforc
         <p></p>
         <div class="content-block">
 <br>
+
+
+
+
+
+<p>4. Single QFT, No Structure (Fully Scrambled Registers) <br>
+Both a and b are placed into full superposition, phase-shifted with fixed per-qubit RZ masks, and then passed through one global QFT with no oracle structure. The result is a clean spectral control run, the left side shows high-frequency interference turbulence, while the right side forms smoother low-frequency modes with probability concentrating in the upper-right and lower-right corners. 
+
+	<img src="Single QFT, No Structure (Fully Scrambled Registers) SS.png" alt="" class="experiment-image">
+        <p></p>
+        <div class="content-block">
+<br>
+
+<br>
+  <img src="Single QFT, No Structure (Fully Scrambled Registers) Back SS.png" alt="" class="experiment-image">
+        <p></p>
+        <div class="content-block">
+<br>
+
+
+
+<br>
+  <img src="Single QFT, No Structure (Fully Scrambled Registers) Image.png" alt="" class="experiment-image">
+        <p></p>
+        <div class="content-block">
+<br>
+
+
+
+
+
+
+
+
+
+<p>5. Randomized Single QFT With Inverted Fourier Partition <br>
+With all 10 qubits in superposition but randomly split before a single QFT is applied, the Fourier space fractures instead of unifying, producing an asymmetric landscape, one half collapses into a flat, near-thermal sheet while the mixed region forms scattered interference spikes where random subspaces briefly align. No global ridges appear, only local vertical bursts, showing what happens when the QFT doesn’t span the full Hilbert space. 
+
+	<img src="Randomized Single QFT With Inverted Fourier Partition SS.png" alt="" class="experiment-image">
+        <p></p>
+        <div class="content-block">
+<br>
+
+<br>
+  <img src="Randomized Single QFT With Inverted Fourier Partition Back SS.png" alt="" class="experiment-image">
+        <p></p>
+        <div class="content-block">
+<br>
+
+
+
+<br>
+  <img src="Randomized Single QFT With Inverted Fourier Partition Image.png" alt="" class="experiment-image">
+        <p></p>
+        <div class="content-block">
+<br>
+
+
+
+
+
+
+
+
+
+
+
+
+
+<p>6. Real Oracle and single 10-Qubit QFT <br>
+This run uses the full oracle exactly as in the 5-bit arXiv paper, but replaces the two separate 5-qubit QFTs with a single 10-qubit QFT across a ∪ b. The four vertical interference lanes vanish completely and are replaced by one broad, chaotic ridge with no vertical periodicity and no discernible subgroup structure. Even with perfect aP + bQ phases, the joint Fourier basis destroys the geometry that creates the interference lanes, ridges, and valleys.
+
+	<img src="Real Oracle and single 10-Qubit QFT SS.png" alt="" class="experiment-image">
+        <p></p>
+        <div class="content-block">
+<br>
+
+<br>
+  <img src="Real Oracle and single 10-Qubit QFT Back SS.png" alt="" class="experiment-image">
+        <p></p>
+        <div class="content-block">
+<br>
+
+
+
+<br>
+  <img src="Real Oracle and single 10-Qubit QFT Image.png" alt="" class="experiment-image">
+        <p></p>
+        <div class="content-block">
+<br>
+
+
 
 
   <p>Code:<br>
@@ -478,7 +570,7 @@ log.info("Results saved → %s", JSON_PATH)
 # End
 
 
-////////////////////////////////////////////
+//////////////////////////////////////////////////////
 
 
 # Randomized QFT With Inverted Fourier Partition  
@@ -623,6 +715,463 @@ with open(JSON_PATH, "w") as fp:
 
 log.info("Results saved → %s", JSON_PATH)
 
+
+# End
+
+//////////////////////////////////////////////////////////////
+
+#  Single QFT, No Structure (Fully Scrambled Registers)
+# Imports
+import logging, json
+from math import gcd
+import numpy as np
+from qiskit import QuantumCircuit, QuantumRegister, ClassicalRegister, transpile
+from qiskit.circuit.library import UnitaryGate, QFT
+from qiskit_ibm_runtime import QiskitRuntimeService, SamplerV2
+import pandas as pd
+
+# IBMQ
+TOKEN = ""
+INSTANCE = ""
+BACKEND  = "ibm_fez"
+CAL_CSV  = "/Users/steventippeconnic/Downloads/ibm_fez_calibrations_2025-11-30T21_33_34Z.csv"
+SHOTS    = 16384
+
+# Group parameter (so gcd / inverse logic is identical)
+ORDER = 32  # |E(F_p)| = 32
+
+# Logging
+logging.basicConfig(level=logging.INFO,
+                    format="%(asctime)s | %(levelname)s | %(message)s")
+log = logging.getLogger(__name__)
+
+# Calibration-based qubit pick
+def best_qubits(csv_path: str, n: int) -> list[int]:
+    df = pd.read_csv(csv_path)
+    df.columns = df.columns.str.strip()
+    winners = (
+        df.sort_values(["√x (sx) error", "T1 (us)", "T2 (us)"],
+                       ascending=[True, False, False])
+        ["Qubit"].head(n).tolist()
+    )
+    log.info("Best physical qubits: %s", winners)
+    return winners
+
+N_Q = 5
+N_Q_TOTAL = N_Q * 3  # a, b, point
+PHYSICAL = best_qubits(CAL_CSV, N_Q_TOTAL)
+
+# Constant-adder modulo 32 as a reusable gate (unused here, kept for continuity)
+def add_const_mod32_gate(c: int) -> UnitaryGate:
+    """Return a 5-qubit gate that maps |x⟩ ↦ |x+c (mod 32)⟩."""
+    mat = np.zeros((32, 32))
+    for x in range(32):
+        mat[(x + c) % 32, x] = 1
+    return UnitaryGate(mat, label=f"+{c}")
+
+ADDERS = {c: add_const_mod32_gate(c) for c in range(1, 32)}
+
+def controlled_add(qc: QuantumCircuit, ctrl_qubit, point_reg, constant):
+    """Apply |x⟩ → |x+constant (mod 32)⟩ controlled by one qubit."""
+    qc.append(ADDERS[constant].control(), [ctrl_qubit, *point_reg])
+
+# Noise oracle: same call site, but no operation
+def ecdlp_oracle(qc, a_reg, b_reg, point_reg):
+    # No-op oracle: no a,b→point structure at all.
+    return
+
+# Fixed "random" phase masks on a and b to scramble QFT bias
+PHASES_A = [0.1732, 0.9410, 1.6180, 2.2740, 2.9670]
+PHASES_B = [0.5120, 1.2210, 1.9370, 2.4440, 2.8890]
+
+def apply_phase_scramble(qc: QuantumCircuit, a_reg, b_reg):
+    """Apply fixed per-qubit RZ phase masks to a and b before QFT."""
+    for q, theta in zip(a_reg, PHASES_A):
+        qc.rz(theta, q)
+    for q, theta in zip(b_reg, PHASES_B):
+        qc.rz(theta, q)
+
+# Build the noise circuit with ONE global QFT on a∪b, no oracle structure on a,b
+def shor_ecdlp_noise_qft_scrambled_circuit() -> QuantumCircuit:
+    a = QuantumRegister(N_Q, "a")
+    b = QuantumRegister(N_Q, "b")
+    p = QuantumRegister(N_Q, "p")
+    c = ClassicalRegister(N_Q * 2, "c")
+    qc = QuantumCircuit(a, b, p, c, name="ECDLP_32pts_noise_qft_scrambled_1QFT")
+
+    # Put a and b into superposition
+    qc.h(a)
+    qc.h(b)
+
+    # Phase-scramble a and b so QFT sees a random-looking phase landscape
+    apply_phase_scramble(qc, a, b)
+
+    # Oracle call (no-op, keeps structure slot)
+    ecdlp_oracle(qc, a, b, p)
+    qc.barrier()
+
+    # Single global QFT on all a∪b qubits (10-qubit QFT)
+    ab_qubits = list(a) + list(b)
+    qc.append(QFT(len(ab_qubits), do_swaps=False), ab_qubits)
+
+    # Measure a and b into classical c
+    qc.measure(a, c[:N_Q])
+    qc.measure(b, c[N_Q:])
+
+    return qc
+
+# IBM Runtime
+service = QiskitRuntimeService(channel="ibm_cloud",
+                               token=TOKEN,
+                               instance=INSTANCE)
+backend = service.backend(BACKEND)
+log.info("Backend → %s", backend.name)
+
+qc_raw = shor_ecdlp_noise_qft_scrambled_circuit()
+trans = transpile(qc_raw,
+                  backend=backend,
+                  initial_layout=PHYSICAL,
+                  optimization_level=3)
+log.info("Circuit depth %d, gate counts %s", trans.depth(), trans.count_ops())
+
+sampler = SamplerV2(mode=backend)
+job = sampler.run([trans], shots=SHOTS)
+result = job.result()
+
+# Classical post-processing
+creg_name = trans.cregs[0].name
+counts_raw = result[0].data.__getattribute__(creg_name).get_counts()
+
+def bits_to_int(bs):
+    return int(bs[::-1], 2)
+
+# Map bitstrings to (a, b) pairs exactly as in the real run
+counts = {(bits_to_int(k[N_Q:]), bits_to_int(k[:N_Q])): v
+          for k, v in counts_raw.items()}
+top = sorted(counts.items(), key=lambda kv: kv[1], reverse=True)
+
+# Same invertible-b scan, now interpreted as a single-QFT scrambled noise baseline
+top_invertibles = []
+for (a_val, b_val), freq in top:
+    if gcd(b_val, ORDER) != 1:
+        continue
+    inv_b = pow(b_val, -1, ORDER)
+    k_candidate = (-a_val * inv_b) % ORDER
+    top_invertibles.append(((a_val, b_val), k_candidate, freq))
+    if len(top_invertibles) == 100:
+        break
+
+print("\nPhase-scrambled single-QFT noise baseline — "
+      "recovered k candidates from top 100 invertible (a, b) pairs:\n")
+for (a, b), k, count in top_invertibles:
+    print(f"  (a={a:2}, b={b:2})  →  k = {k:2}   (count = {count})")
+
+# Save raw data
+out = {
+    "experiment": "ECDLP_32pts_Shors_noise_qft_scrambled_1QFT",
+    "backend": backend.name,
+    "physical_qubits": PHYSICAL,
+    "shots": SHOTS,
+    "counts": counts_raw
+}
+JSON_PATH = "/Users/steventippeconnic/Documents/QC/Shor_style_ECC_5_Bit_QFT_Scrambled_1QFT_Noise_0.json"
+with open(JSON_PATH, "w") as fp:
+    json.dump(out, fp, indent=4)
+log.info("Results saved → %s", JSON_PATH)
+
+# End
+
+/////////////////////////////////////////////////////////////
+
+# Randomized Single QFT With Inverted Fourier Partition
+# Imports
+import logging, json
+from math import gcd
+import numpy as np
+from qiskit import QuantumCircuit, QuantumRegister, ClassicalRegister, transpile
+from qiskit.circuit.library import UnitaryGate, QFT
+from qiskit_ibm_runtime import QiskitRuntimeService, SamplerV2
+import pandas as pd
+
+# IBMQ
+TOKEN = ""
+INSTANCE = ""
+BACKEND  = "ibm_fez"
+CAL_CSV  = "/Users/steventippeconnic/Downloads/ibm_fez_calibrations_2025-11-30T21_33_34Z.csv"
+SHOTS    = 16384
+
+# Group parameter
+ORDER = 32
+
+# Logging
+logging.basicConfig(level=logging.INFO,
+                    format="%(asctime)s | %(levelname)s | %(message)s")
+log = logging.getLogger(__name__)
+
+# Calibration-based qubit pick
+def best_qubits(csv_path: str, n: int) -> list[int]:
+    df = pd.read_csv(csv_path)
+    df.columns = df.columns.str.strip()
+    winners = (
+        df.sort_values(["√x (sx) error", "T1 (us)", "T2 (us)"],
+                       ascending=[True, False, False])
+          ["Qubit"].head(n).tolist()
+    )
+    log.info("Best physical qubits: %s", winners)
+    return winners
+
+N_Q = 5
+N_Q_TOTAL = N_Q * 3
+PHYSICAL = best_qubits(CAL_CSV, N_Q_TOTAL)
+
+rng = np.random.default_rng(999)
+
+# Build SINGLE-QFT noise circuit with random partition
+def dual_random_qft_noise_circuit() -> QuantumCircuit:
+    a = QuantumRegister(N_Q, "a")
+    b = QuantumRegister(N_Q, "b")
+    p = QuantumRegister(N_Q, "p")
+    c = ClassicalRegister(N_Q * 2, "c")
+    qc = QuantumCircuit(a, b, p, c, name="DualRandomQFT_Noise")
+
+    # Unordered global superposition
+    qc.h(a)
+    qc.h(b)
+
+    # Combine a+b into one 10-qubit pool
+    ab_qubits = list(a) + list(b)
+    rng.shuffle(ab_qubits)
+
+    # Split into two random halves
+    half1 = ab_qubits[:5]
+    half2 = ab_qubits[5:]
+
+    log.info(f"Random QFT partitions: half1={half1}, half2={half2}")
+
+    # Apply QFT to ONLY the first half (single QFT variant)
+    qc.append(QFT(len(half1), do_swaps=False), half1)
+
+    qc.barrier()
+
+    # Measure original a,b layout
+    qc.measure(a, c[:N_Q])
+    qc.measure(b, c[N_Q:])
+
+    return qc
+
+# IBM Runtime
+service = QiskitRuntimeService(
+    channel="ibm_cloud",
+    token=TOKEN,
+    instance=INSTANCE
+)
+backend = service.backend(BACKEND)
+log.info("Backend → %s", backend.name)
+
+qc_raw = dual_random_qft_noise_circuit()
+trans = transpile(
+    qc_raw,
+    backend=backend,
+    initial_layout=PHYSICAL,
+    optimization_level=3
+)
+log.info("Circuit depth %d, gate counts %s", trans.depth(), trans.count_ops())
+
+sampler = SamplerV2(mode=backend)
+job = sampler.run([trans], shots=SHOTS)
+result = job.result()
+
+# Post-processing
+creg_name = trans.cregs[0].name
+counts_raw = result[0].data.__getattribute__(creg_name).get_counts()
+
+def bits_to_int(bs):
+    return int(bs[::-1], 2)
+
+# Map bitstrings → (a,b)
+counts = {(bits_to_int(k[N_Q:]), bits_to_int(k[:N_Q])): v
+          for k, v in counts_raw.items()}
+top = sorted(counts.items(), key=lambda kv: kv[1], reverse=True)
+
+top_invertibles = []
+for (a_val, b_val), freq in top:
+    if gcd(b_val, ORDER) != 1:
+        continue
+    inv_b = pow(b_val, -1, ORDER)
+    k_candidate = (-a_val * inv_b) % ORDER
+    top_invertibles.append(((a_val, b_val), k_candidate, freq))
+    if len(top_invertibles) >= 100:
+        break
+
+print("\nDual-QFT Random Partition Noise — top invertible b-values:\n")
+for (a, b), k, count in top_invertibles:
+    print(f"  (a={a:2}, b={b:2})  →  k = {k:2}   (count = {count})")
+
+# Save raw data
+out = {
+    "experiment": "DualQFT_random_partition_noise",
+    "backend": backend.name,
+    "physical_qubits": PHYSICAL,
+    "shots": SHOTS,
+    "counts": counts_raw
+}
+JSON_PATH = "/Users/steventippeconnic/Documents/QC/Shor_style_ECC_5_Bit_Key_Noise_Baseline_Scramble_IF_Single_QFT_0.json"
+with open(JSON_PATH, "w") as fp:
+    json.dump(out, fp, indent=4)
+
+log.info("Results saved → %s", JSON_PATH)
+
+# End
+
+/////////////////////////////////////////////////////////////
+
+# Real Oracle and single 10-Qubit QFT
+# Imports
+import logging, json
+from math import gcd
+import numpy as np
+from qiskit import QuantumCircuit, QuantumRegister, ClassicalRegister, transpile
+from qiskit.circuit.library import UnitaryGate, QFT
+from qiskit_ibm_runtime import QiskitRuntimeService, SamplerV2
+import pandas as pd
+
+# IBMQ
+TOKEN = ""
+INSTANCE = ""
+BACKEND = "ibm_fez"
+CAL_CSV = "/Users/steventippeconnic/Downloads/ibm_fez_calibrations_2025-11-30T23_33_22Z.csv"
+SHOTS   = 16384
+
+# Toy-curve parameters  (order-32 subgroup of E(F_p))
+ORDER = 32  # |E(F_p)| = 32
+P_IDX = 1   # Generator P  -> index 1
+Q_IDX = 23  # Public point Q = kP, here “23 mod 32” for k = 7
+
+# Logging helper
+logging.basicConfig(level=logging.INFO,
+                    format="%(asctime)s | %(levelname)s | %(message)s")
+log = logging.getLogger(__name__)
+
+# Calibration-based qubit pick
+def best_qubits(csv_path: str, n: int) -> list[int]:
+    df = pd.read_csv(csv_path)
+    df.columns = df.columns.str.strip()
+    winners = (
+        df.sort_values(["√x (sx) error", "T1 (us)", "T2 (us)"],
+                       ascending=[True, False, False])
+        ["Qubit"].head(n).tolist()
+    )
+    log.info("Best physical qubits: %s", winners)
+    return winners
+
+N_Q = 5
+N_Q_TOTAL = N_Q * 3  # a, b, point
+PHYSICAL = best_qubits(CAL_CSV, N_Q_TOTAL)
+
+# Constant-adder modulo 32 as a reusable gate
+def add_const_mod32_gate(c: int) -> UnitaryGate:
+    """Return a 5-qubit gate that maps |x⟩ ↦ |x+c (mod 32)⟩."""
+    mat = np.zeros((32, 32))
+    for x in range(32):
+        mat[(x + c) % 32, x] = 1
+    return UnitaryGate(mat, label=f"+{c}")
+
+ADDERS = {c: add_const_mod32_gate(c) for c in range(1, 32)}
+
+def controlled_add(qc: QuantumCircuit, ctrl_qubit, point_reg, constant):
+    """Apply |x⟩ → |x+constant (mod 32)⟩ controlled by one qubit."""
+    qc.append(ADDERS[constant].control(), [ctrl_qubit, *point_reg])
+
+# Oracle  U_f : |a⟩|b⟩|0⟩ ⟶ |a⟩|b⟩|aP + bQ⟩   (index arithmetic mod 32)
+def ecdlp_oracle(qc, a_reg, b_reg, point_reg):
+    # a * P contribution
+    for i in range(N_Q):
+        constant = (P_IDX * (1 << i)) % ORDER
+        if constant:
+            controlled_add(qc, a_reg[i], point_reg, constant)
+
+    # b * Q contribution
+    for i in range(N_Q):
+        constant = (Q_IDX * (1 << i)) % ORDER
+        if constant:
+            controlled_add(qc, b_reg[i], point_reg, constant)
+
+# Build the Shor circuit variant with a single 10-qubit QFT on a∪b
+def shor_ecdlp_single_qft_circuit() -> QuantumCircuit:
+    a = QuantumRegister(N_Q, "a")
+    b = QuantumRegister(N_Q, "b")
+    p = QuantumRegister(N_Q, "p")
+    c = ClassicalRegister(N_Q * 2, "c")
+    qc = QuantumCircuit(a, b, p, c, name="ECDLP_32pts_singleQFT")
+
+    # Same uniform superposition on a,b
+    qc.h(a)
+    qc.h(b)
+
+    # Same real aP + bQ oracle
+    ecdlp_oracle(qc, a, b, p)
+    qc.barrier()
+
+    # Single 10-qubit QFT across a ∪ b instead of two 5-qubit QFTs 
+    ab_qubits = list(a) + list(b)
+    qc.append(QFT(len(ab_qubits), do_swaps=False), ab_qubits)
+
+    # Measure a and b into classical bits 
+    qc.measure(a, c[:N_Q])
+    qc.measure(b, c[N_Q:])
+
+    return qc
+
+# IBM Runtime execution
+service = QiskitRuntimeService(channel="ibm_cloud",
+                               token=TOKEN,
+                               instance=INSTANCE)
+backend = service.backend(BACKEND)
+log.info("Backend → %s", backend.name)
+
+qc_raw = shor_ecdlp_single_qft_circuit()
+trans = transpile(qc_raw,
+                  backend=backend,
+                  initial_layout=PHYSICAL,
+                  optimization_level=3)
+log.info("Circuit depth %d, gate counts %s", trans.depth(), trans.count_ops())
+
+sampler = SamplerV2(mode=backend)
+job = sampler.run([trans], shots=SHOTS)
+result = job.result()
+
+# Classical post-processing
+creg_name = trans.cregs[0].name
+counts_raw = result[0].data.__getattribute__(creg_name).get_counts()
+
+def bits_to_int(bs):
+    return int(bs[::-1], 2)
+
+# Map measurement bitstrings into (a, b) grid exactly as in the paper
+counts = {(bits_to_int(k[N_Q:]), bits_to_int(k[:N_Q])): v
+          for k, v in counts_raw.items()}
+top = sorted(counts.items(), key=lambda kv: kv[1], reverse=True)
+
+print("\nSingle-QFT real-oracle run — top 100 (a, b) bins:\n")
+for i, ((a_val, b_val), freq) in enumerate(top[:100], start=1):
+    print(f"{i:3d}: (a={a_val:2}, b={b_val:2})   count = {freq}")
+
+# Save raw data for Three.js / heatmaps
+out = {
+    "experiment": "ECDLP_32pts_Shors_singleQFT",
+    "backend": backend.name,
+    "physical_qubits": PHYSICAL,
+    "shots": SHOTS,
+    "P_IDX": P_IDX,
+    "Q_IDX": Q_IDX,
+    "ORDER": ORDER,
+    "counts": counts_raw
+}
+JSON_PATH = "/Users/steventippeconnic/Documents/QC/Shors_ECC_5_Bit_SingleQFT_RealOracle_0.json"
+with open(JSON_PATH, "w") as fp:
+    json.dump(out, fp, indent=4)
+
+log.info("Results saved → %s", JSON_PATH)
 
 # End
 
