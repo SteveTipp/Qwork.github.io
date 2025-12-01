@@ -553,7 +553,10 @@ for (a_val, b_val), freq in top:
     if len(top_invertibles) == 100:
         break
 
-print("\nPhase-scrambled QFT noise baseline — recovered k candidates from top 100 invertible (a, b) pairs:\n")
+print(
+    "\nPhase-scrambled QFT noise baseline — recovered k candidates "
+    "from top 100 invertible (a, b) pairs:\n"
+)
 for (a, b), k, count in top_invertibles:
     print(f"  (a={a:2}, b={b:2})  →  k = {k:2}   (count = {count})")
 
