@@ -22,9 +22,6 @@
         0
     ],
     "shots": 8192,
-    "k_found": 2,
-    "ridge_fidelity": 0.117431640625,
-    "success_rate": 0,
     "counts": {
         "001001": 0,
         "110101": 0,
