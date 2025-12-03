@@ -76,6 +76,15 @@
     <div class="visual-title">5-Bit Interference Wave - Upload Your Own JSON</div>
 
     <div id="upload-ui">
+    <button id="reset-btn" style="
+        background:#000;
+        color:#0f0;
+        border:1px solid #0f0;
+        padding:4px 10px;
+        cursor:pointer;
+    ">
+        Reset
+    </button>
         <label for="data-source">Data:</label>
         <select id="data-source">
             <option value="default">Empty JSON (5_Bit_Empty.json)</option>
@@ -175,6 +184,18 @@ const dataSelect = document.getElementById('data-source');
 const fileInput  = document.getElementById('json-upload');
 const statusEl   = document.getElementById('status-text');
 const visualBox  = document.getElementById('visual-1');
+const resetBtn = document.getElementById('reset-btn');
+
+resetBtn.addEventListener('click', () => {
+    dataSelect.value = 'default';
+    statusEl.textContent = ' (resetting to default...)';
+    loadJsonFromUrl('5_Bit_Empty.json')
+        .then(json => applyCounts(json.counts))
+        .catch(err => {
+            console.error(err);
+            statusEl.textContent = ' (error loading default)';
+        });
+});
 
 // Data loading helpers 
 async function loadJsonFromUrl(url){
