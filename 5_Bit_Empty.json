@@ -1,9 +1,6 @@
 {
     "experiment": "ECDLP8_Shor_Twistor",
     "backend": "ibm_torino",
-    "twistor": true,
-    "idle_dt": 2048,
-    "dt_seconds": 4e-09,
     "physical_qubits": [
         0,
         0,
