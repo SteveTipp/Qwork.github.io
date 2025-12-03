@@ -376,9 +376,17 @@ function animate(){
 // UI wiring 
 dataSelect.addEventListener('change', () => {
     if (dataSelect.value === 'upload') {
-        fileInput.click();
+        // Show the file picker so the user can tap it (so it works on mobile)
+        fileInput.style.display = 'inline-block';
+        statusEl.textContent = ' (tap to choose a JSON file)';
+        return;
+    } else {
+        // Hide the file input when not in upload mode
+        fileInput.style.display = 'none';
+        fileInput.value = '';
+    }
 
-    } else if (dataSelect.value === 'default') {
+    if (dataSelect.value === 'default') {
         statusEl.textContent = ' (loading default...)';
         loadJsonFromUrl('5_Bit_Empty.json')
             .then(json => applyCounts(json.counts))
@@ -397,6 +405,7 @@ dataSelect.addEventListener('change', () => {
             });
     }
 });
+
 
 
 fileInput.addEventListener('change', () => {
