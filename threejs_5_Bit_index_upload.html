@@ -1,0 +1,399 @@
+
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Qwork</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="QWORK" content="Explore groundbreaking experiments in quantum mechanics and computing.">
+    <meta property="og:title" content="QWORK - Quantum Computing"/>
+    <meta property="og:description" content="Dive into the world of quantum computing.">
+    <meta property="og:image" content="QImage4.png"/>
+    <meta property="og:url" content="qubits.work"/>
+    <meta property="og:type" content="website"/>
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="Qwork - Quantum Computing">
+    <meta name="twitter:description" content="Dive into the world of quantum computing.">
+    <meta name="twitter:image" content="QImage4.png">
+
+    <style>
+        body{background:#000;color:#fff;font-family:Arial,sans-serif;margin:0;padding:0}
+        header{background:url('QImage4.png') no-repeat center/contain;height:400px}
+        nav{display:flex;justify-content:center;padding:10px 0}
+        nav a{color:#fff;margin:0 20px;text-decoration:none;font-size:1.2em}
+        nav a:hover{color:#0f0}
+        .experiments-list{display:flex;flex-direction:column;align-items:center;padding:20px}
+        .visual-title{font-size:1.4em;color:#0f0;margin:40px 0 10px;text-align:center}
+        .visual-box,iframe.visual-frame{width:90%;max-width:800px;aspect-ratio:4/3;margin:0 auto 40px;border:2px solid #0f0;background:#000}
+        canvas{width:100%;height:100%;display:block}
+        footer{color:#fff;text-align:center;padding:20px 0}
+        footer a{color:#fff;text-decoration:none}
+        footer a:hover{color:#0f0}
+        @media(max-width:450px){
+            header{height:200px}
+            .visual-box,iframe.visual-frame{aspect-ratio:1/1}
+        }
+        /* Upload UI */
+        #upload-ui{
+            width:90%;
+            max-width:800px;
+            margin:0 auto 10px;
+            font-size:0.9em;
+            display:flex;
+            flex-wrap:wrap;
+            align-items:center;
+            gap:8px;
+        }
+        #upload-ui label{
+            margin-right:8px;
+        }
+        #upload-ui select{
+            background:#000;
+            color:#0f0;
+            border:1px solid #0f0;
+            padding:4px 8px;
+        }
+        #status-text{
+            color:#0f0;
+            margin-left:4px;
+        }
+    </style>
+</head>
+<body>
+
+<header></header>
+
+<nav>
+    <a href="try_yourself.html">Try</a>
+    <a href="index.html">Experiments</a>
+    <a href="visuals.html">Waves</a>
+    <a href="about.html">About</a>
+</nav>
+
+<section class="experiments-list">
+
+    <!------- VISUAL BLOCKS ------->
+
+    <div class="visual-title">5-Bit Interference Wave - Upload Your Own JSON</div>
+
+    <div id="upload-ui">
+        <label for="data-source">Data:</label>
+        <select id="data-source">
+            <option value="default">Built-in 5_Bit_Empty.json</option>
+            <option value="upload">Upload JSON…</option>
+        </select>
+        <input type="file" id="json-upload" accept="application/json" style="display:none">
+        <span id="status-text"></span>
+    </div>
+
+    <div id="visual-1" class="visual-box"></div>
+
+</section>
+
+<footer>
+    <a href="mailto:stevetippeconnic@gmail.com">Contact</a><br>
+    <a href="https://x.com/SteveTipp">Follow Me</a>
+</footer>
+
+<!-- Three.js & OrbitControls -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.js"></script>
+
+<!-- Canvas redirect so Three.js canvas lives inside #visual-1 -->
+<script>
+const originalAppend = document.body.appendChild;
+document.body.appendChild = function (el){
+    if(el instanceof HTMLCanvasElement){
+        const box = document.getElementById('visual-1');
+        box.appendChild(el);
+        Object.assign(el.style,{position:'absolute',top:0,left:0,width:'100%',height:'100%'});
+        Object.assign(box.style,{position:'relative',overflow:'hidden'});
+    }else{
+        originalAppend.call(document.body,el);
+    }
+};
+</script>
+
+<!-- Lazy-load, pause, resume, and fully unload iframes (safe even if none exist) -->
+<script>
+function activate(frame){
+    if(frame.dataset.active==='true') return;
+
+    frame.dataset.active='pending';
+
+    frame.addEventListener('load',function onload(){
+        frame.removeEventListener('load',onload);
+        frame.dataset.active='true';
+        frame.contentWindow?.postMessage({action:'resume'},'*');
+    });
+
+    frame.src = frame.dataset.src;
+}
+
+function deactivate(frame){
+    if(frame.dataset.active!=='true') return;
+    frame.contentWindow?.postMessage({action:'pause'},'*');
+    frame.dataset.active='false';
+    frame.removeAttribute('src');
+}
+
+const io = new IntersectionObserver(entries=>{
+    entries.forEach(entry=>{
+        const frame = entry.target;
+        if(entry.isIntersecting){
+            activate(frame);
+        }else{
+            deactivate(frame);
+        }
+    });
+},{threshold:0.35});
+
+document.querySelectorAll('iframe.visual-frame').forEach(f=>io.observe(f));
+</script>
+
+<!-- 5-bit interference viewer with JSON upload -->
+<script>
+// Config 
+const HALF_BITS = 5;                 // 5 per axis
+const TOTAL_BITS = 2 * HALF_BITS;    // 10
+const GRID = 1 << HALF_BITS;         // 32
+const MOD = GRID;                    // 32
+
+// UI elements
+const dataSelect = document.getElementById('data-source');
+const fileInput  = document.getElementById('json-upload');
+const statusEl   = document.getElementById('status-text');
+const visualBox  = document.getElementById('visual-1');
+
+// Data loading helpers 
+async function loadJsonFromUrl(url){
+    const res = await fetch(url);
+    if(!res.ok){
+        throw new Error('Failed to load ' + url + ': ' + res.status);
+    }
+    return await res.json();
+}
+
+// Apply counts into the viewer
+function applyCounts(counts){
+    const entries = parseEntries(counts);
+    const built   = buildMatrix(entries);
+    const matrix  = built.matrix;
+    const maxCount= built.maxCount;
+
+    if(!mesh){
+        createWaveSurface(matrix, maxCount);
+        animate();
+    }else{
+        mesh.userData.matrix   = matrix;
+        mesh.userData.maxCount = maxCount;
+    }
+
+    statusEl.textContent = ' (data loaded)';
+}
+
+// Three.js setup 
+// Compute container-based size
+function getContainerSize(){
+    const rect = visualBox.getBoundingClientRect();
+    let w = rect.width  || window.innerWidth;
+    let h = rect.height || window.innerHeight;
+    return { width: w, height: h };
+}
+
+const size   = getContainerSize();
+const scene  = new THREE.Scene();
+const camera = new THREE.PerspectiveCamera(
+    75, size.width / size.height, 0.1, 1000
+);
+const renderer = new THREE.WebGLRenderer({ antialias:true });
+renderer.setSize(size.width, size.height);
+document.body.appendChild(renderer.domElement); // intercepted into #visual-1
+
+// Controls & lighting
+const controls = new THREE.OrbitControls(camera, renderer.domElement);
+const light    = new THREE.DirectionalLight(0xffffff, 1);
+light.position.set(10,10,10);
+scene.add(light);
+
+// Camera
+camera.position.set(0,30,60);
+camera.lookAt(0,0,0);
+
+// Globals
+let mesh;
+let redDots = [];
+let time = 0;
+
+// Helpers 
+const pad10 = s => s.padStart(TOTAL_BITS,'0').slice(-TOTAL_BITS);
+const rev   = s => s.split('').reverse().join('');
+
+// Parse into classical (a,b) and use those as display (u,v)
+function parseEntries(counts){
+    const entries = [];
+    for(const [bit,cRaw] of Object.entries(counts)){
+        const b10   = pad10(bit);
+        const left  = b10.slice(0, HALF_BITS);    // raw left 5
+        const right = b10.slice(HALF_BITS);       // raw right 5
+
+        const a = parseInt(rev(right), 2);
+        const b = parseInt(rev(left),  2);
+
+        const u = a;
+        const v = b;
+
+        entries.push({ bit, a, b, u, v, count:Number(cRaw) });
+    }
+    return entries;
+}
+
+function buildMatrix(entries){
+    const matrix = Array.from({length:GRID}, () => Array(GRID).fill(0));
+    let maxCount = 0;
+    for(const e of entries){
+        matrix[e.u][e.v] = e.count;
+        if(e.count > maxCount) maxCount = e.count;
+    }
+    return { matrix, maxCount };
+}
+
+// Build surface + dots
+function createWaveSurface(matrix, maxCount){
+    const WIDTH    = GRID * 2;
+    const SEGMENTS = WIDTH;
+    const STEP     = WIDTH / (GRID - 1);
+
+    const geometry = new THREE.PlaneGeometry(WIDTH, WIDTH, SEGMENTS, SEGMENTS);
+    const colors   = [];
+    const gridX    = SEGMENTS + 1;
+    const gridY    = SEGMENTS + 1;
+
+    for(let y=0; y<gridY; y++){
+        for(let x=0; x<gridX; x++){
+            const color = new THREE.Color(0x00ff00); // uniform green mesh
+            colors.push(color.r, color.g, color.b);
+        }
+    }
+
+    geometry.setAttribute('color', new THREE.Float32BufferAttribute(colors, 3));
+    const material = new THREE.MeshBasicMaterial({ vertexColors:true, wireframe:true });
+
+    mesh = new THREE.Mesh(geometry, material);
+    mesh.rotation.x = -Math.PI / 2;
+    mesh.userData   = { matrix, maxCount, GRID, STEP };
+    scene.add(mesh);
+
+    // Red dots at every (u,v)
+    const dotMat = new THREE.MeshBasicMaterial({ color:0xff0000 });
+    for(let v=0; v<GRID; v++){
+        for(let u=0; u<GRID; u++){
+            const dot = new THREE.Mesh(new THREE.SphereGeometry(0.15,8,8), dotMat);
+            dot.position.set(
+                (u - (GRID - 1)/2) * STEP,
+                0,
+                (v - (GRID - 1)/2) * STEP
+            );
+            redDots.push(dot);
+            scene.add(dot);
+        }
+    }
+}
+
+// Animate 
+function animate(){
+    requestAnimationFrame(animate);
+    time += 0.2;
+
+    if(!mesh){
+        renderer.render(scene, camera);
+        return;
+    }
+
+    const userData = mesh.userData;
+    const matrix   = userData.matrix;
+    const maxCount = userData.maxCount;
+
+    const pos   = mesh.geometry.attributes.position;
+    const gridX = mesh.geometry.parameters.widthSegments + 1;
+    const gridY = mesh.geometry.parameters.heightSegments + 1;
+
+    for(let i=0; i<pos.count; i++){
+        const x = i % gridX;
+        const y = Math.floor(i / gridX);
+        const u = Math.floor(x / (gridX / GRID));
+        const v = Math.floor(y / (gridY / GRID));
+        const amp  = matrix[u]?.[v] ? matrix[u][v] / maxCount : 0;
+        const wave = Math.sin((x + time) * 0.4) * Math.cos((y + time) * 0.4);
+        pos.setZ(i, amp * wave * 20);
+    }
+
+    // Move dots with amplitude
+    redDots.forEach((dot, idx) => {
+        const u = idx % GRID;
+        const v = Math.floor(idx / GRID);
+        const amp = matrix[u]?.[v] ? matrix[u][v] / maxCount : 0;
+        dot.position.y = amp * 20 + 0.5;
+    });
+
+    pos.needsUpdate = true;
+    controls.update();
+    renderer.render(scene, camera);
+}
+
+// UI wiring 
+dataSelect.addEventListener('change', () => {
+    if(dataSelect.value === 'upload'){
+        fileInput.click();
+    }else if(dataSelect.value === 'default'){
+        statusEl.textContent = ' (loading default...)';
+        loadJsonFromUrl('5_Bit_Empty.json')
+            .then(json => applyCounts(json.counts))
+            .catch(err => {
+                console.error(err);
+                statusEl.textContent = ' (error loading default)';
+            });
+    }
+});
+
+fileInput.addEventListener('change', () => {
+    const file = fileInput.files[0];
+    if(!file) return;
+
+    const reader = new FileReader();
+    reader.onload = e => {
+        try{
+            const json = JSON.parse(e.target.result);
+            if(!json.counts || typeof json.counts !== 'object'){
+                throw new Error('JSON must have a "counts" object');
+            }
+            applyCounts(json.counts);
+            statusEl.textContent = ' (loaded: ' + file.name + ')';
+        }catch(err){
+            console.error(err);
+            alert('Invalid JSON format for this viewer: ' + err.message);
+            statusEl.textContent = ' (load failed)';
+        }
+    };
+    reader.readAsText(file);
+});
+
+// Initial load
+statusEl.textContent = ' (loading default...)';
+loadJsonFromUrl('5_Bit_Empty.json')
+    .then(json => applyCounts(json.counts))
+    .catch(err => {
+        console.error(err);
+        statusEl.textContent = ' (error loading default)';
+    });
+
+// Resize handling
+window.addEventListener('resize', () => {
+    const s = getContainerSize();
+    camera.aspect = s.width / s.height;
+    camera.updateProjectionMatrix();
+    renderer.setSize(s.width, s.height);
+});
+</script>
+
+</body>
+</html>
