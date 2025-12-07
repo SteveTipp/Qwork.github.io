@@ -1,0 +1,573 @@
+
+
+
+
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Experiment 79 - Qwork</title>
+    <style>
+       body {
+            background-color: #000000; /* Black background */
+            color: #FFFFFF; /* White text */
+            font-family: Arial, sans-serif; /* Modern, sans-serif font */
+            margin: 0;
+            padding: 0;
+            width: fit-content;
+            margin-left: auto;
+            margin-right: auto;
+            text-align: center;
+            
+        } 
+        header {
+            background: url('QImage4.png') no-repeat center center;
+            background-size: contain; /* Ensure the image is fully contained within the header */
+            height: 400px; /* Height as per the resized image */
+            position: relative;
+        }
+        nav {
+            display: flex;
+            justify-content: center;
+            padding: 10px 0;
+        }
+        nav a {
+            color: #FFFFFF; /* White links */
+            margin: 0 20px;
+            text-decoration: none;
+            font-size: 1.2em;
+        }
+        nav a:hover {
+            color: #00FF00; /* Matrix green for hover state */
+        }
+        .content-section {
+            padding: 20px;
+            text-align: left;
+        }
+        .content-block {
+            margin: 10px auto;
+            padding: 10px;
+            border: 1px solid #00FF00; /* Matrix green border */
+        }
+        .experiment-image {
+            width: 1200px; /* Updated width */
+            height: auto; /* Updated height */
+            margin: 20px auto;
+            display: block;
+        }
+        .experiment-image2 {
+            width: 1200px; /* Updated width */
+            height: auto; /* Updated height */
+            margin: 20px auto;
+            display: block;
+        }
+         .experiment-image3 {
+            width: 1200px; /* Updated width */
+            height: auto; /* Updated height */
+            margin: 20px auto;
+            display: block;
+        }
+        .experiment-image4 {
+            width: 1200px; /* Updated width */
+            height: auto; /* Updated height */
+            margin: 20px auto;
+            display: block;
+        }
+       
+        footer {
+            color: #FFFFFF; /* White text */
+            text-align: center;
+            padding: 20px 0;
+        }
+        footer a {
+            color: #FFFFFF;
+            text-decoration: none;
+        }
+        footer a:hover {
+            color: #00FF00; /* Matrix green on hover */
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <!-- Header with the resized image -->
+    </header>
+
+   <nav>
+        <a href="try_yourself.html">Try</a>
+        <a href="index.html">Experiments</a>
+	    <a href="visuals.html">Waves</a>
+        <a href="about.html">About</a>
+    </nav>
+
+    <section class="content-section">
+        <h1><center> Geometric Noise Cancellation of a 5-Bit arXiv Run via Classical Distribution Subtraction  </center></h1>
+        <div class="content-block">        
+This experiment uses a classical post-processing layer that sits on top of two IBM quantum experiments, my 5-bit arXiv result and a 5-bit noise-variant. The method rescales the noise run to the same shot budget as the signal, subtracts it at the level of expected counts, discards negative contributions, renormalizes the surviving structure, and then re-quantizes the result using the Largest Remainder Method. The outcome is a new histogram over 10-bit strings in which the interference geometry has been cleaned of as much empirically measured noise as possible.
+<br>
+<br> 			
+Code Walkthrough
+<br>        
+<p>1. Setup and Notation <br>
+Work with two completed IBM quantum experiments over the same measurement space:<br>
+A signal experiment (the actual 5-bit arXiv result JSON).<br>
+A noise-template (a 5-bit noise-variant).<br>
+Each experiment measures bitstrings b of fixed length (10 bits).<br>
+From the signal JSON we extract:<br>
+A count map:<br>
+c_sig(b) ∈ N_0<br>
+giving the number of shots that collapsed into bitstring b.<br>
+A total number of shots:<br>
+N_sig = ∑_b c_sig(b).<br>
+From the noise JSON we extract:<br>
+A count map:<br>
+c_noise(b) ∈ N_0<br>
+for the noise-dominated run.<br>
+A total number of shots:<br>
+N_noise = ∑_b c_noise(b).<br>
+Define the joint outcome space as the union of all bitstrings that appear in either run:<br>
+S = {b ∣ c_sig(b) > 0} ∪ {b ∣ c_noise(b) > 0}.<br>
+Every subsequent step is defined on this set S.<br>
+Also introduce a noise-subtraction strength parameter:<br>
+α ≥ 0,<br>
+where α = 1 represents full subtraction of the noise template, and other values can be used to under- or over-subtract by design.<br>
+<br>
+
+<p>2. Rescaling the Noise to the Signal Shot Budget<br>
+The key idea is that the noise run, and the signal run may have different shot counts. We want to interpret the noise template as 'what the noise would look like if it had been collected with N_sig shots', so that subtraction has a clean physical meaning. <br>
+Define a shot rescaling factor:<br>
+scale = N_sig/N_noise.<br>
+For each bitstring b ∈ S, define:<br>
+The expected signal counts (which are just the observed counts):<br>
+E_sig(b) = c_sig(b).<br>
+The expected noise counts at the signal shot budget, scaled and weighted by α:<br>
+E_noise(b) = α * scale * c_noise(b) = α * N_sig/N_noise * c_noise(b).<br>
+Thus, if the two runs had equal shots and α = 1, this reduces to subtracting counts directly. When the shots differ, the rescaling keeps the interpretation 'subtract the expected noise you would have seen in N_sig shots'.<br>
+
+<br>
+
+<p>3. Constructing the Expected Difference Distribution<br>
+For each bitstring b ∈ S, form the expected difference in counts:<br>
+E_diff(b) = E_sig(b) - E_noise(b) = c_sig(b) - α * N_sig/N_noise * c_noise(b).<br>
+This is a real-valued quantity. Some bins will be positive (signal-dominated), some near zero (noise-matched), and some negative (noise-dominated).<br>
+Then apply a small numerical threshold ε > 0 to avoid floating-point edge cases and to discard bins that are effectively zero:<br>
+If E_diff(b) > ε, keep it.<br>
+If E_diff(b) ≤ ε, treat it as zero and drop it from the positive support.<br>
+Define the positive expected set:<br>
+S_+ = {b ∈ S ∣ E_diff(b) > ε}.<br>
+On this set we define:<br>
+E_pos(b) = E_diff(b), b ∈ S_+.<br>
+If S_+ is empty or the total positive mass is effectively zero, treat that as a pathological situation where the subtraction has cancelled everything, in that case, fall back to the original signal counts c_sig(b) rather than outputting a meaningless all-zero distribution.<br>
+
+<br>
+
+
+<p>4. Normalizing to a Probability-Like Distribution<br>
+Assuming a nontrivial positive mass on S_+, compute the total positive expected count:<br>
+T = ∑_(b∈S_+) E_pos(b).<br>
+Then define a probability-like distribution q(b) over S_+:<br>
+q(b) = (E_pos(b))/T, b ∈ S_+.<br>
+By construction:<br>
+∑_(b∈S_+) q(b) = 1.<br>
+This q(b) is not directly observed probability from hardware, it is a derived distribution that represents the noise-subtracted, renormalized interference pattern inferred from the two runs.<br>
+
+<br>
+
+
+
+<p>5. Ideal Real-Valued Counts at the Signal Shot Budget<br>
+We now want to return to an object that looks like a backend histogram: integer counts that sum to exactly N_sig. <br>
+The ideal real-valued counts compatible with q(b) and shot budget N_sig are:<br>
+r(b) = q(b) * N_sig, b ∈ S_+.<br>
+Each r(b) is a real number that tells you how many counts this bin would receive on average if you drew N_sig samples from the ideal noise-subtracted distribution.<br>
+Then decompose each r(b) into an integer and a fractional part:<br>
+Integer part:<br>
+n_int(b) = ⌊r(b)⌋ (or equivalently, int(r(b))).<br>
+Fractional part:<br>
+f(b) = r(b) - n_int(b), 0 ≤ f(b) < 1.<br>
+Also compute the initial integer sum:<br>
+N_int = ∑_(b∈S_+) n_int(b).<br>
+In general, N_int will be less than or equal to N_sig, since taking floors throws away fractional contributions.<br>
+Define the remaining shot budget:<br>
+R = N_sig - N_int.<br>
+By construction, R is a nonnegative integer (in typical usage with floors), it measures how many more '+1' increments there are to distribute across bins to restore the total to N_sig.<br>
+
+<br>
+  
+<p>6. Largest Remainder Method (Hamilton Apportionment) <br>
+To preserve the relative weights as faithfully as possible, use the Largest Remainder Method (also known as Hamilton apportionment):<br>
+First, list all b ∈ S_+ together with their fractional parts f(b).<br>
+Sort them in descending order of f(b):<br>
+f(b_1) ≥ f(b_2) ≥ ⋯ ≥ f(b_(∣S_+∣)).<br>
+Starting from i = 1 up to i = R, add one extra count to the i-th bitstring:<br>
+n_final(b_i) = n_int(b_i) + 1 for i = 1, …, R,<br>
+and<br>
+n_final(b) = n_int(b) for all other b ∈ S_+.<br>
+After this allocation:<br>
+∑_(b∈S_+) n_final(b) = N_int + R = N_sig.<br>
+This method ensures that:<br>
+Bins with larger fractional surplus f(b) are more likely to get the extra counts.<br>
+The tail structure is preserved as closely as possible to the continuous distribution q(b).<br>
+We avoid the bias introduced by repeatedly perturbing only the largest bins.<br>
+Finally, for completeness, extend this to all of S by defining:<br>
+c_clean(b) = <br>
+{ n_final(b), b ∈ S_+,<br>
+  0,                 b ∈ S ∖ S_+.<br>
+So c_clean(b) is the integer-valued, noise-suppressed histogram over the same outcome space as the original experiments.<br>
+
+<br>
+
+<p>7. Conceptual Interpretation <br>                       
+Viewed conceptually, the procedure does the following:<br> 
+Treats the signal run as 'signal + hardware noise'.<br> 
+Treats the noise template run as a direct empirical probe of “hardware noise” alone.<br> 
+Rescales the noise template to match the signal’s shot budget so that subtraction is physically meaningful.<br> 
+Subtracts the scaled noise from the signal at the level of expected counts, not raw probabilities, so that α has the clear meaning, 'fraction of the expected noise to remove'.<br> 
+Discards any bins where noise overwhelms the signal (negative differences).<br> 
+Renormalizes the surviving structure into a proper distribution and re-quantizes it into integer counts using a mathematically clean apportionment method.<br> 
+The resulting histogram c_clean(b) can be fed into my <a href="https://stevetipp.github.io/Qwork.github.io/threejs_5_Bit_index_upload.html">Threejs 3D interferometric renderer</a>.<br> 
+
+<br>  
+  
+0. arXiv 5-bit Run
+<br> 
+<a href="https://arxiv.org/abs/2507.10592">5-bit arXiv Paper Link</a>
+<br> 
+<br>
+  <br>
+  <img src="5_Bit_arXiv_Paper_Image.png" alt="" class="experiment-image">
+        <p></p>
+        <div class="content-block">
+<br>
+<a href="https://stevetipp.github.io/Qwork.github.io/experiment78.html">IBM Noise Variants</a>
+<br>
+
+<p><center> Results:</center><br>
+<br>
+<br>
+<a href="https://stevetipp.github.io/Qwork.github.io/experiment78.html">IBM Noise Variants Used</a>
+<br>
+<br>
+<a href="https://github.com/SteveTipp/Qwork.github.io/blob/main/5_Bit_arXiv_Noise_Cancellation_JSON_Dataset.zip">Download Full JSON Dataset (ZIP)</a>
+<br>
+<br>
+1. No-QFT Pure Hardware Noise (Baseline Run) Subtracted from arXiv Run
+<br>
+  <br>
+  <img src="Shor_style_ECC_5_Bit_NoQFT_Noise_0_Cancel Image.png" alt="" class="experiment-image">
+        <p></p>
+       
+<br>
+<br>
+<br>
+  <br>
+  <img src="Shor_style_ECC_5_Bit_NoQFT_Noise_0_Cancel SS.png" alt="" class="experiment-image">
+        <p></p>
+       
+<br>
+384 bitstrings survive after cancellation (out of 1024 possible).<br>
+Subtracting the pure hardware baseline flattens almost everything and leaves one extraordinarily clear dominant lane. This is very good at removing raw device bias and readout drift, but because the noise variant never saw a QFT, it doesn’t model QFT-induced imperfections. The result is that the strongest lane survives, but the other three are over-suppressed, so it’s an excellent 'global denoiser', slightly too aggressive on the weaker spectral modes.<br>
+<br>
+<br>
+ <div class="content-block">
+2. Dual QFTs, No Structure (Fully Scrambled Registers) Subtracted from arXiv Run
+<br>
+  <br>
+  <img src="Shor_style_ECC_5_Bit_QFT_Scrambled_Noise_0_Cancel Image.png" alt="" class="experiment-image">
+        <p></p>
+       
+<br>
+<br>
+  <br>
+  <img src="Shor_style_ECC_5_Bit_QFT_Scrambled_Noise_0_Cancel SS.png" alt="" class="experiment-image">
+        <p></p>
+       
+<br>
+680 bitstrings survive after cancellation (out of 1024 possible).<br>
+Mixing with this noise variant leaves a visible grid, low lane floor, and notably diffused ridges. The QFT envelope is right, but the scrambling introduces cross-axis correlations that don’t exist in the real oracle run, so this subtraction injects as much structured deformation as it removes. You still see the oracle ridge, but it’s surrounded by too much 'Fourier texture', so the cancellation is only moderate. <br>
+<br>
+<br>
+ <div class="content-block">
+3. Randomized QFTs With Inverted Fourier Partition Subtracted from arXiv Run
+<br>
+  <br>
+  <img src="Shor_style_ECC_5_Bit_DualQFT_Random_Noise_0_Cancel Image.png" alt="" class="experiment-image">
+        <p></p>
+        
+<br>
+<br>
+  <br>
+  <img src="Shor_style_ECC_5_Bit_DualQFT_Random_Noise_0_Cancel SS.png" alt="" class="experiment-image">
+        <p></p>
+        
+<br>
+<br>
+821 bitstrings survive after cancellation (out of 1021 possible).<br>
+Here the subtraction lowers the overall noise floor and calms the big chaotic spikes, but you still see a tessellated grid and muted four-lane structure. This means the noise variant partially matches the QFT hardware behavior but with the wrong partition, so some structured noise cancels while other components remain as faint vertical and horizontal bands. Better than a random noise template, but not as clean as some of the others.<br>
+<br>
+<br>
+<div class="content-block">
+4. Single QFT, No Structure (Fully Scrambled Registers) Subtracted from arXiv Run (Best Noise Cancellation)
+<br>
+  <br>
+  <img src="Shor_style_ECC_5_Bit_QFT_Scrambled_1QFT_Noise_0_Cancel Image.png" alt="" class="experiment-image">
+        <p></p>
+        
+<br>
+<br>
+  <br>
+  <img src="Shor_style_ECC_5_Bit_QFT_Scrambled_1QFT_Noise_0_Cancel SS.png" alt="" class="experiment-image">
+        <p></p>
+        
+<br>
+<br>
+562 bitstrings survive after cancellation (out of 1024 possible).<br>
+This one gives the cleanest four-lane picture, the lane centers are almost silent, the off-lane regions are low, and the four vertical corridors are very clearly separated. That means the noise variant has the same QFT envelope as the real circuit but no oracle structure, so subtracting it removes 'QFT-shaped hardware bias' while leaving the oracle-driven phase slope. Matching the optical bench but turning off the grating, ideal as a noise model and possibly the best noise canceler of the structures tested.<br>
+<br>
+<br>
+<div class="content-block">
+5. Random Partition QFT (One transform only, no oracle) Subtracted from arXiv Run
+<br>
+  <br>
+  <img src="Shor_style_ECC_5_Bit_Key_Noise_Baseline_Scramble_IF_Single_QFT_0_Cancel Image.png" alt="" class="experiment-image">
+        <p></p>
+        
+<br>
+<br>
+  <br>
+  <img src="Shor_style_ECC_5_Bit_Key_Noise_Baseline_Scramble_IF_Single_QFT_0_Cancel SS.png" alt="" class="experiment-image">
+        <p></p>
+        
+<br>
+<br>
+854 bitstrings survive after cancellation (out of 1023 possible).<br>
+This leaves the lanes present but messy, lots of short vertical bar segments and uneven right-side structure. Because the QFT acts on only a subspace, the noise varient doesn’t represent the full Hilbert-space noise of the real circuit. When you subtract it, some local artifacts are reduced, but global coherence is fractured, so the result looks granular rather than cleanly denoised.<br>
+<br>
+<br>
+<div class="content-block">
+6. Real Oracle and single 10-Qubit QFT Subtracted from arXiv Run
+<br>
+  <br>
+  <img src="Shors_ECC_5_Bit_SingleQFT_RealOracle_0_Cancel Image.png" alt="" class="experiment-image">
+        <p></p>
+        
+<br>
+<br>
+  <br>
+  <img src="Shors_ECC_5_Bit_SingleQFT_RealOracle_0_Cancel SS.png" alt="" class="experiment-image">
+        <p></p>
+        
+<br>
+<br>
+428 bitstrings survive after cancellation (out of 1024 possible).<br>
+This noise variant still carries a real oracle signal. Subtracting it suppresses the shared structure and lowers the noise floor, revealing what remains. The primary left-most interference lane stays coherent, but the remaining lanes begin to fragment and blend into a more turbulent central region.
+<br>
+<br>
+<div class="content-block">
+The number of surviving bitstrings after subtraction is a direct proxy for the fidelity of noise suppression. Noise variants with this cancellation that leave ~800 - 850 bitstrings after clipping and renormalisation are necessarily retaining hundreds of noise-dominated states, manifesting as residual haze, grid artifacts, and diffused ridges. In contrast, the single-QFT scrambled-register template drives the support down to 562 outcomes (and the pure No-QFT baseline to ~384), meaning >60% of the 1024-dimensional space is rigorously forced to zero. This aggressive background rejection, while preserving the full four-lane geometry, shows that this noise variant matches the dominant hardware error channels the best, enabling the subtraction to excise incoherent and semi-coherent noise without contaminating the genuine interference structure. 
+<br>
+<br>
+In the end, this experiment mixed my arXiv 5-bit interference result with six independently executed IBM noise-variant runs, from pure hardware drift, to scrambled dual-QFT environments, to inverted partitioning, to single-QFT phase disorder, to an oracle-bearing one-QFT configuration. The goal was to see which physical noise landscape best subtracts backend bias while preserving the true interference signature. The result shows that noise cancellation is geometric, it only succeeds when the noise run shares the same computational envelope but lacks the phase relation. Among all variants, the Single-QFT scrambled run produced the cleanest cancellation, keeping the ridge architecture but suppressing incoherent background, with the pure hardware baseline coming second by flattening device drift and leaving the dominant lane intact. Taken together, the results show that backend noise can be treated not as something to eliminate blindly, but as something to sculpt, revealing signal through subtraction.
+<br>
+
+
+
+
+
+
+  <p>Code:<br>
+        <p><pre><code>
+#Imports
+import json
+from pathlib import Path
+from typing import Dict, Any
+
+# Paths 
+ARXIV_JSON_PATH = Path(
+    "/Users/steventippeconnic/Documents/QC/Shors_ECC_5_Bit_Key_0.json"
+)
+
+NOISE_JSON_PATH = Path(
+    "/Users/steventippeconnic/Documents/QC/Shor_style_ECC_5_Bit_QFT_Scrambled_1QFT_Noise_0.json"
+)
+
+OUT_JSON_PATH = Path(
+    "/Users/steventippeconnic/Documents/QC/Shor_style_ECC_5_Bit_QFT_Scrambled_1QFT_Noise_0_Cancel.json"
+)
+
+# Subtraction strength - 1.0 = full noise template subtraction
+ALPHA = 1.0
+
+# Noise Cancellation Logic
+def load_result(path: Path) -> Dict[str, Any]:
+    """Load a JSON result and normalize shots to int."""
+    with path.open("r") as f:
+        data = json.load(f)
+
+    shots = data.get("shots")
+
+    # If JSON stores shots as str normalize
+    if isinstance(shots, str):
+        shots = shots.strip()
+        shots = int(shots)
+    else:
+        shots = int(shots)
+
+    data["shots"] = shots
+    return data
+
+
+def noise_cancel_counts(
+    key_data: Dict[str, Any],
+    noise_data: Dict[str, Any],
+    alpha: float = 1.0,
+    eps: float = 1e-12,
+) -> Dict[str, int]:
+    """
+    Produces a noise-suppressed count dictionary using:
+        p̃(b) ∝ max( p_sig(b) − α · p_noise(b) , 0 )
+    but implemented in the expected-count domain to handle unequal shots.
+
+    Then:
+      Compute expected "signal - rescaled noise" counts.
+      Discard negative bins.
+      Renormalize and re-quantize to exactly key_shots using Largest Remainder.
+    """
+    key_counts: Dict[str, int] = key_data["counts"]
+    noise_counts: Dict[str, int] = noise_data["counts"]
+
+    key_shots = int(key_data["shots"])
+    noise_shots = int(noise_data["shots"])
+
+    all_bitstrings = set(key_counts.keys()) | set(noise_counts.keys())
+
+    # Work in expected-count space so alpha has a clean meaning:
+    # expected_sig(b)   = c_sig(b)
+    # expected_noise(b) = alpha * (key_shots / noise_shots) * c_noise(b)
+    # c_diff(b)         = expected_sig(b) - expected_noise(b)
+    # If key_shots == noise_shots, this reduces to c_sig - alpha * c_noise.
+    positive_expected: Dict[str, float] = {}
+
+    if noise_shots == 0:
+        # Degenerate case, just return the original signal
+        return dict(key_counts)
+
+    scale_factor = key_shots / noise_shots  # <-- IMPORTANT: key_shots / noise_shots
+
+    for b in all_bitstrings:
+        c_sig = key_counts.get(b, 0)
+        c_noise = noise_counts.get(b, 0)
+
+        expected_diff = c_sig - alpha * scale_factor * c_noise
+
+        if expected_diff > eps:  # keep tiny positive values
+            positive_expected[b] = expected_diff
+
+    # Pathological case: everything cancelled -> fall back to original signal
+    if not positive_expected:
+        print("Warning: Complete cancellation detected - falling back to signal counts.")
+        return dict(key_counts)
+
+    total_positive = sum(positive_expected.values())
+
+    if total_positive <= eps:
+        print("Warning: Total positive mass vanished - falling back to signal counts.")
+        return dict(key_counts)
+
+    # Largest Remainder Method (Hamilton apportionment)
+    clean_counts: Dict[str, int] = {}
+    fractional_parts: Dict[str, float] = {}
+
+    for b, exp_val in positive_expected.items():
+        contribution = exp_val / total_positive * key_shots
+        integer_part = int(contribution)
+        clean_counts[b] = integer_part
+        fractional_parts[b] = contribution - integer_part
+
+    # Distribute remaining shots to bins with largest fractional parts
+    remaining = key_shots - sum(clean_counts.values())
+
+    if remaining != 0:
+        sorted_by_frac = sorted(
+            fractional_parts,
+            key=fractional_parts.get,
+            reverse=True,
+        )
+        L = len(sorted_by_frac)
+        for i in range(abs(remaining)):
+            b = sorted_by_frac[i % L]
+            if remaining > 0:
+                clean_counts[b] += 1
+            else:
+                if clean_counts[b] > 0:
+                    clean_counts[b] -= 1
+
+    # Ensure every bitstring that ever appeared is in the output (with 0 if needed)
+    for b in all_bitstrings:
+        clean_counts.setdefault(b, 0)
+
+    # Final sanity check
+    final_total = sum(clean_counts.values())
+    if final_total != key_shots:
+        print(
+            f"Warning: final_total={final_total} != key_shots={key_shots}; "
+            "small discrepancy due to rounding."
+        )
+
+    return clean_counts
+
+def main():
+    print("Loading signal (key-breaking) run...")
+    key_data = load_result(ARXIV_JSON_PATH)
+    print(f"   → {key_data.get('experiment', 'unknown')} | {key_data['shots']} shots")
+
+    print("Loading noise template run...")
+    noise_data = load_result(NOISE_JSON_PATH)
+    print(f"   → {noise_data.get('experiment', 'unknown')} | {noise_data['shots']} shots")
+
+    print(f"\nPerforming noise cancellation (α = {ALPHA})...")
+    clean_counts = noise_cancel_counts(key_data, noise_data, alpha=ALPHA)
+
+    populated = sum(1 for v in clean_counts.values() if v > 0)
+    print(
+        f"Done! {populated} bitstrings survive after cancellation "
+        f"(out of {len(clean_counts)} possible)."
+    )
+
+    # Build output JSON - preserve metadata from the original cryptographic run
+    output = {
+        "experiment": f"{key_data.get('experiment', 'Shors_ECC_5_Bit_Key_0')}_noise_cancelled",
+        "backend": key_data.get("backend"),
+        "physical_qubits": key_data.get("physical_qubits"),
+        "shots": key_data["shots"],
+        "counts": clean_counts,
+    }
+
+    # Save result
+    OUT_JSON_PATH.parent.mkdir(parents=True, exist_ok=True)
+    with OUT_JSON_PATH.open("w") as f:
+        json.dump(output, f, indent=2)
+
+    print(f"\nNoise-cancelled result saved to:")
+    print(f"   {OUT_JSON_PATH.resolve()}")
+
+if __name__ == "__main__":
+    main()
+
+# End
+
+
+
+
+<br>
+
+  
+
+    <footer>
+        <!-- Footer content -->
+        <a href="mailto:stevetippeconnic@gmail.com">Contact</a>
+        <a href="https://x.com/SteveTipp">Follow Me</a> 
+    </footer>
+
+</body>
+</html>
