@@ -51,6 +51,74 @@
     <!------- VISUAL BLOCKS ------->
 
 
+ <div class="visual-title"><a href="https://stevetipp.github.io/Qwork.github.io/experiment79.html" target="_blank" style="color:#0f0;text-decoration:none">No-QFT Pure Hardware Noise (Baseline Run) Subtracted from arXiv Run </a></div>
+    <iframe class="visual-frame" data-src="Threejs_35.html" frameborder="0" loading="lazy"></iframe>
+
+<div style="color:#0f0; text-align:center; max-width:800px; margin:20px auto; font-family:sans-serif; line-height:1.5;">
+384 bitstrings survive after cancellation (out of 1024 possible).<br>
+Subtracting the pure hardware baseline flattens almost everything and leaves one extraordinarily clear dominant lane. This is very good at removing raw device bias and readout drift, but because the noise variant never saw a QFT, it doesn’t model QFT-induced imperfections. The result is that the strongest lane survives, but the other three are over-suppressed, so it’s an excellent 'global denoiser', slightly too aggressive on the weaker spectral modes.<br>
+
+
+
+
+<div class="visual-title"><a href="https://stevetipp.github.io/Qwork.github.io/experiment79.html" target="_blank" style="color:#0f0;text-decoration:none">Dual QFTs, No Structure (Fully Scrambled Registers) Subtracted from arXiv Run</a></div>
+    <iframe class="visual-frame" data-src="Threejs_36.html" frameborder="0" loading="lazy"></iframe>
+
+<div style="color:#0f0; text-align:center; max-width:800px; margin:20px auto; font-family:sans-serif; line-height:1.5;">
+680 bitstrings survive after cancellation (out of 1024 possible).<br>
+Mixing with this noise variant leaves a visible grid, low lane floor, and notably diffused ridges. The QFT envelope is right, but the scrambling introduces cross-axis correlations that don’t exist in the real oracle run, so this subtraction injects as much structured deformation as it removes. You still see the oracle ridge, but it’s surrounded by too much 'Fourier texture', so the cancellation is only moderate. <br>
+
+
+
+	
+	 <div class="visual-title"><a href="https://stevetipp.github.io/Qwork.github.io/experiment79.html" target="_blank" style="color:#0f0;text-decoration:none">Randomized QFTs With Inverted Fourier Partition Subtracted from arXiv Run</a></div>
+    <iframe class="visual-frame" data-src="Threejs_37.html" frameborder="0" loading="lazy"></iframe>
+
+<div style="color:#0f0; text-align:center; max-width:800px; margin:20px auto; font-family:sans-serif; line-height:1.5;">
+821 bitstrings survive after cancellation (out of 1021 possible).<br>
+Here the subtraction lowers the overall noise floor and calms the big chaotic spikes, but you still see a tessellated grid and muted four-lane structure. This means the noise variant partially matches the QFT hardware behavior but with the wrong partition, so some structured noise cancels while other components remain as faint vertical and horizontal bands. Better than a random noise template, but not as clean as some of the others.<br>
+
+
+	
+
+ <div class="visual-title"><a href="https://stevetipp.github.io/Qwork.github.io/experiment79.html" target="_blank" style="color:#0f0;text-decoration:none">Single QFT, No Structure (Fully Scrambled Registers) Subtracted from arXiv Run (Best Noise Cancellation)</a></div>
+    <iframe class="visual-frame" data-src="Threejs_38.html" frameborder="0" loading="lazy"></iframe>
+
+<div style="color:#0f0; text-align:center; max-width:800px; margin:20px auto; font-family:sans-serif; line-height:1.5;">
+562 bitstrings survive after cancellation (out of 1024 possible).<br>
+This one gives the cleanest four-lane picture, the lane centers are almost silent, the off-lane regions are low, and the four vertical corridors are very clearly separated. That means the noise variant has the same QFT envelope as the real circuit but no oracle structure, so subtracting it removes 'QFT-shaped hardware bias' while leaving the oracle-driven phase slope. Matching the optical bench but turning off the grating, ideal as a noise model and possibly the best noise canceler of the structures tested.<br>
+
+	
+
+	
+
+<div class="visual-title"><a href="https://stevetipp.github.io/Qwork.github.io/experiment79.html" target="_blank" style="color:#0f0;text-decoration:none">Random Partition QFT (One transform only, no oracle) Subtracted from arXiv Run </a></div>
+    <iframe class="visual-frame" data-src="Threejs_39.html" frameborder="0" loading="lazy"></iframe>
+
+<div style="color:#0f0; text-align:center; max-width:800px; margin:20px auto; font-family:sans-serif; line-height:1.5;">
+854 bitstrings survive after cancellation (out of 1023 possible).<br>
+This leaves the lanes present but messy, lots of short vertical bar segments and uneven right-side structure. Because the QFT acts on only a subspace, the noise varient doesn’t represent the full Hilbert-space noise of the real circuit. When you subtract it, some local artifacts are reduced, but global coherence is fractured, so the result looks granular rather than cleanly denoised.<br>
+
+	
+
+	
+
+ <div class="visual-title"><a href="https://stevetipp.github.io/Qwork.github.io/experiment79.html" target="_blank" style="color:#0f0;text-decoration:none">Real Oracle and single 10-Qubit QFT Subtracted from arXiv Run </a></div>
+    <iframe class="visual-frame" data-src="Threejs_40.html" frameborder="0" loading="lazy"></iframe>
+
+<div style="color:#0f0; text-align:center; max-width:800px; margin:20px auto; font-family:sans-serif; line-height:1.5;">
+428 bitstrings survive after cancellation (out of 1024 possible).<br>
+This noise variant still carries a real oracle signal. Subtracting it suppresses the shared structure and lowers the noise floor, revealing what remains. The primary left-most interference lane stays coherent, but the remaining lanes begin to fragment and blend into a more turbulent central region.<br>
+	
+
+
+ 
+	
+
+
+
+
+
     <div class="visual-title"><a href="https://stevetipp.github.io/Qwork.github.io/experiment78.html" target="_blank" style="color:#0f0;text-decoration:none">Full arXiv-paper oracle under a single QFT </a></div>
     <iframe class="visual-frame" data-src="Threejs_34.html" frameborder="0" loading="lazy"></iframe>
 
