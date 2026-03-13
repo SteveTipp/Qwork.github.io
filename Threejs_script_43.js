@@ -5,7 +5,7 @@ const HALF_BITS = 5;                 // 5 per axis
 const TOTAL_BITS = 2 * HALF_BITS;    // 10
 const GRID = 1 << HALF_BITS;         // 32
 const MOD = GRID;                    // 32
-const MAX_WAVE_HEIGHT = 20;          // same height scale used in animation
+const MAX_WAVE_HEIGHT = 20;          
 const PANEL_K = 7;
 const TOP_POINTS_PER_PANEL = 8;
 const PANEL_SIZE = 24;
@@ -24,15 +24,37 @@ async function loadQuantumData() {
 // Three.js setup
 const scene    = new THREE.Scene();
 const camera   = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
-const renderer = new THREE.WebGLRenderer({ antialias: true });
+const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: false });
 renderer.setSize(window.innerWidth, window.innerHeight);
+renderer.outputColorSpace = THREE.SRGBColorSpace;
+renderer.toneMappingExposure = 1.9;
 document.body.appendChild(renderer.domElement);
 
 // Controls & lighting
 const controls = new THREE.OrbitControls(camera, renderer.domElement);
-const light = new THREE.DirectionalLight(0xffffff, 1);
-light.position.set(10, 10, 10);
-scene.add(light);
+
+const ambientLight = new THREE.AmbientLight(0xffffff, 2.25);
+scene.add(ambientLight);
+
+const hemiLight = new THREE.HemisphereLight(0xffffff, 0x506070, 1.9);
+hemiLight.position.set(0, 30, 0);
+scene.add(hemiLight);
+
+const keyLight = new THREE.DirectionalLight(0xffffff, 2.2);
+keyLight.position.set(10, 16, 12);
+scene.add(keyLight);
+
+const fillLight = new THREE.DirectionalLight(0xffffff, 1.6);
+fillLight.position.set(-12, 10, 8);
+scene.add(fillLight);
+
+const rimLight = new THREE.PointLight(0xffffff, 1.8, 140);
+rimLight.position.set(0, 20, -10);
+scene.add(rimLight);
+
+const frontLight = new THREE.PointLight(0xffffff, 1.35, 160);
+frontLight.position.set(0, 12, 22);
+scene.add(frontLight);
 
 // Camera
 camera.position.set(0, 18, 30);
@@ -44,13 +66,42 @@ controls.update();
 let mesh;
 let redDots = [];
 let whiteDots = [];
+let whiteGlows = [];
 let time = 0;
 
 // Helpers
 const pad10 = s => s.padStart(TOTAL_BITS, '0').slice(-TOTAL_BITS);
 
+function makeGlowTexture() {
+  const size = 128;
+  const canvas = document.createElement('canvas');
+  canvas.width = size;
+  canvas.height = size;
+
+  const ctx = canvas.getContext('2d');
+  const g = ctx.createRadialGradient(
+    size / 2, size / 2, 0,
+    size / 2, size / 2, size / 2
+  );
+
+  g.addColorStop(0.0, 'rgba(255,255,255,1.0)');
+  g.addColorStop(0.22, 'rgba(255,255,255,0.95)');
+  g.addColorStop(0.45, 'rgba(255,255,255,0.45)');
+  g.addColorStop(0.72, 'rgba(255,255,255,0.12)');
+  g.addColorStop(1.0, 'rgba(255,255,255,0.0)');
+
+  ctx.fillStyle = g;
+  ctx.fillRect(0, 0, size, size);
+
+  const texture = new THREE.CanvasTexture(canvas);
+  texture.needsUpdate = true;
+  return texture;
+}
+
+const glowTexture = makeGlowTexture();
+
 // Parse into classical (a,b) and use those as display (u,v)
-// Codex Reanalysis mapping:
+// Codex reanalysis mapping:
 // split into left/right 5-bit halves
 // swap halves
 // no bit reversal
@@ -134,11 +185,11 @@ function weightedExactLineScore(gridProbs, k) {
 
 function colorFromValue(value, vmin, vmax) {
   const stops = [
-    [0.0, [8, 6, 70]],
-    [0.28, [20, 24, 130]],
-    [0.52, [28, 90, 80]],
-    [0.75, [0, 170, 70]],
-    [1.0, [0, 255, 65]],
+    [0.0, [18, 16, 110]],
+    [0.28, [40, 56, 190]],
+    [0.52, [40, 145, 120]],
+    [0.75, [30, 220, 95]],
+    [1.0, [90, 255, 120]],
   ];
 
   let t = 0;
@@ -229,7 +280,7 @@ function createWaveSurface(smoothed, ridgeMeta) {
 
   // Red dots for all grid points
   const redDotGeo = new THREE.SphereGeometry(0.055, 6, 6);
-  const redDotMat = new THREE.MeshBasicMaterial({ color: 0xff0000 });
+  const redDotMat = new THREE.MeshBasicMaterial({ color: 0xff3a3a });
 
   for (let a = 0; a < GRID; a++) {
     for (let b = 0; b < GRID; b++) {
@@ -251,18 +302,35 @@ function createWaveSurface(smoothed, ridgeMeta) {
   const whiteDotGeo = new THREE.SphereGeometry(0.07, 8, 8);
   const whiteDotMat = new THREE.MeshBasicMaterial({ color: 0xffffff });
 
-  for (const [a, b] of ridgeMeta.ridge) {
-    const dot = new THREE.Mesh(whiteDotGeo, whiteDotMat);
+  // Soft glow sprites for the white ridge points
+  const glowMatBase = new THREE.SpriteMaterial({
+    map: glowTexture,
+    color: 0xffffff,
+    transparent: true,
+    opacity: 1.0,
+    depthWrite: false,
+    depthTest: true,
+    blending: THREE.AdditiveBlending
+  });
 
+  for (const [a, b] of ridgeMeta.ridge) {
     const x = ((b / (GRID - 1)) - 0.5) * PANEL_SIZE;
     const z = ((a / (GRID - 1)) - 0.5) * PANEL_SIZE;
     const baseY = (smoothed[a][b] / safeMax) * MAX_WAVE_HEIGHT;
 
+    const dot = new THREE.Mesh(whiteDotGeo, whiteDotMat);
     dot.position.set(x, baseY, z);
     dot.userData = { a, b, baseY };
-
     whiteDots.push(dot);
     scene.add(dot);
+
+    const glowMat = glowMatBase.clone();
+    const glow = new THREE.Sprite(glowMat);
+    glow.position.set(x, baseY, z);
+    glow.scale.set(0.72, 0.72, 0.72);
+    glow.userData = { a, b, baseY };
+    whiteGlows.push(glow);
+    scene.add(glow);
   }
 }
 
@@ -316,6 +384,22 @@ function animate() {
       Math.cos(a * FLOW_FREQ_Y + time * 0.85);
 
     dot.position.y = baseY + flow * FLOW_STRENGTH * MAX_WAVE_HEIGHT * localAmp;
+  });
+
+  // Keep glow sprites on the flowing surface with a small pulse
+  whiteGlows.forEach((glow, idx) => {
+    const { a, b, baseY } = glow.userData;
+    const localAmp = baseY / MAX_WAVE_HEIGHT;
+
+    const flow =
+      Math.sin(b * FLOW_FREQ_X + time) *
+      Math.cos(a * FLOW_FREQ_Y + time * 0.85);
+
+    glow.position.y = baseY + flow * FLOW_STRENGTH * MAX_WAVE_HEIGHT * localAmp;
+
+    const pulse = 1.0 + 0.1 * Math.sin(time * 5.0 + idx * 0.35);
+    glow.scale.set(0.72 * pulse, 0.72 * pulse, 0.72 * pulse);
+    glow.material.opacity = 0.95 + 0.05 * Math.sin(time * 4.0 + idx * 0.21);
   });
 
   pos.needsUpdate = true;
