@@ -1,0 +1,154 @@
+
+
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Experiment 81 - Qwork</title>
+    <style>
+       body {
+            background-color: #000000; /* Black background */
+            color: #FFFFFF; /* White text */
+            font-family: Arial, sans-serif; /* Modern, sans-serif font */
+            margin: 0;
+            padding: 0;
+            width: fit-content;
+            margin-left: auto;
+            margin-right: auto;
+            text-align: center;
+            
+        } 
+        header {
+            background: url('QImage4.png') no-repeat center center;
+            background-size: contain; /* Ensure the image is fully contained within the header */
+            height: 400px; /* Height as per the resized image */
+            position: relative;
+        }
+        nav {
+            display: flex;
+            justify-content: center;
+            padding: 10px 0;
+        }
+        nav a {
+            color: #FFFFFF; /* White links */
+            margin: 0 20px;
+            text-decoration: none;
+            font-size: 1.2em;
+        }
+        nav a:hover {
+            color: #00FF00; /* Matrix green for hover state */
+        }
+        .content-section {
+            padding: 20px;
+            text-align: left;
+        }
+        .content-block {
+            margin: 10px auto;
+            padding: 10px;
+            border: 1px solid #00FF00; /* Matrix green border */
+        }
+        .experiment-image {
+            width: 1200px; /* Updated width */
+            height: auto; /* Updated height */
+            margin: 20px auto;
+            display: block;
+        }
+        .experiment-image2 {
+            width: 1200px; /* Updated width */
+            height: auto; /* Updated height */
+            margin: 20px auto;
+            display: block;
+        }
+         .experiment-image3 {
+            width: 1200px; /* Updated width */
+            height: auto; /* Updated height */
+            margin: 20px auto;
+            display: block;
+        }
+        .experiment-image4 {
+            width: 1200px; /* Updated width */
+            height: auto; /* Updated height */
+            margin: 20px auto;
+            display: block;
+        }
+       
+        footer {
+            color: #FFFFFF; /* White text */
+            text-align: center;
+            padding: 20px 0;
+        }
+        footer a {
+            color: #FFFFFF;
+            text-decoration: none;
+        }
+        footer a:hover {
+            color: #00FF00; /* Matrix green on hover */
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <!-- Header with the resized image -->
+    </header>
+
+   <nav>
+        <a href="try_yourself.html">Try</a>
+        <a href="index.html">Experiments</a>
+	    <a href="visuals.html">Waves</a>
+        <a href="about.html">About</a>
+    </nav>
+
+    <section class="content-section">
+        <h1><center> Codex Re-Analysis of the Interference Pattern from My IBM Quantum 6-Bit ECC Key Experiment  </center></h1>
+        <div class="content-block">
+         
+I wanted to use Codex to re-analyze the fixed 6-bit result from my IBM Quantum experiment in the same way I did my arXiv 5-bit paper's result. The goal was to keep the backend data fixed, improve the readout of the interference structure, and see whether a better analysis pipeline could recover more information from the measured distribution itself. I set this up as an analysis-only workflow around the existing JSON result, with Codex restricted to improving the post-processing rather than touching any circuit code or changing the experiment.<br> 
+
+<br>
+  <img src="method6_heatmap_ridge_overlays.png" alt="" class="experiment-image">
+        <p></p>
+        <div class="content-block">
+<br>
+
+The first major jump came when Codex stopped treating the full grid as the only view and tested parity sectors directly. That identified the even-odd sector as the strongest sectoral view of the 6-bit result. From there, a sparse top-point capped-weight score improved the parity-sector result further, and the strongest overall result came from Method 6: a row-centered positive residual on top of the capped even-odd sector. In that mode, k = 42 improved to rank 3 in the single-run analysis, with a much stronger separation statistic than the full-grid baseline. Across 500 bootstrap replicates, the same pipeline gave a mean true rank of about 11.49, a top-3 rate of 14.2%, a top-5 rate of 24.6%, and a mean z-separation of about 1.1788. That suggests the k = 42 structure is a persistent feature of the measured distribution.
+<br>
+<br>
+The next question was what was beating it. Early in the search, false competitors like k = 32 looked tied to simple symmetry structure in the 64-point modular grid, especially half-modulus effects and row-concentrated patterns. That is why later post-processing began to focus less on generic smoothing and more on targeted suppression of structured bias. Null-model normalization was informative because it did suppress the row-concentrated false competitor k = 32, but it also degraded the standing of k = 42, so it was not promoted. The better result came from a milder strategy: preserve the even-odd sector, keep the capped weighted ridge score, then subtract row-centered bias only enough to suppress the dominant structured pattern without destroying the true-key signal. That is what pushed the 6-bit result from a weak ridge into a competitive one.
+<br>
+<br>
+The final top three candidate states in Method 6 were k = 40, k = 30, and k = 42, so the true key rose to rank 3 with only two false candidates still above it. A geometric comparison then showed that those two competitors do not substantially overlap the k = 42 ridge. Their exact ridge overlap with k = 42 is low, their active-support overlap on the final processed grid is zero, their ridge-intensity correlation with the true ridge is near zero and slightly negative, and neither shares any of the true ridge’s top contributing points. That suggests k = 40 and k = 30 are not nearby deformations of the true-key ridge, but different structured modes that still survive in the same interference field.
+<br>
+<br>
+In the end, the main thing I learned is that the fixed 6-bit result contains more recoverable structure than the original raw ridge score showed, but extracting it required a more selective lens than the 5-bit case. The current best-supported 6-bit post-analysis result is Method 6: the even-odd parity sector with toroidal 3 x 3 smoothing, capped-weight weighted exact-line ridge scoring, and a row-centered positive residual. In that mode, the true key leaves a much stronger and more persistent interference signature than the raw baseline suggested. I’m open sourcing the full analysis files, project, and note below.
+<br>
+<br>
+<br>
+<br>
+<a href="https://x.com/stevetipp/status/1962935033414746420">6-bit ECC Key Experiment</a> 
+<br>
+<br>
+<a href="https://github.com/SteveTipp/Qwork.github.io/blob/main/FIVE_BIT_INTERFERENCE_ANALYSIS_NOTE.md">Codex files</a> 
+<br>
+<br>
+<a href="https://arxiv.org/abs/2507.10592">Analysis note (SIX_BIT_INTERFERENCE_ANALYSIS_NOTE.md)</a> 
+<br>
+<br>
+<a href="https://arxiv.org/abs/2507.10592">Paper: arXiv:2507.10592 - Breaking a 5-Bit Elliptic Curve Key using a 133-Qubit Quantum Computer</a> 
+<br>
+<br>
+<a href="https://stevetipp.github.io/Qwork.github.io/experiment82.html">Codex Re-Analysis of the Interference Pattern from My 5-Bit ECC Key arXiv Paper</a> 
+<br>
+<br>
+
+            
+
+
+  
+
+    <footer>
+        <!-- Footer content -->
+        <a href="mailto:stevetippeconnic@gmail.com">Contact</a>
+    </footer>
+
+</body>
+</html>
