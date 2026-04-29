@@ -48,7 +48,57 @@
 
 <section class="experiments-list">
 
-    <!------- VISUAL BLOCKS ------->
+    <!------- VISUAL BLOCKS -------> 
+
+ <div class="visual-title"><a href="https://stevetipp.github.io/Qwork.github.io/experiment84.html" target="_blank" style="color:#0f0;text-decoration:none"> QFT on a Only, Real Oracle </a></div>
+    <iframe class="visual-frame" data-src="Threejs_45.html" frameborder="0" loading="lazy"></iframe>
+
+<div style="color:#0f0; text-align:center; max-width:800px; margin:20px auto; font-family:sans-serif; line-height:1.5;">
+The original 5-bit oracle is kept fully intact, with the modular relation a + bk still encoded through the point register, but after the barrier only register a is passed through a QFT while b is left in the computational basis and both are measured together. The result does not reproduce the paper’s four-lane hidden-slope interference structure and instead collapses into a row-dominated geometry, with the strongest probability concentrated in the low-b region, especially the non-invertible b = 0 row and the first invertible b = 1 row. The top raw peaks contain exactly one diagnostic k = 7 point, (a=25, b=1), which lies on the raised b = 1 row and satisfies k = −25 ≡ 7 (mod 32); this suggests the full oracle relation is still present as a narrow row-slice remnant, but the clean paper-style four-lane geometry requires both a and b to be transformed together in the dual-QFT readout.
+</div>
+
+	
+
+	 <div class="visual-title"><a href="https://stevetipp.github.io/Qwork.github.io/experiment84.html" target="_blank" style="color:#0f0;text-decoration:none"> QFT on b Only, Real Oracle </a></div>
+    <iframe class="visual-frame" data-src="Threejs_46.html" frameborder="0" loading="lazy"></iframe>
+
+<div style="color:#0f0; text-align:center; max-width:800px; margin:20px auto; font-family:sans-serif; line-height:1.5;">
+The original 5-bit oracle is kept fully intact, with the modular relation a + bk still encoded through the point register, but after the barrier only register b is passed through a QFT while a is left in the computational basis and both are measured together. The result does not reproduce the paper’s four-lane hidden-slope interference structure and instead collapses into a sharply one-sided geometry, with the strongest raw peaks concentrated almost entirely at a = 0 across many b values and a weaker secondary band near a = 16. The top raw peaks do not produce diagnostic k = 7; instead, the dominant invertible outcomes mostly give diagnostic k = 0 or k = 16, suggesting that the b-only Fourier projection amplifies axis-aligned register structure rather than the original a + 7b ≡ 0 (mod 32) relation.
+</div>
+
+
+		 <div class="visual-title"><a href="https://stevetipp.github.io/Qwork.github.io/experiment84.html" target="_blank" style="color:#0f0;text-decoration:none"> Half-Oracle aP Only, Dual QFTs </a></div>
+    <iframe class="visual-frame" data-src="Threejs_47.html" frameborder="0" loading="lazy"></iframe>
+
+<div style="color:#0f0; text-align:center; max-width:800px; margin:20px auto; font-family:sans-serif; line-height:1.5;">
+The original 5-bit circuit shell is kept intact, with both a and b placed into superposition and both passed through normal QFTs after the barrier, but the oracle is reduced to only the aP branch while the bQ branch is deliberately removed, breaking the mixed relation a + bk. The result does not reproduce the paper’s four-lane hidden-slope interference structure and instead forms a many-lane branch-only pattern with alternating tall and low wave regions across the surface. The top raw peaks do not produce diagnostic k = 7 and are dominated by non-invertible b-values, suggesting this is an aP-only modular interference pattern rather than the original a + 7b ≡ 0 (mod 32) geometry.
+</div>
+
+
+
+			 <div class="visual-title"><a href="https://stevetipp.github.io/Qwork.github.io/experiment84.html" target="_blank" style="color:#0f0;text-decoration:none"> Half-Oracle bQ Only, Dual QFTs </a></div>
+    <iframe class="visual-frame" data-src="Threejs_48.html" frameborder="0" loading="lazy"></iframe>
+
+<div style="color:#0f0; text-align:center; max-width:800px; margin:20px auto; font-family:sans-serif; line-height:1.5;">
+The original 5-bit circuit shell is kept intact, with both a and b placed into superposition and both passed through normal QFTs after the barrier, but the oracle is reduced to only the bQ branch while the aP branch is deliberately removed, breaking the mixed relation a + bk. The result does not reproduce the paper’s four-lane hidden-slope interference structure and instead forms a many-lane branch-only pattern, with tall narrow ridges running in the transverse direction and lower wave regions spread between them. The top raw peaks do not produce diagnostic k = 7, instead clustering around branch-only diagnostic families such as k = 16, k = 8, and k = 24, suggesting this is a bQ-only modular interference pattern rather than the original a + 7b ≡ 0 (mod 32) geometry.
+</div>
+
+
+
+				 <div class="visual-title"><a href="https://stevetipp.github.io/Qwork.github.io/experiment84.html" target="_blank" style="color:#0f0;text-decoration:none"> Triple QFT, Real Oracle </a></div>
+    <iframe class="visual-frame" data-src="Threejs_49.html" frameborder="0" loading="lazy"></iframe>
+
+<div style="color:#0f0; text-align:center; max-width:800px; margin:20px auto; font-family:sans-serif; line-height:1.5;">
+The original 5-bit oracle is kept fully intact, with the modular relation a + bk still encoded through the point register, but after the barrier a separate QFT is applied not only to a and b, but also to p, and all 15 qubits are measured before reducing back to the (a,b) marginal. The result loses the original four-lane interference structure and instead spreads into a dense, corrugated wave surface with many local peaks, rough banding, and uneven clustered amplification, suggesting that the point-register Fourier readout disrupts the clean hidden-slope projection. The top raw (a,b) marginal peaks do not produce diagnostic k = 7, meaning the strongest amplified modes are no longer the same periodic points lifted by the paper’s normal oracle geometry; this supports the view that the distinctive four-lane structure depends on isolating the useful phase relation in a,b rather than transforming p as a co-equal Fourier register.
+</div>
+	
+
+	
+
+
+
+
+	
 
  <div class="visual-title"><a href="https://stevetipp.github.io/Qwork.github.io/experiment83.html" target="_blank" style="color:#0f0;text-decoration:none"> Codex Re-Analysis of the Interference Pattern from My IBM Quantum 6-Bit ECC Key Experiment </a></div>
     <iframe class="visual-frame" data-src="Threejs_44.html" frameborder="0" loading="lazy"></iframe>
