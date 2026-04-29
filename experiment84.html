@@ -1,0 +1,1525 @@
+
+
+
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Experiment 78 - Qwork</title>
+    <style>
+       body {
+            background-color: #000000; /* Black background */
+            color: #FFFFFF; /* White text */
+            font-family: Arial, sans-serif; /* Modern, sans-serif font */
+            margin: 0;
+            padding: 0;
+            width: fit-content;
+            margin-left: auto;
+            margin-right: auto;
+            text-align: center;
+            
+        } 
+        header {
+            background: url('QImage4.png') no-repeat center center;
+            background-size: contain; /* Ensure the image is fully contained within the header */
+            height: 400px; /* Height as per the resized image */
+            position: relative;
+        }
+        nav {
+            display: flex;
+            justify-content: center;
+            padding: 10px 0;
+        }
+        nav a {
+            color: #FFFFFF; /* White links */
+            margin: 0 20px;
+            text-decoration: none;
+            font-size: 1.2em;
+        }
+        nav a:hover {
+            color: #00FF00; /* Matrix green for hover state */
+        }
+        .content-section {
+            padding: 20px;
+            text-align: left;
+        }
+        .content-block {
+            margin: 10px auto;
+            padding: 10px;
+            border: 1px solid #00FF00; /* Matrix green border */
+        }
+        .experiment-image {
+            width: 1200px; /* Updated width */
+            height: auto; /* Updated height */
+            margin: 20px auto;
+            display: block;
+        }
+        .experiment-image2 {
+            width: 1200px; /* Updated width */
+            height: auto; /* Updated height */
+            margin: 20px auto;
+            display: block;
+        }
+         .experiment-image3 {
+            width: 1200px; /* Updated width */
+            height: auto; /* Updated height */
+            margin: 20px auto;
+            display: block;
+        }
+        .experiment-image4 {
+            width: 1200px; /* Updated width */
+            height: auto; /* Updated height */
+            margin: 20px auto;
+            display: block;
+        }
+       
+        footer {
+            color: #FFFFFF; /* White text */
+            text-align: center;
+            padding: 20px 0;
+        }
+        footer a {
+            color: #FFFFFF;
+            text-decoration: none;
+        }
+        footer a:hover {
+            color: #00FF00; /* Matrix green on hover */
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <!-- Header with the resized image -->
+    </header>
+
+   <nav>
+        <a href="try_yourself.html">Try</a>
+        <a href="index.html">Experiments</a>
+	    <a href="visuals.html">Waves</a>
+        <a href="about.html">About</a>
+    </nav>
+
+    <section class="content-section">
+        <h1><center> Wave Geometry Controls for my arXiv 5-Bit Circuit Part 3  </center></h1>
+        <div class="content-block">  
+<br>			
+<a href="https://github.com/SteveTipp/Qwork.github.io/blob/main/Wave_Geometry_Controls_for_my_arXiv_5_Bit_Circuit_Part_3.zip">All Data ZIP Download</a>
+<br>
+These new circuits continue oracle tests to my 5-bit arXiv circuit and test what happens when the original wave geometry is disturbed in controlled ways: by transforming only one logical register, removing one side of the oracle, or Fourier-transforming the point register. The goal is to test whether the four-lane interference pattern is a generic artifact, or whether it depends specifically on the full aP + bQ oracle, the paired QFT readout on a and b, and leaving the point register p out of the final Fourier measurement.<br>
+<a href="https://arxiv.org/abs/2507.10592">arXiv Link</a>
+<br>
+		
+<p>QFT on a Only, Real Oracle<br>
+The original 5-bit oracle is kept fully intact, with the modular relation a + bk still encoded through the point register, but after the barrier only register a is passed through a QFT while b is left in the computational basis and both are measured together. The result does not reproduce the paper’s four-lane hidden-slope interference structure and instead collapses into a row-dominated geometry, with the strongest probability concentrated in the low-b region, especially the non-invertible b = 0 row and the first invertible b = 1 row. The top raw peaks contain exactly one diagnostic k = 7 point, (a=25, b=1), which lies on the raised b = 1 row and satisfies k = −25 ≡ 7 (mod 32); this suggests the full oracle relation is still present as a narrow row-slice remnant, but the clean paper-style four-lane geometry requires both a and b to be transformed together in the dual-QFT readout.
+
+  <img src="Shors_ECC_5_Bit_QFT_A_Only_0 Run SS.png" alt="" class="experiment-image">
+        <p></p>
+        <div class="content-block">
+<br>
+
+<br>
+  <img src="Shors_ECC_5_Bit_QFT_A_Only_0 Backend SS.png" alt="" class="experiment-image">
+        <p></p>
+        <div class="content-block">
+<br>
+
+<br>
+  <img src="Shors_ECC_5_Bit_Key_QFT_a_only Wave SS.png" alt="" class="experiment-image">
+        <p></p>
+        <div class="content-block">
+<br>
+
+<p>QFT on b Only, Real Oracle<br>
+The original 5-bit oracle is kept fully intact, with the modular relation a + bk still encoded through the point register, but after the barrier only register b is passed through a QFT while a is left in the computational basis and both are measured together. The result does not reproduce the paper’s four-lane hidden-slope interference structure and instead collapses into a sharply one-sided geometry, with the strongest raw peaks concentrated almost entirely at a = 0 across many b values and a weaker secondary band near a = 16. The top raw peaks do not produce diagnostic k = 7; instead, the dominant invertible outcomes mostly give diagnostic k = 0 or k = 16, suggesting that the b-only Fourier projection amplifies axis-aligned register structure rather than the original a + 7b ≡ 0 (mod 32) relation.
+
+  <img src="Shors_ECC_5_Bit_QFT_B_Only_0 Run SS.png" alt="" class="experiment-image">
+        <p></p>
+        <div class="content-block">
+<br>
+
+<br>
+  <img src="Shors_ECC_5_Bit_Key_QFT_b_only Backend SS.png" alt="" class="experiment-image">
+        <p></p>
+        <div class="content-block">
+<br>
+
+
+<br>
+  <img src="Shors_ECC_5_Bit_QFT_B_Only_0 Wave SS.png" alt="" class="experiment-image">
+        <p></p>
+        <div class="content-block">
+<br>
+
+<p>Half-Oracle aP Only, Dual QFTs <br>
+The original 5-bit circuit shell is kept intact, with both a and b placed into superposition and both passed through normal QFTs after the barrier, but the oracle is reduced to only the aP branch while the bQ branch is deliberately removed, breaking the mixed relation a + bk. The result does not reproduce the paper’s four-lane hidden-slope interference structure and instead forms a many-lane branch-only pattern with alternating tall and low wave regions across the surface. The top raw peaks do not produce diagnostic k = 7 and are dominated by non-invertible b-values, suggesting this is an aP-only modular interference pattern rather than the original a + 7b ≡ 0 (mod 32) geometry.
+
+	<img src="Shors_ECC_5_Bit_Key_HalfOracle_aP_Only_0 SS.png" alt="" class="experiment-image">
+        <p></p>
+        <div class="content-block">
+<br>
+
+<br>
+  <img src="Shors_ECC_5_Bit_Key_HalfOracle_aP_Only_0 Backend SS.png" alt="" class="experiment-image">
+        <p></p>
+        <div class="content-block">
+<br>
+
+
+
+<br>
+  <img src="Shors_ECC_5_Bit_Key_half_oracle_aP_only Wave SS.png" alt="" class="experiment-image">
+        <p></p>
+        <div class="content-block">
+<br>
+
+
+
+
+
+<p>Half-Oracle bQ Only, Dual QFTs<br>
+The original 5-bit circuit shell is kept intact, with both a and b placed into superposition and both passed through normal QFTs after the barrier, but the oracle is reduced to only the bQ branch while the aP branch is deliberately removed, breaking the mixed relation a + bk. The result does not reproduce the paper’s four-lane hidden-slope interference structure and instead forms a many-lane branch-only pattern, with tall narrow ridges running in the transverse direction and lower wave regions spread between them. The top raw peaks do not produce diagnostic k = 7, instead clustering around branch-only diagnostic families such as k = 16, k = 8, and k = 24, suggesting this is a bQ-only modular interference pattern rather than the original a + 7b ≡ 0 (mod 32) geometry.
+	<img src="Shors_ECC_5_Bit_Key_HalfOracle_bQ_Only_0 SS.png" alt="" class="experiment-image">
+        <p></p>
+        <div class="content-block">
+<br>
+
+<br>
+  <img src="Shors_ECC_5_Bit_Key_HalfOracle_bQ_Only_0 Backend SS.png" alt="" class="experiment-image">
+        <p></p>
+        <div class="content-block">
+<br>
+
+
+
+<br>
+  <img src="Shors_ECC_5_Bit_Key_HalfOracle_bQ_Only_0 Wave SS.png" alt="" class="experiment-image">
+        <p></p>
+        <div class="content-block">
+<br>
+
+
+
+
+
+
+
+
+
+<p>Triple QFT, Real Oracle <br>
+The original 5-bit oracle is kept fully intact, with the modular relation a + bk still encoded through the point register, but after the barrier a separate QFT is applied not only to a and b, but also to p, and all 15 qubits are measured before reducing back to the (a,b) marginal. The result loses the original four-lane interference structure and instead spreads into a dense, corrugated wave surface with many local peaks, rough banding, and uneven clustered amplification, suggesting that the point-register Fourier readout disrupts the clean hidden-slope projection. The top raw (a,b) marginal peaks do not produce diagnostic k = 7, meaning the strongest amplified modes are no longer the same periodic points lifted by the paper’s normal oracle geometry; this supports the view that the distinctive four-lane structure depends on isolating the useful phase relation in a,b rather than transforming p as a co-equal Fourier register.
+	<img src="Shors_ECC_5_Bit_Triple_QFT_0 Run SS.png" alt="" class="experiment-image">
+        <p></p>
+        <div class="content-block">
+<br>
+
+<br>
+  <img src="Shors_ECC_5_Bit_Triple_QFT_0 Backend SS.png" alt="" class="experiment-image">
+        <p></p>
+        <div class="content-block">
+<br>
+
+
+
+<br>
+  <img src="Shors_ECC_5_Bit_Triple_QFT_0 Wave SS.png" alt="" class="experiment-image">
+        <p></p>
+        <div class="content-block">
+<br>
+
+
+<br>
+
+
+Across these five controls, the main lesson is that the paper’s four-lane interference geometry behaves like a specific coupled-oracle signature, not a generic artifact of hardware noise, QFT texture, or one modular-adder branch. When p is transformed in the Triple QFT test, the clean (a,b) projection dissolves; when only one logical register is Fourier-transformed, the geometry collapses into one-sided row or axis structure; and when only aP or only bQ is kept, each branch still produces organized wave lanes, but not the recoverable a + 7b ≡ 0 (mod 32) pattern. Taken together, the tests suggest that the original result depends on all three ingredients working together: the full aP + bQ oracle, aligned dual QFTs on a and b, and leaving the point register out of the Fourier readout so the hidden relation projects cleanly into the measured (a,b) plane.
+<br>
+All circuits were run on @IBM 156-qubit ibm_kingston backend (Heron r2). All circuits, calibration CSVs, raw results, backend data, and Three.js render code are open sourced on Qwork and GitHub. You can interact with these renders on the Waves page.
+<br>
+
+<br>
+
+  <p>Code:<br>
+        <p><pre><code>
+# QFT on a Only, Real Oracle
+# Imports
+import logging, json
+from math import gcd
+import numpy as np
+from qiskit import QuantumCircuit, QuantumRegister, ClassicalRegister, transpile
+from qiskit.circuit.library import UnitaryGate, QFT
+from qiskit_ibm_runtime import QiskitRuntimeService, SamplerV2
+import pandas as pd
+
+# IBMQ
+TOKEN = ""
+INSTANCE = ""
+BACKEND  = "ibm_kingston"
+CAL_CSV  = "/Users/steventippeconnic/Downloads/ibm_kingston_calibrations_2026-04-29T02_58_47Z.csv"
+SHOTS    = 16384
+
+# Toy-curve parameters  (order-32 subgroup of E(F_p))
+ORDER = 32  # |E(F_p)| = 32
+P_IDX = 1   # Generator P  -> index 1
+Q_IDX = 23  # Public point Q = kP, here “23 mod 32” for k = 7
+
+# Logging helper
+logging.basicConfig(level=logging.INFO,
+                    format="%(asctime)s | %(levelname)s | %(message)s")
+log = logging.getLogger(__name__)
+
+# Calibration-based qubit pick
+def best_qubits(csv_path: str, n: int) -> list[int]:
+    df = pd.read_csv(csv_path)
+    df.columns = df.columns.str.strip()
+    winners = (
+        df.sort_values(["√x (sx) error", "T1 (us)", "T2 (us)"],
+                       ascending=[True, False, False])
+        ["Qubit"].head(n).tolist()
+    )
+    log.info("Best physical qubits: %s", winners)
+    return winners
+
+N_Q = 5
+N_Q_TOTAL = N_Q * 3  # a, b, point
+PHYSICAL = best_qubits(CAL_CSV, N_Q_TOTAL)
+
+# Constant-adder modulo 32 as a reusable gate
+def add_const_mod32_gate(c: int) -> UnitaryGate:
+    """Return a 5-qubit gate that maps |x⟩ ↦ |x+c (mod 32)⟩."""
+    mat = np.zeros((32, 32))
+    for x in range(32):
+        mat[(x + c) % 32, x] = 1
+    return UnitaryGate(mat, label=f"+{c}")
+
+ADDERS = {c: add_const_mod32_gate(c) for c in range(1, 32)}
+
+def controlled_add(qc: QuantumCircuit, ctrl_qubit, point_reg, constant):
+    """Apply |x⟩ → |x+constant (mod 32)⟩ controlled by one qubit."""
+    qc.append(ADDERS[constant].control(), [ctrl_qubit, *point_reg])
+
+# Oracle  U_f : |a⟩|b⟩|0⟩ ⟶ |a⟩|b⟩|aP + bQ⟩   (index arithmetic mod 32)
+def ecdlp_oracle(qc, a_reg, b_reg, point_reg):
+    for i in range(N_Q):
+        constant = (P_IDX * (1 << i)) % ORDER
+        if constant:
+            controlled_add(qc, a_reg[i], point_reg, constant)
+
+    for i in range(N_Q):
+        constant = (Q_IDX * (1 << i)) % ORDER
+        if constant:
+            controlled_add(qc, b_reg[i], point_reg, constant)
+
+# Build the QFT-on-a-only circuit
+def shor_ecdlp_qft_a_only_circuit() -> QuantumCircuit:
+    a = QuantumRegister(N_Q, "a")
+    b = QuantumRegister(N_Q, "b")
+    p = QuantumRegister(N_Q, "p")
+    c = ClassicalRegister(N_Q * 2, "c")
+    qc = QuantumCircuit(a, b, p, c, name="ECDLP_32pts_QFT_A_Only")
+
+    qc.h(a)
+    qc.h(b)
+    ecdlp_oracle(qc, a, b, p)
+    qc.barrier()
+
+    # Apply QFT only to a; leave b in computational basis
+    qc.append(QFT(N_Q, do_swaps=False), a)
+
+    qc.measure(a, c[:N_Q])
+    qc.measure(b, c[N_Q:])
+
+    return qc
+
+# IBM Runtime execution
+service = QiskitRuntimeService(channel="ibm_cloud",
+                               token=TOKEN,
+                               instance=INSTANCE)
+backend = service.backend(BACKEND)
+log.info("Backend → %s", backend.name)
+
+qc_raw = shor_ecdlp_qft_a_only_circuit()
+trans = transpile(qc_raw,
+                  backend=backend,
+                  initial_layout=PHYSICAL,
+                  optimization_level=3)
+log.info("Circuit depth %d, gate counts %s", trans.depth(), trans.count_ops())
+
+sampler = SamplerV2(mode=backend)
+job = sampler.run([trans], shots=SHOTS)
+result = job.result()
+
+# Classical post-processing
+creg_name = trans.cregs[0].name
+counts_raw = result[0].data.__getattribute__(creg_name).get_counts()
+
+def bits_to_int(bs):
+    return int(bs[::-1], 2)
+
+counts = {(bits_to_int(k[N_Q:]), bits_to_int(k[:N_Q])): v
+          for k, v in counts_raw.items()}
+top = sorted(counts.items(), key=lambda kv: kv[1], reverse=True)
+
+# Diagnostic
+top_raw_diagnostics = []
+for (a_val, b_val), freq in top[:100]:
+    if gcd(b_val, ORDER) == 1:
+        inv_b = pow(b_val, -1, ORDER)
+        diagnostic_k = (-a_val * inv_b) % ORDER
+    else:
+        diagnostic_k = None
+
+    top_raw_diagnostics.append(((a_val, b_val), diagnostic_k, freq))
+
+# Check for diagnostic k = 7 in the raw top 100 peaks
+found_k7 = any(k == 7 for (_, k, _) in top_raw_diagnostics)
+
+if found_k7:
+    print("\nDIAGNOSTIC — k = 7 appeared in the top 100 raw peaks\n")
+else:
+    print("\nWARNING — diagnostic k = 7 NOT found in the top 100 raw peaks\n")
+
+print("Top 100 raw (a, b) peaks with diagnostic k when b is invertible:")
+for (a, b), k, count in top_raw_diagnostics:
+    if k is None:
+        k_text = "non-invertible b"
+        tag = ""
+    else:
+        k_text = f"diagnostic k = {k:2}"
+        tag = " <<< diagnostic k=7" if k == 7 else ""
+
+    print(f"  (a={a:2}, b={b:2})  count = {count:4}   {k_text}{tag}")
+
+# Save raw data
+out = {
+    "experiment": "ECDLP_32pts_QFT_A_Only",
+    "backend": backend.name,
+    "physical_qubits": PHYSICAL,
+    "shots": SHOTS,
+    "counts": counts_raw,
+    "top_100_raw_peak_diagnostics": [
+        {
+            "a": a,
+            "b": b,
+            "count": count,
+            "diagnostic_k": k
+        }
+        for ((a, b), k, count) in top_raw_diagnostics
+    ]
+}
+JSON_PATH = "/Users/steventippeconnic/Documents/QC/Shors_ECC_5_Bit_QFT_A_Only_0.json"
+with open(JSON_PATH, "w") as fp:
+    json.dump(out, fp, indent=4)
+log.info("Results saved → %s", JSON_PATH)
+
+# End
+
+
+///////////////////////////////////////////////////
+
+# QFT on b Only, Real Oracle
+# Imports
+import logging, json
+from math import gcd
+import numpy as np
+from qiskit import QuantumCircuit, QuantumRegister, ClassicalRegister, transpile
+from qiskit.circuit.library import UnitaryGate, QFT
+from qiskit_ibm_runtime import QiskitRuntimeService, SamplerV2
+import pandas as pd
+
+# IBMQ
+TOKEN = ""
+INSTANCE = ""
+BACKEND  = "ibm_kingston"
+CAL_CSV  = "/Users/steventippeconnic/Downloads/ibm_kingston_calibrations_2026-04-29T03_32_29Z.csv"
+SHOTS    = 16384
+
+# Toy-curve parameters  (order-32 subgroup of E(F_p))
+ORDER = 32  # |E(F_p)| = 32
+P_IDX = 1   # Generator P  -> index 1
+Q_IDX = 23  # Public point Q = kP, here “23 mod 32” for k = 7
+
+# Logging helper
+logging.basicConfig(level=logging.INFO,
+                    format="%(asctime)s | %(levelname)s | %(message)s")
+log = logging.getLogger(__name__)
+
+# Calibration-based qubit pick
+def best_qubits(csv_path: str, n: int) -> list[int]:
+    df = pd.read_csv(csv_path)
+    df.columns = df.columns.str.strip()
+    winners = (
+        df.sort_values(["√x (sx) error", "T1 (us)", "T2 (us)"],
+                       ascending=[True, False, False])
+        ["Qubit"].head(n).tolist()
+    )
+    log.info("Best physical qubits: %s", winners)
+    return winners
+
+N_Q = 5
+N_Q_TOTAL = N_Q * 3  # a, b, point
+PHYSICAL = best_qubits(CAL_CSV, N_Q_TOTAL)
+
+# Constant-adder modulo 32 as a reusable gate
+def add_const_mod32_gate(c: int) -> UnitaryGate:
+    """Return a 5-qubit gate that maps |x⟩ ↦ |x+c (mod 32)⟩."""
+    mat = np.zeros((32, 32))
+    for x in range(32):
+        mat[(x + c) % 32, x] = 1
+    return UnitaryGate(mat, label=f"+{c}")
+
+ADDERS = {c: add_const_mod32_gate(c) for c in range(1, 32)}
+
+def controlled_add(qc: QuantumCircuit, ctrl_qubit, point_reg, constant):
+    """Apply |x⟩ → |x+constant (mod 32)⟩ controlled by one qubit."""
+    qc.append(ADDERS[constant].control(), [ctrl_qubit, *point_reg])
+
+# Oracle  U_f : |a⟩|b⟩|0⟩ ⟶ |a⟩|b⟩|aP + bQ⟩   (index arithmetic mod 32)
+def ecdlp_oracle(qc, a_reg, b_reg, point_reg):
+    for i in range(N_Q):
+        constant = (P_IDX * (1 << i)) % ORDER
+        if constant:
+            controlled_add(qc, a_reg[i], point_reg, constant)
+
+    for i in range(N_Q):
+        constant = (Q_IDX * (1 << i)) % ORDER
+        if constant:
+            controlled_add(qc, b_reg[i], point_reg, constant)
+
+# Build the QFT-on-b-only circuit
+def shor_ecdlp_qft_b_only_circuit() -> QuantumCircuit:
+    a = QuantumRegister(N_Q, "a")
+    b = QuantumRegister(N_Q, "b")
+    p = QuantumRegister(N_Q, "p")
+    c = ClassicalRegister(N_Q * 2, "c")
+    qc = QuantumCircuit(a, b, p, c, name="ECDLP_32pts_QFT_B_Only")
+
+    qc.h(a)
+    qc.h(b)
+    ecdlp_oracle(qc, a, b, p)
+    qc.barrier()
+
+    # Apply QFT only to b; leave a in computational basis
+    qc.append(QFT(N_Q, do_swaps=False), b)
+
+    qc.measure(a, c[:N_Q])
+    qc.measure(b, c[N_Q:])
+
+    return qc
+
+# IBM Runtime execution
+service = QiskitRuntimeService(channel="ibm_cloud",
+                               token=TOKEN,
+                               instance=INSTANCE)
+backend = service.backend(BACKEND)
+log.info("Backend → %s", backend.name)
+
+qc_raw = shor_ecdlp_qft_b_only_circuit()
+trans = transpile(qc_raw,
+                  backend=backend,
+                  initial_layout=PHYSICAL,
+                  optimization_level=3)
+log.info("Circuit depth %d, gate counts %s", trans.depth(), trans.count_ops())
+
+sampler = SamplerV2(mode=backend)
+job = sampler.run([trans], shots=SHOTS)
+result = job.result()
+
+# Classical post-processing
+creg_name = trans.cregs[0].name
+counts_raw = result[0].data.__getattribute__(creg_name).get_counts()
+
+def bits_to_int(bs):
+    return int(bs[::-1], 2)
+
+counts = {(bits_to_int(k[N_Q:]), bits_to_int(k[:N_Q])): v
+          for k, v in counts_raw.items()}
+top = sorted(counts.items(), key=lambda kv: kv[1], reverse=True)
+
+# Diagnostic
+top_raw_diagnostics = []
+for (a_val, b_val), freq in top[:100]:
+    if gcd(b_val, ORDER) == 1:
+        inv_b = pow(b_val, -1, ORDER)
+        diagnostic_k = (-a_val * inv_b) % ORDER
+    else:
+        diagnostic_k = None
+
+    top_raw_diagnostics.append(((a_val, b_val), diagnostic_k, freq))
+
+# Check for diagnostic k = 7 in the raw top 100 peaks
+found_k7 = any(k == 7 for (_, k, _) in top_raw_diagnostics)
+
+if found_k7:
+    print("\nDIAGNOSTIC — k = 7 appeared in the top 100 raw peaks\n")
+else:
+    print("\nWARNING — diagnostic k = 7 NOT found in the top 100 raw peaks\n")
+
+print("Top 100 raw (a, b) peaks with diagnostic k when b is invertible:")
+for (a, b), k, count in top_raw_diagnostics:
+    if k is None:
+        k_text = "non-invertible b"
+        tag = ""
+    else:
+        k_text = f"diagnostic k = {k:2}"
+        tag = " <<< diagnostic k=7" if k == 7 else ""
+
+    print(f"  (a={a:2}, b={b:2})  count = {count:4}   {k_text}{tag}")
+
+# Save raw data
+out = {
+    "experiment": "ECDLP_32pts_QFT_B_Only",
+    "backend": backend.name,
+    "physical_qubits": PHYSICAL,
+    "shots": SHOTS,
+    "counts": counts_raw,
+    "top_100_raw_peak_diagnostics": [
+        {
+            "a": a,
+            "b": b,
+            "count": count,
+            "diagnostic_k": k
+        }
+        for ((a, b), k, count) in top_raw_diagnostics
+    ]
+}
+JSON_PATH = "/Users/steventippeconnic/Documents/QC/Shors_ECC_5_Bit_QFT_B_Only_0.json"
+with open(JSON_PATH, "w") as fp:
+    json.dump(out, fp, indent=4)
+log.info("Results saved → %s", JSON_PATH)
+
+# End
+
+
+//////////////////////////////////////////////////////
+
+
+# Half-Oracle aP Only, Dual QFTs
+# Imports
+import logging, json
+from math import gcd
+import numpy as np
+from qiskit import QuantumCircuit, QuantumRegister, ClassicalRegister, transpile
+from qiskit.circuit.library import UnitaryGate, QFT
+from qiskit_ibm_runtime import QiskitRuntimeService, SamplerV2
+import pandas as pd
+
+# IBMQ
+TOKEN = ""
+INSTANCE = ""
+BACKEND  = "ibm_kingston"
+CAL_CSV  = "/Users/steventippeconnic/Downloads/ibm_kingston_calibrations_2026-04-28T00_13_52Z.csv"
+SHOTS    = 16384
+
+# Toy-curve parameters  (order-32 subgroup of E(F_p))
+ORDER = 32  # |E(F_p)| = 32
+P_IDX = 1   # Generator P  -> index 1
+Q_IDX = 23  # Public point Q = kP, here “23 mod 32” for k = 7
+
+# Logging helper
+logging.basicConfig(level=logging.INFO,
+                    format="%(asctime)s | %(levelname)s | %(message)s")
+log = logging.getLogger(__name__)
+
+# Calibration-based qubit pick
+def best_qubits(csv_path: str, n: int) -> list[int]:
+    df = pd.read_csv(csv_path)
+    df.columns = df.columns.str.strip()
+    winners = (
+        df.sort_values(["√x (sx) error", "T1 (us)", "T2 (us)"],
+                       ascending=[True, False, False])
+        ["Qubit"].head(n).tolist()
+    )
+    log.info("Best physical qubits: %s", winners)
+    return winners
+
+N_Q = 5
+N_Q_TOTAL = N_Q * 3  # a, b, point
+PHYSICAL = best_qubits(CAL_CSV, N_Q_TOTAL)
+
+# Constant-adder modulo 32 as a reusable gate
+def add_const_mod32_gate(c: int) -> UnitaryGate:
+    """Return a 5-qubit gate that maps |x⟩ ↦ |x+c (mod 32)⟩."""
+    mat = np.zeros((32, 32))
+    for x in range(32):
+        mat[(x + c) % 32, x] = 1
+    return UnitaryGate(mat, label=f"+{c}")
+
+ADDERS = {c: add_const_mod32_gate(c) for c in range(1, 32)}
+
+def controlled_add(qc: QuantumCircuit, ctrl_qubit, point_reg, constant):
+    """Apply |x⟩ → |x+constant (mod 32)⟩ controlled by one qubit."""
+    qc.append(ADDERS[constant].control(), [ctrl_qubit, *point_reg])
+
+# Half-oracle A: |a⟩|b⟩|0⟩ ⟶ |a⟩|b⟩|aP⟩
+# The bQ branch is deliberately removed.
+def ecdlp_oracle_aP_only(qc, a_reg, b_reg, point_reg):
+    for i in range(N_Q):
+        constant = (P_IDX * (1 << i)) % ORDER
+        if constant:
+            controlled_add(qc, a_reg[i], point_reg, constant)
+
+# Build the half-oracle aP-only circuit
+def shor_ecdlp_half_oracle_aP_only_circuit() -> QuantumCircuit:
+    a = QuantumRegister(N_Q, "a")
+    b = QuantumRegister(N_Q, "b")
+    p = QuantumRegister(N_Q, "p")
+    c = ClassicalRegister(N_Q * 2, "c")
+    qc = QuantumCircuit(a, b, p, c, name="ECDLP_32pts_HalfOracle_aP_Only")
+
+    qc.h(a)
+    qc.h(b)
+
+    # Only the aP branch of the oracle is applied.
+    ecdlp_oracle_aP_only(qc, a, b, p)
+
+    qc.barrier()
+
+    # QFTs
+    qc.append(QFT(N_Q, do_swaps=False), a)
+    qc.append(QFT(N_Q, do_swaps=False), b)
+
+    qc.measure(a, c[:N_Q])
+    qc.measure(b, c[N_Q:])
+
+    return qc
+
+# IBM Runtime execution
+service = QiskitRuntimeService(channel="ibm_cloud",
+                               token=TOKEN,
+                               instance=INSTANCE)
+backend = service.backend(BACKEND)
+log.info("Backend → %s", backend.name)
+
+qc_raw = shor_ecdlp_half_oracle_aP_only_circuit()
+trans = transpile(qc_raw,
+                  backend=backend,
+                  initial_layout=PHYSICAL,
+                  optimization_level=3)
+log.info("Circuit depth %d, gate counts %s", trans.depth(), trans.count_ops())
+
+sampler = SamplerV2(mode=backend)
+job = sampler.run([trans], shots=SHOTS)
+result = job.result()
+
+# Classical post-processing
+creg_name = trans.cregs[0].name
+counts_raw = result[0].data.__getattribute__(creg_name).get_counts()
+
+def bits_to_int(bs):
+    return int(bs[::-1], 2)
+
+counts = {(bits_to_int(k[N_Q:]), bits_to_int(k[:N_Q])): v
+          for k, v in counts_raw.items()}
+top = sorted(counts.items(), key=lambda kv: kv[1], reverse=True)
+
+# Diagnostic
+top_raw_diagnostics = []
+for (a_val, b_val), freq in top[:100]:
+    if gcd(b_val, ORDER) == 1:
+        inv_b = pow(b_val, -1, ORDER)
+        diagnostic_k = (-a_val * inv_b) % ORDER
+    else:
+        diagnostic_k = None
+
+    top_raw_diagnostics.append(((a_val, b_val), diagnostic_k, freq))
+
+# Check for diagnostic k = 7 
+found_k7 = any(k == 7 for (_, k, _) in top_raw_diagnostics)
+
+if found_k7:
+    print("\nDIAGNOSTIC — k = 7 appeared in the top 100 raw peaks\n")
+else:
+    print("\nEXPECTED — diagnostic k = 7 not found in the top 100 raw peaks\n")
+
+print("Top 100 raw (a, b) peaks with diagnostic k when b is invertible:")
+for (a, b), k, count in top_raw_diagnostics:
+    if k is None:
+        k_text = "non-invertible b"
+        tag = ""
+    else:
+        k_text = f"diagnostic k = {k:2}"
+        tag = " <<< diagnostic k=7" if k == 7 else ""
+
+    print(f"  (a={a:2}, b={b:2})  count = {count:4}   {k_text}{tag}")
+
+# Save raw data
+out = {
+    "experiment": "ECDLP_32pts_HalfOracle_aP_Only",
+    "backend": backend.name,
+    "physical_qubits": PHYSICAL,
+    "shots": SHOTS,
+    "counts": counts_raw,
+    "top_100_raw_peak_diagnostics": [
+        {
+            "a": a,
+            "b": b,
+            "count": count,
+            "diagnostic_k": k
+        }
+        for ((a, b), k, count) in top_raw_diagnostics
+    ]
+}
+JSON_PATH = "/Users/steventippeconnic/Documents/QC/Shors_ECC_5_Bit_Key_HalfOracle_aP_Only_0.json"
+with open(JSON_PATH, "w") as fp:
+    json.dump(out, fp, indent=4)
+log.info("Results saved → %s", JSON_PATH)
+
+# End
+
+//////////////////////////////////////////////////////////////
+
+# Half-Oracle bQ Only, Dual QFTs
+# Imports
+import logging, json
+from math import gcd
+import numpy as np
+from qiskit import QuantumCircuit, QuantumRegister, ClassicalRegister, transpile
+from qiskit.circuit.library import UnitaryGate, QFT
+from qiskit_ibm_runtime import QiskitRuntimeService, SamplerV2
+import pandas as pd
+
+# IBMQ
+TOKEN = ""
+INSTANCE = ""
+BACKEND  = "ibm_kingston"
+CAL_CSV  = "/Users/steventippeconnic/Downloads/ibm_kingston_calibrations_2026-04-28T00_33_56Z.csv"
+SHOTS    = 16384
+
+# Toy-curve parameters  (order-32 subgroup of E(F_p))
+ORDER = 32  # |E(F_p)| = 32
+P_IDX = 1   # Kept for metadata only; aP branch is removed in this control.
+Q_IDX = 23  # Public point Q = kP, here “23 mod 32” for k = 7
+
+# Logging helper
+logging.basicConfig(level=logging.INFO,
+                    format="%(asctime)s | %(levelname)s | %(message)s")
+log = logging.getLogger(__name__)
+
+# Calibration-based qubit pick
+def best_qubits(csv_path: str, n: int) -> list[int]:
+    df = pd.read_csv(csv_path)
+    df.columns = df.columns.str.strip()
+    winners = (
+        df.sort_values(["√x (sx) error", "T1 (us)", "T2 (us)"],
+                       ascending=[True, False, False])
+        ["Qubit"].head(n).tolist()
+    )
+    log.info("Best physical qubits: %s", winners)
+    return winners
+
+N_Q = 5
+N_Q_TOTAL = N_Q * 3  # a, b, point
+PHYSICAL = best_qubits(CAL_CSV, N_Q_TOTAL)
+
+# Constant-adder modulo 32 as a reusable gate
+def add_const_mod32_gate(c: int) -> UnitaryGate:
+    """Return a 5-qubit gate that maps |x⟩ ↦ |x+c (mod 32)⟩."""
+    mat = np.zeros((32, 32))
+    for x in range(32):
+        mat[(x + c) % 32, x] = 1
+    return UnitaryGate(mat, label=f"+{c}")
+
+ADDERS = {c: add_const_mod32_gate(c) for c in range(1, 32)}
+
+def controlled_add(qc: QuantumCircuit, ctrl_qubit, point_reg, constant):
+    """Apply |x⟩ → |x+constant (mod 32)⟩ controlled by one qubit."""
+    qc.append(ADDERS[constant].control(), [ctrl_qubit, *point_reg])
+
+# Half-oracle B: |a⟩|b⟩|0⟩ ⟶ |a⟩|b⟩|bQ⟩
+# The aP branch is deliberately removed.
+def ecdlp_oracle_bQ_only(qc, a_reg, b_reg, point_reg):
+    for i in range(N_Q):
+        constant = (Q_IDX * (1 << i)) % ORDER
+        if constant:
+            controlled_add(qc, b_reg[i], point_reg, constant)
+
+# Build the half-oracle bQ-only circuit
+def shor_ecdlp_half_oracle_bQ_only_circuit() -> QuantumCircuit:
+    a = QuantumRegister(N_Q, "a")
+    b = QuantumRegister(N_Q, "b")
+    p = QuantumRegister(N_Q, "p")
+    c = ClassicalRegister(N_Q * 2, "c")
+    qc = QuantumCircuit(a, b, p, c, name="ECDLP_32pts_HalfOracle_bQ_Only")
+
+    qc.h(a)
+    qc.h(b)
+
+    # Only the bQ branch of the oracle is applied.
+    ecdlp_oracle_bQ_only(qc, a, b, p)
+
+    qc.barrier()
+
+    # QFTs
+    qc.append(QFT(N_Q, do_swaps=False), a)
+    qc.append(QFT(N_Q, do_swaps=False), b)
+
+    qc.measure(a, c[:N_Q])
+    qc.measure(b, c[N_Q:])
+
+    return qc
+
+# IBM Runtime execution
+service = QiskitRuntimeService(channel="ibm_cloud",
+                               token=TOKEN,
+                               instance=INSTANCE)
+backend = service.backend(BACKEND)
+log.info("Backend → %s", backend.name)
+
+qc_raw = shor_ecdlp_half_oracle_bQ_only_circuit()
+trans = transpile(qc_raw,
+                  backend=backend,
+                  initial_layout=PHYSICAL,
+                  optimization_level=3)
+log.info("Circuit depth %d, gate counts %s", trans.depth(), trans.count_ops())
+
+sampler = SamplerV2(mode=backend)
+job = sampler.run([trans], shots=SHOTS)
+result = job.result()
+
+# Classical post-processing
+creg_name = trans.cregs[0].name
+counts_raw = result[0].data.__getattribute__(creg_name).get_counts()
+
+def bits_to_int(bs):
+    return int(bs[::-1], 2)
+
+counts = {(bits_to_int(k[N_Q:]), bits_to_int(k[:N_Q])): v
+          for k, v in counts_raw.items()}
+top = sorted(counts.items(), key=lambda kv: kv[1], reverse=True)
+
+# Diagnostic 
+top_raw_diagnostics = []
+for (a_val, b_val), freq in top[:100]:
+    if gcd(b_val, ORDER) == 1:
+        inv_b = pow(b_val, -1, ORDER)
+        diagnostic_k = (-a_val * inv_b) % ORDER
+    else:
+        diagnostic_k = None
+
+    top_raw_diagnostics.append(((a_val, b_val), diagnostic_k, freq))
+
+# Check for diagnostic k = 7 
+found_k7 = any(k == 7 for (_, k, _) in top_raw_diagnostics)
+
+if found_k7:
+    print("\nDIAGNOSTIC — k = 7 appeared in the top 100 raw peaks\n")
+else:
+    print("\nEXPECTED — diagnostic k = 7 not found in the top 100 raw peaks\n")
+
+print("Top 100 raw (a, b) peaks with diagnostic k when b is invertible:")
+for (a, b), k, count in top_raw_diagnostics:
+    if k is None:
+        k_text = "non-invertible b"
+        tag = ""
+    else:
+        k_text = f"diagnostic k = {k:2}"
+        tag = " <<< diagnostic k=7" if k == 7 else ""
+
+    print(f"  (a={a:2}, b={b:2})  count = {count:4}   {k_text}{tag}")
+
+# Save raw data
+out = {
+    "experiment": "ECDLP_32pts_HalfOracle_bQ_Only",
+    "backend": backend.name,
+    "physical_qubits": PHYSICAL,
+    "shots": SHOTS,
+    "counts": counts_raw,
+    "top_100_raw_peak_diagnostics": [
+        {
+            "a": a,
+            "b": b,
+            "count": count,
+            "diagnostic_k": k
+        }
+        for ((a, b), k, count) in top_raw_diagnostics
+    ]
+}
+JSON_PATH = "/Users/steventippeconnic/Documents/QC/Shors_ECC_5_Bit_Key_HalfOracle_bQ_Only_0.json"
+with open(JSON_PATH, "w") as fp:
+    json.dump(out, fp, indent=4)
+log.info("Results saved → %s", JSON_PATH)
+
+# End
+
+/////////////////////////////////////////////////////////////
+
+# Triple QFT, Real Oracle
+# Imports
+import logging
+import json
+from math import gcd
+import numpy as np
+import pandas as pd
+from qiskit import QuantumCircuit, QuantumRegister, ClassicalRegister, transpile
+from qiskit.circuit.library import UnitaryGate, QFT
+from qiskit_ibm_runtime import QiskitRuntimeService, SamplerV2
+
+# IBMQ
+TOKEN = ""
+INSTANCE = ""
+BACKEND  = "ibm_kingston"
+CAL_CSV  = "/Users/steventippeconnic/Downloads/ibm_kingston_calibrations_2026-04-29T01_15_24Z.csv"
+SHOTS    = 16384
+
+# Toy-curve parameters  (order-32 subgroup of E(F_p))
+ORDER = 32
+P_IDX = 1
+Q_IDX = 23   
+
+# Logging
+logging.basicConfig(
+    level=logging.INFO,
+    format="%(asctime)s | %(levelname)s | %(message)s"
+)
+log = logging.getLogger(__name__)
+
+# Calibration-based qubit pick
+def best_qubits(csv_path: str, n: int) -> list[int]:
+    df = pd.read_csv(csv_path)
+    df.columns = df.columns.str.strip()
+    winners = (
+        df.sort_values(
+            ["√x (sx) error", "T1 (us)", "T2 (us)"],
+            ascending=[True, False, False]
+        )["Qubit"].head(n).tolist()
+    )
+    log.info("Best physical qubits: %s", winners)
+    return winners
+
+N_Q = 5
+N_Q_TOTAL = N_Q * 3   # a, b, p
+PHYSICAL = best_qubits(CAL_CSV, N_Q_TOTAL)
+
+# Constant-adder modulo 32 as reusable gates
+def add_const_mod32_gate(c: int) -> UnitaryGate:
+    """Return a 5-qubit gate mapping |x> -> |x + c (mod 32)>."""
+    mat = np.zeros((32, 32))
+    for x in range(32):
+        mat[(x + c) % 32, x] = 1
+    return UnitaryGate(mat, label=f"+{c}")
+
+ADDERS = {c: add_const_mod32_gate(c) for c in range(1, 32)}
+
+def controlled_add(qc: QuantumCircuit, ctrl_qubit, point_reg, constant: int) -> None:
+    """Apply |x> -> |x + constant (mod 32)> controlled by one qubit."""
+    qc.append(ADDERS[constant].control(), [ctrl_qubit, *point_reg])
+
+# Oracle U_f : |a>|b>|0> -> |a>|b>|aP + bQ>
+def ecdlp_oracle(qc: QuantumCircuit, a_reg, b_reg, point_reg) -> None:
+    for i in range(N_Q):
+        constant = (P_IDX * (1 << i)) % ORDER
+        if constant:
+            controlled_add(qc, a_reg[i], point_reg, constant)
+
+    for i in range(N_Q):
+        constant = (Q_IDX * (1 << i)) % ORDER
+        if constant:
+            controlled_add(qc, b_reg[i], point_reg, constant)
+
+# Build the triple-QFT circuit
+def shor_ecdlp_triple_qft_circuit() -> QuantumCircuit:
+    a = QuantumRegister(N_Q, "a")
+    b = QuantumRegister(N_Q, "b")
+    p = QuantumRegister(N_Q, "p")
+    c = ClassicalRegister(N_Q * 3, "c")   # now measuring all 15 qubits
+
+    qc = QuantumCircuit(a, b, p, c, name="ECDLP_32pts_TripleQFT")
+
+    # Superposition 
+    qc.h(a)
+    qc.h(b)
+
+    # Oracle 
+    ecdlp_oracle(qc, a, b, p)
+
+    # Barrier
+    qc.barrier()
+
+    # Triple QFT: a, b, and p
+    qc.append(QFT(N_Q, do_swaps=False), a)
+    qc.append(QFT(N_Q, do_swaps=False), b)
+    qc.append(QFT(N_Q, do_swaps=False), p)
+
+    # Measure all 15 qubits
+    qc.measure(a, c[:N_Q])
+    qc.measure(b, c[N_Q:2 * N_Q])
+    qc.measure(p, c[2 * N_Q:3 * N_Q])
+
+    return qc
+
+# Runtime execution
+service = QiskitRuntimeService(
+    channel="ibm_cloud",
+    token=TOKEN,
+    instance=INSTANCE
+)
+
+backend = service.backend(BACKEND)
+log.info("Backend -> %s", backend.name)
+
+qc_raw = shor_ecdlp_triple_qft_circuit()
+
+trans = transpile(
+    qc_raw,
+    backend=backend,
+    initial_layout=PHYSICAL,
+    optimization_level=3
+)
+
+log.info("Circuit depth %d", trans.depth())
+log.info("Gate counts %s", trans.count_ops())
+
+sampler = SamplerV2(mode=backend)
+job = sampler.run([trans], shots=SHOTS)
+result = job.result()
+
+# Result extraction
+creg_name = trans.cregs[0].name
+counts_raw = result[0].data.__getattribute__(creg_name).get_counts()
+
+def bits_to_int(bs: str) -> int:
+    return int(bs[::-1], 2)
+
+full_counts = {}
+ab_marginal_counts = {}
+p_marginal_counts = {}
+
+for bitstring, freq in counts_raw.items():
+    p_bits = bitstring[:N_Q]
+    b_bits = bitstring[N_Q:2 * N_Q]
+    a_bits = bitstring[2 * N_Q:3 * N_Q]
+
+    a_val = bits_to_int(a_bits)
+    b_val = bits_to_int(b_bits)
+    p_val = bits_to_int(p_bits)
+
+    full_counts[(a_val, b_val, p_val)] = freq
+    ab_marginal_counts[(a_val, b_val)] = ab_marginal_counts.get((a_val, b_val), 0) + freq
+    p_marginal_counts[p_val] = p_marginal_counts.get(p_val, 0) + freq
+
+# Top raw (a, b) peaks from the marginal
+top_ab = sorted(ab_marginal_counts.items(), key=lambda kv: kv[1], reverse=True)
+
+# Diagnostic
+top_raw_diagnostics = []
+for (a_val, b_val), freq in top_ab[:100]:
+    if gcd(b_val, ORDER) == 1:
+        inv_b = pow(b_val, -1, ORDER)
+        diagnostic_k = (-a_val * inv_b) % ORDER
+    else:
+        diagnostic_k = None
+
+    top_raw_diagnostics.append(((a_val, b_val), diagnostic_k, freq))
+
+found_k7 = any(k == 7 for (_, k, _) in top_raw_diagnostics)
+
+if found_k7:
+    print("\nDIAGNOSTIC — k = 7 appeared in the top 100 raw marginal (a, b) peaks\n")
+else:
+    print("\nWARNING — diagnostic k = 7 NOT found in the top 100 raw marginal (a, b) peaks\n")
+
+print("Top 100 raw marginal (a, b) peaks with diagnostic k when b is invertible:")
+for (a_val, b_val), k_val, count in top_raw_diagnostics:
+    if k_val is None:
+        k_text = "non-invertible b"
+        tag = ""
+    else:
+        k_text = f"diagnostic k = {k_val:2}"
+        tag = " <<< diagnostic k=7" if k_val == 7 else ""
+
+    print(f" (a={a_val:2}, b={b_val:2}) count = {count:4}   {k_text}{tag}")
+
+# Show the strongest full (a, b, p) peaks 
+top_full = sorted(full_counts.items(), key=lambda kv: kv[1], reverse=True)[:40]
+
+print("\nTop 40 full (a, b, p) outcomes:")
+for (a_val, b_val, p_val), count in top_full:
+    print(f" (a={a_val:2}, b={b_val:2}, p={p_val:2}) -> count = {count}")
+
+# Save raw data + marginals 
+out = {
+    "experiment": "ECDLP_32pts_Triple_QFT_ABC",
+    "backend": backend.name,
+    "physical_qubits": PHYSICAL,
+    "shots": SHOTS,
+    "counts_raw_15bit": counts_raw,
+    "ab_marginal_counts": {
+        f"{a_val},{b_val}": freq
+        for (a_val, b_val), freq in ab_marginal_counts.items()
+    },
+    "p_marginal_counts": {
+        str(p_val): freq
+        for p_val, freq in p_marginal_counts.items()
+    },
+    "top_100_raw_ab_peak_diagnostics": [
+        {
+            "a": a_val,
+            "b": b_val,
+            "count": count,
+            "diagnostic_k": k_val
+        }
+        for ((a_val, b_val), k_val, count) in top_raw_diagnostics
+    ]
+}
+
+JSON_PATH = "/Users/steventippeconnic/Documents/QC/Shors_ECC_5_Bit_Triple_QFT_0.json"
+with open(JSON_PATH, "w") as fp:
+    json.dump(out, fp, indent=4)
+
+log.info("Results saved -> %s", JSON_PATH)
+
+# End
+
+/////////////////////////////////////////////////////////////
+
+// code for QFT on a only, QFT on b only, aP only, and bQ only Threejs visuals
+// Config 
+const HALF_BITS = 5;                 // 5 per axis
+const TOTAL_BITS = 2 * HALF_BITS;    // 10
+const GRID = 1 << HALF_BITS;         // 32
+const MOD = GRID;                    // 32
+
+// Load JSON (replace for experiment run)
+async function loadQuantumData() {
+  const res = await fetch('FILE.json');
+  const data = await res.json();
+  return data.counts;
+}
+
+// Three.js setup
+const scene    = new THREE.Scene();
+const camera = new THREE.PerspectiveCamera(
+    75, window.innerWidth / window.innerHeight, 0.1, 1000
+);
+const renderer = new THREE.WebGLRenderer({ antialias: true });
+renderer.setSize(window.innerWidth, window.innerHeight);
+document.body.appendChild(renderer.domElement);
+
+// Controls & lighting
+const controls = new THREE.OrbitControls(camera, renderer.domElement);
+const light = new THREE.DirectionalLight(0xffffff, 1);
+light.position.set(10, 10, 10);
+scene.add(light);
+
+// Camera
+camera.position.set(0, 30, 60);
+camera.lookAt(0, 0, 0);
+
+// Globals
+let mesh;
+let redDots = [];
+let time = 0;
+
+// Helpers 
+const pad10 = s => s.padStart(TOTAL_BITS, '0').slice(-TOTAL_BITS);
+const rev   = s => s.split('').reverse().join('');     
+
+// Parse into classical (a,b) and use those as display (u,v)
+function parseEntries(counts) {
+  const entries = [];
+  for (const [bit, cRaw] of Object.entries(counts)) {
+    const b10   = pad10(bit);
+    const left  = b10.slice(0, HALF_BITS);    // raw left 5
+    const right = b10.slice(HALF_BITS);       // raw right 5
+
+    const a = parseInt(rev(right), 2);        // a = int(right[::-1], 2)
+    const b = parseInt(rev(left),  2);        // b = int(left[::-1],  2)
+
+    const u = a;
+    const v = b;
+
+    entries.push({ bit, a, b, u, v, count: Number(cRaw) });
+  }
+  return entries;
+}
+
+function buildMatrix(entries) {
+  const matrix = Array.from({ length: GRID }, () => Array(GRID).fill(0));
+  let maxCount = 0;
+  for (const e of entries) {
+    matrix[e.u][e.v] = e.count;
+    if (e.count > maxCount) maxCount = e.count;
+  }
+  return { matrix, maxCount };
+}
+
+// Build surface + dots
+function createWaveSurface(matrix, maxCount) {
+  const WIDTH    = GRID * 2;
+  const SEGMENTS = WIDTH;
+  const STEP     = WIDTH / (GRID - 1);
+
+  const geometry = new THREE.PlaneGeometry(WIDTH, WIDTH, SEGMENTS, SEGMENTS);
+  const colors   = [];
+  const gridX    = SEGMENTS + 1;
+  const gridY    = SEGMENTS + 1;
+
+  for (let y = 0; y < gridY; y++) {
+    for (let x = 0; x < gridX; x++) {
+      const color = new THREE.Color(0x00ff00); // uniform green mesh
+      colors.push(color.r, color.g, color.b);
+    }
+  }
+
+  geometry.setAttribute('color', new THREE.Float32BufferAttribute(colors, 3));
+  const material = new THREE.MeshBasicMaterial({ vertexColors: true, wireframe: true });
+
+  mesh = new THREE.Mesh(geometry, material);
+  mesh.rotation.x = -Math.PI / 2;
+  mesh.userData   = { matrix, maxCount, GRID, STEP };
+  scene.add(mesh);
+
+  // Red dots at every (u,v)
+  const dotMat = new THREE.MeshBasicMaterial({ color: 0xff0000 });
+  for (let v = 0; v < GRID; v++) {
+    for (let u = 0; u < GRID; u++) {
+      const dot = new THREE.Mesh(new THREE.SphereGeometry(0.15, 8, 8), dotMat);
+      dot.position.set(
+        (u - (GRID - 1) / 2) * STEP,
+        0,
+        (v - (GRID - 1) / 2) * STEP
+      );
+      redDots.push(dot);
+      scene.add(dot);
+    }
+  }
+}
+
+// Animate 
+function animate() {
+  requestAnimationFrame(animate);
+  time += 0.2;
+  if (!mesh) {
+    renderer.render(scene, camera);
+    return;
+  }
+
+  const { matrix, maxCount, GRID } = mesh.userData;
+  const pos   = mesh.geometry.attributes.position;
+  const gridX = mesh.geometry.parameters.widthSegments + 1;
+  const gridY = mesh.geometry.parameters.heightSegments + 1;
+
+  for (let i = 0; i < pos.count; i++) {
+    const x = i % gridX;
+    const y = Math.floor(i / gridX);
+    const u = Math.floor(x / (gridX / GRID));
+    const v = Math.floor(y / (gridY / GRID));
+    const amp  = matrix[u]?.[v] ? matrix[u][v] / maxCount : 0;
+    const wave = Math.sin((x + time) * 0.4) * Math.cos((y + time) * 0.4);
+    pos.setZ(i, amp * wave * 20);
+  }
+
+  // Move dots with amplitude
+  redDots.forEach((dot, idx) => {
+    const u = idx % GRID;
+    const v = Math.floor(idx / GRID);
+    const amp = matrix[u]?.[v] ? matrix[u][v] / maxCount : 0;
+    dot.position.y = amp * 20 + 0.5;
+  });
+
+  pos.needsUpdate = true;
+  controls.update();
+  renderer.render(scene, camera);
+}
+
+// Main 
+loadQuantumData().then(counts => {
+  const entries = parseEntries(counts);
+  const { matrix, maxCount } = buildMatrix(entries);
+
+  createWaveSurface(matrix, maxCount);
+  animate();
+});
+
+/////////////////////////////////////////////////////////////
+
+// code for triple QFT Threejs visual
+
+// code for all Threejs visuals
+// Config 
+const HALF_BITS = 5;                 // 5 per axis
+const TOTAL_BITS = 2 * HALF_BITS;    // 10
+const GRID = 1 << HALF_BITS;         // 32
+const MOD = GRID;                    // 32
+
+// Load JSON (triple-QFT run uses ab_marginal_counts, not counts)
+async function loadQuantumData() {
+  const res = await fetch('FILE.json');
+  const data = await res.json();
+  return data.ab_marginal_counts || {};
+}
+
+// Three.js setup
+const scene = new THREE.Scene();
+const camera = new THREE.PerspectiveCamera(
+  75, window.innerWidth / window.innerHeight, 0.1, 1000
+);
+const renderer = new THREE.WebGLRenderer({ antialias: true });
+renderer.setSize(window.innerWidth, window.innerHeight);
+document.body.style.margin = '0';
+document.body.style.overflow = 'hidden';
+document.body.appendChild(renderer.domElement);
+
+// Controls & lighting
+const controls = new THREE.OrbitControls(camera, renderer.domElement);
+const light = new THREE.DirectionalLight(0xffffff, 1);
+light.position.set(10, 10, 10);
+scene.add(light);
+
+// Camera
+camera.position.set(0, 30, 60);
+camera.lookAt(0, 0, 0);
+
+// Globals
+let mesh;
+let redDots = [];
+let time = 0;
+
+// Parse "a,b" -> entries for display as (u,v) = (a,b)
+function parseEntries(counts) {
+  const entries = [];
+
+  for (const [key, cRaw] of Object.entries(counts)) {
+    const parts = key.split(',');
+    if (parts.length !== 2) continue;
+
+    const a = Number(parts[0]);
+    const b = Number(parts[1]);
+    const count = Number(cRaw);
+
+    if (!Number.isFinite(a) || !Number.isFinite(b) || !Number.isFinite(count)) continue;
+    if (a < 0 || a >= GRID || b < 0 || b >= GRID) continue;
+
+    const u = a;
+    const v = b;
+
+    entries.push({ key, a, b, u, v, count });
+  }
+
+  return entries;
+}
+
+function buildMatrix(entries) {
+  const matrix = Array.from({ length: GRID }, () => Array(GRID).fill(0));
+  let maxCount = 0;
+
+  for (const e of entries) {
+    matrix[e.u][e.v] = e.count;
+    if (e.count > maxCount) maxCount = e.count;
+  }
+
+  return { matrix, maxCount };
+}
+
+// Build surface + dots
+function createWaveSurface(matrix, maxCount) {
+  const WIDTH = GRID * 2;
+  const SEGMENTS = WIDTH;
+  const STEP = WIDTH / (GRID - 1);
+
+  const geometry = new THREE.PlaneGeometry(WIDTH, WIDTH, SEGMENTS, SEGMENTS);
+  const colors = [];
+  const gridX = SEGMENTS + 1;
+  const gridY = SEGMENTS + 1;
+
+  for (let y = 0; y < gridY; y++) {
+    for (let x = 0; x < gridX; x++) {
+      const color = new THREE.Color(0x00ff00); // uniform green mesh
+      colors.push(color.r, color.g, color.b);
+    }
+  }
+
+  geometry.setAttribute('color', new THREE.Float32BufferAttribute(colors, 3));
+  const material = new THREE.MeshBasicMaterial({ vertexColors: true, wireframe: true });
+
+  mesh = new THREE.Mesh(geometry, material);
+  mesh.rotation.x = -Math.PI / 2;
+  mesh.userData = { matrix, maxCount, GRID, STEP };
+  scene.add(mesh);
+
+  // Red dots at every (u,v)
+  const dotMat = new THREE.MeshBasicMaterial({ color: 0xff0000 });
+  for (let v = 0; v < GRID; v++) {
+    for (let u = 0; u < GRID; u++) {
+      const dot = new THREE.Mesh(new THREE.SphereGeometry(0.15, 8, 8), dotMat);
+      dot.position.set(
+        (u - (GRID - 1) / 2) * STEP,
+        0,
+        (v - (GRID - 1) / 2) * STEP
+      );
+      redDots.push(dot);
+      scene.add(dot);
+    }
+  }
+}
+
+// Animate 
+function animate() {
+  requestAnimationFrame(animate);
+  time += 0.2;
+
+  if (!mesh) {
+    renderer.render(scene, camera);
+    return;
+  }
+
+  const { matrix, maxCount, GRID } = mesh.userData;
+  const pos = mesh.geometry.attributes.position;
+  const gridX = mesh.geometry.parameters.widthSegments + 1;
+  const gridY = mesh.geometry.parameters.heightSegments + 1;
+
+  for (let i = 0; i < pos.count; i++) {
+    const x = i % gridX;
+    const y = Math.floor(i / gridX);
+    const u = Math.min(GRID - 1, Math.floor(x / (gridX / GRID)));
+    const v = Math.min(GRID - 1, Math.floor(y / (gridY / GRID)));
+
+    const amp = maxCount > 0 && matrix[u]?.[v] ? matrix[u][v] / maxCount : 0;
+    const wave = Math.sin((x + time) * 0.4) * Math.cos((y + time) * 0.4);
+    pos.setZ(i, amp * wave * 20);
+  }
+
+  // Move dots with amplitude
+  redDots.forEach((dot, idx) => {
+    const u = idx % GRID;
+    const v = Math.floor(idx / GRID);
+    const amp = maxCount > 0 && matrix[u]?.[v] ? matrix[u][v] / maxCount : 0;
+    dot.position.y = amp * 20 + 0.5;
+  });
+
+  pos.needsUpdate = true;
+  controls.update();
+  renderer.render(scene, camera);
+}
+
+// Resize
+window.addEventListener('resize', () => {
+  camera.aspect = window.innerWidth / window.innerHeight;
+  camera.updateProjectionMatrix();
+  renderer.setSize(window.innerWidth, window.innerHeight);
+});
+
+// Main 
+loadQuantumData().then(counts => {
+  const entries = parseEntries(counts);
+  const { matrix, maxCount } = buildMatrix(entries);
+
+  console.log('Loaded entries:', entries.length);
+  console.log('Max count:', maxCount);
+
+  createWaveSurface(matrix, maxCount);
+  animate();
+}).catch(err => {
+  console.error('Failed to load quantum data:', err);
+});
+
+<br>
+
+  
+
+    <footer>
+        <a href="mailto:stevetippeconnic@gmail.com">Contact</a> <br>
+        <a href="https://x.com/SteveTipp">Follow Me</a> 
+    </footer>
+
+</body>
+</html>
