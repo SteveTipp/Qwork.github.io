@@ -1,0 +1,325 @@
+
+
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Experiment 85 - Qwork</title>
+    <style>
+       body {
+            background-color: #000000; /* Black background */
+            color: #FFFFFF; /* White text */
+            font-family: Arial, sans-serif; /* Modern, sans-serif font */
+            margin: 0;
+            padding: 0;
+            width: fit-content;
+            margin-left: auto;
+            margin-right: auto;
+            text-align: center;
+            
+        } 
+        header {
+            background: url('QImage4.png') no-repeat center center;
+            background-size: contain; /* Ensure the image is fully contained within the header */
+            height: 400px; /* Height as per the resized image */
+            position: relative;
+        }
+        nav {
+            display: flex;
+            justify-content: center;
+            padding: 10px 0;
+        }
+        nav a {
+            color: #FFFFFF; /* White links */
+            margin: 0 20px;
+            text-decoration: none;
+            font-size: 1.2em;
+        }
+        nav a:hover {
+            color: #00FF00; /* Matrix green for hover state */
+        }
+        .content-section {
+            padding: 20px;
+            text-align: left;
+        }
+        .content-block {
+            margin: 10px auto;
+            padding: 10px;
+            border: 1px solid #00FF00; /* Matrix green border */
+        }
+        .experiment-image {
+            width: 1200px; /* Updated width */
+            height: auto; /* Updated height */
+            margin: 20px auto;
+            display: block;
+        }
+        .experiment-image2 {
+            width: 1200px; /* Updated width */
+            height: auto; /* Updated height */
+            margin: 20px auto;
+            display: block;
+        }
+         .experiment-image3 {
+            width: 1200px; /* Updated width */
+            height: auto; /* Updated height */
+            margin: 20px auto;
+            display: block;
+        }
+        .experiment-image4 {
+            width: 1200px; /* Updated width */
+            height: auto; /* Updated height */
+            margin: 20px auto;
+            display: block;
+        }
+       
+        footer {
+            color: #FFFFFF; /* White text */
+            text-align: center;
+            padding: 20px 0;
+        }
+        footer a {
+            color: #FFFFFF;
+            text-decoration: none;
+        }
+        footer a:hover {
+            color: #00FF00; /* Matrix green on hover */
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <!-- Header with the resized image -->
+    </header>
+
+   <nav>
+        <a href="try_yourself.html">Try</a>
+        <a href="index.html">Experiments</a>
+	    <a href="visuals.html">Waves</a>
+        <a href="about.html">About</a>
+    </nav>
+
+    <section class="content-section">
+        <h1><center> Quantum Sealed Record Layer  </center></h1>
+        <div class="content-block">
+         
+I have recently been experimenting with post-quantum cryptography, and learn best by building, so I created a small open source prototype called qsrl (Quantum Sealed Record Layer).
+<br>
+  <img src="qsrl_0_main.png" alt="" class="experiment-image">
+        <p></p>
+       
+<br>
+<br>
+qsrl is an experimental local archive/signing tool built in Rust. The idea is simple - take a folder, package it into a deterministic .qsrl archive, sign the archive with post-quantum signature schemes, optionally encrypt the payload for a recipient, and then verify or extract it later through either a CLI or a small local desktop app.
+<br>
+<br>
+The project currently supports ML-DSA and SLH-DSA signatures through liboqs, ML-KEM recipient encryption, AES-256-GCM payload protection, verified extraction, detached signatures, archive inspection, and a local desktop UI. Everything stays local on disk. No accounts, no sync, no telemetry, and no cloud backend.
+<br>
+<br>
+The desktop UI features Keygen, Pack, Sign, Verify, Extract, and Inspect. The UI is just a local front end over the Rust core. It does not replace the CLI, and it does not add network behavior. The goal was to make the archive workflows easier to demo and use without turning it into a large app.
+<br>
+<br>
+The main reason I built this was to understand the practical mechanics of post-quantum archive authentication - where the manifest should be signed, what should remain inspectable, how recipient encryption should sit beside signature verification, and how to make the archive format deterministic enough to reason about.
+<br>
+<br>
+A few things I wanted qsrl to explore:
+<br>
+deterministic archive manifests
+<br>
+post-quantum signatures for archive identity
+<br>
+recipient-based payload encryption
+<br>
+signed-only and signed + encrypted workflows
+<br>
+detached signature support
+<br>
+verified extraction
+<br>
+safe extraction behavior
+<br>
+local-first UI workflows for non-terminal use
+<br>
+<br>
+ <div class="content-block">
+Walkthrough of qsrl
+<br>
+<br>
+1. Key generation
+<br>
+<br>
+The desktop app includes a Keygen workflow for creating local ML-DSA, SLH-DSA, and ML-KEM keypairs.
+<br>
+<br>
+<br>
+  <img src="qsrl_1_keygen_mldsa.png" alt="" class="experiment-image">
+        <p></p>
+        
+<br>
+<br>
+  <img src="qsrl_1_keygen_slhdsa.png" alt="" class="experiment-image">
+        <p></p>
+        
+<br>
+<br>
+  <img src="qsrl_1_keygen_mlkem.png" alt="" class="experiment-image">
+        <p></p>
+       
+<br>
+<br>
+This shows the local key workflow. ML-DSA and SLH-DSA are used for signatures, while ML-KEM is used for recipient encryption. The private key files stay local, and on Unix-like systems QSRL creates prototype .private key files with restrictive permissions.
+<br>
+<br>
+ <div class="content-block">
+2. Packing a folder into a .qsrl archive
+<br>
+<br>
+qsrl can package a folder into a .qsrl archive using an explicit manifest, compression options, and archive metadata.
+<br>
+<br>
+  <img src="qsrl_2_pack.png" alt="" class="experiment-image">
+        <p></p>
+       
+<br>
+<br>
+This is the core archive creation step. The archive stores enough structure to inspect what was packaged while keeping the format deterministic and easy to test.
+<br>
+<br>
+ <div class="content-block">
+3. Inspecting an archive
+<br>
+<br>
+The Inspect tab shows archive metadata before or after signing/encryption.
+<br>
+<br>
+  <img src="qsrl_3_inspect.png" alt="" class="experiment-image">
+        <p></p>
+        
+<br>
+<br>
+This is one of the parts I care about most. I wanted qsrl archives to be inspectable, not just opaque blobs. Even when encryption is used, the signed identity and archive structure remain understandable.
+<br>
+<br>
+ <div class="content-block">
+4. Signing an archive
+<br>
+<br>
+qsrl supports embedded and detached signatures.
+<br>
+<br>
+  <img src="qsrl_4_sign.png" alt="" class="experiment-image">
+        <p></p>
+       
+<br>
+<br>
+This step signs the archive’s canonical identity. Embedded signatures keep everything in one file, while detached signatures allow the .sig file to sit beside the archive.
+<br>
+<br>
+ <div class="content-block">
+5. Verifying an archive
+<br>
+<br>
+The Verify tab checks signatures and file hashes when possible.
+<br>
+<br>
+  <img src="qsrl_5_verify.png" alt="" class="experiment-image">
+        <p></p>
+        
+<br>
+<br>
+For encrypted archives, qsrl is careful about wording, verification can confirm the signature, but encrypted payload authentication happens during decrypt/extract. I wanted the tool to avoid implying more than it has actually checked.
+<br>
+<br>
+ <div class="content-block">
+6. Extracting an archive
+<br>
+<br>
+The Extract workflow restores the archive contents to a selected output folder.
+<br>
+<br>
+  <img src="qsrl_6_extract.png" alt="" class="experiment-image">
+        <p></p>
+       
+<br>
+<br>
+qsrl verifies decoded file integrity before writing and includes safety checks around extraction behavior. It rejects path traversal, symlink path components, overwrite attempts, malformed archives, and trailing archive bytes.
+<br>
+<br>
+ <div class="content-block">
+7. Encrypted recipient workflow
+<br>
+<br>
+qsrl can encrypt the archive payload for an ML-KEM recipient.
+<br>
+<br>
+  <img src="qsrl_7_encrypted.png" alt="" class="experiment-image">
+        <p></p>
+        
+<br>
+<br>
+  <img src="qsrl_8_encrypted_inspect.png" alt="" class="experiment-image">
+        <p></p>
+        
+<br>
+<br>
+  <img src="qsrl_9_encrypted_sign.png" alt="" class="experiment-image">
+        <p></p>
+       
+<br>
+<br>
+  <img src="qsrl_10_encrypted_verify.png" alt="" class="experiment-image">
+        <p></p>
+        
+<br>
+<br>
+  <img src="qsrl_11_encrypted_extract.png" alt="" class="experiment-image">
+        <p></p>
+        
+<br>
+<br>
+This is the signed + encrypted path, the manifest/signature model remains separate from payload confidentiality. The archive can be signed for authenticity and encrypted for a recipient who has the matching ML-KEM private key.
+<br>
+<br>
+ <div class="content-block">
+8. Wrong-key failure tests
+<br>
+<br>
+I also tested failure paths, verifying with the wrong public key and extracting encrypted archives with the wrong recipient private key.
+<br>
+<br><br>
+  <img src="qsrl_12_wrong_key.png" alt="" class="experiment-image">
+        <p></p>
+       
+<br>
+  <img src="qsrl_13_wrong_key_encrypted.png" alt="" class="experiment-image">
+        <p></p>
+       
+<br>  
+<br> 
+This is important because crypto tools should fail clearly. A correct private recipient key can decrypt, a correct signer public key can authenticate. If either is missing or wrong, qsrl should say exactly what was and was not checked.
+<br>  
+<br> 
+ <div class="content-block">
+9. Release hygiene
+<br>  
+<br> 
+Before pushing the repo, I ran locked builds/tests, liboqs feature tests, desktop checks, Clippy with strict warnings, cargo audit, private-file checks, and a fresh-clone test from GitHub. This was important because qsrl is an archive/crypto prototype. The project now keeps Cargo.lock committed, documents dependency policy, ignores generated keys and archives, and treats dependency updates as intentional changes.
+<br>  
+<br> 
+qsrl is still experimental and is not audited. It should not be used for production secrets yet. This is a first prototype and a developer-preview open source release.
+<br>  
+<br> 
+If you try it and run into issues, open a pull request or file an issue. I’ll keep improving the format, the UI, and the safety checks over time. I also plan to add more post-quantum signature schemes as the project evolves. 
+<br>  
+<br> 
+Hope you enjoy!
+<br>  
+<br> 
+<a href="https://github.com/SteveTipp/qsrl">qsrl GitHub Repository Link</a> 
+
+    <footer>
+        <!-- Footer content -->
+        <a href="mailto:stevetippeconnic@gmail.com">Contact</a>
+    </footer>
+
+</body>
+</html>
