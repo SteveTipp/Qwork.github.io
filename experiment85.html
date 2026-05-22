@@ -112,7 +112,7 @@ I have recently been experimenting with post-quantum cryptography, and learn bes
 qsrl is an experimental local archive/signing tool built in Rust. The idea is simple - take a folder, package it into a deterministic .qsrl archive, sign the archive with post-quantum signature schemes, optionally encrypt the payload for a recipient, and then verify or extract it later through either a CLI or a small local desktop app.
 <br>
 <br>
-The project currently supports ML-DSA and SLH-DSA signatures through liboqs, ML-KEM recipient encryption, AES-256-GCM payload protection, verified extraction, detached signatures, archive inspection, and a local desktop UI. Everything stays local on disk. No accounts, no sync, no telemetry, and no cloud backend.
+The project currently supports ML-DSA and SLH-DSA signatures through liboqs, ML-KEM key encapsulation for recipients, AES-256-GCM payload encryption, verified extraction, detached signatures, archive inspection, and a local desktop UI. Everything stays local on disk. No accounts, no sync, no telemetry, and no cloud backend.
 <br>
 <br>
 The desktop UI features Keygen, Pack, Sign, Verify, Extract, and Inspect. The UI is just a local front end over the Rust core. It does not replace the CLI, and it does not add network behavior. The goal was to make the archive workflows easier to demo and use without turning it into a large app.
