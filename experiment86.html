@@ -1,0 +1,4040 @@
+
+
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Experiment 86 - Qwork</title>
+    <style>
+       body {
+            background-color: #000000; /* Black background */
+            color: #FFFFFF; /* White text */
+            font-family: Arial, sans-serif; /* Modern, sans-serif font */
+            margin: 0;
+            padding: 0;
+            width: fit-content;
+            margin-left: auto;
+            margin-right: auto;
+            text-align: center;
+            
+        } 
+        header {
+            background: url('QImage4.png') no-repeat center center;
+            background-size: contain; /* Ensure the image is fully contained within the header */
+            height: 400px; /* Height as per the resized image */
+            position: relative;
+        }
+        nav {
+            display: flex;
+            justify-content: center;
+            padding: 10px 0;
+        }
+        nav a {
+            color: #FFFFFF; /* White links */
+            margin: 0 20px;
+            text-decoration: none;
+            font-size: 1.2em;
+        }
+        nav a:hover {
+            color: #00FF00; /* Matrix green for hover state */
+        }
+        .content-section {
+            padding: 20px;
+            text-align: left;
+        }
+        .content-block {
+            margin: 10px auto;
+            padding: 10px;
+            border: 1px solid #00FF00; /* Matrix green border */
+        }
+        .experiment-image {
+            width: 1200px; /* Updated width */
+            height: auto; /* Updated height */
+            margin: 20px auto;
+            display: block;
+        }
+        .experiment-image2 {
+            width: 1200px; /* Updated width */
+            height: auto; /* Updated height */
+            margin: 20px auto;
+            display: block;
+        }
+         .experiment-image3 {
+            width: 1200px; /* Updated width */
+            height: auto; /* Updated height */
+            margin: 20px auto;
+            display: block;
+        }
+        .experiment-image4 {
+            width: 1200px; /* Updated width */
+            height: auto; /* Updated height */
+            margin: 20px auto;
+            display: block;
+        }
+       
+        footer {
+            color: #FFFFFF; /* White text */
+            text-align: center;
+            padding: 20px 0;
+        }
+        footer a {
+            color: #FFFFFF;
+            text-decoration: none;
+        }
+        footer a:hover {
+            color: #00FF00; /* Matrix green on hover */
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <!-- Header with the resized image -->
+    </header>
+
+   <nav>
+        <a href="try_yourself.html">Try</a>
+        <a href="index.html">Experiments</a>
+	    <a href="visuals.html">Waves</a>
+        <a href="about.html">About</a>
+    </nav>
+
+    <section class="content-section">
+        <h1><center> Four Ways to Do Nothing on a Quantum Chip </center></h1>
+        <div class="content-block">
+         
+Can a quantum chip tell apart four gate sequences that all perform the identity operation? I encoded two-bit symbols in four equal-duration sequences on qubit 55 of IBM Kingston and measured each sequence at four phases of a Ramsey interferometer. An ideal qubit gives the same measurement probabilities for every symbol. On Kingston, a decoder trained on the first job identified all 32 blinded symbols in the second job from their fringe angles alone. Applying the secret mask recovered all 64 plaintext bits.
+
+<br>
+<br> 
+Code Walkthrough
+<br>
+<br>           
+<p>1. Select the physical qubit <br>
+Rank qubits by lowest calibrated √X gate error, breaking ties by longest T₁ and then longest T₂. This selected qubit 55 for both jobs.<br>
+<br>
+    q* = argmin_q (ε_√X(q), −T₁(q), −T₂(q)) = 55<br>
+    T₁ = 338.77 µs,  T₂ = 86.02 µs<br>
+    
+<p>2. Build four physical versions of the identity<br>
+Let S = √X. Apply a virtual Z rotation of aπ/2, four S pulses, and the opposite Z rotation, where a is +1 or −1. Each block is exactly the identity because S⁴ = I. Assign a triple of signs (a, b, c) to each symbol. Repeat the triple four times between an opening S and its inverse S³. In the operator products below, the rightmost gate acts first.<br>
+<br>
+    B(a) = Rz(−aπ/2) S⁴ Rz(aπ/2) = I<br>
+    00 → (+,+,+)     01 → (+,−,+)     10 → (−,+,−)     11 → (−,−,−)<br>
+    U = S³ [B(c) B(b) B(a)]⁴ S = I<br>
+    
+<p>3. Measure the Ramsey fringe<br>
+Prepare |0⟩, apply S, insert the selected identity sequence U, apply Rz(φ − π), then apply S and measure. Barriers preserve the individual pulses. All 16 combinations of symbol and phase compiled to 54 S pulses and the same duration of 3.908 µs, including readout. If the gates are ideal, the probability of measuring 0 depends only on φ.<br>
+<br>
+    P(0 | φ) = |⟨0| S Rz(φ − π) U S |0⟩|² = (1 + cos φ)/2<br>
+    φ = (0°, 90°, 180°, 270°)     P(0 | φ) = (1, ½, 0, ½)<br>
+
+
+<p>4. Collect labeled samples, then transmit a masked message<br>
+Run eight labeled samples per symbol in the early job. For the late job, split a random 64-bit message into 32 two-bit values mᵢ. Draw an independent, uniformly random two-bit mask rᵢ for each value. Their bitwise XOR selects the gate sequence. Shuffle the measurement settings within each job and keep the late labels, masks, and plaintext in a separate answer key.<br>
+<br>
+    sᵢ = mᵢ ⊕ rᵢ<br>
+    N = 4,096 shots per phase<br>
+    Total shots = (32 early + 32 late) × 4 phases × 4,096 = 1,048,576<br>
+
+
+
+
+<p>5. Learn the alphabet from the early job<br>
+For one sample, let kφ be the number of zeros at phase φ and pφ = kφ/N. Estimate the fringe angle from the differences between opposite phases. Pool early counts by symbol to get four reference angles. The angle decoder picks the closest reference using angular distance around the circle.<br>
+<br>
+    X = p₀ − p₁₈₀       Y = p₂₇₀ − p₉₀       θ = atan2(Y, X)<br>
+    ŝ = argmin_s |wrap(θ − θₛ)|, with θₛ the early reference and wrap taking angles into [−π, π)<br>
+
+A second decoder uses all four probabilities. For symbol s, let K(s,φ) be the pooled zero count at phase φ and nₛ the number of early samples used for that symbol. Estimate each probability with a half-count correction, then choose the symbol with the highest binomial log-likelihood.<br>
+<br>
+    q(s,φ) = [K(s,φ) + ½] / [nₛN + 1]<br>
+    ŝ = argmax_s Σφ [kφ ln q(s,φ) + (N − kφ) ln(1 − q(s,φ))]<br>
+	
+<p>6. Freeze the late predictions and open the key<br>
+Check early accuracy by holding out one whole four-phase sample at a time. Then fit both decoders to all 32 early samples and save their late predictions before opening the answer key. Score each predicted symbol ŝᵢ and apply its mask to recover the predicted plaintext.<br>
+<br>
+    Symbol accuracy = (number of correct late symbols) / 32<br>
+    m̂ᵢ = ŝᵢ ⊕ rᵢ<br>
+
+
+<p>7. Measure how much information survives with fewer shots<br>                       
+Keep both decoders fixed. For each smaller budget h, draw h shots without replacement from each archived late phase measurement. Repeat 5,000 times at each budget and score the same 32 symbols. The sampled zero count k′φ follows a hypergeometric distribution with kφ zeros among N recorded shots.<br>  
+<br>  
+    k′φ ∼ Hypergeometric(population N, zeros kφ, draws h)<br>  
+    h = 16, 32, 64, 128, 256, 512, 1,024, 2,048, 4,096<br>  
+
+  
+
+
+<p><center> Results:</center><br>
+<br>
+<br>
+Ramsey_Identity_Cipher_20261124T023947Z_5b416fd2_measurements.json
+<br>
+<br>
+<pre style="white-space: pre-wrap; overflow-wrap: anywhere; max-width: 100%; box-sizing: border-box;">
+{
+  "experiment": "Ramsey identity cipher",
+  "run_id": "20261124T023947Z_5b416fd2",
+  "backend": "ibm_kingston",
+  "physical_qubit": 55,
+  "calibration": {
+    "source": "/Users/steventippeconnic/Documents/QC/ibm_kingston_calibrations_2026-11-24T02_24_57Z.csv",
+    "sx_error": 0.00010773911740897725,
+    "t1_us": 338.76653892256047,
+    "t2_us": 86.01612624248708
+  },
+  "shots_per_phase": 4096,
+  "phases_deg": [
+    0,
+    90,
+    180,
+    270
+  ],
+  "word_frame_signs": [
+    [
+      1,
+      1,
+      1
+    ],
+    [
+      1,
+      -1,
+      1
+    ],
+    [
+      -1,
+      1,
+      -1
+    ],
+    [
+      -1,
+      -1,
+      -1
+    ]
+  ],
+  "word_repeats": 4,
+  "compiled_duration_dt": 977,
+  "dt_seconds": 4e-09,
+  "blocks": {
+    "early": {
+      "records_in_pub_order": [
+        {
+          "sample_id": 27,
+          "phase_deg": 0,
+          "symbol": 3,
+          "counts": {
+            "0": 3842,
+            "1": 254
+          }
+        },
+        {
+          "sample_id": 12,
+          "phase_deg": 270,
+          "symbol": 1,
+          "counts": {
+            "1": 2293,
+            "0": 1803
+          }
+        },
+        {
+          "sample_id": 18,
+          "phase_deg": 270,
+          "symbol": 0,
+          "counts": {
+            "0": 1357,
+            "1": 2739
+          }
+        },
+        {
+          "sample_id": 11,
+          "phase_deg": 180,
+          "symbol": 3,
+          "counts": {
+            "1": 3859,
+            "0": 237
+          }
+        },
+        {
+          "sample_id": 28,
+          "phase_deg": 90,
+          "symbol": 2,
+          "counts": {
+            "0": 2178,
+            "1": 1918
+          }
+        },
+        {
+          "sample_id": 20,
+          "phase_deg": 90,
+          "symbol": 3,
+          "counts": {
+            "1": 1376,
+            "0": 2720
+          }
+        },
+        {
+          "sample_id": 13,
+          "phase_deg": 90,
+          "symbol": 2,
+          "counts": {
+            "0": 2226,
+            "1": 1870
+          }
+        },
+        {
+          "sample_id": 14,
+          "phase_deg": 0,
+          "symbol": 3,
+          "counts": {
+            "1": 229,
+            "0": 3867
+          }
+        },
+        {
+          "sample_id": 6,
+          "phase_deg": 90,
+          "symbol": 0,
+          "counts": {
+            "0": 2828,
+            "1": 1268
+          }
+        },
+        {
+          "sample_id": 12,
+          "phase_deg": 90,
+          "symbol": 1,
+          "counts": {
+            "1": 1923,
+            "0": 2173
+          }
+        },
+        {
+          "sample_id": 5,
+          "phase_deg": 90,
+          "symbol": 1,
+          "counts": {
+            "1": 1945,
+            "0": 2151
+          }
+        },
+        {
+          "sample_id": 18,
+          "phase_deg": 90,
+          "symbol": 0,
+          "counts": {
+            "1": 1269,
+            "0": 2827
+          }
+        },
+        {
+          "sample_id": 25,
+          "phase_deg": 0,
+          "symbol": 0,
+          "counts": {
+            "0": 3824,
+            "1": 272
+          }
+        },
+        {
+          "sample_id": 6,
+          "phase_deg": 270,
+          "symbol": 0,
+          "counts": {
+            "1": 2738,
+            "0": 1358
+          }
+        },
+        {
+          "sample_id": 17,
+          "phase_deg": 270,
+          "symbol": 1,
+          "counts": {
+            "0": 1778,
+            "1": 2318
+          }
+        },
+        {
+          "sample_id": 30,
+          "phase_deg": 270,
+          "symbol": 3,
+          "counts": {
+            "1": 2856,
+            "0": 1240
+          }
+        },
+        {
+          "sample_id": 21,
+          "phase_deg": 270,
+          "symbol": 1,
+          "counts": {
+            "1": 2268,
+            "0": 1828
+          }
+        },
+        {
+          "sample_id": 25,
+          "phase_deg": 90,
+          "symbol": 0,
+          "counts": {
+            "1": 1268,
+            "0": 2828
+          }
+        },
+        {
+          "sample_id": 3,
+          "phase_deg": 0,
+          "symbol": 2,
+          "counts": {
+            "0": 4030,
+            "1": 66
+          }
+        },
+        {
+          "sample_id": 15,
+          "phase_deg": 90,
+          "symbol": 0,
+          "counts": {
+            "1": 1258,
+            "0": 2838
+          }
+        },
+        {
+          "sample_id": 0,
+          "phase_deg": 90,
+          "symbol": 2,
+          "counts": {
+            "0": 2208,
+            "1": 1888
+          }
+        },
+        {
+          "sample_id": 29,
+          "phase_deg": 270,
+          "symbol": 3,
+          "counts": {
+            "1": 2829,
+            "0": 1267
+          }
+        },
+        {
+          "sample_id": 27,
+          "phase_deg": 180,
+          "symbol": 3,
+          "counts": {
+            "1": 3861,
+            "0": 235
+          }
+        },
+        {
+          "sample_id": 28,
+          "phase_deg": 0,
+          "symbol": 2,
+          "counts": {
+            "0": 4010,
+            "1": 86
+          }
+        },
+        {
+          "sample_id": 19,
+          "phase_deg": 90,
+          "symbol": 0,
+          "counts": {
+            "0": 2853,
+            "1": 1243
+          }
+        },
+        {
+          "sample_id": 19,
+          "phase_deg": 270,
+          "symbol": 0,
+          "counts": {
+            "1": 2705,
+            "0": 1391
+          }
+        },
+        {
+          "sample_id": 13,
+          "phase_deg": 270,
+          "symbol": 2,
+          "counts": {
+            "0": 2046,
+            "1": 2050
+          }
+        },
+        {
+          "sample_id": 15,
+          "phase_deg": 0,
+          "symbol": 0,
+          "counts": {
+            "0": 3815,
+            "1": 281
+          }
+        },
+        {
+          "sample_id": 12,
+          "phase_deg": 0,
+          "symbol": 1,
+          "counts": {
+            "0": 4007,
+            "1": 89
+          }
+        },
+        {
+          "sample_id": 9,
+          "phase_deg": 90,
+          "symbol": 2,
+          "counts": {
+            "1": 1921,
+            "0": 2175
+          }
+        },
+        {
+          "sample_id": 17,
+          "phase_deg": 90,
+          "symbol": 1,
+          "counts": {
+            "1": 1950,
+            "0": 2146
+          }
+        },
+        {
+          "sample_id": 27,
+          "phase_deg": 270,
+          "symbol": 3,
+          "counts": {
+            "1": 2853,
+            "0": 1243
+          }
+        },
+        {
+          "sample_id": 24,
+          "phase_deg": 90,
+          "symbol": 1,
+          "counts": {
+            "0": 2155,
+            "1": 1941
+          }
+        },
+        {
+          "sample_id": 10,
+          "phase_deg": 0,
+          "symbol": 1,
+          "counts": {
+            "0": 4018,
+            "1": 78
+          }
+        },
+        {
+          "sample_id": 13,
+          "phase_deg": 0,
+          "symbol": 2,
+          "counts": {
+            "0": 4018,
+            "1": 78
+          }
+        },
+        {
+          "sample_id": 16,
+          "phase_deg": 0,
+          "symbol": 1,
+          "counts": {
+            "0": 4026,
+            "1": 70
+          }
+        },
+        {
+          "sample_id": 6,
+          "phase_deg": 0,
+          "symbol": 0,
+          "counts": {
+            "0": 3806,
+            "1": 290
+          }
+        },
+        {
+          "sample_id": 3,
+          "phase_deg": 270,
+          "symbol": 2,
+          "counts": {
+            "1": 2089,
+            "0": 2007
+          }
+        },
+        {
+          "sample_id": 23,
+          "phase_deg": 270,
+          "symbol": 2,
+          "counts": {
+            "1": 2018,
+            "0": 2078
+          }
+        },
+        {
+          "sample_id": 8,
+          "phase_deg": 180,
+          "symbol": 0,
+          "counts": {
+            "1": 3892,
+            "0": 204
+          }
+        },
+        {
+          "sample_id": 26,
+          "phase_deg": 180,
+          "symbol": 3,
+          "counts": {
+            "1": 3828,
+            "0": 268
+          }
+        },
+        {
+          "sample_id": 5,
+          "phase_deg": 180,
+          "symbol": 1,
+          "counts": {
+            "1": 4027,
+            "0": 69
+          }
+        },
+        {
+          "sample_id": 4,
+          "phase_deg": 270,
+          "symbol": 2,
+          "counts": {
+            "1": 2086,
+            "0": 2010
+          }
+        },
+        {
+          "sample_id": 2,
+          "phase_deg": 180,
+          "symbol": 0,
+          "counts": {
+            "1": 3898,
+            "0": 198
+          }
+        },
+        {
+          "sample_id": 9,
+          "phase_deg": 270,
+          "symbol": 2,
+          "counts": {
+            "1": 2143,
+            "0": 1953
+          }
+        },
+        {
+          "sample_id": 14,
+          "phase_deg": 180,
+          "symbol": 3,
+          "counts": {
+            "1": 3861,
+            "0": 235
+          }
+        },
+        {
+          "sample_id": 3,
+          "phase_deg": 90,
+          "symbol": 2,
+          "counts": {
+            "1": 1921,
+            "0": 2175
+          }
+        },
+        {
+          "sample_id": 16,
+          "phase_deg": 270,
+          "symbol": 1,
+          "counts": {
+            "0": 1816,
+            "1": 2280
+          }
+        },
+        {
+          "sample_id": 11,
+          "phase_deg": 270,
+          "symbol": 3,
+          "counts": {
+            "1": 2857,
+            "0": 1239
+          }
+        },
+        {
+          "sample_id": 27,
+          "phase_deg": 90,
+          "symbol": 3,
+          "counts": {
+            "0": 2702,
+            "1": 1394
+          }
+        },
+        {
+          "sample_id": 0,
+          "phase_deg": 180,
+          "symbol": 2,
+          "counts": {
+            "1": 4034,
+            "0": 62
+          }
+        },
+        {
+          "sample_id": 7,
+          "phase_deg": 90,
+          "symbol": 3,
+          "counts": {
+            "0": 2661,
+            "1": 1435
+          }
+        },
+        {
+          "sample_id": 19,
+          "phase_deg": 0,
+          "symbol": 0,
+          "counts": {
+            "0": 3821,
+            "1": 275
+          }
+        },
+        {
+          "sample_id": 10,
+          "phase_deg": 180,
+          "symbol": 1,
+          "counts": {
+            "1": 4026,
+            "0": 70
+          }
+        },
+        {
+          "sample_id": 19,
+          "phase_deg": 180,
+          "symbol": 0,
+          "counts": {
+            "1": 3904,
+            "0": 192
+          }
+        },
+        {
+          "sample_id": 28,
+          "phase_deg": 180,
+          "symbol": 2,
+          "counts": {
+            "1": 4033,
+            "0": 63
+          }
+        },
+        {
+          "sample_id": 4,
+          "phase_deg": 0,
+          "symbol": 2,
+          "counts": {
+            "0": 4007,
+            "1": 89
+          }
+        },
+        {
+          "sample_id": 14,
+          "phase_deg": 270,
+          "symbol": 3,
+          "counts": {
+            "1": 2883,
+            "0": 1213
+          }
+        },
+        {
+          "sample_id": 16,
+          "phase_deg": 90,
+          "symbol": 1,
+          "counts": {
+            "0": 2198,
+            "1": 1898
+          }
+        },
+        {
+          "sample_id": 23,
+          "phase_deg": 90,
+          "symbol": 2,
+          "counts": {
+            "0": 2267,
+            "1": 1829
+          }
+        },
+        {
+          "sample_id": 31,
+          "phase_deg": 0,
+          "symbol": 0,
+          "counts": {
+            "0": 3815,
+            "1": 281
+          }
+        },
+        {
+          "sample_id": 0,
+          "phase_deg": 270,
+          "symbol": 2,
+          "counts": {
+            "0": 2028,
+            "1": 2068
+          }
+        },
+        {
+          "sample_id": 22,
+          "phase_deg": 90,
+          "symbol": 2,
+          "counts": {
+            "0": 2209,
+            "1": 1887
+          }
+        },
+        {
+          "sample_id": 23,
+          "phase_deg": 180,
+          "symbol": 2,
+          "counts": {
+            "1": 4032,
+            "0": 64
+          }
+        },
+        {
+          "sample_id": 21,
+          "phase_deg": 0,
+          "symbol": 1,
+          "counts": {
+            "0": 4040,
+            "1": 56
+          }
+        },
+        {
+          "sample_id": 14,
+          "phase_deg": 90,
+          "symbol": 3,
+          "counts": {
+            "0": 2650,
+            "1": 1446
+          }
+        },
+        {
+          "sample_id": 25,
+          "phase_deg": 270,
+          "symbol": 0,
+          "counts": {
+            "0": 1419,
+            "1": 2677
+          }
+        },
+        {
+          "sample_id": 24,
+          "phase_deg": 270,
+          "symbol": 1,
+          "counts": {
+            "0": 1829,
+            "1": 2267
+          }
+        },
+        {
+          "sample_id": 22,
+          "phase_deg": 180,
+          "symbol": 2,
+          "counts": {
+            "1": 4012,
+            "0": 84
+          }
+        },
+        {
+          "sample_id": 13,
+          "phase_deg": 180,
+          "symbol": 2,
+          "counts": {
+            "1": 4035,
+            "0": 61
+          }
+        },
+        {
+          "sample_id": 17,
+          "phase_deg": 180,
+          "symbol": 1,
+          "counts": {
+            "1": 4033,
+            "0": 63
+          }
+        },
+        {
+          "sample_id": 8,
+          "phase_deg": 90,
+          "symbol": 0,
+          "counts": {
+            "0": 2856,
+            "1": 1240
+          }
+        },
+        {
+          "sample_id": 26,
+          "phase_deg": 0,
+          "symbol": 3,
+          "counts": {
+            "0": 3866,
+            "1": 230
+          }
+        },
+        {
+          "sample_id": 23,
+          "phase_deg": 0,
+          "symbol": 2,
+          "counts": {
+            "0": 4008,
+            "1": 88
+          }
+        },
+        {
+          "sample_id": 29,
+          "phase_deg": 0,
+          "symbol": 3,
+          "counts": {
+            "0": 3861,
+            "1": 235
+          }
+        },
+        {
+          "sample_id": 29,
+          "phase_deg": 90,
+          "symbol": 3,
+          "counts": {
+            "0": 2701,
+            "1": 1395
+          }
+        },
+        {
+          "sample_id": 4,
+          "phase_deg": 180,
+          "symbol": 2,
+          "counts": {
+            "1": 4029,
+            "0": 67
+          }
+        },
+        {
+          "sample_id": 7,
+          "phase_deg": 180,
+          "symbol": 3,
+          "counts": {
+            "1": 3850,
+            "0": 246
+          }
+        },
+        {
+          "sample_id": 0,
+          "phase_deg": 0,
+          "symbol": 2,
+          "counts": {
+            "0": 4013,
+            "1": 83
+          }
+        },
+        {
+          "sample_id": 28,
+          "phase_deg": 270,
+          "symbol": 2,
+          "counts": {
+            "1": 2117,
+            "0": 1979
+          }
+        },
+        {
+          "sample_id": 24,
+          "phase_deg": 180,
+          "symbol": 1,
+          "counts": {
+            "1": 4028,
+            "0": 68
+          }
+        },
+        {
+          "sample_id": 2,
+          "phase_deg": 90,
+          "symbol": 0,
+          "counts": {
+            "0": 2843,
+            "1": 1253
+          }
+        },
+        {
+          "sample_id": 6,
+          "phase_deg": 180,
+          "symbol": 0,
+          "counts": {
+            "1": 3904,
+            "0": 192
+          }
+        },
+        {
+          "sample_id": 20,
+          "phase_deg": 0,
+          "symbol": 3,
+          "counts": {
+            "0": 3853,
+            "1": 243
+          }
+        },
+        {
+          "sample_id": 18,
+          "phase_deg": 180,
+          "symbol": 0,
+          "counts": {
+            "1": 3917,
+            "0": 179
+          }
+        },
+        {
+          "sample_id": 8,
+          "phase_deg": 270,
+          "symbol": 0,
+          "counts": {
+            "1": 2714,
+            "0": 1382
+          }
+        },
+        {
+          "sample_id": 1,
+          "phase_deg": 270,
+          "symbol": 1,
+          "counts": {
+            "0": 1867,
+            "1": 2229
+          }
+        },
+        {
+          "sample_id": 9,
+          "phase_deg": 0,
+          "symbol": 2,
+          "counts": {
+            "0": 4001,
+            "1": 95
+          }
+        },
+        {
+          "sample_id": 1,
+          "phase_deg": 90,
+          "symbol": 1,
+          "counts": {
+            "0": 2122,
+            "1": 1974
+          }
+        },
+        {
+          "sample_id": 8,
+          "phase_deg": 0,
+          "symbol": 0,
+          "counts": {
+            "1": 304,
+            "0": 3792
+          }
+        },
+        {
+          "sample_id": 30,
+          "phase_deg": 180,
+          "symbol": 3,
+          "counts": {
+            "1": 3871,
+            "0": 225
+          }
+        },
+        {
+          "sample_id": 30,
+          "phase_deg": 90,
+          "symbol": 3,
+          "counts": {
+            "1": 1403,
+            "0": 2693
+          }
+        },
+        {
+          "sample_id": 26,
+          "phase_deg": 270,
+          "symbol": 3,
+          "counts": {
+            "1": 2879,
+            "0": 1217
+          }
+        },
+        {
+          "sample_id": 1,
+          "phase_deg": 0,
+          "symbol": 1,
+          "counts": {
+            "0": 4012,
+            "1": 84
+          }
+        },
+        {
+          "sample_id": 31,
+          "phase_deg": 180,
+          "symbol": 0,
+          "counts": {
+            "1": 3909,
+            "0": 187
+          }
+        },
+        {
+          "sample_id": 7,
+          "phase_deg": 0,
+          "symbol": 3,
+          "counts": {
+            "1": 236,
+            "0": 3860
+          }
+        },
+        {
+          "sample_id": 22,
+          "phase_deg": 270,
+          "symbol": 2,
+          "counts": {
+            "1": 2068,
+            "0": 2028
+          }
+        },
+        {
+          "sample_id": 1,
+          "phase_deg": 180,
+          "symbol": 1,
+          "counts": {
+            "1": 4035,
+            "0": 61
+          }
+        },
+        {
+          "sample_id": 22,
+          "phase_deg": 0,
+          "symbol": 2,
+          "counts": {
+            "0": 4004,
+            "1": 92
+          }
+        },
+        {
+          "sample_id": 10,
+          "phase_deg": 90,
+          "symbol": 1,
+          "counts": {
+            "0": 2168,
+            "1": 1928
+          }
+        },
+        {
+          "sample_id": 31,
+          "phase_deg": 90,
+          "symbol": 0,
+          "counts": {
+            "1": 1309,
+            "0": 2787
+          }
+        },
+        {
+          "sample_id": 24,
+          "phase_deg": 0,
+          "symbol": 1,
+          "counts": {
+            "0": 4007,
+            "1": 89
+          }
+        },
+        {
+          "sample_id": 21,
+          "phase_deg": 90,
+          "symbol": 1,
+          "counts": {
+            "1": 1900,
+            "0": 2196
+          }
+        },
+        {
+          "sample_id": 5,
+          "phase_deg": 0,
+          "symbol": 1,
+          "counts": {
+            "0": 4021,
+            "1": 75
+          }
+        },
+        {
+          "sample_id": 2,
+          "phase_deg": 0,
+          "symbol": 0,
+          "counts": {
+            "0": 3804,
+            "1": 292
+          }
+        },
+        {
+          "sample_id": 5,
+          "phase_deg": 270,
+          "symbol": 1,
+          "counts": {
+            "1": 2253,
+            "0": 1843
+          }
+        },
+        {
+          "sample_id": 11,
+          "phase_deg": 90,
+          "symbol": 3,
+          "counts": {
+            "1": 1443,
+            "0": 2653
+          }
+        },
+        {
+          "sample_id": 31,
+          "phase_deg": 270,
+          "symbol": 0,
+          "counts": {
+            "1": 2764,
+            "0": 1332
+          }
+        },
+        {
+          "sample_id": 3,
+          "phase_deg": 180,
+          "symbol": 2,
+          "counts": {
+            "1": 4018,
+            "0": 78
+          }
+        },
+        {
+          "sample_id": 18,
+          "phase_deg": 0,
+          "symbol": 0,
+          "counts": {
+            "0": 3824,
+            "1": 272
+          }
+        },
+        {
+          "sample_id": 2,
+          "phase_deg": 270,
+          "symbol": 0,
+          "counts": {
+            "0": 1307,
+            "1": 2789
+          }
+        },
+        {
+          "sample_id": 4,
+          "phase_deg": 90,
+          "symbol": 2,
+          "counts": {
+            "0": 2194,
+            "1": 1902
+          }
+        },
+        {
+          "sample_id": 15,
+          "phase_deg": 180,
+          "symbol": 0,
+          "counts": {
+            "0": 180,
+            "1": 3916
+          }
+        },
+        {
+          "sample_id": 26,
+          "phase_deg": 90,
+          "symbol": 3,
+          "counts": {
+            "0": 2640,
+            "1": 1456
+          }
+        },
+        {
+          "sample_id": 16,
+          "phase_deg": 180,
+          "symbol": 1,
+          "counts": {
+            "1": 4016,
+            "0": 80
+          }
+        },
+        {
+          "sample_id": 10,
+          "phase_deg": 270,
+          "symbol": 1,
+          "counts": {
+            "1": 2331,
+            "0": 1765
+          }
+        },
+        {
+          "sample_id": 15,
+          "phase_deg": 270,
+          "symbol": 0,
+          "counts": {
+            "1": 2785,
+            "0": 1311
+          }
+        },
+        {
+          "sample_id": 21,
+          "phase_deg": 180,
+          "symbol": 1,
+          "counts": {
+            "1": 4031,
+            "0": 65
+          }
+        },
+        {
+          "sample_id": 17,
+          "phase_deg": 0,
+          "symbol": 1,
+          "counts": {
+            "0": 4011,
+            "1": 85
+          }
+        },
+        {
+          "sample_id": 30,
+          "phase_deg": 0,
+          "symbol": 3,
+          "counts": {
+            "0": 3872,
+            "1": 224
+          }
+        },
+        {
+          "sample_id": 12,
+          "phase_deg": 180,
+          "symbol": 1,
+          "counts": {
+            "0": 84,
+            "1": 4012
+          }
+        },
+        {
+          "sample_id": 20,
+          "phase_deg": 180,
+          "symbol": 3,
+          "counts": {
+            "1": 3865,
+            "0": 231
+          }
+        },
+        {
+          "sample_id": 29,
+          "phase_deg": 180,
+          "symbol": 3,
+          "counts": {
+            "1": 3876,
+            "0": 220
+          }
+        },
+        {
+          "sample_id": 25,
+          "phase_deg": 180,
+          "symbol": 0,
+          "counts": {
+            "1": 3915,
+            "0": 181
+          }
+        },
+        {
+          "sample_id": 11,
+          "phase_deg": 0,
+          "symbol": 3,
+          "counts": {
+            "0": 3890,
+            "1": 206
+          }
+        },
+        {
+          "sample_id": 20,
+          "phase_deg": 270,
+          "symbol": 3,
+          "counts": {
+            "1": 2878,
+            "0": 1218
+          }
+        },
+        {
+          "sample_id": 9,
+          "phase_deg": 180,
+          "symbol": 2,
+          "counts": {
+            "1": 4025,
+            "0": 71
+          }
+        },
+        {
+          "sample_id": 7,
+          "phase_deg": 270,
+          "symbol": 3,
+          "counts": {
+            "0": 1235,
+            "1": 2861
+          }
+        }
+      ],
+      "submission_requested_utc": "2026-11-24T02:39:47.347234+00:00",
+      "job_id": "dc2fht5hdvas73bm58o0",
+      "result_received_utc": "2026-11-24T02:42:19.647533+00:00",
+      "qpu_windows": [
+        {
+          "start": "2026-11-24T02:39:54.290952",
+          "stop": "2026-11-24T02:41:45.588892"
+        },
+        {
+          "start": "2026-11-24T02:41:45.736810",
+          "stop": "2026-11-24T02:42:15.667358"
+        }
+      ]
+    },
+    "late": {
+      "records_in_pub_order": [
+        {
+          "sample_id": 16,
+          "phase_deg": 90,
+          "counts": {
+            "0": 2181,
+            "1": 1915
+          }
+        },
+        {
+          "sample_id": 25,
+          "phase_deg": 180,
+          "counts": {
+            "1": 4021,
+            "0": 75
+          }
+        },
+        {
+          "sample_id": 0,
+          "phase_deg": 90,
+          "counts": {
+            "0": 2171,
+            "1": 1925
+          }
+        },
+        {
+          "sample_id": 6,
+          "phase_deg": 270,
+          "counts": {
+            "1": 2320,
+            "0": 1776
+          }
+        },
+        {
+          "sample_id": 27,
+          "phase_deg": 0,
+          "counts": {
+            "0": 3995,
+            "1": 101
+          }
+        },
+        {
+          "sample_id": 20,
+          "phase_deg": 0,
+          "counts": {
+            "0": 3980,
+            "1": 116
+          }
+        },
+        {
+          "sample_id": 28,
+          "phase_deg": 180,
+          "counts": {
+            "1": 4025,
+            "0": 71
+          }
+        },
+        {
+          "sample_id": 19,
+          "phase_deg": 0,
+          "counts": {
+            "0": 3785,
+            "1": 311
+          }
+        },
+        {
+          "sample_id": 2,
+          "phase_deg": 180,
+          "counts": {
+            "1": 4042,
+            "0": 54
+          }
+        },
+        {
+          "sample_id": 1,
+          "phase_deg": 180,
+          "counts": {
+            "1": 3865,
+            "0": 231
+          }
+        },
+        {
+          "sample_id": 22,
+          "phase_deg": 180,
+          "counts": {
+            "0": 206,
+            "1": 3890
+          }
+        },
+        {
+          "sample_id": 1,
+          "phase_deg": 0,
+          "counts": {
+            "0": 3763,
+            "1": 333
+          }
+        },
+        {
+          "sample_id": 8,
+          "phase_deg": 180,
+          "counts": {
+            "1": 3879,
+            "0": 217
+          }
+        },
+        {
+          "sample_id": 22,
+          "phase_deg": 90,
+          "counts": {
+            "1": 1231,
+            "0": 2865
+          }
+        },
+        {
+          "sample_id": 29,
+          "phase_deg": 270,
+          "counts": {
+            "1": 2322,
+            "0": 1774
+          }
+        },
+        {
+          "sample_id": 1,
+          "phase_deg": 270,
+          "counts": {
+            "1": 2802,
+            "0": 1294
+          }
+        },
+        {
+          "sample_id": 5,
+          "phase_deg": 0,
+          "counts": {
+            "0": 4005,
+            "1": 91
+          }
+        },
+        {
+          "sample_id": 23,
+          "phase_deg": 270,
+          "counts": {
+            "1": 2344,
+            "0": 1752
+          }
+        },
+        {
+          "sample_id": 18,
+          "phase_deg": 270,
+          "counts": {
+            "1": 2293,
+            "0": 1803
+          }
+        },
+        {
+          "sample_id": 1,
+          "phase_deg": 90,
+          "counts": {
+            "0": 2909,
+            "1": 1187
+          }
+        },
+        {
+          "sample_id": 18,
+          "phase_deg": 180,
+          "counts": {
+            "1": 4022,
+            "0": 74
+          }
+        },
+        {
+          "sample_id": 10,
+          "phase_deg": 0,
+          "counts": {
+            "0": 3801,
+            "1": 295
+          }
+        },
+        {
+          "sample_id": 6,
+          "phase_deg": 90,
+          "counts": {
+            "0": 2164,
+            "1": 1932
+          }
+        },
+        {
+          "sample_id": 27,
+          "phase_deg": 270,
+          "counts": {
+            "0": 1771,
+            "1": 2325
+          }
+        },
+        {
+          "sample_id": 15,
+          "phase_deg": 270,
+          "counts": {
+            "1": 2793,
+            "0": 1303
+          }
+        },
+        {
+          "sample_id": 19,
+          "phase_deg": 270,
+          "counts": {
+            "1": 2790,
+            "0": 1306
+          }
+        },
+        {
+          "sample_id": 23,
+          "phase_deg": 180,
+          "counts": {
+            "1": 4031,
+            "0": 65
+          }
+        },
+        {
+          "sample_id": 28,
+          "phase_deg": 90,
+          "counts": {
+            "0": 2228,
+            "1": 1868
+          }
+        },
+        {
+          "sample_id": 16,
+          "phase_deg": 270,
+          "counts": {
+            "0": 1810,
+            "1": 2286
+          }
+        },
+        {
+          "sample_id": 31,
+          "phase_deg": 270,
+          "counts": {
+            "1": 2844,
+            "0": 1252
+          }
+        },
+        {
+          "sample_id": 14,
+          "phase_deg": 270,
+          "counts": {
+            "1": 2762,
+            "0": 1334
+          }
+        },
+        {
+          "sample_id": 29,
+          "phase_deg": 90,
+          "counts": {
+            "0": 2109,
+            "1": 1987
+          }
+        },
+        {
+          "sample_id": 11,
+          "phase_deg": 180,
+          "counts": {
+            "1": 4024,
+            "0": 72
+          }
+        },
+        {
+          "sample_id": 7,
+          "phase_deg": 180,
+          "counts": {
+            "1": 4020,
+            "0": 76
+          }
+        },
+        {
+          "sample_id": 24,
+          "phase_deg": 90,
+          "counts": {
+            "0": 2893,
+            "1": 1203
+          }
+        },
+        {
+          "sample_id": 9,
+          "phase_deg": 180,
+          "counts": {
+            "1": 4023,
+            "0": 73
+          }
+        },
+        {
+          "sample_id": 10,
+          "phase_deg": 90,
+          "counts": {
+            "1": 1249,
+            "0": 2847
+          }
+        },
+        {
+          "sample_id": 16,
+          "phase_deg": 180,
+          "counts": {
+            "1": 4027,
+            "0": 69
+          }
+        },
+        {
+          "sample_id": 24,
+          "phase_deg": 0,
+          "counts": {
+            "0": 3784,
+            "1": 312
+          }
+        },
+        {
+          "sample_id": 30,
+          "phase_deg": 180,
+          "counts": {
+            "1": 4030,
+            "0": 66
+          }
+        },
+        {
+          "sample_id": 6,
+          "phase_deg": 0,
+          "counts": {
+            "0": 3987,
+            "1": 109
+          }
+        },
+        {
+          "sample_id": 9,
+          "phase_deg": 0,
+          "counts": {
+            "0": 4017,
+            "1": 79
+          }
+        },
+        {
+          "sample_id": 14,
+          "phase_deg": 180,
+          "counts": {
+            "0": 191,
+            "1": 3905
+          }
+        },
+        {
+          "sample_id": 9,
+          "phase_deg": 270,
+          "counts": {
+            "0": 1732,
+            "1": 2364
+          }
+        },
+        {
+          "sample_id": 25,
+          "phase_deg": 270,
+          "counts": {
+            "1": 2341,
+            "0": 1755
+          }
+        },
+        {
+          "sample_id": 27,
+          "phase_deg": 180,
+          "counts": {
+            "0": 81,
+            "1": 4015
+          }
+        },
+        {
+          "sample_id": 22,
+          "phase_deg": 0,
+          "counts": {
+            "1": 300,
+            "0": 3796
+          }
+        },
+        {
+          "sample_id": 31,
+          "phase_deg": 180,
+          "counts": {
+            "1": 3867,
+            "0": 229
+          }
+        },
+        {
+          "sample_id": 28,
+          "phase_deg": 270,
+          "counts": {
+            "1": 2247,
+            "0": 1849
+          }
+        },
+        {
+          "sample_id": 26,
+          "phase_deg": 0,
+          "counts": {
+            "0": 3868,
+            "1": 228
+          }
+        },
+        {
+          "sample_id": 5,
+          "phase_deg": 180,
+          "counts": {
+            "1": 4022,
+            "0": 74
+          }
+        },
+        {
+          "sample_id": 19,
+          "phase_deg": 180,
+          "counts": {
+            "1": 3889,
+            "0": 207
+          }
+        },
+        {
+          "sample_id": 14,
+          "phase_deg": 90,
+          "counts": {
+            "0": 2577,
+            "1": 1519
+          }
+        },
+        {
+          "sample_id": 12,
+          "phase_deg": 270,
+          "counts": {
+            "1": 2796,
+            "0": 1300
+          }
+        },
+        {
+          "sample_id": 11,
+          "phase_deg": 270,
+          "counts": {
+            "1": 2068,
+            "0": 2028
+          }
+        },
+        {
+          "sample_id": 30,
+          "phase_deg": 90,
+          "counts": {
+            "0": 2199,
+            "1": 1897
+          }
+        },
+        {
+          "sample_id": 7,
+          "phase_deg": 270,
+          "counts": {
+            "1": 2304,
+            "0": 1792
+          }
+        },
+        {
+          "sample_id": 13,
+          "phase_deg": 90,
+          "counts": {
+            "1": 1942,
+            "0": 2154
+          }
+        },
+        {
+          "sample_id": 4,
+          "phase_deg": 90,
+          "counts": {
+            "0": 2848,
+            "1": 1248
+          }
+        },
+        {
+          "sample_id": 18,
+          "phase_deg": 90,
+          "counts": {
+            "1": 1888,
+            "0": 2208
+          }
+        },
+        {
+          "sample_id": 7,
+          "phase_deg": 0,
+          "counts": {
+            "0": 3974,
+            "1": 122
+          }
+        },
+        {
+          "sample_id": 20,
+          "phase_deg": 90,
+          "counts": {
+            "1": 1937,
+            "0": 2159
+          }
+        },
+        {
+          "sample_id": 20,
+          "phase_deg": 180,
+          "counts": {
+            "1": 4029,
+            "0": 67
+          }
+        },
+        {
+          "sample_id": 29,
+          "phase_deg": 0,
+          "counts": {
+            "0": 3983,
+            "1": 113
+          }
+        },
+        {
+          "sample_id": 8,
+          "phase_deg": 270,
+          "counts": {
+            "1": 2826,
+            "0": 1270
+          }
+        },
+        {
+          "sample_id": 23,
+          "phase_deg": 90,
+          "counts": {
+            "1": 1906,
+            "0": 2190
+          }
+        },
+        {
+          "sample_id": 30,
+          "phase_deg": 0,
+          "counts": {
+            "0": 4000,
+            "1": 96
+          }
+        },
+        {
+          "sample_id": 19,
+          "phase_deg": 90,
+          "counts": {
+            "0": 2894,
+            "1": 1202
+          }
+        },
+        {
+          "sample_id": 5,
+          "phase_deg": 90,
+          "counts": {
+            "1": 1911,
+            "0": 2185
+          }
+        },
+        {
+          "sample_id": 27,
+          "phase_deg": 90,
+          "counts": {
+            "1": 1883,
+            "0": 2213
+          }
+        },
+        {
+          "sample_id": 26,
+          "phase_deg": 180,
+          "counts": {
+            "1": 3884,
+            "0": 212
+          }
+        },
+        {
+          "sample_id": 15,
+          "phase_deg": 90,
+          "counts": {
+            "0": 2656,
+            "1": 1440
+          }
+        },
+        {
+          "sample_id": 30,
+          "phase_deg": 270,
+          "counts": {
+            "0": 1769,
+            "1": 2327
+          }
+        },
+        {
+          "sample_id": 17,
+          "phase_deg": 180,
+          "counts": {
+            "1": 4038,
+            "0": 58
+          }
+        },
+        {
+          "sample_id": 16,
+          "phase_deg": 0,
+          "counts": {
+            "0": 4003,
+            "1": 93
+          }
+        },
+        {
+          "sample_id": 12,
+          "phase_deg": 0,
+          "counts": {
+            "0": 3848,
+            "1": 248
+          }
+        },
+        {
+          "sample_id": 0,
+          "phase_deg": 0,
+          "counts": {
+            "0": 4023,
+            "1": 73
+          }
+        },
+        {
+          "sample_id": 4,
+          "phase_deg": 0,
+          "counts": {
+            "0": 3746,
+            "1": 350
+          }
+        },
+        {
+          "sample_id": 15,
+          "phase_deg": 180,
+          "counts": {
+            "1": 3872,
+            "0": 224
+          }
+        },
+        {
+          "sample_id": 14,
+          "phase_deg": 0,
+          "counts": {
+            "0": 3828,
+            "1": 268
+          }
+        },
+        {
+          "sample_id": 10,
+          "phase_deg": 180,
+          "counts": {
+            "1": 3906,
+            "0": 190
+          }
+        },
+        {
+          "sample_id": 13,
+          "phase_deg": 180,
+          "counts": {
+            "1": 4018,
+            "0": 78
+          }
+        },
+        {
+          "sample_id": 21,
+          "phase_deg": 180,
+          "counts": {
+            "1": 3881,
+            "0": 215
+          }
+        },
+        {
+          "sample_id": 10,
+          "phase_deg": 270,
+          "counts": {
+            "1": 2717,
+            "0": 1379
+          }
+        },
+        {
+          "sample_id": 13,
+          "phase_deg": 0,
+          "counts": {
+            "0": 3998,
+            "1": 98
+          }
+        },
+        {
+          "sample_id": 12,
+          "phase_deg": 180,
+          "counts": {
+            "1": 3881,
+            "0": 215
+          }
+        },
+        {
+          "sample_id": 3,
+          "phase_deg": 270,
+          "counts": {
+            "0": 2050,
+            "1": 2046
+          }
+        },
+        {
+          "sample_id": 23,
+          "phase_deg": 0,
+          "counts": {
+            "0": 4009,
+            "1": 87
+          }
+        },
+        {
+          "sample_id": 29,
+          "phase_deg": 180,
+          "counts": {
+            "1": 4023,
+            "0": 73
+          }
+        },
+        {
+          "sample_id": 15,
+          "phase_deg": 0,
+          "counts": {
+            "0": 3879,
+            "1": 217
+          }
+        },
+        {
+          "sample_id": 18,
+          "phase_deg": 0,
+          "counts": {
+            "0": 3996,
+            "1": 100
+          }
+        },
+        {
+          "sample_id": 31,
+          "phase_deg": 90,
+          "counts": {
+            "0": 2837,
+            "1": 1259
+          }
+        },
+        {
+          "sample_id": 24,
+          "phase_deg": 270,
+          "counts": {
+            "0": 1310,
+            "1": 2786
+          }
+        },
+        {
+          "sample_id": 22,
+          "phase_deg": 270,
+          "counts": {
+            "1": 2790,
+            "0": 1306
+          }
+        },
+        {
+          "sample_id": 0,
+          "phase_deg": 270,
+          "counts": {
+            "1": 2069,
+            "0": 2027
+          }
+        },
+        {
+          "sample_id": 25,
+          "phase_deg": 0,
+          "counts": {
+            "0": 3995,
+            "1": 101
+          }
+        },
+        {
+          "sample_id": 17,
+          "phase_deg": 270,
+          "counts": {
+            "0": 1791,
+            "1": 2305
+          }
+        },
+        {
+          "sample_id": 17,
+          "phase_deg": 0,
+          "counts": {
+            "0": 4013,
+            "1": 83
+          }
+        },
+        {
+          "sample_id": 20,
+          "phase_deg": 270,
+          "counts": {
+            "1": 2037,
+            "0": 2059
+          }
+        },
+        {
+          "sample_id": 9,
+          "phase_deg": 90,
+          "counts": {
+            "0": 2186,
+            "1": 1910
+          }
+        },
+        {
+          "sample_id": 11,
+          "phase_deg": 90,
+          "counts": {
+            "1": 1952,
+            "0": 2144
+          }
+        },
+        {
+          "sample_id": 31,
+          "phase_deg": 0,
+          "counts": {
+            "0": 3751,
+            "1": 345
+          }
+        },
+        {
+          "sample_id": 7,
+          "phase_deg": 90,
+          "counts": {
+            "1": 1955,
+            "0": 2141
+          }
+        },
+        {
+          "sample_id": 21,
+          "phase_deg": 270,
+          "counts": {
+            "1": 2746,
+            "0": 1350
+          }
+        },
+        {
+          "sample_id": 26,
+          "phase_deg": 270,
+          "counts": {
+            "1": 2764,
+            "0": 1332
+          }
+        },
+        {
+          "sample_id": 2,
+          "phase_deg": 270,
+          "counts": {
+            "1": 2045,
+            "0": 2051
+          }
+        },
+        {
+          "sample_id": 4,
+          "phase_deg": 270,
+          "counts": {
+            "1": 2765,
+            "0": 1331
+          }
+        },
+        {
+          "sample_id": 5,
+          "phase_deg": 270,
+          "counts": {
+            "0": 1769,
+            "1": 2327
+          }
+        },
+        {
+          "sample_id": 12,
+          "phase_deg": 90,
+          "counts": {
+            "0": 2601,
+            "1": 1495
+          }
+        },
+        {
+          "sample_id": 2,
+          "phase_deg": 90,
+          "counts": {
+            "0": 2145,
+            "1": 1951
+          }
+        },
+        {
+          "sample_id": 3,
+          "phase_deg": 180,
+          "counts": {
+            "1": 4022,
+            "0": 74
+          }
+        },
+        {
+          "sample_id": 25,
+          "phase_deg": 90,
+          "counts": {
+            "1": 1897,
+            "0": 2199
+          }
+        },
+        {
+          "sample_id": 4,
+          "phase_deg": 180,
+          "counts": {
+            "1": 3872,
+            "0": 224
+          }
+        },
+        {
+          "sample_id": 21,
+          "phase_deg": 90,
+          "counts": {
+            "1": 1476,
+            "0": 2620
+          }
+        },
+        {
+          "sample_id": 28,
+          "phase_deg": 0,
+          "counts": {
+            "0": 3987,
+            "1": 109
+          }
+        },
+        {
+          "sample_id": 21,
+          "phase_deg": 0,
+          "counts": {
+            "0": 3855,
+            "1": 241
+          }
+        },
+        {
+          "sample_id": 2,
+          "phase_deg": 0,
+          "counts": {
+            "0": 4006,
+            "1": 90
+          }
+        },
+        {
+          "sample_id": 26,
+          "phase_deg": 90,
+          "counts": {
+            "0": 2616,
+            "1": 1480
+          }
+        },
+        {
+          "sample_id": 0,
+          "phase_deg": 180,
+          "counts": {
+            "1": 4007,
+            "0": 89
+          }
+        },
+        {
+          "sample_id": 3,
+          "phase_deg": 90,
+          "counts": {
+            "0": 2154,
+            "1": 1942
+          }
+        },
+        {
+          "sample_id": 13,
+          "phase_deg": 270,
+          "counts": {
+            "1": 2346,
+            "0": 1750
+          }
+        },
+        {
+          "sample_id": 6,
+          "phase_deg": 180,
+          "counts": {
+            "1": 4029,
+            "0": 67
+          }
+        },
+        {
+          "sample_id": 24,
+          "phase_deg": 180,
+          "counts": {
+            "1": 3890,
+            "0": 206
+          }
+        },
+        {
+          "sample_id": 8,
+          "phase_deg": 0,
+          "counts": {
+            "0": 3882,
+            "1": 214
+          }
+        },
+        {
+          "sample_id": 11,
+          "phase_deg": 0,
+          "counts": {
+            "0": 4009,
+            "1": 87
+          }
+        },
+        {
+          "sample_id": 17,
+          "phase_deg": 90,
+          "counts": {
+            "0": 2186,
+            "1": 1910
+          }
+        },
+        {
+          "sample_id": 8,
+          "phase_deg": 90,
+          "counts": {
+            "1": 1469,
+            "0": 2627
+          }
+        },
+        {
+          "sample_id": 3,
+          "phase_deg": 0,
+          "counts": {
+            "0": 3984,
+            "1": 112
+          }
+        }
+      ],
+      "submission_requested_utc": "2026-11-24T02:42:19.648994+00:00",
+      "job_id": "dc2fj35s2omc738bto20",
+      "result_received_utc": "2026-11-24T02:44:49.928136+00:00",
+      "qpu_windows": [
+        {
+          "start": "2026-11-24T02:42:26.502255",
+          "stop": "2026-11-24T02:44:15.085398"
+        },
+        {
+          "start": "2026-11-24T02:44:15.246052",
+          "stop": "2026-11-24T02:44:46.288195"
+        }
+      ]
+    }
+  }
+}
+<br>
+<br>
+Ramsey_Identity_Cipher_20261124T023947Z_5b416fd2_PRIVATE_key.json
+<br>
+<br>
+{
+  "run_id": "20261124T023947Z_5b416fd2",
+  "late_in_message_order": [
+    {
+      "sample_id": 0,
+      "plaintext": 2,
+      "mask": 0,
+      "symbol": 2
+    },
+    {
+      "sample_id": 1,
+      "plaintext": 2,
+      "mask": 2,
+      "symbol": 0
+    },
+    {
+      "sample_id": 2,
+      "plaintext": 3,
+      "mask": 1,
+      "symbol": 2
+    },
+    {
+      "sample_id": 3,
+      "plaintext": 1,
+      "mask": 3,
+      "symbol": 2
+    },
+    {
+      "sample_id": 4,
+      "plaintext": 1,
+      "mask": 1,
+      "symbol": 0
+    },
+    {
+      "sample_id": 5,
+      "plaintext": 1,
+      "mask": 0,
+      "symbol": 1
+    },
+    {
+      "sample_id": 6,
+      "plaintext": 2,
+      "mask": 3,
+      "symbol": 1
+    },
+    {
+      "sample_id": 7,
+      "plaintext": 2,
+      "mask": 3,
+      "symbol": 1
+    },
+    {
+      "sample_id": 8,
+      "plaintext": 3,
+      "mask": 0,
+      "symbol": 3
+    },
+    {
+      "sample_id": 9,
+      "plaintext": 1,
+      "mask": 0,
+      "symbol": 1
+    },
+    {
+      "sample_id": 10,
+      "plaintext": 0,
+      "mask": 0,
+      "symbol": 0
+    },
+    {
+      "sample_id": 11,
+      "plaintext": 0,
+      "mask": 2,
+      "symbol": 2
+    },
+    {
+      "sample_id": 12,
+      "plaintext": 3,
+      "mask": 0,
+      "symbol": 3
+    },
+    {
+      "sample_id": 13,
+      "plaintext": 3,
+      "mask": 2,
+      "symbol": 1
+    },
+    {
+      "sample_id": 14,
+      "plaintext": 1,
+      "mask": 2,
+      "symbol": 3
+    },
+    {
+      "sample_id": 15,
+      "plaintext": 0,
+      "mask": 3,
+      "symbol": 3
+    },
+    {
+      "sample_id": 16,
+      "plaintext": 2,
+      "mask": 3,
+      "symbol": 1
+    },
+    {
+      "sample_id": 17,
+      "plaintext": 0,
+      "mask": 1,
+      "symbol": 1
+    },
+    {
+      "sample_id": 18,
+      "plaintext": 0,
+      "mask": 1,
+      "symbol": 1
+    },
+    {
+      "sample_id": 19,
+      "plaintext": 1,
+      "mask": 1,
+      "symbol": 0
+    },
+    {
+      "sample_id": 20,
+      "plaintext": 2,
+      "mask": 0,
+      "symbol": 2
+    },
+    {
+      "sample_id": 21,
+      "plaintext": 1,
+      "mask": 2,
+      "symbol": 3
+    },
+    {
+      "sample_id": 22,
+      "plaintext": 1,
+      "mask": 1,
+      "symbol": 0
+    },
+    {
+      "sample_id": 23,
+      "plaintext": 0,
+      "mask": 1,
+      "symbol": 1
+    },
+    {
+      "sample_id": 24,
+      "plaintext": 0,
+      "mask": 0,
+      "symbol": 0
+    },
+    {
+      "sample_id": 25,
+      "plaintext": 3,
+      "mask": 2,
+      "symbol": 1
+    },
+    {
+      "sample_id": 26,
+      "plaintext": 3,
+      "mask": 0,
+      "symbol": 3
+    },
+    {
+      "sample_id": 27,
+      "plaintext": 1,
+      "mask": 0,
+      "symbol": 1
+    },
+    {
+      "sample_id": 28,
+      "plaintext": 0,
+      "mask": 1,
+      "symbol": 1
+    },
+    {
+      "sample_id": 29,
+      "plaintext": 1,
+      "mask": 0,
+      "symbol": 1
+    },
+    {
+      "sample_id": 30,
+      "plaintext": 3,
+      "mask": 2,
+      "symbol": 1
+    },
+    {
+      "sample_id": 31,
+      "plaintext": 3,
+      "mask": 3,
+      "symbol": 0
+    }
+  ]
+}
+<br>
+<br>
+20261124T023947Z_5b416fd2_frozen_predictions.json
+<br>
+<br>
+{
+  "run_id": "20261124T023947Z_5b416fd2",
+  "frozen_utc": "2026-11-24T03:13:35.804686+00:00",
+  "measurements_sha256": "deded43dae21bc81c5b7f30e173177ec5dad5c2af1c5f33cc9087623422463c0",
+  "sample_definition": "four readout-zero counts in order 0, 90, 180, 270 degrees",
+  "primary": "Estimate angle atan2(k270-k90,k0-k180). Choose nearest early pooled class angle by circular distance. Ties use lowest symbol.",
+  "secondary": "Maximum product-binomial likelihood over four phase settings, equal class priors. Class p=(early pooled zero count+0.5)/(class phase shots+1). Ties use lowest symbol.",
+  "early_phase_centers_deg": [
+    -22.154604227622613,
+    -5.0304849746038265,
+    -2.7282097369452414,
+    -21.703285202208363
+  ],
+  "early_profile_probabilities": [
+    [
+      0.9308035033110562,
+      0.6915224755103909,
+      0.046186944978485765,
+      0.3313344929659129
+    ],
+    [
+      0.9808813207604749,
+      0.5282278983185328,
+      0.01710458054868931,
+      0.44339162012878025
+    ],
+    [
+      0.9793249717721016,
+      0.5380847752448961,
+      0.016799414080380846,
+      0.4922182550581342
+    ],
+    [
+      0.9433153285117032,
+      0.6536818334401416,
+      0.057905337361530716,
+      0.3012755958375294
+    ]
+  ],
+  "early_leave_one_sample_out": [
+    {
+      "sample_id": 0,
+      "true_symbol": 2,
+      "phase_prediction": 2,
+      "profile_prediction": 2
+    },
+    {
+      "sample_id": 1,
+      "true_symbol": 1,
+      "phase_prediction": 2,
+      "profile_prediction": 1
+    },
+    {
+      "sample_id": 2,
+      "true_symbol": 0,
+      "phase_prediction": 0,
+      "profile_prediction": 0
+    },
+    {
+      "sample_id": 3,
+      "true_symbol": 2,
+      "phase_prediction": 2,
+      "profile_prediction": 2
+    },
+    {
+      "sample_id": 4,
+      "true_symbol": 2,
+      "phase_prediction": 2,
+      "profile_prediction": 2
+    },
+    {
+      "sample_id": 5,
+      "true_symbol": 1,
+      "phase_prediction": 1,
+      "profile_prediction": 1
+    },
+    {
+      "sample_id": 6,
+      "true_symbol": 0,
+      "phase_prediction": 0,
+      "profile_prediction": 0
+    },
+    {
+      "sample_id": 7,
+      "true_symbol": 3,
+      "phase_prediction": 3,
+      "profile_prediction": 3
+    },
+    {
+      "sample_id": 8,
+      "true_symbol": 0,
+      "phase_prediction": 0,
+      "profile_prediction": 0
+    },
+    {
+      "sample_id": 9,
+      "true_symbol": 2,
+      "phase_prediction": 2,
+      "profile_prediction": 2
+    },
+    {
+      "sample_id": 10,
+      "true_symbol": 1,
+      "phase_prediction": 1,
+      "profile_prediction": 1
+    },
+    {
+      "sample_id": 11,
+      "true_symbol": 3,
+      "phase_prediction": 3,
+      "profile_prediction": 3
+    },
+    {
+      "sample_id": 12,
+      "true_symbol": 1,
+      "phase_prediction": 1,
+      "profile_prediction": 1
+    },
+    {
+      "sample_id": 13,
+      "true_symbol": 2,
+      "phase_prediction": 2,
+      "profile_prediction": 2
+    },
+    {
+      "sample_id": 14,
+      "true_symbol": 3,
+      "phase_prediction": 3,
+      "profile_prediction": 3
+    },
+    {
+      "sample_id": 15,
+      "true_symbol": 0,
+      "phase_prediction": 0,
+      "profile_prediction": 0
+    },
+    {
+      "sample_id": 16,
+      "true_symbol": 1,
+      "phase_prediction": 1,
+      "profile_prediction": 1
+    },
+    {
+      "sample_id": 17,
+      "true_symbol": 1,
+      "phase_prediction": 1,
+      "profile_prediction": 1
+    },
+    {
+      "sample_id": 18,
+      "true_symbol": 0,
+      "phase_prediction": 0,
+      "profile_prediction": 0
+    },
+    {
+      "sample_id": 19,
+      "true_symbol": 0,
+      "phase_prediction": 3,
+      "profile_prediction": 0
+    },
+    {
+      "sample_id": 20,
+      "true_symbol": 3,
+      "phase_prediction": 0,
+      "profile_prediction": 3
+    },
+    {
+      "sample_id": 21,
+      "true_symbol": 1,
+      "phase_prediction": 1,
+      "profile_prediction": 1
+    },
+    {
+      "sample_id": 22,
+      "true_symbol": 2,
+      "phase_prediction": 2,
+      "profile_prediction": 2
+    },
+    {
+      "sample_id": 23,
+      "true_symbol": 2,
+      "phase_prediction": 2,
+      "profile_prediction": 2
+    },
+    {
+      "sample_id": 24,
+      "true_symbol": 1,
+      "phase_prediction": 1,
+      "profile_prediction": 1
+    },
+    {
+      "sample_id": 25,
+      "true_symbol": 0,
+      "phase_prediction": 3,
+      "profile_prediction": 0
+    },
+    {
+      "sample_id": 26,
+      "true_symbol": 3,
+      "phase_prediction": 3,
+      "profile_prediction": 3
+    },
+    {
+      "sample_id": 27,
+      "true_symbol": 3,
+      "phase_prediction": 0,
+      "profile_prediction": 3
+    },
+    {
+      "sample_id": 28,
+      "true_symbol": 2,
+      "phase_prediction": 2,
+      "profile_prediction": 2
+    },
+    {
+      "sample_id": 29,
+      "true_symbol": 3,
+      "phase_prediction": 3,
+      "profile_prediction": 3
+    },
+    {
+      "sample_id": 30,
+      "true_symbol": 3,
+      "phase_prediction": 3,
+      "profile_prediction": 3
+    },
+    {
+      "sample_id": 31,
+      "true_symbol": 0,
+      "phase_prediction": 3,
+      "profile_prediction": 0
+    }
+  ],
+  "late_predictions": [
+    {
+      "sample_id": 0,
+      "phase_prediction": 2,
+      "profile_prediction": 2
+    },
+    {
+      "sample_id": 1,
+      "phase_prediction": 0,
+      "profile_prediction": 0
+    },
+    {
+      "sample_id": 2,
+      "phase_prediction": 2,
+      "profile_prediction": 2
+    },
+    {
+      "sample_id": 3,
+      "phase_prediction": 2,
+      "profile_prediction": 2
+    },
+    {
+      "sample_id": 4,
+      "phase_prediction": 0,
+      "profile_prediction": 0
+    },
+    {
+      "sample_id": 5,
+      "phase_prediction": 1,
+      "profile_prediction": 1
+    },
+    {
+      "sample_id": 6,
+      "phase_prediction": 1,
+      "profile_prediction": 1
+    },
+    {
+      "sample_id": 7,
+      "phase_prediction": 1,
+      "profile_prediction": 1
+    },
+    {
+      "sample_id": 8,
+      "phase_prediction": 3,
+      "profile_prediction": 3
+    },
+    {
+      "sample_id": 9,
+      "phase_prediction": 1,
+      "profile_prediction": 1
+    },
+    {
+      "sample_id": 10,
+      "phase_prediction": 0,
+      "profile_prediction": 0
+    },
+    {
+      "sample_id": 11,
+      "phase_prediction": 2,
+      "profile_prediction": 2
+    },
+    {
+      "sample_id": 12,
+      "phase_prediction": 3,
+      "profile_prediction": 3
+    },
+    {
+      "sample_id": 13,
+      "phase_prediction": 1,
+      "profile_prediction": 1
+    },
+    {
+      "sample_id": 14,
+      "phase_prediction": 3,
+      "profile_prediction": 3
+    },
+    {
+      "sample_id": 15,
+      "phase_prediction": 3,
+      "profile_prediction": 3
+    },
+    {
+      "sample_id": 16,
+      "phase_prediction": 1,
+      "profile_prediction": 1
+    },
+    {
+      "sample_id": 17,
+      "phase_prediction": 1,
+      "profile_prediction": 1
+    },
+    {
+      "sample_id": 18,
+      "phase_prediction": 1,
+      "profile_prediction": 1
+    },
+    {
+      "sample_id": 19,
+      "phase_prediction": 0,
+      "profile_prediction": 0
+    },
+    {
+      "sample_id": 20,
+      "phase_prediction": 2,
+      "profile_prediction": 2
+    },
+    {
+      "sample_id": 21,
+      "phase_prediction": 3,
+      "profile_prediction": 3
+    },
+    {
+      "sample_id": 22,
+      "phase_prediction": 0,
+      "profile_prediction": 0
+    },
+    {
+      "sample_id": 23,
+      "phase_prediction": 1,
+      "profile_prediction": 1
+    },
+    {
+      "sample_id": 24,
+      "phase_prediction": 0,
+      "profile_prediction": 0
+    },
+    {
+      "sample_id": 25,
+      "phase_prediction": 1,
+      "profile_prediction": 1
+    },
+    {
+      "sample_id": 26,
+      "phase_prediction": 3,
+      "profile_prediction": 3
+    },
+    {
+      "sample_id": 27,
+      "phase_prediction": 1,
+      "profile_prediction": 1
+    },
+    {
+      "sample_id": 28,
+      "phase_prediction": 1,
+      "profile_prediction": 1
+    },
+    {
+      "sample_id": 29,
+      "phase_prediction": 1,
+      "profile_prediction": 1
+    },
+    {
+      "sample_id": 30,
+      "phase_prediction": 1,
+      "profile_prediction": 1
+    },
+    {
+      "sample_id": 31,
+      "phase_prediction": 0,
+      "profile_prediction": 0
+    }
+  ]
+}
+<br>
+<br>
+20261124T023947Z_5b416fd2_scored_results.json
+<br>
+<br>
+{
+  "run_id": "20261124T023947Z_5b416fd2",
+  "backend": "ibm_kingston",
+  "qubit": 55,
+  "shots_per_phase": 4096,
+  "compiled_duration_us": 3.9080000000000004,
+  "frozen_predictions_sha256": "860db6cf3b331373cd5cd50595f930f1c02a21267e3299533bcce6cce7add86b",
+  "input_measurements_sha256": "deded43dae21bc81c5b7f30e173177ec5dad5c2af1c5f33cc9087623422463c0",
+  "decoders": {
+    "phase": {
+      "early_leave_one_out_correct": 26,
+      "late_confusion_true_rows_predicted_columns": [
+        [
+          7,
+          0,
+          0,
+          0
+        ],
+        [
+          0,
+          14,
+          0,
+          0
+        ],
+        [
+          0,
+          0,
+          5,
+          0
+        ],
+        [
+          0,
+          0,
+          0,
+          6
+        ]
+      ],
+      "late_symbols_correct": 32,
+      "plaintext_bits_correct": 64
+    },
+    "four_phase_profile": {
+      "early_leave_one_out_correct": 32,
+      "late_confusion_true_rows_predicted_columns": [
+        [
+          7,
+          0,
+          0,
+          0
+        ],
+        [
+          0,
+          14,
+          0,
+          0
+        ],
+        [
+          0,
+          0,
+          5,
+          0
+        ],
+        [
+          0,
+          0,
+          0,
+          6
+        ]
+      ],
+      "late_symbols_correct": 32,
+      "plaintext_bits_correct": 64
+    }
+  },
+  "symbols": {
+    "0": {
+      "early": {
+        "samples": 8,
+        "readout_zero_probabilities": [
+          0.930816650390625,
+          0.6915283203125,
+          0.046173095703125,
+          0.331329345703125
+        ],
+        "pooled_angle_deg": -22.154604227622613,
+        "fringe_contrast": 0.9551636091056762,
+        "opposite_phase_sum_difference": -0.045867919921875,
+        "sample_angles_deg": [
+          -23.071906584483777,
+          -22.134108512398875,
+          -22.333536144605578,
+          -22.786425227019784,
+          -21.963835073958702,
+          -21.942819827855704,
+          -21.144932587489308,
+          -21.853125377806077
+        ]
+      },
+      "late": {
+        "samples": 7,
+        "readout_zero_probabilities": [
+          0.9216657366071429,
+          0.7007882254464286,
+          0.05207170758928571,
+          0.32010323660714285
+        ],
+        "pooled_angle_deg": -23.642516393147027,
+        "fringe_contrast": 0.9492706863856468,
+        "opposite_phase_sum_difference": -0.04715401785714285,
+        "sample_angles_deg": [
+          -24.572154895683557,
+          -23.302568359242837,
+          -22.12349184390073,
+          -23.93276662443368,
+          -23.473466670639656,
+          -23.86584128329019,
+          -24.22909814906219
+        ]
+      }
+    },
+    "1": {
+      "early": {
+        "samples": 8,
+        "readout_zero_probabilities": [
+          0.98089599609375,
+          0.528228759765625,
+          0.01708984375,
+          0.443389892578125
+        ],
+        "pooled_angle_deg": -5.0304849746038265,
+        "fringe_contrast": 0.9675329103866814,
+        "opposite_phase_sum_difference": 0.0263671875,
+        "sample_angles_deg": [
+          -3.6927835467484127,
+          -4.4563514259144394,
+          -5.828393887191181,
+          -5.3879460724909345,
+          -5.529396306233503,
+          -5.325252909795456,
+          -5.289287231799612,
+          -4.731137890228236
+        ]
+      },
+      "late": {
+        "samples": 14,
+        "readout_zero_probabilities": [
+          0.9758998325892857,
+          0.5326276506696429,
+          0.017438616071428572,
+          0.43409946986607145
+        ],
+        "pooled_angle_deg": -5.869291939055418,
+        "fringe_contrast": 0.9635121722019665,
+        "opposite_phase_sum_difference": 0.026611328124999944,
+        "sample_angles_deg": [
+          -6.040870240163676,
+          -5.652701089389198,
+          -5.116226652382686,
+          -6.566504913608382,
+          -5.884198644535674,
+          -5.387405141907723,
+          -5.7034213038266115,
+          -5.895674128512267,
+          -6.337002800651719,
+          -6.462083826126801,
+          -6.442998910693219,
+          -5.5280077463409665,
+          -4.897014336219017,
+          -6.237866542474746
+        ]
+      }
+    },
+    "2": {
+      "early": {
+        "samples": 8,
+        "readout_zero_probabilities": [
+          0.979339599609375,
+          0.5380859375,
+          0.01678466796875,
+          0.492218017578125
+        ],
+        "pooled_angle_deg": -2.7282097369452414,
+        "fringe_contrast": 0.9636471670189498,
+        "opposite_phase_sum_difference": -0.0341796875,
+        "sample_angles_deg": [
+          -2.6084824111492355,
+          -2.434184971682109,
+          -2.6737993202801014,
+          -3.2331194910414127,
+          -2.6045326192922436,
+          -2.643667231605713,
+          -2.7435660556980688,
+          -2.8862968675823746
+        ]
+      },
+      "late": {
+        "samples": 5,
+        "readout_zero_probabilities": [
+          0.97666015625,
+          0.526025390625,
+          0.0173828125,
+          0.498779296875
+        ],
+        "pooled_angle_deg": -1.6269190651334031,
+        "fringe_contrast": 0.9596641974444444,
+        "opposite_phase_sum_difference": -0.03076171875,
+        "sample_angles_deg": [
+          -2.0963168166114596,
+          -1.3625475588310403,
+          -1.523620571367738,
+          -1.6876779618587514,
+          -1.4639231047682515
+        ]
+      }
+    },
+    "3": {
+      "early": {
+        "samples": 8,
+        "readout_zero_probabilities": [
+          0.943328857421875,
+          0.6536865234375,
+          0.057891845703125,
+          0.30126953125
+        ],
+        "pooled_angle_deg": -21.703285202208363,
+        "fringe_contrast": 0.9529934092657274,
+        "opposite_phase_sum_difference": 0.0462646484375,
+        "sample_angles_deg": [
+          -21.53303431535038,
+          -21.16037977167835,
+          -21.586217639892922,
+          -22.523199346695765,
+          -21.578673128045303,
+          -22.022902113757677,
+          -21.4968934286747,
+          -21.72281450202294
+        ]
+      },
+      "late": {
+        "samples": 6,
+        "readout_zero_probabilities": [
+          0.9423828125,
+          0.6387125651041666,
+          0.051839192708333336,
+          0.3210042317708333
+        ],
+        "pooled_angle_deg": -19.634252429310063,
+        "fringe_contrast": 0.9455191821539576,
+        "opposite_phase_sum_difference": 0.034505208333333426,
+        "sample_angles_deg": [
+          -20.31753582035269,
+          -19.70276321320149,
+          -18.868642342961643,
+          -20.31343563285017,
+          -19.233935790792067,
+          -19.351453471424986
+        ]
+      }
+    }
+  },
+  "jobs": {
+    "early": {
+      "job_id": "dc2fht5hdvas73bm58o0",
+      "verified_settings": 128,
+      "unique_circuit_settings": 16,
+      "qpu_window_seconds": 141.228488,
+      "ibm_estimated_running_seconds": 150.860146079
+    },
+    "late": {
+      "job_id": "dc2fj35s2omc738bto20",
+      "verified_settings": 128,
+      "unique_circuit_settings": 16,
+      "qpu_window_seconds": 139.62528600000002,
+      "ibm_estimated_running_seconds": 150.860146079
+    }
+  },
+  "chance": {
+    "uniform_guess_accuracy": 0.25,
+    "late_majority_correct": 14,
+    "conditional_exact_permutation_probability_perfect_match": 1.442716118535105e-16,
+    "permutation_assumption": "Random assignment of late labels conditional on their observed frequencies, with the primary predictions fixed."
+  },
+  "unique_shot_streams": 256,
+  "max_ideal_probability_numeric_error": 2.220446049250313e-16,
+  "gap_between_qpu_blocks_seconds": 10.834897,
+  "first_submit_to_last_result_seconds": 302.580902
+}
+
+<br>
+<a href="https://arxiv.org/abs/2507.10592">Download the complete Kingston experiment (code, data, calibration, and IBM job exports ZIP)</a>
+Includes both Kingston job exports, full circuit and figure code, calibration, measurement counts, the answer key, frozen decoder predictions, and scored results.
+<br>
+<br>
+The early circuit diagram shows symbol 11 at φ = 0°. Its three negative frame signs place each group of four √X pulses between Rz(−π/2) and Rz(+π/2). The final analysis rotation is Rz(−π). This setting returned 0 in 3,842 of 4,096 shots, where the ideal circuit predicts 4,096 zeros.
+<br>
+<br>
+The late circuit diagram shows a different frame pattern on the same qubit, followed by Rz(−π/2) for φ = 90°. This setting returned 2,181 zeros. Combining it with the other three phases of that sample gave counts of (4,003, 2,181, 69, 1,810) in phase order. Both decoders identified symbol 01 before the key confirmed it.
+<br>
+<br>
+Figure 1 shows how the four symbols separated on Kingston. Each dot is one sample, each diamond is a pooled class angle, and each dashed line is a decision boundary learned early. Symbols 00 and 11 were only 0.45° apart early. Their late centers moved to −23.64° and −19.63°, widening the gap to 4.01°. Every late sample in that pair fell on the correct side of the original boundary.
+<br>
+<br>
+  <img src="e86i1.png" alt="" class="experiment-image">
+        <p></p>
+        <div class="content-block">
+<br>
+<br>
+Figure 2 shows where Kingston departed from the ideal fringe. Each cell gives the measured probability of 0 minus its ideal value, in percentage points. At 90°, symbol 00 exceeded the ideal by 19.2 points early and 20.1 points late. At 270°, it fell below ideal by 16.9 and 18.0 points. The symbol retained this pattern across jobs.
+<br>
+<br>
+          <img src="e86i2.png" alt="" class="experiment-image">
+        <p></p>
+        <div class="content-block">
+<br>
+<br>
+Figure 3 plots all 64 samples by fringe angle, contrast √(X² + Y²), and opposite-phase imbalance (p₀ + p₁₈₀) − (p₉₀ + p₂₇₀). The adjoining projection shows what the angle alone misses. Although the early angles for 00 and 11 overlapped, their mean imbalances had opposite signs, −4.59 and +4.63 percentage points. The four-phase decoder could use that difference.
+<br>
+<br>
+          <img src="e86i3.png" alt="" class="experiment-image">
+        <p></p>
+        <div class="content-block">
+<br>
+<br>
+Figure 4 shows decoding accuracy as fewer archived shots are retained. At 1,024 shots per phase, one-quarter of the original budget, the angle decoder averaged 30.3 correct symbols out of 32 and the four-phase decoder averaged 31.2. The shaded ranges cover the middle 90% of resampled scores. The point at 4,096 shots is the observed result from the full run.
+<br>
+<br>
+          <img src="e86i4.png" alt="" class="experiment-image">
+        <p></p>
+        
+<br>
+<br>
+<br>
+</div>
+Conclusion
+<br>
+<br>
+On held-out early samples, the angle decoder scored 26/32 and the four-phase decoder scored 32/32. On the blinded late job, both scored 32/32, including all seven instances of 00, fourteen of 01, five of 10, and six of 11. A uniform guess would average 8/32. The late job was easier for the angle decoder because the hardest pair moved farther apart while the early decision boundary stayed useful.
+<br>
+<br>
+In the end, all 256 recorded phase measurements matched the archived backend shot counts, and ideal evaluation of the submitted circuits gave the same fringe for every symbol. The hardware supplied a readable alphabet across two jobs separated by 10.8 seconds. The independent masks supplied the message secrecy. How long the same decoder would work across a longer delay or a recalibration remains open.
+<br>
+ </div>
+  <p>Code:<br>
+        <p><pre><code>
+# Main circuit
+# Imports
+import csv
+import json
+import logging
+import math
+import os
+from datetime import datetime, timezone
+from pathlib import Path
+from secrets import SystemRandom, randbits, token_hex
+from qiskit import ClassicalRegister, QuantumCircuit, QuantumRegister, transpile
+from qiskit_ibm_runtime import QiskitRuntimeService, SamplerV2
+from qiskit_ibm_runtime.models import BackendProperties
+from qiskit_ibm_runtime.models.exceptions import BackendPropertyError
+
+
+# IBM Quantum and acquisition settings
+TOKEN = ""     
+INSTANCE = ""  
+BACKEND = "ibm_kingston"
+CAL_JSON = "/Users/steventippeconnic/Documents/QC/ibm_kingston_calibrations_2026-11-24T02_24_57Z.csv"  
+RESULT_DIR = Path("")
+SHOTS = 4096   # Per phase setting. Four settings give 16,384 shots per symbol.
+EARLY_SAMPLES_PER_SYMBOL = 8
+LATE_SYMBOLS = 32  # Used when PLAINTEXT_BITS is empty.
+PLAINTEXT_BITS = ""  # Optional even-length binary message, in transmission order.
+WORD_REPEATS = 4
+
+
+# Each sign sets the virtual frame for four successive physical SX pulses.
+WORDS = ((+1, +1, +1), (+1, -1, +1), (-1, +1, -1), (-1, -1, -1))
+PHASES_DEG = (0, 90, 180, 270)
+log = logging.getLogger(__name__)
+
+
+# Calibration-based qubit pick
+def best_qubit(backend):
+    path = Path(CAL_JSON).expanduser() if CAL_JSON else None
+    rows = None
+    properties = None
+    if path is None:
+        properties = backend.properties()
+    elif path.suffix.lower() == ".csv":
+        with path.open(encoding="utf-8-sig", newline="") as file:
+            rows = list(csv.DictReader(file))
+    else:
+        with path.open(encoding="utf-8-sig") as file:
+            data = json.load(file)
+        if isinstance(data, list):
+            rows = data
+        else:
+            properties = BackendProperties.from_dict(data)
+
+    candidates = []
+    if rows is not None:
+        for row in rows:
+            row = {key.strip(): value for key, value in row.items()}
+            try:
+                candidates.append((int(row["Qubit"]), float(row["√x (sx) error"]),
+                                   float(row["T1 (us)"]), float(row["T2 (us)"])))
+            except (TypeError, ValueError):
+                continue  # An uncharacterized qubit can have empty cells.
+    else:
+        if properties is None or properties.backend_name != backend.name:
+            raise ValueError(f"Expected calibration properties for {backend.name}.")
+        for q in range(min(len(properties.qubits), backend.num_qubits)):
+            if not properties.is_qubit_operational(q):
+                continue
+            try:
+                candidates.append((q, properties.gate_error("sx", [q]),
+                                   properties.t1(q) * 1e6, properties.t2(q) * 1e6))
+            except BackendPropertyError:
+                continue
+
+    eligible = [
+        (error, -t1, -t2, q) for q, error, t1, t2 in candidates
+        if 0 <= q < backend.num_qubits and 0 <= error <= 1
+        and 0 < t1 < math.inf and 0 < t2 < math.inf
+        and all(backend.target.instruction_supported(operation_name=gate, qargs=(q,))
+                for gate in ("sx", "rz", "measure"))
+    ]
+    if not eligible:
+        raise ValueError("No qubit has usable SX, T1, T2 and readout calibration.")
+    error, neg_t1, neg_t2, q = min(eligible)
+    return q, {"source": str(path) if path else "live backend properties",
+               "sx_error": error, "t1_us": -neg_t1, "t2_us": -neg_t2}
+
+
+# Identity word and Ramsey interferometer
+def sx_pulses(qc, q, number):
+    for _ in range(number):
+        qc.sx(q)
+        qc.barrier(q)  # Preserve every physical drive, including adjacent SXs.
+
+
+def append_identity_word(qc, q, symbol):
+    # SX**4 = I, so each RZ-framed quartet is exactly I for either frame.
+    # The outer SX and SX**3 are inverses. They rotate residual drive-angle
+    # error about the framed +/-Y axis into a Ramsey-sensitive Z phase.
+    sx_pulses(qc, q, 1)
+    for _ in range(WORD_REPEATS):
+        for sign in WORDS[symbol]:
+            frame = sign * math.pi / 2
+            qc.rz(frame, q)
+            sx_pulses(qc, q, 4)
+            qc.rz(-frame, q)
+            qc.barrier(q)
+    sx_pulses(qc, q, 3)
+
+
+def ramsey_circuit(symbol, phase_deg):
+    probe = QuantumRegister(1, "probe")
+    readout = ClassicalRegister(1, "readout")
+    qc = QuantumCircuit(probe, readout, name="ramsey")
+    q = probe[0]
+    sx_pulses(qc, q, 1)  # First Ramsey pi/2 pulse.
+    append_identity_word(qc, q, symbol)
+    # The pi offset inverts the second splitter at phase zero. For every ideal
+    # word P(readout=0) = (1 + cos(phase)) / 2.
+    qc.rz(math.radians(phase_deg - 180), q)
+    qc.sx(q)
+    qc.measure(q, readout[0])
+    return qc
+
+
+def native_sequence(qc, physical):
+    sequence = []
+    for item in qc.data:
+        gate = item.operation
+        if gate.name == "barrier":
+            continue
+        if [qc.find_bit(bit).index for bit in item.qubits] != [physical]:
+            raise ValueError("Transpilation moved an operation off the selected qubit.")
+        if gate.name == "rz":
+            angle = round(float(gate.params[0]) % math.tau, 12)
+            if angle:
+                sequence.append(("rz", angle))
+        else:
+            sequence.append((gate.name, None))
+    return sequence
+
+
+def compile_alphabet(backend, physical):
+    templates = {}
+    durations = set()
+    for symbol in range(len(WORDS)):
+        for phase in PHASES_DEG:
+            raw = ramsey_circuit(symbol, phase)
+            isa = transpile(raw, backend=backend, initial_layout=[physical],
+                            optimization_level=0)
+            if native_sequence(isa, physical) != native_sequence(raw, 0):
+                raise ValueError("The compiler changed the native Ramsey pulse sequence.")
+            durations.add(isa.estimate_duration(backend.target, unit="dt"))
+            templates[symbol, phase] = isa
+    if len(durations) != 1:
+        raise ValueError(f"Compiled Ramsey durations differ in backend ticks: {durations}")
+    return templates, int(durations.pop())
+
+
+# Acquisition plan and private answer key
+def acquisition_plan():
+    if min(EARLY_SAMPLES_PER_SYMBOL, LATE_SYMBOLS, WORD_REPEATS, SHOTS) < 1:
+        raise ValueError("Sample counts, word repeats and shots must be positive.")
+    bits = PLAINTEXT_BITS
+    if len(bits) % 2 or set(bits) - {"0", "1"}:
+        raise ValueError("PLAINTEXT_BITS must contain complete two-bit symbols.")
+    plaintext = ([int(bits[i:i+2], 2) for i in range(0, len(bits), 2)]
+                 if bits else [randbits(2) for _ in range(LATE_SYMBOLS)])
+    early = list(range(len(WORDS))) * EARLY_SAMPLES_PER_SYMBOL
+    rng = SystemRandom()
+    rng.shuffle(early)
+    key = []
+    for sample_id, plain in enumerate(plaintext):
+        mask = randbits(2)
+        key.append({"sample_id": sample_id, "plaintext": plain, "mask": mask,
+                    "symbol": plain ^ mask})
+
+    plans = {}
+    for stage, symbols in (("early", early), ("late", [row["symbol"] for row in key])):
+        settings = [(sample_id, symbol, phase) for sample_id, symbol in enumerate(symbols)
+                    for phase in PHASES_DEG]
+        rng.shuffle(settings)  # Submitted order carries no systematic symbol or phase cue.
+        plans[stage] = settings
+    return plans, key
+
+
+def save_measurements(path, data):
+    temporary = path.with_suffix(".tmp")
+    temporary.write_text(json.dumps(data, indent=2) + "\n", encoding="utf-8")
+    temporary.replace(path)
+
+
+# Runtime execution and result extraction
+def main():
+    logging.basicConfig(level=logging.INFO, format="%(asctime)s | %(levelname)s | %(message)s")
+    plans, key = acquisition_plan()
+    service = QiskitRuntimeService(channel="ibm_quantum_platform" if TOKEN else None,
+                                   token=TOKEN or None,
+                                   instance=INSTANCE or None)
+    backend = service.backend(BACKEND)
+    physical, calibration = best_qubit(backend)
+    templates, duration_dt = compile_alphabet(backend, physical)
+    log.info("Backend %s | qubit %d | all Ramsey circuits %d dt", backend.name,
+             physical, duration_dt)
+    sampler = SamplerV2(mode=backend, options={
+        "dynamical_decoupling": {"enable": False},
+        "twirling": {"enable_gates": False, "enable_measure": False},
+    })
+
+    run_id = datetime.now(timezone.utc).strftime("%Y%m%dT%H%M%SZ") + "_" + token_hex(4)
+    RESULT_DIR.mkdir(parents=True, exist_ok=True)
+    prefix = f"Ramsey_Identity_Cipher_{run_id}"
+    public_path = RESULT_DIR / f"{prefix}_measurements.json"
+    private_path = RESULT_DIR / f"{prefix}_PRIVATE_key.json"
+    with open(private_path, "x", encoding="utf-8",
+              opener=lambda path, flags: os.open(path, flags, 0o600)) as file:
+        json.dump({"run_id": run_id, "late_in_message_order": key}, file, indent=2)
+
+    out = {"experiment": "Ramsey identity cipher", "run_id": run_id, "backend": backend.name,
+           "physical_qubit": physical, "calibration": calibration, "shots_per_phase": SHOTS,
+           "phases_deg": PHASES_DEG, "word_frame_signs": WORDS, "word_repeats": WORD_REPEATS,
+           "compiled_duration_dt": duration_dt, "dt_seconds": backend.dt, "blocks": {}}
+    log.info("Measurements -> %s", public_path)
+    log.info("Private answer key -> %s", private_path)
+
+    # job.result() and the early checkpoint both finish before the late submission.
+    for stage, settings in plans.items():
+        records = []
+        circuits = []
+        for sample_id, symbol, phase in settings:
+            record = {"sample_id": sample_id, "phase_deg": phase}
+            if stage == "early":
+                record["symbol"] = symbol
+            records.append(record)
+            circuits.append(templates[symbol, phase])
+        block = {"records_in_pub_order": records,
+                 "submission_requested_utc": datetime.now(timezone.utc).isoformat()}
+        out["blocks"][stage] = block
+        save_measurements(public_path, out)
+        job = sampler.run(circuits, shots=SHOTS)
+        block["job_id"] = job.job_id()
+        log.info("%s job %s | %d settings x %d shots", stage, job.job_id(), len(records), SHOTS)
+        save_measurements(public_path, out)
+        result = job.result()
+        for record, pub in zip(records, result, strict=True):
+            counts = pub.data.readout.get_counts()
+            if sum(counts.values()) != SHOTS or counts.keys() - {"0", "1"}:
+                raise ValueError(f"Unexpected one-bit counts in {stage} job {job.job_id()}.")
+            record["counts"] = counts
+        block["result_received_utc"] = datetime.now(timezone.utc).isoformat()
+        # Record the device's acquisition windows directly from the Sampler result.
+        spans = result.metadata.get("execution", {}).get("execution_spans", ())
+        executor = result.metadata.get("executor")
+        if executor is not None:
+            spans = executor.chunk_timing
+        block["qpu_windows"] = [{"start": span.start.isoformat(), "stop": span.stop.isoformat()}
+                                for span in spans]
+        save_measurements(public_path, out)
+    log.info("Acquisition complete. Use %s for blind decoding.", public_path)
+
+
+if __name__ == "__main__":
+    main()
+
+
+# End.
+
+
+# Code to create figures from resulting jsons
+import json
+from dataclasses import dataclass
+from pathlib import Path
+import matplotlib
+import numpy as np
+matplotlib.use("Agg")
+import matplotlib.pyplot as plt
+from matplotlib import font_manager
+from matplotlib.colors import LinearSegmentedColormap, Normalize
+from matplotlib.lines import Line2D
+from matplotlib.ticker import FormatStrFormatter, MultipleLocator
+
+
+RUN_ID = "20261124T023947Z_5b416fd2"
+PHASES = (0, 90, 180, 270)
+SYMBOLS = range(4)
+SYMBOL_COLORS = ("#007066", "#a44d08", "#5552a2", "#a33c59")
+INK, GRAY, GRID = "#183541", "#4b636e", "#dae4e6"
+
+
+@dataclass
+class Block:
+    # Rows follow sample ID order. Columns follow PHASES. Values count readout 0.
+    counts: np.ndarray
+    labels: np.ndarray
+
+    def for_symbol(self, symbol):
+        return self.counts[self.labels == symbol]
+
+
+def load_run(directory):
+    stem = f"Ramsey_Identity_Cipher_{RUN_ID}"
+    measurements = json.loads((directory / f"{stem}_measurements.json").read_bytes())
+    answer_key = json.loads((directory / f"{stem}_PRIVATE_key.json").read_bytes())
+    if measurements["run_id"] != RUN_ID or answer_key["run_id"] != RUN_ID:
+        raise ValueError("The measurements and answer key must belong to the published run.")
+    if tuple(measurements["phases_deg"]) != PHASES:
+        raise ValueError(f"Expected analysis phases {PHASES}.")
+    shots = measurements["shots_per_phase"]
+    key_rows = answer_key["late_in_message_order"]
+    truth = {row["sample_id"]: row["symbol"] for row in key_rows}
+    if len(truth) != len(key_rows):
+        raise ValueError("Duplicate sample ID in the late answer key.")
+
+    blocks = {}
+    for stage in ("early", "late"):
+        rows = measurements["blocks"][stage]["records_in_pub_order"]
+        sample_ids = sorted({row["sample_id"] for row in rows})
+        if stage == "late" and set(sample_ids) != set(truth):
+            raise ValueError("The late sample IDs do not match the answer key.")
+        row_index = {sample_id: index for index, sample_id in enumerate(sample_ids)}
+        counts = np.full((len(sample_ids), len(PHASES)), -1, dtype=int)
+        labels = np.full(len(sample_ids), -1, dtype=int)
+        for row in rows:
+            sample_id = row["sample_id"]
+            i, j = row_index[sample_id], PHASES.index(row["phase_deg"])
+            histogram = row["counts"]
+            if counts[i, j] != -1 or set(histogram) - {"0", "1"}:
+                raise ValueError(f"Duplicate setting or invalid readout for sample {sample_id}.")
+            if sum(histogram.values()) != shots or min(histogram.values()) < 0:
+                raise ValueError(f"Invalid shot count for {stage} sample {sample_id}.")
+            counts[i, j] = histogram.get("0", 0)
+            symbol = row["symbol"] if stage == "early" else truth[sample_id]
+            if symbol not in SYMBOLS or labels[i] not in (-1, symbol):
+                raise ValueError(f"Inconsistent symbol for {stage} sample {sample_id}.")
+            labels[i] = symbol
+        if np.any(counts < 0) or set(labels) != set(SYMBOLS):
+            raise ValueError(f"Incomplete four-phase alphabet in the {stage} block.")
+        blocks[stage] = Block(counts, labels)
+    return blocks, shots
+
+
+def fringe_angle(values):
+    """Ramsey phase in radians. Counts and probabilities yield the same angle."""
+    return np.arctan2(values[..., 3] - values[..., 1], values[..., 0] - values[..., 2])
+
+
+def page(title, subtitle):
+    fig = plt.figure(figsize=(12, 7.3))
+    fig.text(.065, .92, title, fontsize=23.5, fontweight="bold", va="center")
+    fig.text(.066, .85, subtitle, fontsize=12.2, color=GRAY, va="center")
+    return fig
+
+
+def footer(fig, line, detail):
+    fig.add_artist(Line2D([.065, .94], [.132, .132], lw=.8, color=GRID,
+                          transform=fig.transFigure))
+    fig.text(.066, .086, line, fontsize=10.1, color=INK)
+    fig.text(.066, .048, detail, fontsize=9.5, color=GRAY)
+
+
+def save(fig, path, **options):
+    fig.savefig(path, **options)
+    plt.close(fig)
+    print(path)
+
+
+# Image 1 - How the four symbols separated on Kingston
+def plot_fringe_angles(blocks, output):
+    fig, axes = plt.subplots(1, 2, figsize=(9.4, 4.7), facecolor="white")
+    fig.subplots_adjust(left=.09, right=.98, top=.80, bottom=.24, wspace=.26)
+    fig.text(.09, .938, "How the four symbols separated on Kingston",
+             fontsize=19, weight="bold", color="#142d3a")
+    fig.text(.09, .872, "Measured Ramsey fringe angle on qubit 55",
+             fontsize=11, color="#38515d")
+
+    panels = [((0, 3), (-25.5, -17.9)), ((1, 2), (-7.25, .35))]
+    for ax, (pair, limits) in zip(axes, panels):
+        ax.set_title(f"Symbols {pair[0]:02b} and {pair[1]:02b}",
+                     loc="left", weight="bold", fontsize=11, pad=9)
+        early_centers = [np.degrees(fringe_angle(blocks["early"].for_symbol(s).sum(0)))
+                         for s in pair]
+        ax.axhline(np.mean(early_centers), ls=(0, (3, 3)), lw=1.2, color="#59666c", zorder=2)
+        for offset, symbol in zip((-.115, .115), pair):
+            color = SYMBOL_COLORS[symbol]
+            x = np.array([0., 1.]) + offset
+            centers = []
+            for i, stage in enumerate(("early", "late")):
+                rows = blocks[stage].for_symbol(symbol)
+                angles = np.degrees(fringe_angle(rows))
+                centers.append(np.degrees(fringe_angle(rows.sum(axis=0))))
+                jitter = np.linspace(-.055, .055, len(rows))
+                ax.scatter(x[i] + jitter, angles, s=18, facecolor=color,
+                           edgecolor="none", alpha=.53, zorder=4)
+            ax.plot(x, centers, color=color, lw=1.5, alpha=.88, zorder=3)
+            ax.scatter(x, centers, s=41, marker="D", c=color,
+                       edgecolor="white", linewidth=.85, zorder=5)
+            ax.text(x[1] + .095, centers[1], f"{symbol:02b}", fontsize=10.5,
+                    ha="left", va="center", color=color, weight="bold",
+                    bbox=dict(facecolor="white", edgecolor="none", pad=.6, alpha=.85))
+        ax.set(xlim=(-.35, 1.43), ylim=limits)
+        ax.set_xticks([0, 1], ["Early · labeled", "Late · blinded"])
+        ax.yaxis.set_major_locator(MultipleLocator(2))
+        ax.yaxis.set_major_formatter(FormatStrFormatter("%d°"))
+        ax.grid(axis="y", color="#dae3e7", lw=.65, zorder=0)
+        ax.spines[["top", "right"]].set_visible(False)
+        ax.spines[["left", "bottom"]].set_color("#adbcc1")
+        ax.tick_params(length=0, labelsize=10, pad=6, colors="#304650")
+
+    legend = [
+        Line2D([], [], marker="o", ms=5, ls="", color="#82979d", label="One symbol measurement"),
+        Line2D([], [], marker="D", ms=6, color="#38525e", label="Pooled class angle"),
+        Line2D([], [], ls=(0, (3, 3)), color="#59666c", label="Frozen early boundary within pair"),
+    ]
+    fig.legend(handles=legend, ncol=3, loc="lower left", bbox_to_anchor=(.075, .065),
+               frameon=False, handlelength=1.6, columnspacing=1.8, fontsize=9)
+    fig.text(.09, .035, "Each measurement combines 4,096 shots at each of four phases. "
+             "Panels use the same degrees per vertical interval.", fontsize=8.6, color="#52666e")
+    save(fig, output / "01_How_the_four_symbols_separated_on_Kingston.png",
+         dpi=165, bbox_inches="tight", pad_inches=.18)
+
+
+# Image 2 - Observed minus ideal readout probability, in percentage points
+def plot_ideal_comparison(blocks, shots, output):
+    ideal = (1 + np.cos(np.deg2rad(PHASES))) / 2
+    cmap = LinearSegmentedColormap.from_list(
+        "departures", ["#235483", "#93b8cf", "#f7f8f5", "#efa77c", "#a43e19"])
+    norm = Normalize(-21, 21)
+    fig = page("Where Kingston departed from the ideal fringe",
+               "Each cell shows how far the measured probability of reading 0 fell above or below ideal, in percentage points.")
+    panels = [("early", .115, "Early · labeled"), ("late", .573, "Late · scored after unblinding")]
+    for stage, left, title in panels:
+        ax = fig.add_axes([left, .287, .34, .43])
+        pooled = np.array([blocks[stage].for_symbol(s).mean(axis=0) / shots for s in SYMBOLS])
+        difference = 100 * (pooled - ideal)
+        image = ax.imshow(difference, cmap=cmap, norm=norm, aspect="auto", interpolation="nearest")
+        ax.set_title(title, loc="left", fontsize=13.5, pad=13)
+        ax.set_xticks(range(4), [f"{phase}°" for phase in PHASES])
+        ax.set_yticks(range(4), [f"{s:02b}" for s in SYMBOLS])
+        ax.set_xlabel("Analysis phase", fontsize=11, labelpad=6)
+        if stage == "early":
+            ax.set_ylabel("Transmitted symbol", fontsize=11, labelpad=10)
+        ax.tick_params(length=0, pad=7)
+        ax.set_xticks(np.arange(-.5, 4), minor=True)
+        ax.set_yticks(np.arange(-.5, 4), minor=True)
+        ax.grid(which="minor", color="white", lw=3)
+        ax.tick_params(which="minor", length=0)
+        for spine in ax.spines.values():
+            spine.set_visible(False)
+        for i, j in np.ndindex(difference.shape):
+            value = difference[i, j]
+            luminance = np.dot(cmap(norm(value))[:3], [.213, .715, .072])
+            ax.text(j, i, f"{value:+.1f}".replace("-", "−"), ha="center", va="center",
+                    fontsize=13.2, color="white" if luminance < .52 else INK, fontweight="bold")
+    color_axis = fig.add_axes([.34, .176, .34, .016])
+    bar = fig.colorbar(image, cax=color_axis, orientation="horizontal", ticks=[-20, -10, 0, 10, 20])
+    bar.outline.set_visible(False)
+    bar.ax.tick_params(length=0, pad=2, labelsize=9)
+    footer(fig, "The ideal P(0) is 100%, 50%, 0%, and 50% at the four phases. "
+           "Each value pools the shots for one symbol in one job.",
+           "IBM Kingston · qubit 55 · 4,096 shots per phase per sample · "
+           "8 early samples per symbol and 5–14 late samples per symbol")
+    save(fig, output / "02_Kingston_vs_ideal_fringe.png", dpi=180)
+
+
+# Image 3 - The symbol cloud and its angle–imbalance projection
+def plot_symbol_cloud(blocks, shots, output):
+    fig = page("The four symbols in three measured coordinates",
+               "Each point is one four-phase measurement. The projection shows why similar fringe angles can still carry different symbols.")
+    space = fig.add_axes([.045, .255, .455, .525], projection="3d", proj_type="ortho")
+    plane = fig.add_axes([.618, .302, .306, .385])
+    space.view_init(elev=22, azim=-53)
+    space.set_box_aspect([1.65, 1.12, .93], zoom=1.0)
+    for stage, marker in [("early", "o"), ("late", "D")]:
+        for symbol, color in enumerate(SYMBOL_COLORS):
+            probabilities = blocks[stage].for_symbol(symbol) / shots
+            p0, p90, p180, p270 = probabilities.T
+            angle = np.degrees(fringe_angle(probabilities))
+            imbalance = 100 * (p0 + p180 - p90 - p270)
+            contrast = 100 * np.hypot(p0 - p180, p270 - p90)
+            style = dict(marker=marker, s=26 if stage == "early" else 21,
+                         facecolors="none" if stage == "early" else color,
+                         edgecolors=color, linewidths=1.05 if stage == "early" else .55, alpha=.9)
+            space.scatter(angle, imbalance, contrast, depthshade=False, **style)
+            plane.scatter(angle, imbalance, zorder=3, **style)
+    space.set(xlim=(-27, 1), ylim=(-8, 8), zlim=(93, 98))
+    space.set_xticks([-25, -15, -5])
+    space.set_yticks([-6, 0, 6])
+    space.set_zticks([94, 96, 98])
+    space.set_xlabel("Fringe angle (°)", labelpad=4, fontsize=10)
+    space.set_ylabel("Imbalance (pp)", labelpad=3, fontsize=10)
+    space.set_zlabel("Contrast (%)", labelpad=0, fontsize=10)
+    space.tick_params(pad=0, labelsize=8.8)
+    for axis in (space.xaxis, space.yaxis, space.zaxis):
+        axis.pane.set_facecolor("#f3f7f7")
+        axis.pane.set_edgecolor(GRID)
+        axis._axinfo["grid"].update(color=GRID, linewidth=.65)
+    plane.set_title("Angle and imbalance", loc="left", fontsize=13, pad=12)
+    plane.set(xlim=(-28, 2), ylim=(-8, 9), xlabel="Fringe angle (°)",
+              ylabel="Imbalance (percentage points)")
+    plane.set_xticks([-25, -20, -15, -10, -5, 0])
+    plane.set_yticks([-6, -3, 0, 3, 6])
+    plane.tick_params(length=0, labelsize=9, pad=5)
+    plane.grid(color=GRID, lw=.63, zorder=0)
+    plane.spines[["top", "right"]].set_visible(False)
+    for symbol, (x, y) in enumerate([(-25.9, -7.05), (-9.3, 5.7), (-3., -6.), (-23.2, 7.35)]):
+        plane.text(x, y, f"{symbol:02b}", color=SYMBOL_COLORS[symbol], weight="bold", fontsize=10,
+                   bbox=dict(facecolor="white", alpha=.85, edgecolor="none", pad=1.1))
+    legend = [
+        Line2D([], [], marker="o", markerfacecolor="none", markeredgecolor=INK, lw=0,
+               label="Early · 32 samples"),
+        Line2D([], [], marker="D", color=INK, lw=0, label="Late · 32 samples"),
+    ]
+    legend.extend(Line2D([], [], marker="s", color=color, lw=0, label=f"{s:02b}")
+                  for s, color in enumerate(SYMBOL_COLORS))
+    fig.legend(handles=legend, loc="center", bbox_to_anchor=(.50, .184), ncol=6,
+               frameon=False, fontsize=10.4, columnspacing=1.3, handletextpad=.35)
+    footer(fig, "Imbalance is the sum of P(0) at 0° and 180° minus the sum at 90° and 270°, "
+           "in percentage points (pp).",
+           "Contrast is the length of the two measured fringe quadratures. "
+           "All three coordinates come from the same four readout probabilities.")
+    save(fig, output / "03_Kingston_symbol_cloud_3D.png", dpi=180)
+
+
+# Image 4 - Accuracy of the fixed early decoders as the late shot budget changes
+def plot_shot_budget(blocks, shots, output):
+    early, late = blocks["early"], blocks["late"]
+    pooled_counts = np.array([early.for_symbol(s).sum(axis=0) for s in SYMBOLS])
+    class_shots = np.bincount(early.labels, minlength=4) * shots
+    centers = fringe_angle(pooled_counts)
+    profile = (pooled_counts + .5) / (class_shots[:, None] + 1)
+    log_zero, log_one = np.log(profile.T), np.log1p(-profile.T)
+    budgets = np.array([16, 32, 64, 128, 256, 512, 1024, 2048, 4096])
+    if shots != budgets[-1]:
+        raise ValueError("The published shot-budget figure uses 4,096 shots per phase.")
+    rng = np.random.default_rng(55)
+    repeats = 5000
+    means = np.empty((len(budgets), 2))
+    lower = np.empty_like(means)
+    upper = np.empty_like(means)
+    for i, budget in enumerate(budgets):
+        # Draw an unordered subset of each recorded one-bit shot stream.
+        zeros = rng.hypergeometric(late.counts, shots - late.counts, budget,
+                                   size=(repeats, *late.counts.shape))
+        angle = fringe_angle(zeros)
+        distances = np.abs((angle[..., None] - centers + np.pi) % (2 * np.pi) - np.pi)
+        phase_prediction = distances.argmin(axis=-1)
+        profile_prediction = (zeros @ log_zero + (budget - zeros) @ log_one).argmax(axis=-1)
+        correct = np.stack([(phase_prediction == late.labels).sum(axis=1),
+                            (profile_prediction == late.labels).sum(axis=1)], axis=1)
+        means[i] = correct.mean(axis=0)
+        lower[i], upper[i] = np.quantile(correct, [.05, .95], axis=0, method="nearest")
+
+    fig = page("How decoding accuracy changes with fewer shots",
+               "The same 32 late symbols were reread using random subsets of their archived shots. Both early decoders stayed fixed.")
+    ax = fig.add_axes([.095, .295, .607, .445])
+    ax.set_xscale("log", base=2)
+    handles = []
+    for j, (color, title, marker) in enumerate([("#a45520", "Fringe angle", "o"),
+                                                 ("#246982", "Four-phase profile", "D")]):
+        ax.fill_between(budgets, lower[:, j], upper[:, j], color=color, alpha=.105, lw=0)
+        line, = ax.plot(budgets, means[:, j], color=color, marker=marker, markerfacecolor="white",
+                        ms=5.5, lw=2.1, label=title, zorder=3)
+        handles.append(line)
+    ax.scatter([shots] * 2, means[-1], s=56, marker="o", color=INK, zorder=5, clip_on=False)
+    ax.axhline(8, color=GRAY, lw=1, ls=(0, (3, 3)))
+    ax.text(19, 8.45, "Uniform guessing · 8 of 32 on average", fontsize=9, color=GRAY)
+    ax.set(xlim=(13, 5200), ylim=(6.2, 34), xlabel="Shots retained per phase setting",
+           ylabel="Late symbols decoded correctly")
+    ax.set_xticks(budgets, [f"{x:,}" for x in budgets])
+    ax.set_yticks([8, 12, 16, 20, 24, 28, 32])
+    ax.tick_params(length=0, labelsize=9.1, pad=5)
+    ax.spines[["top", "right"]].set_visible(False)
+    ax.grid(axis="y", lw=.65, color=GRID)
+    fig.legend(handles=handles, loc="center left", bbox_to_anchor=(.085, .193),
+               ncol=2, frameon=False, fontsize=10.4)
+    fig.add_artist(Line2D([.742, .742], [.304, .73], lw=1, color=GRID, transform=fig.transFigure))
+    phase_mean, profile_mean = means[budgets == 1024][0]
+    fig.text(.765, .678, "1,024 shots per phase", fontsize=12.4, weight="bold")
+    fig.text(.765, .629, "Average correct out of 32", fontsize=10, color=GRAY)
+    fig.text(.765, .568, f"{phase_mean:.1f}   Fringe angle", fontsize=12.4, color="#964813")
+    fig.text(.765, .517, f"{profile_mean:.1f}   Four-phase profile", fontsize=12.4, color="#246982")
+    fig.text(.765, .405, "4,096 shots per phase", fontsize=12.4, weight="bold")
+    full_phase, full_profile = means[-1]
+    text = (f"{full_phase:.0f}/{len(late.labels)} for both decoders" if full_phase == full_profile
+            else f"{full_phase:.0f} angle · {full_profile:.0f} profile")
+    fig.text(.765, .35, text, fontsize=11.6, color=INK)
+    fig.text(.765, .306, "Observed in the full run", fontsize=10, color=GRAY)
+    footer(fig, "Lines show mean scores. Shading covers the 5th–95th percentiles of 5,000 random "
+           "subsets drawn without replacement at each shot count.",
+           "Each symbol uses four phase settings. These ranges describe shot sampling within this run. "
+           "Drift across hardware runs adds further uncertainty.")
+    save(fig, output / "04_Kingston_shot_budget.png", dpi=180)
+
+
+def main():
+    directory = Path(__file__).resolve().parent
+    blocks, shots = load_run(directory)
+    output = directory / "Figures"
+    output.mkdir(exist_ok=True)
+    with plt.style.context("default"):
+        plot_fringe_angles(blocks, output)
+        # The first figure used Matplotlib defaults; the remaining three used Open Sans.
+        available_fonts = {font.name for font in font_manager.fontManager.ttflist}
+        plt.rcParams.update({
+            "font.family": "Open Sans" if "Open Sans" in available_fonts else "DejaVu Sans",
+            "font.size": 11, "text.color": INK, "axes.labelcolor": INK,
+            "xtick.color": GRAY, "ytick.color": GRAY, "axes.edgecolor": "#a5b7bc",
+            "axes.titleweight": "bold", "axes.titlecolor": INK,
+            "figure.facecolor": "white", "savefig.facecolor": "white",
+        })
+        plot_ideal_comparison(blocks, shots, output)
+        plot_symbol_cloud(blocks, shots, output)
+        plot_shot_budget(blocks, shots, output)
+
+
+if __name__ == "__main__":
+    main()
+
+# End.
+
+</code></pre>
+</p>
+ </div>
+        <img src="e86i6.png" alt="" class="experiment-image4">
+        <p></p>
+        <div class="content-block">
+
+           
+            <br>
+            
+           
+        <img src="e86i7.png" alt="" class="experiment-image4">
+        <p></p>
+        <div class="content-block">
+
+           
+            <br>
+            
+
+        <img src="e86i5.png" alt="" class="experiment-image4">
+        <p></p>
+        <div class="content-block">
+
+           
+            <br>
+
+
+        
+  
+
+  
+
+    <footer>
+        <!-- Footer content -->
+        <a href="mailto:stevetippeconnic@gmail.com">Contact</a>
+    </footer>
+
+</body>
+</html>
